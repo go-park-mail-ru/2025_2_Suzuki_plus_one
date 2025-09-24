@@ -12,6 +12,8 @@ servers:
 tags:
   - name: page
     description: Endpoints related to updating UI
+  - name: auth
+    description: Authentication endpoints
 paths:
   /:
     get:
@@ -57,6 +59,69 @@ paths:
         "404":
           description: Movie not found
 
+  # Authentication endpoints
+  /auth/signup:
+    post:
+      tags:
+        - auth
+      summary: User registration
+      description: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Bad request (invalid input)
+        "409":
+          description: User already exists
+
+  /auth/signin:
+    post:
+      tags:
+        - auth
+      summary: User login
+      description: Authenticate user and return JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+        "404":
+          description: User not found
+
+  /auth/signout:
+    post:
+      tags:
+        - auth
+      summary: User logout
+      description: Invalidate user session/token
+      security:
+        - JWT: []
+      responses:
+        "200":
+          description: Successfully signed out
+        "401":
+          description: Unauthorized
+
 components:
   securitySchemes:
     JWT:
@@ -83,3 +148,71 @@ components:
           items:
             type: string
           example: ["Sci-Fi", "Thriller"]
+
+    # Authentication schemas
+    SignUpRequest:
+      type: object
+      required:
+        - email
+        - password
+        - username
+      properties:
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 6
+          example: "securepassword123"
+        username:
+          type: string
+          minLength: 3
+          example: "john_doe"
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+
+    SignInRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        password:
+          type: string
+          format: password
+          example: "securepassword123"
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Authentication successful"
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "user123"
+            email:
+              type: string
+              example: "user@example.com"
+            username:
+              type: string
+              example: "john_doe"
