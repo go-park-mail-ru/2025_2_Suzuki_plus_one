@@ -51,6 +51,8 @@ link_dir() {
 # Ensure pre-commit directories are linked
 for dir in "${PRECOMMIT_DIRS[@]}"; do
     link_dir "$HOOKS_SRC_DIR/$dir" "$HOOKS_DIR/$dir"
+    chmod -R +x "$HOOKS_SRC_DIR/$dir"
+    INSTALLED_DIRS+=("$dir")
 done
 
 # Install pre-commit hooks
