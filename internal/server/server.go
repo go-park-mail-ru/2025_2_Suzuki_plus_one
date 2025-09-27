@@ -137,7 +137,7 @@ func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 	var request struct {
-		Email    string `json:"email"'`
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
