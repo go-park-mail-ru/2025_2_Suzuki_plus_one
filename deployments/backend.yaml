@@ -1,0 +1,53 @@
+---
+- hosts: back
+  tasks:
+    - name: Ensure backend folder exists
+      file:
+        path: /home/{{ ansible_user }}/backend
+        state: directory
+
+    - name: Pull latest code and switch to deploy branch
+      git:
+        repo: "https://github.com/go-park-mail-ru/2025_2_Suzuki_plus_one.git"
+        dest: /home/{{ ansible_user }}/backend
+        update: yes
+        version: deploy
+
+    - name: Ensure Go version matches go.mod
+      shell: |
+        required_go_version=$(grep '^go ' go.mod | awk '{print $2}')
+        installed_go_version=$(go version | awk '{print $3}' | sed 's/go//')
+        if [ "$required_go_version" != "$installed_go_version" ]; then
+          echo "Go version mismatch: required $required_go_version, installed $installed_go_version"
+          exit 1
+        fi
+      args:
+        chdir: /home/{{ ansible_user }}/backend
+
+    - name: Install Go dependencies
+      command: go mod tidy
+      args:
+        chdir: /home/{{ ansible_user }}/backend
+
+
+    - name: Build Go server
+      command: go build -o build/server cmd/main.go
+      args:
+        chdir: /home/{{ ansible_user }}/backend
+
+    - name: Restart server service
+      systemd:
+        name: APIserver
+        state: restarted
+        enabled: yes
+
+    - name: Wait for server to start
+      uri:
+      url: http://{{ SERVER_SERVE_STRING }}
+      status_code: 200
+      timeout: 10
+      validate_certs: no
+      register: server_health
+      retries: 3
+      delay: 3
+      until: server_health.status == 200

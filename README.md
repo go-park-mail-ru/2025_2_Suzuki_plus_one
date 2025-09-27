@@ -1,10 +1,10 @@
-# 2025_2_Suzuki_plus_one
+# Popfilms. Backend
 
-Репозиторий команды `Сузуки + 1`. Проект **Netflix**.
+This repo contains the backend code for the Popfilms project.
+Which is an open source Netflix like service.
 
-## Основные пункты разработки проекта
-1. Ветка `main` закрыта для того, чтобы в нее напрямую коммитить.
-2. Всю разработку ведем в ветке `dev`, отведенной от `main`.
-3. Для каждой задачи от `dev` отводится отдельная ветка с названием вида `<TIKET_ID>-<feature-name>`, где `<TIKET_ID>` - id тикета в трекере, `<feature-name>` - краткое название выполняемой фичи/задачи.
-4. По завершении разработки задачи создается Pull Request в `dev`, по которому я или ваши сокомандники проводят ревью. Название Pull Request'а - строка вида `<TIKET_ID>: <description>`, где `<TIKET_ID>` - id тикета в трекере, `<description>` - краткое описание выполненной работы. Более подробно выполненную работу можно описать в соответствующем поле.
-5. Перед каждым РК ветка `dev` вливается в `main`.
+Popfilms provides users with a platform to stream and share films and series.
+
+---
+
+... Later here will appear some links to our credentials, support email, etc. ...

@@ -1,0 +1,19 @@
+---
+- name: Read logs from backend APIserver
+  hosts: back
+  tasks:
+    - name: Fetch last 100 lines of backend logs
+      command: tail -n 100 /var/log/apiserver/error.log
+      register: backend_logs
+      
+    - name: Display backend logs
+      debug:
+        var: backend_logs.stdout_lines
+
+    - name: Get systemd service status
+      command: systemctl status APIserver
+      register: service_status
+      
+    - name: Display service status
+      debug:
+        var: service_status.stdout_lines
