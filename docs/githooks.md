@@ -4,7 +4,7 @@ To install githooks you simply copy them into .git folder
 
 ```bash
 chmod +x githooks/install.sh
-sh githooks/install.sh
+./githooks/install.sh
 ```
 
 ## pre-commit
