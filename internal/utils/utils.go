@@ -4,26 +4,46 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
-// HashPassword hashes a plain-text password using SHA-256
-func HashPassword(password string) (string, error) {
-	if len(password) < 8 {
-		return "", errors.New("password must be at least 8 characters long")
-	}
+// HashString hashes a string using SHA-256
+func HashString(target string) (string, error) {
 	hasher := sha256.New()
-	hasher.Write([]byte(password))
-	hashedPassword := hex.EncodeToString(hasher.Sum(nil))
-	return hashedPassword, nil
+	hasher.Write([]byte(target))
+	hashedString := hex.EncodeToString(hasher.Sum(nil))
+	return hashedString, nil
 }
 
-// ValidateHashedPassword compares a hashed password with its plain-text version
-func ValidateHashedPassword(hashedPassword, password string) error {
+// ValidateHashedString compares a hashed string with its plain-text version
+//
+// Args:
+//
+//	hashedString: The hashed string to compare against
+//	plainText: The plain-text string to validate
+func ValidateHashedString(hashedString, plainText string) error {
 	hasher := sha256.New()
-	hasher.Write([]byte(password))
+	hasher.Write([]byte(plainText))
 	computedHash := hex.EncodeToString(hasher.Sum(nil))
 
-	if hashedPassword != computedHash {
+	if hashedString != computedHash {
+		return errors.New("string does not match")
+	}
+	return nil
+}
+
+func HashPasswordBcrypt(password string) (string, error) {
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedBytes), nil
+}
+
+func ValidateHashedPasswordBcrypt(hashedPassword, password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err != nil {
 		return errors.New("password does not match")
 	}
 	return nil

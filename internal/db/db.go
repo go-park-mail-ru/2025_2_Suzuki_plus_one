@@ -26,7 +26,7 @@ func NewDataBase() *DataBase {
 
 // Get all movies from the database (for now, returns all mock movies)
 // TODO: implement offset and limit
-func (db *DataBase) GetMovies(offset int, limit int) []models.Movie {
+func (db *DataBase) GetMovies(offset uint, limit uint) []models.Movie {
 	result := make(chan []models.Movie)
 
 	go func() {
@@ -41,7 +41,7 @@ func (db *DataBase) GetMovies(offset int, limit int) []models.Movie {
 }
 
 // Generate a new user ID (just a simple increment for now)
-func (db *DataBase) GetNewID() string {
+func (db *DataBase) getNewID() string {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 	return strconv.Itoa(len(db.users) + 1)
@@ -57,7 +57,7 @@ func (db *DataBase) CreateUser(email, password string) error {
 		return err
 	}
 
-	hashedPassword, err := utils.HashPassword(password)
+	hashedPassword, err := utils.HashPasswordBcrypt(password)
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (db *DataBase) CreateUser(email, password string) error {
 		db.mu.Lock()
 		defer db.mu.Unlock()
 
-		id := db.GetNewID()
+		id := db.getNewID()
 		// Simulate creating a user
 		user := models.UserDB{
 			ID:           id,

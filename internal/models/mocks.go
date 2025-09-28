@@ -96,7 +96,7 @@ func MockUsers() []UserDB {
 
 	// Hash passwords for mock users
 	for i, user := range users {
-		hashedPassword, err := utils.HashPassword(user.PasswordHash)
+		hashedPassword, err := utils.HashPasswordBcrypt(user.PasswordHash)
 		if err == nil {
 			users[i].PasswordHash = hashedPassword
 		}
