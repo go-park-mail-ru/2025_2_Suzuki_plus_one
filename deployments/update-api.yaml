@@ -1,0 +1,8 @@
+---
+- hosts: back
+  tasks:
+    - name: Copy popfilms.yml to remote /var/www/docs/
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../api/popfilms.yml"
+        dest: /var/www/docs/popfilms.yml
+      become: true
