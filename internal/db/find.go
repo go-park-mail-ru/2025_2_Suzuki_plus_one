@@ -48,10 +48,15 @@ func (db *DataBase) FindUserByID(id string) *models.UserDB {
 	return <-result
 }
 
-// Get all movies from the database (for now, returns all mock movies)
+// Get movies from the database
+// If limit is 0, return all movies from offset
 func (db *DataBase) FindMovies(offset uint, limit uint) []models.Movie {
 	if offset > uint(len(db.movies)) {
 		return []models.Movie{}
+	}
+
+	if limit == 0 {
+		limit = uint(len(db.movies)) - offset
 	}
 
 	result := make(chan []models.Movie)

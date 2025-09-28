@@ -46,13 +46,14 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	// Parse query parameters
 	query := r.URL.Query()
 	if offStr := query.Get("offset"); offStr != "" {
-		// If it is black we leave it as default 0
+		// If parameter is blank we leave it as default 0
 		if _, err := fmt.Sscanf(offStr, "%d", &request.Offset); err != nil {
 			responseWithError(w, http.StatusBadRequest, ErrMoviesInvalidParams)
 			return
 		}
 	}
 	if limStr := query.Get("limit"); limStr != "" {
+		// If parameter is blank we leave it as default 0 (means no limit)
 		if _, err := fmt.Sscanf(limStr, "%d", &request.Limit); err != nil {
 			responseWithError(w, http.StatusBadRequest, ErrMoviesInvalidParams)
 			return

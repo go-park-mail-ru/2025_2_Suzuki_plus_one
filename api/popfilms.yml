@@ -32,7 +32,8 @@ paths:
           name: limit
           schema:
             type: integer
-          description: The number of movies to return
+            default: 0
+          description: The number of movies to return (default is 0, which means all movies)
       responses:
         "200":
           description: A list of movies
