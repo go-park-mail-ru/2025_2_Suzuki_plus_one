@@ -16,6 +16,7 @@ import (
 
 type Server struct {
 	address           string         // Serving address
+	prefix            string         // API prefix
 	authSecret        string         // JWT secret for HMAC
 	serverName        string         // Server name
 	accessTokenExpiry time.Duration  // JWT access token expiry duration
@@ -28,6 +29,7 @@ func NewServer(cfg *config.Config, database *db.DataBase) *Server {
 	mux := http.NewServeMux()
 	return &Server{
 		address:           cfg.SERVER_SERVE_STRING,
+		prefix:            cfg.SERVER_SERVE_PREFIX,
 		authSecret:        cfg.SERVER_JWT_SECRET,
 		serverName:        cfg.SERVER_NAME,
 		accessTokenExpiry: cfg.SERVER_JWT_ACCESS_EXPIRATION,
@@ -57,7 +59,8 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	movies := s.db.GetMovies(request.Offset, request.Limit)
+	movies := s.db.FindMovies(request.Offset, request.Limit)
+
 	log.Printf("Fetched %d movies from database", len(movies))
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(movies)
@@ -72,27 +75,25 @@ func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if request.Email == "" || request.Password == "" {
-		log.Println("Email or password is empty")
+		// TODO: create a fancy logger
+		log.Println("SignUp: Email or password is empty")
 		responseWithError(w, http.StatusBadRequest, ErrSignUpWrongData)
 		return
 	}
 
-	err := s.db.CreateUser(request.Email, request.Password)
+	// Create user in database or get existing one
+	user, err, created := s.db.CreateUser(request.Email, request.Password)
 	if err != nil {
-		if err.Error() == "user with this email already exists" {
-			responseWithError(w, http.StatusConflict, ErrSignUpUserExists)
+		if !created {
+			responseWithError(w, http.StatusConflict, errorWithDetails(ErrSignUpUserExists, err.Error()))
 		} else {
 			responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignUpInternal, err.Error()))
 		}
 		return
 	}
+	log.Println("SignUp: Created new user:", user.Email)
 
-	user := s.db.FindUserByEmail(request.Email)
-	if user == nil {
-		responseWithError(w, http.StatusInternalServerError, ErrSignUpInternal)
-		return
-	}
-
+	// Create token for the new user
 	authenticator := auth.NewAuth(s.authSecret)
 	claims := auth.NewJWTClaims(user.ID, "access", s.accessTokenExpiry, s.serverName)
 	token, err := authenticator.GenerateToken(claims)
@@ -101,6 +102,7 @@ func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Return signup response
 	response := models.SignUpResponse{
 		Token: token,
 		User: models.UserAPI{
@@ -143,6 +145,7 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("SignIn: User signed in:", user.Email)
 	response := models.SignInResponse{
 		Token: token,
 		User: models.UserAPI{
@@ -156,24 +159,47 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
-	response := models.SignOutResponse{
-		Success: true,
-		Message: "Successfully signed out",
-	}
+	// Since we use stateless JWT, sign-out is handled on the client side by deleting the token.
+	// TODO: Think about token blacklisting
+	// Context is already checked by withAuthRequired middleware
+	log.Println("SignOut: User signed out")
+	w.WriteHeader(http.StatusOK)
+}
 
+func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
+	// Context is already checked by withAuthRequired middleware
+	authCtx := r.Context().Value(AuthContextKey).(*authContext)
+
+	user := s.db.FindUserByID(authCtx.Claims.Subject)
+	if user == nil {
+		log.Println("Auth: User not found")
+		responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired)
+		return
+	}
+	log.Println("Auth: User authenticated:", user.Email)
+	response := models.AuthResponse{
+		User: models.UserAPI{
+			ID:       user.ID,
+			Email:    user.Email,
+			Username: user.Username,
+		},
+	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }
 
-func (s *Server) setupRoutes() {
-	s.server.HandleFunc("/movies", s.getAllMovies)
-	s.server.HandleFunc("/auth/signup", s.signUp)
-	s.server.HandleFunc("/auth/signin", s.signIn)
-	s.server.Handle("/auth/signout", withAuthRequired(http.HandlerFunc(s.signOut)))
+// Add handlers to routes
+// Prefix is used for versioning, e.g. /api/v1/
+func (s *Server) setupRoutes(prefix string) {
+	s.server.HandleFunc(prefix+"/movies", s.getAllMovies)
+	s.server.HandleFunc(prefix+"/auth/signup", s.signUp)
+	s.server.HandleFunc(prefix+"/auth/signin", s.signIn)
+	s.server.Handle(prefix+"/auth/signout", withAuthRequired(http.HandlerFunc(s.signOut)))
+	s.server.Handle(prefix+"/auth", withAuthRequired(http.HandlerFunc(s.auth)))
 }
 
 func (s *Server) Serve() {
-	s.setupRoutes()
+	s.setupRoutes(s.prefix)
 
 	// Add middleware
 	logHandler := loggingMiddleware(s.server)

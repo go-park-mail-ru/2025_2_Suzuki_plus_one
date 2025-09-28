@@ -73,12 +73,14 @@ func MockMovies() []Movie {
 
 // Mock credentials for multiple users
 func MockUsers() []UserDB {
+	// Important: Don't change the order of users below, because tests depend on it
 	users := []UserDB{
 		{
 			ID:           "user1",
-			Email:        "test@example.com",
+			Email:        "test@example.com", // * This email is used in tests
 			Username:     "testuser",
-			PasswordHash: "hashedpassword123",
+			PasswordHash: "hashedpassword123", // This password will be hashed
+			// and will be unique due to bcrypt
 		},
 		{
 			ID:           "user2",

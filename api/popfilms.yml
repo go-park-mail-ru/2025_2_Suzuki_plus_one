@@ -46,6 +46,23 @@ paths:
           description: Invalid request parameters"
 
   # Authentication endpoints
+  /auth:
+    get:
+      tags:
+        - auth
+      summary: Check authentication status
+      description: Verify if the user is authenticated
+      security:
+        - JWT: []
+      responses:
+        "200":
+          description: User is authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized (invalid or missing token)
   /auth/signup:
     post:
       tags:
@@ -69,6 +86,8 @@ paths:
           description: Bad request (invalid input)
         "409":
           description: User already exists
+        "500":
+          description: Internal server error
 
   /auth/signin:
     post:

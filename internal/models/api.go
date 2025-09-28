@@ -35,9 +35,8 @@ type SignUpResponse struct {
 	User  UserAPI `json:"user"`
 }
 
-type SignOutResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
+type AuthResponse struct {
+	User UserAPI `json:"user"`
 }
 
 // ## Error

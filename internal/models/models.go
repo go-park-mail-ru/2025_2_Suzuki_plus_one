@@ -3,6 +3,7 @@
 
 package models
 
+// User model in the database
 type UserDB struct {
 	ID           string `json:"id"`
 	Email        string `json:"email"`
@@ -10,12 +11,14 @@ type UserDB struct {
 	PasswordHash string `json:"password_hash"`
 }
 
+// User model in the API
 type UserAPI struct {
 	ID       string `json:"id"`
 	Email    string `json:"email"`
 	Username string `json:"username"`
 }
 
+// MovieAPI and MovieDB coincide
 type Movie struct {
 	ID      string   `json:"id"`
 	Title   string   `json:"title"`

@@ -13,6 +13,7 @@ import (
 // See .env.example for documentation.
 type Config struct {
 	SERVER_SERVE_STRING           string
+	SERVER_SERVE_PREFIX           string
 	SERVER_JWT_SECRET             string
 	SERVER_JWT_ACCESS_EXPIRATION  time.Duration
 	SERVER_JWT_REFRESH_EXPIRATION time.Duration
@@ -24,11 +25,12 @@ type Config struct {
 func Load() Config {
 	cfg := Config{
 		SERVER_SERVE_STRING:           getEnv("SERVER_SERVE_STRING", ":8080"),
+		SERVER_SERVE_PREFIX:           trimTrailingSlash(getEnv("SERVER_SERVE_PREFIX", "")),
 		SERVER_JWT_SECRET:             mustEnv("SERVER_JWT_SECRET"),
 		SERVER_JWT_ACCESS_EXPIRATION:  parseDuration(getEnv("SERVER_JWT_ACCESS_EXPIRATION", "15m")),
 		SERVER_JWT_REFRESH_EXPIRATION: parseDuration(getEnv("SERVER_JWT_REFRESH_EXPIRATION", "1440m")),
 		SERVER_NAME:                   getEnv("SERVER_NAME", "Localhost"),
-		SERVER_FRONTEND_URL:           mustEnv("SERVER_FRONTEND_URL"),
+		SERVER_FRONTEND_URL:           trimTrailingSlash(mustEnv("SERVER_FRONTEND_URL")),
 	}
 
 	return cfg
@@ -66,4 +68,17 @@ func parseDuration(value string) time.Duration {
 		log.Fatalf("Invalid duration %q: %v", value, err)
 	}
 	return duration
+}
+
+// trimTrailingSlash removes a trailing slash from the input string,
+// unless the string is empty or just "/".
+func trimTrailingSlash(s string) string {
+	if len(s) > 1 && s[len(s)-1] == '/' {
+		return s[:len(s)-1]
+	}
+
+	if len(s) == 1 && s[0] != '/' {
+		return ""
+	}
+	return s
 }

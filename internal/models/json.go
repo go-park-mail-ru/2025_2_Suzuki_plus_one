@@ -1,25 +1,27 @@
 package models
 
-import (
-	"encoding/json"
-	"log"
-)
+// TODO: Implement JSON conversion functions
 
-// Converts error to JSON { "error": "error message" }
-func bytesFromError(err error) []byte {
-	log.Println("Error marshaling to JSON:", err)
-	return []byte(`{ "error": "` + err.Error() + `" }`)
-}
+// import (
+// 	"encoding/json"
+// 	"log"
+// )
 
-// Converts any model to JSON bytes
-func ConvertModelToBytes(model any) []byte {
-	bytes, err := json.Marshal(model)
-	if err != nil {
-		return bytesFromError(err)
-	}
-	return bytes
-}
+// // Converts error to JSON { "error": "error message" }
+// func bytesFromError(err error) []byte {
+// 	log.Println("Error marshaling to JSON:", err)
+// 	return []byte(`{ "error": "` + err.Error() + `" }`)
+// }
 
-func ConvertBytesToModel(data []byte, model any) error {
-	return json.Unmarshal(data, model)
-}
+// // Converts any model to JSON bytes
+// func ConvertModelToBytes(model any) []byte {
+// 	bytes, err := json.Marshal(model)
+// 	if err != nil {
+// 		return bytesFromError(err)
+// 	}
+// 	return bytes
+// }
+
+// func ConvertBytesToModel(data []byte, model any) error {
+// 	return json.Unmarshal(data, model)
+// }
