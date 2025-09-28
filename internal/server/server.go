@@ -7,56 +7,37 @@ import (
 	"net/http"
 	"time"
 
-	db "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/db"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/auth"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/config"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/db"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/models"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/utils"
 )
 
 type Server struct {
-	address string
-	db      *db.DataBase
-	server  *http.ServeMux
+	address           string         // Serving address
+	authSecret        string         // JWT secret for HMAC
+	serverName        string         // Server name
+	accessTokenExpiry time.Duration  // JWT access token expiry duration
+	frontendOrigin    string         // Frontend origin for CORS
+	db                *db.DataBase   // Database connection
+	server            *http.ServeMux // HTTP request multiplexer
 }
 
-func NewServer(address string, database *db.DataBase) *Server {
+func NewServer(cfg *config.Config, database *db.DataBase) *Server {
 	mux := http.NewServeMux()
 	return &Server{
-		address: address,
-		db:      database,
-		server:  mux,
+		address:           cfg.SERVER_SERVE_STRING,
+		authSecret:        cfg.SERVER_JWT_SECRET,
+		serverName:        cfg.SERVER_NAME,
+		accessTokenExpiry: cfg.SERVER_JWT_ACCESS_EXPIRATION,
+		frontendOrigin:    cfg.SERVER_FRONTEND_URL,
+		db:                database,
+		server:            mux,
 	}
 }
 
-// Middleware for handling CORS
-func corsMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*") // TODO: restrict this in production
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
-// Middleware for logging requests
-func loggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		log.Printf("<<< REQUEST: %s %s === from %s", r.Method, r.RequestURI, r.RemoteAddr)
-		next.ServeHTTP(w, r)
-		log.Printf(">>> REPLY: Completed in %v", time.Since(start))
-	})
-}
-
-// Middleware to always set Content-Type to application/json
-func alwaysJSONMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		next.ServeHTTP(w, r)
-	})
-}
-
+// TODO: remove this example handler
 func greet(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World! %s", time.Now())
 }
@@ -77,6 +58,8 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	movies := s.db.GetMovies(offset, limit)
+	log.Printf("Fetched %d movies from database", len(movies))
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(movies)
 }
 
@@ -141,26 +124,43 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 		Password string `json:"password"`
 	}
 
-	/*
-		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-			http.Error(w, "Invalid request body", http.StatusBadRequest)
-			return
-		}
-	*/
-
-	//Must be some authentication logic
-	response := map[string]interface{}{
-		"success": true,
-		"message": "Authentication successfull",
-		"token":   "exampleasdkjfpa",
-
-		"user": map[string]string{
-			"id":       "user1",
-			"email":    request.Email,
-			"username": "username",
-		},
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		responseWithError(w, http.StatusBadRequest, ErrSignInWrongData)
+		return
 	}
 
+	// Query user from database
+	user := s.db.FindUserByEmail(request.Email)
+	if user == nil {
+		responseWithError(w, http.StatusUnauthorized, ErrSignInWrongData)
+		return
+	}
+
+	// Check password
+	if err := utils.ValidateHashedPassword(user.PasswordHash, request.Password); err != nil {
+		responseWithError(w, http.StatusUnauthorized, ErrSignInWrongData)
+		return
+	}
+
+	// Right credentials, create token
+	// token, err := auth.CreateToken(user.ID, s.authSecret)
+	authenticator := auth.NewAuth(s.authSecret)
+	claims := auth.NewJWTClaims(user.ID, "access", s.accessTokenExpiry, s.serverName)
+	token, err := authenticator.GenerateToken(claims)
+	if err != nil {
+		responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignInInternal, err.Error()))
+		return
+	}
+
+	response := models.SignInResponse{
+		Token: token,
+		User: models.UserAPI{
+			ID:       user.ID,
+			Email:    user.Email,
+			Username: user.Username,
+		},
+	}
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -179,7 +179,7 @@ func (s *Server) setupRoutes() {
 	s.server.HandleFunc("/movies", s.getAllMovies)
 	s.server.HandleFunc("/auth/signup", s.signUp)
 	s.server.HandleFunc("/auth/signin", s.signIn)
-	s.server.HandleFunc("/auth/signout", s.signOut)
+	s.server.Handle("/auth/signout", withAuthRequired(http.HandlerFunc(s.signOut)))
 
 	// Note: Old routing logic, kept for reference // TODO: remove later
 	// switch {
@@ -205,9 +205,11 @@ func (s *Server) Serve() {
 	s.setupRoutes()
 
 	// Apply middlewares
-	loggedHandler := loggingMiddleware(s.server)
-	jsonHandler := alwaysJSONMiddleware(loggedHandler)
-	handler := corsMiddleware(jsonHandler)
+	logHandler := loggingMiddleware(s.server)
+	jsonHandler := forceJSONMiddleware(logHandler)
+	corsHandler := corsMiddleware(jsonHandler, s.frontendOrigin)
+	authedHandler := authMiddleware(corsHandler, s.authSecret)
+	handler := authedHandler
 
 	log.Println("Server starting on", s.address)
 	log.Fatal(http.ListenAndServe(s.address, handler))

@@ -1,5 +1,7 @@
 package models
 
+import "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/utils"
+
 // Mock data for movies
 func MockMovies() []Movie {
 	return []Movie{
@@ -21,8 +23,8 @@ func MockMovies() []Movie {
 }
 
 // Mock credentials for multiple users
-func MockUsers() []User {
-	return []User{
+func MockUsers() []UserDB {
+	users := []UserDB{
 		{
 			ID:           "user1",
 			Email:        "test@example.com",
@@ -42,6 +44,16 @@ func MockUsers() []User {
 			PasswordHash: "hashedpassword789",
 		},
 	}
+
+	// Hash passwords for mock users
+	for i, user := range users {
+		hashedPassword, err := utils.HashPassword(user.PasswordHash)
+		if err == nil {
+			users[i].PasswordHash = hashedPassword
+		}
+	}
+
+	return users
 }
 
 // Mock data for sign-up request
@@ -64,12 +76,10 @@ func MockSignInRequest() SignInRequest {
 }
 
 // Mock data for authentication response
-func MockAuthResponse() AuthResponse {
-	return AuthResponse{
-		Success: true,
-		Message: "Authentication successful",
-		Token:   "exampletoken123",
-		User: &AuthUser{
+func MockAuthResponse() SignInResponse {
+	return SignInResponse{
+		Token: "exampletoken123",
+		User: UserAPI{
 			ID:       "user1",
 			Email:    "test@example.com",
 			Username: "testuser",

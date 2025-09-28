@@ -12,7 +12,7 @@ func main() {
 	// Load configuration
 	config = cfg.Load()
 	database := db.NewDataBase()
-	server := srv.NewServer(config.SERVER_SERVE_STRING, database)
+	server := srv.NewServer(&config, database)
 
 	// Start the server
 	server.Serve()

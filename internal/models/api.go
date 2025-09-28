@@ -1,7 +1,9 @@
 // API request and response models
+// Which have to correspond to OpenAPI spec
 
 package models
 
+// # Requests
 type SignUpRequest struct {
 	Email     string `json:"email"`
 	Password  string `json:"password"`
@@ -15,15 +17,15 @@ type SignInRequest struct {
 	Password string `json:"password"`
 }
 
-type AuthResponse struct {
-	Success bool      `json:"success"`
-	Message string    `json:"message"`
-	Token   string    `json:"token"`
-	User    *AuthUser `json:"user,omitempty"`
+// # Responses
+type SignInResponse struct {
+	Token string  `json:"token"`
+	User  UserAPI `json:"user"`
 }
 
-type AuthUser struct {
-	ID       string `json:"id"`
-	Email    string `json:"email"`
-	Username string `json:"username"`
+// ## Error
+type ErrorResponse struct {
+	Type    string `json:"type"`
+	Message string `json:"message,omitempty"`
+	Details string `json:"details,omitempty"` // Internal error details, optional
 }

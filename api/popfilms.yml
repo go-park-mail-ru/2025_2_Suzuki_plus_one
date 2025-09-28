@@ -1,0 +1,224 @@
+openapi: "3.0.3"
+info:
+  title: PopFilms API
+  version: "1.0"
+  description: |
+    This is the main API specification for PopFilms endpoints.
+
+    See [github](https://github.com/go-park-mail-ru/2025_2_Suzuki_plus_one) for more information.
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+tags:
+  - name: content
+    description: Endpoints related to updating UI
+  - name: auth
+    description: Authentication endpoints
+paths:
+  /movies:
+    get:
+      summary: Get recommended movies
+      tags:
+        - content
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of movies to skip
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The number of movies to return
+      responses:
+        "200":
+          description: A list of movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Movie"
+  # /movies/{id}: # ! Disabled for now
+  #   get:
+  #     summary: Get movie personal page
+  #     tags:
+  #       - page
+  #     parameters:
+  #       - in: path
+  #         name: id
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "200":
+  #         description: A single movie
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Movie"
+  #       "404":
+  #         description: Movie not found
+
+  # Authentication endpoints
+  /auth/signup:
+    post:
+      tags:
+        - auth
+      summary: User registration
+      description: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInResponse"
+        "400":
+          description: Bad request (invalid input)
+        "409":
+          description: User already exists
+
+  /auth/signin:
+    post:
+      tags:
+        - auth
+      summary: User login
+      description: Authenticate user and return JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInResponse"
+        "400":
+          description: Invalid request
+        "401":
+          description: Invalid credentials
+        "404":
+          description: User not found
+
+  /auth/signout:
+    post:
+      tags:
+        - auth
+      summary: User logout
+      description: Invalidate user session/token
+      security:
+        - JWT: []
+      responses:
+        "200":
+          description: Successfully signed out
+        "401":
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    JWT:
+      description: JWT bearer token description...
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "user123"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        username:
+          type: string
+          example: "john_doe"
+
+    Movie:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123"
+        title:
+          type: string
+          example: "Inception"
+        year:
+          type: integer
+          example: 2010
+        genres:
+          type: array
+          items:
+            type: string
+          example: ["Sci-Fi", "Thriller"]
+        preview:
+          type: string
+          format: uri
+          example: https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg
+
+    # Authentication schemas
+    SignUpRequest:
+      type: object
+      required:
+        - email
+        - password
+        - username
+      properties:
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 6
+          example: "securepassword123"
+        username:
+          type: string
+          minLength: 3
+          example: "john_doe"
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+
+    SignInRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        password:
+          type: string
+          format: password
+          example: "securepassword123"
+
+    SignInResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        user:
+          $ref: "#/components/schemas/User"
