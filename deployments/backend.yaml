@@ -29,24 +29,30 @@
       args:
         chdir: /home/{{ ansible_user }}/backend
 
-
     - name: Build Go server
       command: go build -o build/server cmd/main.go
       args:
         chdir: /home/{{ ansible_user }}/backend
 
+    - name: Copy environment file
+      copy:
+        src: "{{ playbook_dir }}/prod.env"
+        dest: /home/{{ ansible_user }}/backend/.env
+
     - name: Restart server service
+      become: yes
       systemd:
+        daemon_reload: yes
         name: APIserver
         state: restarted
         enabled: yes
 
     - name: Wait for server to start
       uri:
-      url: http://{{ SERVER_SERVE_STRING }}
-      status_code: 200
-      timeout: 10
-      validate_certs: no
+        url: "http://{{ lookup('ini', 'SERVER_SERVE_STRING type=properties file=prod.env') }}"
+        status_code: 200
+        timeout: 10
+        validate_certs: no
       register: server_health
       retries: 3
       delay: 3

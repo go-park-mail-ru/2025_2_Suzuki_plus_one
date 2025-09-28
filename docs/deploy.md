@@ -20,6 +20,13 @@ ansible-vault encrypt .env.vault  --vault-password-file=vault_password.sh
 ```bash
 # Create top .env file before running playbook according to .env.example
 cd deployments
+# Decrypt prod.env
+ansible-vault decrypt prod.env.vault --vault-password-file=vault_password.sh
+# Copy decrypted data to prod.env (make sure prod.env is in .gitignore)
+cp prod.env.vault prod.env # Note: systemd expects the strict key=value format
+# IMPORTANT: Encrypt prod.env.vault back
+ansible-vault encrypt prod.env.vault --vault-password-file=vault_password.sh
+
 # Make sure you have access to the server via SSH key specified in deployments/.env file
 # This will git pull deploy branch, build and restart the systemd service
 # Which is placed in /lib/systemd/system/APIserver.service
