@@ -23,6 +23,16 @@ type SignInResponse struct {
 	User  UserAPI `json:"user"`
 }
 
+type SignUpResponse struct {
+	Token string  `json:"token"`
+	User  UserAPI `json:"user"`
+}
+
+type SignOutResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
+
 // ## Error
 type ErrorResponse struct {
 	Type    string `json:"type"`

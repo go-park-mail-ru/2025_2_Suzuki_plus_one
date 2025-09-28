@@ -81,39 +81,53 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 // }
 
 func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
-	/*
-		if r.Method != http.MethodPost {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-			return
-		}
-	*/
-
 	var request struct {
 		Email    string `json:"email"`
-		Username string `json:"username"`
 		Password string `json:"password"`
 	}
 
-	/*
-		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	*/
-
-	//Here must be business-logic of creating new user and adding him to db
-	response := map[string]interface{}{
-		"success": true,
-		"message": "User created successfully",
-		"token":   "examplejskdflakdsjf",
-
-		"user": map[string]string{
-			"id":       "user1",
-			"email":    request.Email,
-			"username": request.Username,
-		},
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		responseWithError(w, http.StatusBadRequest, ErrSignUpWrongData)
+		return
 	}
 
+	if request.Email == "" || request.Password == "" {
+		responseWithError(w, http.StatusBadRequest, ErrSignUpWrongData)
+		return
+	}
+
+	err := s.db.CreateUser(request.Email, request.Password)
+	if err != nil {
+		if err.Error() == "user with this email already exists" {
+			responseWithError(w, http.StatusConflict, ErrSignUpUserExists)
+		} else {
+			responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignUpInternal, err.Error()))
+		}
+		return
+	}
+
+	user := s.db.FindUserByEmail(request.Email)
+	if user == nil {
+		responseWithError(w, http.StatusInternalServerError, ErrSignUpInternal)
+		return
+	}
+
+	authenticator := auth.NewAuth(s.authSecret)
+	claims := auth.NewJWTClaims(user.ID, "access", s.accessTokenExpiry, s.serverName)
+	token, err := authenticator.GenerateToken(claims)
+	if err != nil {
+		responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignUpInternal, err.Error()))
+		return
+	}
+
+	response := models.SignUpResponse{
+		Token: token,
+		User: models.UserAPI{
+			ID:       user.ID,
+			Email:    user.Email,
+			Username: user.Username,
+		},
+	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
 }
@@ -165,12 +179,12 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
-	// Must be some sign out logic
-	response := map[string]interface{}{
-		"success": true,
-		"message": "Successfully signed out",
+	response := models.SignOutResponse{
+		Success: true,
+		Message: "Successfully signed out",
 	}
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }
 

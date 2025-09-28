@@ -13,6 +13,9 @@ var (
 	ErrInvalidOrExpired = models.ErrorResponse{Type: "auth", Message: "invalid or expired token"}
 	ErrSignInWrongData  = models.ErrorResponse{Type: "auth", Message: "wrong email or password"}
 	ErrSignInInternal   = models.ErrorResponse{Type: "auth", Message: "internal server error"}
+	ErrSignUpWrongData  = models.ErrorResponse{Type: "auth", Message: "wrong email or password"}
+	ErrSignUpUserExists = models.ErrorResponse{Type: "auth", Message: "user does not exist"}
+	ErrSignUpInternal   = models.ErrorResponse{Type: "auth", Message: "internal server error"}
 )
 
 // Helper function to respond with an error in JSON format
