@@ -8,6 +8,7 @@ REPO_ROOT=$(dirname "$(dirname "$SCRIPT_DIR")")
 vault_files=(
 	"$REPO_ROOT/deployments/ansible.env.vault"
 	"$REPO_ROOT/deployments/prod.env.vault"
+	"$REPO_ROOT/deployments/ssh-key.pem.vault"
 )
 
 PREFIX="PRECOMMIT: LEAKS: "
