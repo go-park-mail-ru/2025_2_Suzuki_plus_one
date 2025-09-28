@@ -16,6 +16,8 @@ var (
 	ErrSignUpWrongData  = models.ErrorResponse{Type: "auth", Message: "wrong email or password"}
 	ErrSignUpUserExists = models.ErrorResponse{Type: "auth", Message: "user does not exist"}
 	ErrSignUpInternal   = models.ErrorResponse{Type: "auth", Message: "internal server error"}
+
+	ErrMoviesInvalidParams = models.ErrorResponse{Type: "content", Message: "invalid request parameters"}
 )
 
 // Helper function to respond with an error in JSON format

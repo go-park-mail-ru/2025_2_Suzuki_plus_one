@@ -7,11 +7,13 @@ info:
 
     See [github](https://github.com/go-park-mail-ru/2025_2_Suzuki_plus_one) for more information.
 servers:
-  - url: http://localhost:8080/api/v1
+  - url: http://217.16.18.125/api/v1/
+    description: Production server
+  - url: http://localhost:8080
     description: Local development server
 tags:
   - name: content
-    description: Endpoints related to updating UI
+    description: Endpoints related to fetching movies
   - name: auth
     description: Authentication endpoints
 paths:
@@ -40,26 +42,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Movie"
-  # /movies/{id}: # ! Disabled for now
-  #   get:
-  #     summary: Get movie personal page
-  #     tags:
-  #       - page
-  #     parameters:
-  #       - in: path
-  #         name: id
-  #         required: true
-  #         schema:
-  #           type: string
-  #     responses:
-  #       "200":
-  #         description: A single movie
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/Movie"
-  #       "404":
-  #         description: Movie not found
+        "400":
+          description: Invalid request parameters"
 
   # Authentication endpoints
   /auth/signup:

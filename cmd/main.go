@@ -6,11 +6,9 @@ import (
 	srv "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/server"
 )
 
-var config cfg.Config
-
 func main() {
 	// Load configuration
-	config = cfg.Load()
+	config := cfg.Load()
 	database := db.NewDataBase()
 	server := srv.NewServer(&config, database)
 
