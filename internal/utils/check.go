@@ -1,4 +1,4 @@
-package db
+package utils
 
 import (
 	"errors"
@@ -52,6 +52,9 @@ func ValidateEmail(email string) error {
 	}
 	if !strings.Contains(domain, ".") {
 		return errors.New("domain must contain a dot")
+	}
+	if strings.Contains(domain, "..") {
+		return errors.New("domain must not contain consecutive dots")
 	}
 	return nil
 }
