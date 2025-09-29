@@ -144,14 +144,14 @@ components:
       properties:
         id:
           type: string
-          example: "user123"
+          example: "user1"
         email:
           type: string
           format: email
-          example: "user@example.com"
+          example: "test@example.com"
         username:
           type: string
-          example: "john_doe"
+          example: "testuser"
 
     Movie:
       type: object
@@ -212,11 +212,11 @@ components:
         email:
           type: string
           format: email
-          example: "user@example.com"
+          example: "test@example.com"
         password:
           type: string
           format: password
-          example: "securepassword123"
+          example: "Password123!"
 
     SignInResponse:
       type: object

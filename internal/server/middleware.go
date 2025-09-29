@@ -43,37 +43,58 @@ func forceJSONMiddleware(next http.Handler) http.Handler {
 
 // Middleware that checks for authentication
 // It parses and validates JWT token from Authorization header
-// Puts it to context as [server.AuthContextKey] no matter valid or not
+// Set context [server.AuthContextKey] no matter valid or not
 func authMiddleware(next http.Handler, secret string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
+		// Get token from Authorization header
+		authHeader := r.Header.Get("Authorization")
+		authenticator := auth.NewAuth(secret)
+		token := authenticator.GetTokenFromHeader(authHeader)
 
-		// If no token found, set NoTokenFound and continue
+		var NoTokenFound bool
+		var TokenFailed bool
+		var JWTClaims auth.JWTClaims
+		// If no token found, set NoTokenFound
 		if token == "" {
-			ctx := context.WithValue(r.Context(), AuthContextKey, &authContext{
-				NoTokenFound: true,
-			})
-			next.ServeHTTP(w, r.WithContext(ctx))
-			return
+			NoTokenFound = true
+		} else {
+			NoTokenFound = false
+
+			// Validate token
+			claims, err := authenticator.ValidateToken(token)
+			if err != nil {
+				log.Println("authMiddleware: error parsing token:", err)
+				TokenFailed = true
+			}
+			JWTClaims = claims
 		}
 
-		// Validate token
-		JWTClaims, err := auth.NewAuth(secret).ValidateToken(token)
 		ctx := context.WithValue(r.Context(), AuthContextKey, &authContext{
 			Claims:       JWTClaims,
-			TokenFailed:  err != nil,
-			NoTokenFound: false,
+			TokenFailed:  TokenFailed,
+			NoTokenFound: NoTokenFound,
 		})
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-// Middleware that ensures authentication is valid
+// Wrapper that ensures authentication is valid
 // If not, returns 401 Unauthorized and JSON error [models.ErrorResponse]
-func withAuthRequired(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authCtx := r.Context().Value(AuthContextKey).(*authContext)
+func withAuthRequired(nextFunc func(http.ResponseWriter, *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		val := r.Context().Value(AuthContextKey)
+		if val == nil {
+			log.Println("withAuthRequired: val is nil")
+			responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired)
+			return
+		}
+		authCtx, ok := val.(*authContext)
+		if !ok {
+			log.Println("withAuthRequired: no auth context found in request context")
+			responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired)
+			return
+		}
 
 		if authCtx == nil || authCtx.NoTokenFound {
 			responseWithError(w, http.StatusUnauthorized, ErrNoTokenProvided)
@@ -82,6 +103,6 @@ func withAuthRequired(next http.Handler) http.Handler {
 			responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired)
 			return
 		}
-		next.ServeHTTP(w, r)
-	})
+		http.HandlerFunc(nextFunc).ServeHTTP(w, r)
+	}
 }

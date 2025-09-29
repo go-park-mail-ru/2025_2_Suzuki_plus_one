@@ -195,19 +195,24 @@ func (s *Server) setupRoutes(prefix string) {
 	s.server.HandleFunc(prefix+"/movies", s.getAllMovies)
 	s.server.HandleFunc(prefix+"/auth/signup", s.signUp)
 	s.server.HandleFunc(prefix+"/auth/signin", s.signIn)
-	s.server.Handle(prefix+"/auth/signout", withAuthRequired(http.HandlerFunc(s.signOut)))
-	s.server.Handle(prefix+"/auth", withAuthRequired(http.HandlerFunc(s.auth)))
+	s.server.HandleFunc(prefix+"/auth/signout", withAuthRequired(s.signOut))
+	s.server.HandleFunc(prefix+"/auth", withAuthRequired(s.auth))
 }
 
 func (s *Server) Serve() {
 	s.setupRoutes(s.prefix)
-
-	// Add middleware
-	logHandler := loggingMiddleware(s.server)
-	jsonHandler := forceJSONMiddleware(logHandler)
-	corsHandler := corsMiddleware(jsonHandler, s.frontendOrigin)
-	authedHandler := authMiddleware(corsHandler, s.authSecret)
-	handler := authedHandler
+	
+	// Add middleware, the order is important
+	// Request -> Logging -> CORS -> Auth -> JSON -> (-> require Auth -> ...) Handlers -> Response
+	handler := loggingMiddleware(
+		corsMiddleware(
+			authMiddleware(
+				forceJSONMiddleware(s.server),
+				s.authSecret,
+			),
+			s.frontendOrigin,
+		),
+	)
 
 	log.Println("Server starting on", s.address)
 	log.Fatal(http.ListenAndServe(s.address, handler))

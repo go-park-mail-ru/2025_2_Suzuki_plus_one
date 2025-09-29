@@ -1,13 +1,16 @@
 package auth
 
 import (
-	"github.com/golang-jwt/jwt/v5"
+	"log"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // JWTClaims represents the claims for both access and refresh tokens
 // * It is better to separate them, when refresh token appears.
 // * Also Generic Generate and Validate methods will be needed
+// > However, we can ignore type bc refresh will be http only cookie
 type JWTClaims struct {
 	jwt.RegisteredClaims
 	Type string `json:"type"` // "access" or "refresh"
@@ -34,6 +37,18 @@ func NewAuth(secret string) *Auth {
 	return &Auth{secret: []byte(secret)}
 }
 
+// Retrieves token string from "Authorization" header
+// Expects header in format "Bearer <token>"
+// Returns empty string if no token found
+func (a *Auth) GetTokenFromHeader(authHeader string) string {
+	const bearerPrefix = "Bearer "
+	// Trim "Bearer " prefix
+	if len(authHeader) > len(bearerPrefix) && authHeader[:len(bearerPrefix)] == bearerPrefix {
+		return authHeader[len(bearerPrefix):]
+	}
+	return ""
+}
+
 // Returns JWT token with given claims
 func (a *Auth) GenerateToken(claims *JWTClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, *claims)
@@ -42,9 +57,15 @@ func (a *Auth) GenerateToken(claims *JWTClaims) (string, error) {
 
 // ValidateToken validates the JWT token and returns the user ID if valid
 func (a *Auth) ValidateToken(tokenString string) (JWTClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+	var claims JWTClaims
+	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (any, error) {
 		return a.secret, nil
 	})
+
+	if err != nil {
+		log.Println("ValidateToken: error parsing token: ", token)
+		return JWTClaims{}, err
+	}
 
 	if claims, ok := token.Claims.(*JWTClaims); ok && token.Valid {
 		return *claims, nil

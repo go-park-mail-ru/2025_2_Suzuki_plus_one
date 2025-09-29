@@ -73,31 +73,39 @@ func MockMovies() []Movie {
 
 // Mock credentials for multiple users
 func MockUsers() []UserDB {
-	// Important: Don't change the order of users below, because tests depend on it
 	users := []UserDB{
 		{
+			// * This User is used in tests and openAPI. Keep it first
 			ID:           "user1",
-			Email:        "test@example.com", // * This email is used in tests
+			Email:        "test@example.com",
 			Username:     "testuser",
-			PasswordHash: "hashedpassword123", // This password will be hashed
-			// and will be unique due to bcrypt
+			PasswordHash: "Password123!",
 		},
 		{
 			ID:           "user2",
 			Email:        "alice@example.com",
 			Username:     "alice",
-			PasswordHash: "hashedpassword456",
+			PasswordHash: "Password123!",
 		},
 		{
 			ID:           "user3",
 			Email:        "bob@example.com",
 			Username:     "bob",
-			PasswordHash: "hashedpassword789",
+			PasswordHash: "Password123!",
 		},
 	}
 
 	// Hash passwords for mock users
 	for i, user := range users {
+		// Make sure mock data is valid
+		if utils.ValidateEmail(user.Email) != nil {
+			panic("Invalid email in mock users: " + user.Email)
+		}
+		if utils.ValidatePassword(user.PasswordHash) != nil {
+			panic("Invalid password in mock users: " + user.PasswordHash)
+		}
+
+		// Hash password
 		hashedPassword, err := utils.HashPasswordBcrypt(user.PasswordHash)
 		if err == nil {
 			users[i].PasswordHash = hashedPassword
