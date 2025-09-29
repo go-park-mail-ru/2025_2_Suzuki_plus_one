@@ -16,6 +16,14 @@ chmod +x vault_password.sh
 Now on you can use `--vault-password-file=vault_password.sh` flag with ansible commands
 to escape typing vault password every time.
 
+### Decrypt SSH key
+
+```bash
+ansible-vault view ssh-key.pem.vault --vault-password-file=vault_password.sh > ssh-key.pem
+# Make ssh-key.pem file only readable by user (required by ssh)
+chmod 400 ssh-key.pem
+```
+
 ## Playbooks
 
 ### Deploy backend
