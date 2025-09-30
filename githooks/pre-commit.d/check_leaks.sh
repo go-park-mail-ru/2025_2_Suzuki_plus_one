@@ -18,14 +18,19 @@ hook_log() {
 }
 
 for vault_file in "${vault_files[@]}"; do
-	hook_log "Checking for unencrypted $vault_file."
+	hook_log "[Check] $vault_file"
 
-	if [ -f "$vault_file" ] && ! grep -q '^$ANSIBLE_VAULT' "$vault_file"; then
-		hook_log "You are probably trying to commit unencrypted $vault_file!"
+	if [ ! -f "$vault_file" ]; then
+		hook_log "[ERROR] File $vault_file does not exist"
+		exit 1
+	fi
+
+	if ! grep -q '^$ANSIBLE_VAULT' "$vault_file"; then
+		hook_log "You are probably trying to commit unencrypted $vault_file"
 		hook_log "Please encrypt it as soon as possible using:"
 		hook_log "ansible-vault encrypt $vault_file --vault-password-file=vault_password.sh"
 		exit 1
     fi
 done
 
-hook_log "OK, no unencrypted vault file found for ${vault_files[*]}."
+hook_log "[OK] no unencrypted vault files found"
