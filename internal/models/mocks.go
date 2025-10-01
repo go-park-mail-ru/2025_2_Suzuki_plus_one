@@ -137,7 +137,6 @@ func MockSignInRequest() SignInRequest {
 // Mock data for authentication response
 func MockAuthResponse() SignInResponse {
 	return SignInResponse{
-		Token: "exampletoken123",
 		User: UserAPI{
 			ID:       "user1",
 			Email:    "test@example.com",

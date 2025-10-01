@@ -45,6 +45,10 @@ paths:
                   $ref: "#/components/schemas/Movie"
         "400":
           description: Invalid request parameters"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   # Authentication endpoints
   /auth:
@@ -64,6 +68,10 @@ paths:
                 $ref: "#/components/schemas/User"
         "401":
           description: Unauthorized (invalid or missing token)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /auth/signup:
     post:
       tags:
@@ -85,10 +93,22 @@ paths:
                 $ref: "#/components/schemas/SignInResponse"
         "400":
           description: Bad request (invalid input)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "409":
           description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "500":
-          description: Internal server error
+          description: Internal server error (with details)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /auth/signin:
     post:
@@ -109,34 +129,60 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SignInResponse"
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: TOKEN=abcde12345; HttpOnly
         "400":
           description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "401":
           description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /auth/signout:
     post:
+      security:
+        - JWT: []
       tags:
         - auth
       summary: User logout
       description: Invalidate user session/token
-      security:
-        - JWT: []
       responses:
         "200":
           description: Successfully signed out
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: TOKEN=; HttpOnly; Max-Age=0
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
 components:
   securitySchemes:
     JWT:
-      description: JWT bearer token description...
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+      description: JWT authentication via cookie
+      type: apiKey
+      in: cookie
+      name: TOKEN
 
   schemas:
     User:
@@ -220,9 +266,26 @@ components:
 
     SignInResponse:
       type: object
+      required:
+        - user
       properties:
-        token:
-          type: string
-          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         user:
           $ref: "#/components/schemas/User"
+
+    ErrorResponse:
+      type: object
+      required:
+        - type
+        - message
+      properties:
+        type:
+          type: string
+          example: "auth"
+          description: Type of error
+        message:
+          type: string
+          example: "Invalid credentials"
+          description: Error description
+        details:
+          type: string
+          description: Internal error details (if any)

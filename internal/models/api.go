@@ -5,6 +5,8 @@
 
 package models
 
+import "net/http"
+
 // # Requests
 type SignUpRequest struct {
 	Email     string `json:"email"`
@@ -25,14 +27,17 @@ type MoviesRequest struct {
 }
 
 // # Responses
+
+type Responder interface {
+	Respond(w http.ResponseWriter) error
+}
+
 type SignInResponse struct {
-	Token string  `json:"token"`
-	User  UserAPI `json:"user"`
+	User UserAPI `json:"user"`
 }
 
 type SignUpResponse struct {
-	Token string  `json:"token"`
-	User  UserAPI `json:"user"`
+	User UserAPI `json:"user"`
 }
 
 type AuthResponse struct {

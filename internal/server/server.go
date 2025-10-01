@@ -37,6 +37,10 @@ func NewServer(cfg *config.Config, database *db.DataBase) *Server {
 		db:                database,
 		server:            mux,
 	}
+	// TODO: store auth instance in Server struct (like db connection)
+	// Note: Now, we call NewAuth(authSecret) anytime we need auth service
+	// However, we can optimize it by storing auth instance in Server struct
+	// But it will require concurrent safety if we store stateful data there
 }
 
 // Get all movies from database
@@ -103,9 +107,9 @@ func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: move this to internal/models
 	// Return signup response
-	response := models.SignUpResponse{
-		Token: token,
+	response := models.SignInResponse{ // SignUp and SignIn responses are the same
 		User: models.UserAPI{
 			ID:       user.ID,
 			Email:    user.Email,
@@ -113,7 +117,7 @@ func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+	authenticator.TokenMgr.ResponseWithAuth(w, token, response)
 }
 
 func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
@@ -147,8 +151,8 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("SignIn: User signed in:", user.Email)
+	// TODO: move this to internal/models converter DB -> API Response
 	response := models.SignInResponse{
-		Token: token,
 		User: models.UserAPI{
 			ID:       user.ID,
 			Email:    user.Email,
@@ -156,15 +160,19 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	authenticator.TokenMgr.ResponseWithAuth(w, token, response)
 }
 
 func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
 	// Since we use stateless JWT, sign-out is handled on the client side by deleting the token.
-	// TODO: Think about token blacklisting
 	// Context is already checked by withAuthRequired middleware
-	log.Println("SignOut: User signed out")
+
+	// TODO: Think about token blacklisting for token key
+	// TODO: Implement refresh tokens with short-lived access tokens
+	authentication := auth.NewAuth(s.authSecret)
 	w.WriteHeader(http.StatusOK)
+	log.Println("SignOut: User signed out")
+	authentication.TokenMgr.ResponseWithDeauth(w)
 }
 
 func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
@@ -201,7 +209,7 @@ func (s *Server) setupRoutes(prefix string) {
 
 func (s *Server) Serve() {
 	s.setupRoutes(s.prefix)
-	
+
 	// Add middleware, the order is important
 	// Request -> Logging -> CORS -> Auth -> JSON -> (-> require Auth -> ...) Handlers -> Response
 	handler := loggingMiddleware(

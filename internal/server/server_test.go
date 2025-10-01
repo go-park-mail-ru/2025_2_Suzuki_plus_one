@@ -1,3 +1,5 @@
+// This file contains tests that hit actual endpoints
+
 package server
 
 import (

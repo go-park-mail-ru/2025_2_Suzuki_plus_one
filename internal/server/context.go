@@ -1,6 +1,7 @@
-package server
+// This files contains context keys and structures
+// Which are used in middleware and then handlers too
 
-// This files contains context keys used in middleware and handlers
+package server
 
 import "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/auth"
 

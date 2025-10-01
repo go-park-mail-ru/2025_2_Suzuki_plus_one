@@ -43,32 +43,34 @@ func forceJSONMiddleware(next http.Handler) http.Handler {
 
 // Middleware that checks for authentication
 // It parses and validates JWT token from Authorization header
-// Set context [server.AuthContextKey] no matter valid or not
+// Set context [server.AuthContextKey] whether token is valid or not
 func authMiddleware(next http.Handler, secret string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get token from Authorization header
-		authHeader := r.Header.Get("Authorization")
 		authenticator := auth.NewAuth(secret)
-		token := authenticator.GetTokenFromHeader(authHeader)
-
 		var NoTokenFound bool
 		var TokenFailed bool
 		var JWTClaims auth.JWTClaims
-		// If no token found, set NoTokenFound
-		if token == "" {
+
+		// Check token existence and validity
+		// Update context fields
+		if authenticator.TokenMgr.Exists(r) == false {
 			NoTokenFound = true
 		} else {
-			NoTokenFound = false
-
-			// Validate token
-			claims, err := authenticator.ValidateToken(token)
-			if err != nil {
-				log.Println("authMiddleware: error parsing token:", err)
+			token := authenticator.TokenMgr.Get(r)
+			if token == "" {
 				TokenFailed = true
+			} else {
+				claims, err := authenticator.ValidateToken(token)
+				if err != nil {
+					log.Println("authMiddleware: error parsing token:", err)
+					TokenFailed = true
+				}
+				JWTClaims = claims
 			}
-			JWTClaims = claims
 		}
 
+		// Set authContext in request context
 		ctx := context.WithValue(r.Context(), AuthContextKey, &authContext{
 			Claims:       JWTClaims,
 			TokenFailed:  TokenFailed,
