@@ -1,9 +1,13 @@
+// Package auth provides methods for generating and validating JWT tokens
+// and handling token storage in HTTP requests (headers or cookies).
 package auth
 
 import (
 	"log"
+	"net/http"
 	"time"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/models"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -28,34 +32,65 @@ func NewJWTClaims(userID, tokenType string, expiration time.Duration, appName st
 	}
 }
 
+// Token extraction from request interface
+type TokenHandler interface {
+	// Request hadndlers
+	Exists(request *http.Request) bool
+	Get(request *http.Request) string
+	Set(request *http.Request, token string)
+
+	// Response handlers
+	ResponseWithAuth(writer http.ResponseWriter, token string, response models.SignInResponse)
+	ResponseWithDeauth(writer http.ResponseWriter)
+}
+
+// Auth structure that holds methods for generating and validating JWT tokens
 type Auth struct {
-	secret []byte
+	TokenMgr TokenHandler
+	secret   []byte
 }
 
-// Returns new Auth instance saving secret key
-func NewAuth(secret string) *Auth {
-	return &Auth{secret: []byte(secret)}
-}
+// Returns new Auth instance using Authorization header for token storage
+func NewAuthHeader(secret string) *Auth {
+	token := NewTokenHeader()
 
-// Retrieves token string from "Authorization" header
-// Expects header in format "Bearer <token>"
-// Returns empty string if no token found
-func (a *Auth) GetTokenFromHeader(authHeader string) string {
-	const bearerPrefix = "Bearer "
-	// Trim "Bearer " prefix
-	if len(authHeader) > len(bearerPrefix) && authHeader[:len(bearerPrefix)] == bearerPrefix {
-		return authHeader[len(bearerPrefix):]
+	// Returns new Auth instance saving secret key
+	return &Auth{
+		secret:   []byte(secret),
+		TokenMgr: token,
 	}
-	return ""
 }
 
-// Returns JWT token with given claims
+// Returns new Auth instance using Cookie for token storage
+func NewAuthCookie(secret string) *Auth {
+	token := NewTokenCookie()
+
+	// Returns new Auth instance saving secret key
+	return &Auth{
+		secret:   []byte(secret),
+		TokenMgr: token,
+	}
+}
+
+// Returns new Auth instance using Authorization header for token storage
+func NewAuth(secret string) *Auth {
+	// Note: change to NewAuthCookie to use cookies instead of headers
+	return NewAuthCookie(secret)
+	// return NewAuthHeader(secret)
+}
+
+// Returns signed token (JWT) from the given claims
 func (a *Auth) GenerateToken(claims *JWTClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, *claims)
 	return token.SignedString(a.secret)
 }
 
-// ValidateToken validates the JWT token and returns the user ID if valid
+// Checks JWT token in the string.
+//
+// Returns:
+//
+//	auth.JWTClaims - if token is valid, otherwise empty claims
+//	error - if token is invalid or expired, otherwise nil
 func (a *Auth) ValidateToken(tokenString string) (JWTClaims, error) {
 	var claims JWTClaims
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (any, error) {
