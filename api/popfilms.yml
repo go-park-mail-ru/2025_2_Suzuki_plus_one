@@ -1,0 +1,291 @@
+openapi: "3.0.3"
+info:
+  title: PopFilms API
+  version: "1.0"
+  description: |
+    This is the main API specification for PopFilms endpoints.
+
+    See [github](https://github.com/go-park-mail-ru/2025_2_Suzuki_plus_one) for more information.
+servers:
+  - url: http://217.16.18.125/api/v1/
+    description: Production server
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: content
+    description: Endpoints related to fetching movies
+  - name: auth
+    description: Authentication endpoints
+paths:
+  /movies:
+    get:
+      summary: Get recommended movies
+      tags:
+        - content
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of movies to skip
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 0
+          description: The number of movies to return (default is 0, which means all movies)
+      responses:
+        "200":
+          description: A list of movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Movie"
+        "400":
+          description: Invalid request parameters"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # Authentication endpoints
+  /auth:
+    get:
+      tags:
+        - auth
+      summary: Check authentication status
+      description: Verify if the user is authenticated
+      security:
+        - JWT: []
+      responses:
+        "200":
+          description: User is authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized (invalid or missing token)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/signup:
+    post:
+      tags:
+        - auth
+      summary: User registration
+      description: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInResponse"
+        "400":
+          description: Bad request (invalid input)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error (with details)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/signin:
+    post:
+      tags:
+        - auth
+      summary: User login
+      description: Authenticate user and return JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInResponse"
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: TOKEN=abcde12345; HttpOnly
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/signout:
+    post:
+      security:
+        - JWT: []
+      tags:
+        - auth
+      summary: User logout
+      description: Invalidate user session/token
+      responses:
+        "200":
+          description: Successfully signed out
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: TOKEN=; HttpOnly; Max-Age=0
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  securitySchemes:
+    JWT:
+      description: JWT authentication via cookie
+      type: apiKey
+      in: cookie
+      name: TOKEN
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "user1"
+        email:
+          type: string
+          format: email
+          example: "test@example.com"
+        username:
+          type: string
+          example: "testuser"
+
+    Movie:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123"
+        title:
+          type: string
+          example: "Inception"
+        year:
+          type: integer
+          example: 2010
+        genres:
+          type: array
+          items:
+            type: string
+          example: ["Sci-Fi", "Thriller"]
+        preview:
+          type: string
+          format: uri
+          example: https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg
+
+    # Authentication schemas
+    SignUpRequest:
+      type: object
+      required:
+        - email
+        - password
+        - username
+      properties:
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 6
+          example: "securepassword123"
+        username:
+          type: string
+          minLength: 3
+          example: "john_doe"
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+
+    SignInRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "test@example.com"
+        password:
+          type: string
+          format: password
+          example: "Password123!"
+
+    SignInResponse:
+      type: object
+      required:
+        - user
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+
+    ErrorResponse:
+      type: object
+      required:
+        - type
+        - message
+      properties:
+        type:
+          type: string
+          example: "auth"
+          description: Type of error
+        message:
+          type: string
+          example: "Invalid credentials"
+          description: Error description
+        details:
+          type: string
+          description: Internal error details (if any)
