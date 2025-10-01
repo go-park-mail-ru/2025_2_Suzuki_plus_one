@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Run all pre-commit hooks in the pre-commit.d directory
+
+# Note:
+# * This script expects to be symnlinked into .git/hooks/pre-commit with githooks/install.sh
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ) # .git/hooks
+REPO_ROOT=$(dirname "$(dirname "$SCRIPT_DIR")")
+HOOK_DIR="$REPO_ROOT/githooks/pre-commit.d"
+
+if [ -d "$HOOK_DIR" ]; then
+	for hook in "$HOOK_DIR"/*; do
+		if [ -x "$hook" ]; then
+			"$hook"
+			status=$?
+			if [ $status -ne 0 ]; then
+				echo "pre-commit hook $hook failed with status $status"
+				exit $status
+			fi
+		fi
+	done
+fi
