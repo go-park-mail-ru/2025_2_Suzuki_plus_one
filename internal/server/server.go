@@ -67,8 +67,8 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	movies := s.db.FindMovies(request.Offset, request.Limit)
 
 	log.Printf("Fetched %d movies from database", len(movies))
-	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(movies)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
@@ -159,8 +159,8 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 			Username: user.Username,
 		},
 	}
-	w.WriteHeader(http.StatusOK)
 	authenticator.TokenMgr.ResponseWithAuth(w, token, response)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
@@ -170,9 +170,9 @@ func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
 	// TODO: Think about token blacklisting for token key
 	// TODO: Implement refresh tokens with short-lived access tokens
 	authentication := auth.NewAuth(s.authSecret)
-	w.WriteHeader(http.StatusOK)
 	log.Println("SignOut: User signed out")
 	authentication.TokenMgr.ResponseWithDeauth(w)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
@@ -193,8 +193,8 @@ func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
 			Username: user.Username,
 		},
 	}
-	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
+	w.WriteHeader(http.StatusOK)
 }
 
 // Add handlers to routes

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/models"
 )
@@ -60,23 +61,31 @@ func (tc *TokenCookie) Set(request *http.Request, token string) {
 // Sets token in the cookie and sends response as JSON
 func (tc *TokenCookie) ResponseWithAuth(writer http.ResponseWriter, token string, response models.SignInResponse) {
 	// Set token in the cookie
-	http.SetCookie(writer, &http.Cookie{
-		Name:     tc.CookieName,
-		Value:    token,
-		HttpOnly: true,
-		Secure:   false, // TODO: set to true in production with HTTPS
-
-	})
-	log.Printf("Set cookie:[%s]=[%s]", tc.CookieName, token)
+	cookie := tc.GetCookieWithName(token)
+	// Set cookie expiration
+	cookie.Expires = time.Now().Add(24 * time.Hour)
+	http.SetCookie(writer, cookie)
+	log.Println("auth: Cookie set in ResponseWithAuth")
 	json.NewEncoder(writer).Encode(response)
 }
 
 // Send clear cookie
 func (tc *TokenCookie) ResponseWithDeauth(writer http.ResponseWriter) {
 	// Clear the cookie by setting its expiration date to the past
-	http.SetCookie(writer, &http.Cookie{
-		Name:   tc.CookieName,
-		Value:  "",
-		MaxAge: -1,
-	})
+	cookie := tc.GetCookieWithName("")
+	cookie.MaxAge = -1
+	log.Println("auth: Cookie cleared in ResponseWithDeauth")
+	http.SetCookie(writer, cookie)
+}
+
+// TODO: improve cookie settings
+func (tc *TokenCookie) GetCookieWithName(token string) *http.Cookie {
+	return &http.Cookie{
+		Name:     tc.CookieName,
+		Value:    token,
+		Path:     "/",                  // Ensure cookie is sent for all paths
+		HttpOnly: true,                 // Prevent JS access to cookie
+		Secure:   false,                // Set to true in production with HTTPS
+		SameSite: http.SameSiteLaxMode, // Helps with cross-site requests
+	}
 }
