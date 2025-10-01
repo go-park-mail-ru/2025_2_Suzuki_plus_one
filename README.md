@@ -1,10 +1,57 @@
 # Popfilms. Backend
 
-This repo contains the backend code for the Popfilms project.
-Which is an open source Netflix like service.
+Этот репозиторий содержит бэкенд проекта Popfilms.
 
-Popfilms provides users with a platform to stream and share films and series.
+## Popfilms
 
----
+Popfilms – это стриминговый сервис, вдохновленный Netflix.
 
-... Later here will appear some links to our credentials, support email, etc. ...
+Popfilms предоставляет пользователям доступ к просмотру библиотеки фильмов, сериалов, телевизионных шоу всевозможных жанров на различных языках. Сервис преимущественно ориентирован на распространение развлекательного контента, однако также имеет внушительное количество документальных фильмов и телепрограмм.
+
+## Релиз
+
+[Ссылка на деплой](http://217.16.18.125/)
+
+## Реализованные функции
+
+[Swagger](http://217.16.18.125/docs/)
+
+- Регистрация и аутентификация пользователей
+- Отдача замоканных объектов фильмов
+
+### Детали реализации
+
+- Бэкенд задеплоен при помощи systemd сервисов, которые управляются с помощью ansible плейбуков
+- Авторизация реализована при помощи JWT
+- Инмемори база данных хранит пользователей и фильмы
+
+```bash
+# копирует .env.example в .env
+make environment
+# загружает переменные окружения из .env
+source .env
+# запускает тесты и создает отчет о покрытии
+make test
+# собирает и запускает приложение
+make run
+```
+
+## Другие ссылки
+
+- [Репозиторий фронтэнда](https://github.com/frontend-park-mail-ru/2025_2_Suzuki_plus_one/)
+
+## О нас
+
+### Команда «Сузуки + 1»
+
+- **Александр Федуков** — [github.com/sorrtory](https://github.com/sorrtory)
+- **Фадеев Арсений** — [github.com/arsmfad](https://github.com/arsmfad)
+- **Гилязева Динара** — [github.com/DinaraGil](https://github.com/DinaraGil)
+- **Марышев Иван** — [github.com/ivanmaryshev](https://github.com/ivanmaryshev)
+
+### Менторы
+
+- **Володимир Коноплюк** — Go
+- **Костин Глеб** — Frontend
+- **Фильчаков Алексей** — СУБД
+- **Даниил Хасьянов** — UX
