@@ -41,7 +41,7 @@ func getEnv(key, fallback string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
 	}
-	log.Printf("Environment variable %s is not set, using default: %s", key, fallback)
+	log.Printf("Environment variable %s is not set or empty, using default: <%s>", key, fallback)
 	return fallback
 }
 
@@ -73,12 +73,8 @@ func parseDuration(value string) time.Duration {
 // trimTrailingSlash removes a trailing slash from the input string,
 // unless the string is empty or just "/".
 func trimTrailingSlash(s string) string {
-	if len(s) > 1 && s[len(s)-1] == '/' {
+	if len(s) >= 1 && s[len(s)-1] == '/' {
 		return s[:len(s)-1]
-	}
-
-	if len(s) == 1 && s[0] != '/' {
-		return ""
 	}
 	return s
 }
