@@ -55,8 +55,6 @@ erDiagram
         smallint genre_id PK
         bigint media_id PK
         %% ---
-        text name
-        %% ---
         timestamptz created_at
         timestamptz updated_at
     }
