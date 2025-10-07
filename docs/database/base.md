@@ -3,6 +3,17 @@
 ```mermaid
 erDiagram
 
+    %% # Genres
+    GENRE {
+        smallint genre_id PK
+        %% ---
+        text name
+        text description
+        %% ---
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
     %% # Playlists
 
     PLAYLIST {
@@ -41,8 +52,8 @@ erDiagram
     }
 
     MEDIA_GENRE {
-        smallint media_genre_id PK
-        bigint media_id FK
+        smallint genre_id PK
+        bigint media_id PK
         %% ---
         text name
         %% ---
@@ -288,12 +299,15 @@ erDiagram
         timestamptz updated_at
     }
 
+    %% # General relationships
+    GENRE ||--o{ MEDIA_GENRE : "media_genre has many genres"
+        MEDIA_GENRE ||--|| MEDIA : "media_genre links media and genre"
+
     %% # Playlist relationships
     PLAYLIST ||--o{ PLAYLIST_MEDIA : "playlist has media"
         PLAYLIST_MEDIA ||--|| MEDIA : "playlist_media links playlist and media"
 
     %% # Core media relationships
-    MEDIA ||--o{ MEDIA_GENRE : "media_genre has many media"
     MEDIA ||--o{ MEDIA_EPISODE : "media(type=series) has episodes"
     MEDIA ||--o{ MEDIA_IMAGE : "media has images"
     MEDIA ||--|{ MEDIA_VIDEO : "media has videos"
@@ -304,6 +318,7 @@ erDiagram
 
         MEDIA_AUDIO ||--o{ ASSET_AUDIO : "media_audio has audio assets"
         MEDIA_SUBTITLE ||--o{ ASSET_SUBTITLE : "media_subtitle has subtitle assets"
+        MEDIA_IMAGE ||--o{ ASSET_IMAGE : "media_image has image assets"
 
     %% ## Asset relationships
     ASSET_VIDEO ||--|| ASSET : "asset_video is an asset"
@@ -314,6 +329,7 @@ erDiagram
 
     %% # Actor relationships
     ACTOR ||--o{ ACTOR_IMAGE : "actor has images"
+        ACTOR_IMAGE ||--o{ ASSET_IMAGE : "actor_image links actor and asset_image"
     ACTOR ||--o{ ACTOR_ROLE : "actor has roles in media"
         ACTOR_ROLE ||--|| MEDIA : "actor_role links actor and media"
 
