@@ -16,6 +16,22 @@
 
 - [x] Создать ERD
 - [ ] Нормализировать
-- [ ] Добавить redis как отдельную сущность
 - [ ] Добавить ограничения
 - [ ] Добавить миграции
+
+
+## О нас
+
+### Команда «Сузуки + 1»
+
+- **Александр Федуков** — [github.com/sorrtory](https://github.com/sorrtory)
+- **Фадеев Арсений** — [github.com/arsmfad](https://github.com/arsmfad)
+- **Гилязева Динара** — [github.com/DinaraGil](https://github.com/DinaraGil)
+- **Марышев Иван** — [github.com/ivanmaryshev](https://github.com/ivanmaryshev)
+
+### Менторы
+
+- **Володимир Коноплюк** — Go
+- **Костин Глеб** — Frontend
+- **Фильчаков Алексей** — СУБД
+- **Даниил Хасьянов** — UX
