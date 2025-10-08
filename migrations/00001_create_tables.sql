@@ -21,7 +21,6 @@ CREATE TABLE playlist (
     CONSTRAINT fk_playlist_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE
 );
 
-
 -- Core media entity (movie / series / episode)
 CREATE TABLE media (
     media_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -31,6 +30,26 @@ CREATE TABLE media (
     release_date DATE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Genres
+CREATE TABLE genre (
+    genre_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Media genres (many-to-many)
+CREATE TABLE media_genre (
+    media_id BIGINT NOT NULL,
+    genre_id BIGINT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (media_id, genre_id),
+    CONSTRAINT fk_mg_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE,
+    CONSTRAINT fk_mg_genre FOREIGN KEY (genre_id) REFERENCES genre (genre_id) ON DELETE CASCADE
 );
 
 CREATE TABLE playlist_media (
@@ -43,15 +62,6 @@ CREATE TABLE playlist_media (
     CONSTRAINT fk_pm_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE
 );
 
--- Media genres
-CREATE TABLE media_genre (
-    media_genre_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    media_id BIGINT NOT NULL,
-    name TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_media_genre_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE
-);
 -- Episode-specific details (episode.media_id references media.media_id)
 CREATE TABLE media_episode (
     episode_id BIGINT PRIMARY KEY,
@@ -79,7 +89,7 @@ CREATE TABLE media_episode (
 -- Media <-> Images
 CREATE TABLE asset (
     asset_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    s3_key TEXT NOT NULL,
+    s3_key TEXT NOT NULL UNIQUE,
     mime_type TEXT NOT NULL,
     size_mb NUMERIC(12,3) NOT NULL CHECK (size_mb >= 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
