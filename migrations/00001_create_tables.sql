@@ -43,23 +43,25 @@ CREATE TABLE genre (
 
 -- Media genres (many-to-many)
 CREATE TABLE media_genre (
+    media_genre_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     media_id BIGINT NOT NULL,
     genre_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (media_id, genre_id),
     CONSTRAINT fk_mg_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE,
-    CONSTRAINT fk_mg_genre FOREIGN KEY (genre_id) REFERENCES genre (genre_id) ON DELETE CASCADE
+    CONSTRAINT fk_mg_genre FOREIGN KEY (genre_id) REFERENCES genre (genre_id) ON DELETE CASCADE,
+    CONSTRAINT unique_media_genre UNIQUE (media_id, genre_id)
 );
 
 CREATE TABLE playlist_media (
+    playlist_media_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     playlist_id BIGINT NOT NULL,
     media_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (playlist_id, media_id),
     CONSTRAINT fk_pm_playlist FOREIGN KEY (playlist_id) REFERENCES playlist (playlist_id) ON DELETE CASCADE,
-    CONSTRAINT fk_pm_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE
+    CONSTRAINT fk_pm_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE,
+    CONSTRAINT unique_playlist_media UNIQUE (playlist_id, media_id)
 );
 
 -- Episode-specific details (episode.media_id references media.media_id)
@@ -139,13 +141,14 @@ CREATE TABLE media_video (
 );
 
 CREATE TABLE media_video_asset (
+    media_video_asset_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     media_video_id BIGINT NOT NULL,
     asset_video_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (media_video_id, asset_video_id),
     CONSTRAINT fk_mva_media_video FOREIGN KEY (media_video_id) REFERENCES media_video (media_video_id) ON DELETE CASCADE,
-    CONSTRAINT fk_mva_asset_video FOREIGN KEY (asset_video_id) REFERENCES asset_video (asset_video_id) ON DELETE CASCADE
+    CONSTRAINT fk_mva_asset_video FOREIGN KEY (asset_video_id) REFERENCES asset_video (asset_video_id) ON DELETE CASCADE,
+    CONSTRAINT unique_media_video_asset UNIQUE (media_video_id, asset_video_id)
 );
 
 -- Audio assets
@@ -159,13 +162,14 @@ CREATE TABLE asset_audio (
 );
 
 CREATE TABLE media_audio (
+    media_audio_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     media_video_id BIGINT NOT NULL,
     asset_audio_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (media_video_id, asset_audio_id),
     CONSTRAINT fk_media_audio_media_video FOREIGN KEY (media_video_id) REFERENCES media_video (media_video_id) ON DELETE CASCADE,
-    CONSTRAINT fk_media_audio_asset FOREIGN KEY (asset_audio_id) REFERENCES asset_audio (asset_audio_id) ON DELETE CASCADE
+    CONSTRAINT fk_media_audio_asset FOREIGN KEY (asset_audio_id) REFERENCES asset_audio (asset_audio_id) ON DELETE CASCADE,
+    CONSTRAINT unique_media_audio UNIQUE (media_video_id, asset_audio_id)
 );
 
 -- Subtitle assets
@@ -180,13 +184,14 @@ CREATE TABLE asset_subtitle (
 );
 
 CREATE TABLE media_subtitle (
+    media_subtitle_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     media_video_id BIGINT NOT NULL,
     asset_subtitle_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (media_video_id, asset_subtitle_id),
     CONSTRAINT fk_media_subtitle_media_video FOREIGN KEY (media_video_id) REFERENCES media_video (media_video_id) ON DELETE CASCADE,
-    CONSTRAINT fk_media_subtitle_asset FOREIGN KEY (asset_subtitle_id) REFERENCES asset_subtitle (asset_subtitle_id) ON DELETE CASCADE
+    CONSTRAINT fk_media_subtitle_asset FOREIGN KEY (asset_subtitle_id) REFERENCES asset_subtitle (asset_subtitle_id) ON DELETE CASCADE,
+    CONSTRAINT unique_media_subtitle UNIQUE (media_video_id, asset_subtitle_id)
 );
 
 -- Actors and roles
@@ -223,14 +228,15 @@ CREATE TABLE actor_role (
 
 -- User-playlist link (collaboration/role)
 CREATE TABLE user_playlist (
+    user_playlist_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
     playlist_id BIGINT NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('owner','collaborator','viewer')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, playlist_id),
     CONSTRAINT fk_up_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_up_playlist FOREIGN KEY (playlist_id) REFERENCES playlist (playlist_id) ON DELETE CASCADE
+    CONSTRAINT fk_up_playlist FOREIGN KEY (playlist_id) REFERENCES playlist (playlist_id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_playlist UNIQUE (user_id, playlist_id)
 );
 
 -- Watch history
@@ -248,33 +254,36 @@ CREATE TABLE user_watch_history (
 
 -- Likes
 CREATE TABLE user_like_media (
+    user_like_media_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
     media_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, media_id),
     CONSTRAINT fk_ulm_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_ulm_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE
+    CONSTRAINT fk_ulm_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_like_media UNIQUE (user_id, media_id)
 );
 
 CREATE TABLE user_like_actor (
+    user_like_actor_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
     actor_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, actor_id),
     CONSTRAINT fk_ula_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_ula_actor FOREIGN KEY (actor_id) REFERENCES actor (actor_id) ON DELETE CASCADE
+    CONSTRAINT fk_ula_actor FOREIGN KEY (actor_id) REFERENCES actor (actor_id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_like_actor UNIQUE (user_id, actor_id)
 );
 
 CREATE TABLE user_like_playlist (
+    user_like_playlist_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
     playlist_id BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, playlist_id),
     CONSTRAINT fk_ulp_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_ulp_playlist FOREIGN KEY (playlist_id) REFERENCES playlist (playlist_id) ON DELETE CASCADE
+    CONSTRAINT fk_ulp_playlist FOREIGN KEY (playlist_id) REFERENCES playlist (playlist_id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_like_playlist UNIQUE (user_id, playlist_id)
 );
 
 -- Comments
@@ -302,14 +311,15 @@ CREATE TABLE user_comment_actor (
 
 -- Ratings
 CREATE TABLE user_rating_media (
+    user_rating_media_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
     media_id BIGINT NOT NULL,
     rating SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, media_id),
     CONSTRAINT fk_urm_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_urm_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE
+    CONSTRAINT fk_urm_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_rating UNIQUE (user_id, media_id)
 );
 
 -- Saved (bookmarks)

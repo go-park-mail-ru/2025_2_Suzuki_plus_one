@@ -36,13 +36,13 @@
 ## PLAYLIST_MEDIA
 ### Таблица связи плейлистов и медиа
 ```
-{playlist_id, media_id} → created_at, updated_at
+{playlist_media_id} → playlist_id, media_id, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных
 - **2НФ**: Неключевые атрибуты зависят от всей комбинации составного ключа
 - **3НФ**: Отсутствуют транзитивные функциональные зависимости между неключевыми атрибутами
-- **НФБК**: Составной детерминант {playlist_id, media_id} является первичным ключом
+- **НФБК**: Детерминант {playlist_media_id} является первичным ключом
 
 ## MEDIA
 ### Таблица медиа контента
@@ -58,24 +58,24 @@
 ## MEDIA_GENRE
 ### Таблица связи медиа и жанров
 ```
-{genre_id, media_id} → created_at, updated_at
+{media_genre_id} → media_id, genre_id, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных
-- **2НФ**: Неключевые атрибуты находятся в полной функциональной зависимости от составного ключа
+- **2НФ**: Неключевые атрибуты находятся в полной функциональной зависимости от составных ключей
 - **3НФ**: Отсутствуют транзитивные функциональные зависимости между неключевыми атрибутами
-- **НФБК**: Составной детерминант {genre_id, media_id} является потенциальным ключом
+- **НФБК**: Детерминант media_genre_id является потенциальным ключом
 
 ## MEDIA_EPISODE
 ### Таблица медиа эпизода
 ```
-{episode_id, series_id} → season_number, episode_number, created_at, updated_at
+{episode_id} → series_id, season_number, episode_number, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных
 - **2НФ**: Все неключевые атрибуты функционально полно зависят от составного ключа
 - **3НФ**: Отсутствуют транзитивные функциональные зависимости между неключевыми атрибутами
-- **НФБК**: Детерминант {episode_id, series_id} является суперключом отношения
+- **НФБК**: Детерминант {episode_id} является первичным ключом
 
 ## MEDIA_IMAGE
 ### Таблица связи медиа и изображений
@@ -102,7 +102,7 @@
 ## MEDIA_AUDIO
 ### Таблица связи медиа и аудио
 ```
-{media_video_id, asset_audio_id} → created_at, updated_at
+{media_audio_id} → media_video_id, asset_audio_id, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных
@@ -113,7 +113,7 @@
 ## MEDIA_SUBTITLE
 ### Таблица связи видео и субтитров
 ```
-{media_video_id, asset_subtitle_id} → created_at, updated_at
+{media_subtitle_id} → media_video_id, asset_subtitle_id, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных
@@ -212,7 +212,7 @@
 ## USER_PLAYLIST
 ### Таблица доступа пользователей к плейлистам
 ```
-{user_id, playlist_id} → role, created_at, updated_at
+{user_playlist_id} → user_id, playlist_id, role, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных
@@ -234,7 +234,7 @@
 ## USER_LIKE_MEDIA
 ### Таблица лайков медиа
 ```
-{user_id, media_id} → created_at, updated_at
+{user_like_media_id} → user_id, media_id, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных
@@ -245,7 +245,7 @@
 ## USER_LIKE_ACTOR
 ### Таблица лайков актеров
 ```
-{user_id, actor_id} → created_at, updated_at
+{user_like_actor_id} → user_id, actor_id, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных
@@ -256,7 +256,7 @@
 ## USER_LIKE_PLAYLIST
 ### Таблица лайков плейлистов
 ```
-{user_id, playlist_id} → created_at, updated_at
+{user_like_playlist_id} → user_id, playlist_id, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных
@@ -289,7 +289,7 @@
 ## USER_RATING_MEDIA
 ### Таблица рейтингов медиа
 ```
-{user_id, media_id} → rating, created_at, updated_at
+{user_rating_media_id} → user_id, media_id, rating, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных

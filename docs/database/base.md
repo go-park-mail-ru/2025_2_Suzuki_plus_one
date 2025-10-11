@@ -29,8 +29,9 @@ erDiagram
     }
 
     PLAYLIST_MEDIA {
-        bigint playlist_id PK
-        bigint media_id PK
+        bigint playlist_media_id PK
+        bigint playlist_id FK
+        bigint media_id FK
         %% ---
         timestamptz created_at
         timestamptz updated_at
@@ -52,8 +53,9 @@ erDiagram
     }
 
     MEDIA_GENRE {
-        smallint genre_id PK
-        bigint media_id PK
+        bigint media_genre_id PK
+        smallint genre_id FK
+        bigint media_id FK
         %% ---
         timestamptz created_at
         timestamptz updated_at
@@ -62,7 +64,7 @@ erDiagram
     %% Specific details for MEDIA of type 'episode'
     MEDIA_EPISODE {
         bigint episode_id PK "refers to MEDIA of type 'episode'"
-        bigint series_id PK "refers to MEDIA of type 'series'"
+        bigint series_id FK "refers to MEDIA of type 'series'"
         %% ---
         integer season_number
         integer episode_number
@@ -87,7 +89,6 @@ erDiagram
     MEDIA_VIDEO {
         bigint media_video_id PK
         bigint media_id FK
-        bigint asset_video_id FK
         %% ---
         text video_type   "main_video / trailer"
         %% ---
@@ -97,16 +98,18 @@ erDiagram
 
     %% Connects MEDIA_VIDEO_ASSET to its AUDIOs
     MEDIA_AUDIO {
-        bigint media_video_id PK
-        bigint asset_audio_id PK
+        bigint media_audio_id PK
+        bigint media_video_id FK
+        bigint asset_audio_id FK
         %% ---
         timestamptz created_at
         timestamptz updated_at
     }
 
     MEDIA_SUBTITLE {
-        bigint media_video_id PK
-        bigint asset_subtitle_id PK
+        bigint media_subtitle_id PK
+        bigint media_video_id FK
+        bigint asset_subtitle_id FK
         %% ---
         timestamptz created_at
         timestamptz updated_at
@@ -217,8 +220,9 @@ erDiagram
     }
 
     USER_PLAYLIST {
-        bigint user_id PK
-        bigint playlist_id PK
+        bigint user_playlist_id PK
+        bigint user_id FK
+        bigint playlist_id FK
         %% ---
         text role "collaborator / viewer"
         %% ---
@@ -238,24 +242,27 @@ erDiagram
     %% ## Likes
 
     USER_LIKE_MEDIA {
-        bigint user_id PK
-        bigint media_id PK
+        bigint user_like_media_id PK
+        bigint user_id FK
+        bigint media_id FK
         %% ---
         timestamptz created_at
         timestamptz updated_at
     }
 
     USER_LIKE_ACTOR {
-        bigint user_id PK
-        bigint actor_id PK
+        bigint user_like_actor_id PK
+        bigint user_id FK
+        bigint actor_id FK
         %% ---
         timestamptz created_at
         timestamptz updated_at
     }
 
     USER_LIKE_PLAYLIST {
-        bigint user_id PK
-        bigint playlist_id PK
+        bigint user_like_playlist_id PK
+        bigint user_id FK
+        bigint playlist_id FK
         %% ---
         timestamptz created_at
         timestamptz updated_at
@@ -288,8 +295,9 @@ erDiagram
     %% ## Rating
 
     USER_RATING_MEDIA {
-        bigint user_id PK
-        bigint media_id PK
+        bigint user_rating_media_id PK
+        bigint user_id FK
+        bigint media_id FK
         %% ---
         smallint rating "1 to 5"
         %% ---
