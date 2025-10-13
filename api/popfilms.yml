@@ -42,7 +42,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Movie"
+                  $ref: "#/components/schemas/Movies"
         "400":
           description: Invalid request parameters"
           content:
@@ -176,6 +176,45 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /actor/{id}:
+    get:
+      summary: Get actor page
+      tags:
+        - content
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The actor ID
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of movies to skip
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 0
+          description: The number of movies to return (default 0 means all)
+      responses:
+        "200":
+          description: Actor details with their movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActorPage"
+        "400":
+          description: Invalid request parameters"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   securitySchemes:
     JWT:
@@ -199,7 +238,7 @@ components:
           type: string
           example: "testuser"
 
-    Movie:
+    Movies:
       type: object
       properties:
         id:
@@ -220,6 +259,41 @@ components:
           type: string
           format: uri
           example: https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg
+
+    Actor:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123"
+        name:
+          type: string
+          example: "Leonardo DiCaprio"
+        birthday:
+          type: string
+          format: date
+          example: "1974-11-11"
+        place_of_birth:
+          type: string
+          example: "Los Angeles, CA, USA"
+        biography:
+          type: string
+          example: "Leonardo Wilhelm DiCaprio is an American actor and film producer."
+        photo:
+          type: string
+          format: uri
+          example: https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Leonardo_Dicaprio_-_World_Premiere_%E2%80%98One_Battle_after_Another%E2%80%99.jpg/800px-Leonardo_Dicaprio_-_World_Premiere_%E2%80%98One_Battle_after_Another%E2%80%99.jpg
+
+    ActorPage:
+      type: object
+      properties:
+        actor:
+          $ref: "#/components/schemas/Actor"
+        movies:
+          type: array
+          items:
+            $ref: "#/components/schemas/Movies"
+          description: "Movies featuring this actor"
 
     # Authentication schemas
     SignUpRequest:
