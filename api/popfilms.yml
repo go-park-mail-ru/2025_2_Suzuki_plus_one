@@ -242,6 +242,169 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  #User profile endpoints
+  /user/account:
+    get:
+      summary: Get User account information
+      tags:
+        - user
+      description: Get User account information for editing
+      security:
+        - JWT: []
+      responses:
+        "200":
+          description: User account details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserAccount"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update user account information
+      tags:
+        - user
+      description: Update user account information
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserAccountUpdate"
+      responses:
+        "200":
+          description: User account updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserAccount"
+        "400":
+          description: Bad request (invalid input)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /user/security:
+    get:
+      summary: Get user security settings form structure
+      tags:
+        - user
+      description: Retrieve security settings
+      security:
+        - JWT: []
+      responses:
+        "200":
+          description: Security settings form structure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SecuritySettings"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update user password
+      tags:
+        - user
+      description: Change user password
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordUpdate"
+      responses:
+        "200":
+          description: Password updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SecuritySettings"
+        "400":
+          description: Bad request (invalid input or password mismatch)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /user/notificatinos:
+    get:
+      summary: Get user notifications settings
+      tags:
+        - user
+      description: Retrieve user notifications preferences
+      security:
+        - JWT: []
+      responses:
+        "200":
+          description: User notification settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationSettings"
+        "401":
+          description: User notification settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      summary: Update user notification settings
+      tags:
+        - user
+      description: Update user notification settings
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationSettings"
+      responses:
+        "200":
+          description: Notification settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationSettings"
+        "400":
+          description: Bad request (invalid input)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   securitySchemes:
     JWT:
@@ -264,7 +427,85 @@ components:
         username:
           type: string
           example: "testuser"
+    
+    UserAccount:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "user1"
+        name:
+          type: string
+          example: "John Doe"
+        username:
+          type: string
+          example: "johndoe"
+        email:
+          type: string
+          example: "john@doe.com"
+        dateOfBirth:
+          type: string
+          format: date
+          example: "1990-01-01"
+        phone:
+          type: string
+          example: "+79999999999"
 
+    UserAccountUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+        username:
+          type: string
+          example: "johndoe"
+        email:
+          type: string
+          example: "john@doe.com"
+        dateOfBirth:
+          type: string
+          format: date
+          example: "1990-01-01"
+        phone:
+          type: string
+          example: "+79999999999"
+    
+    SecuritySettings:
+      type: object
+      description: Empty object representing security settings from structure
+      properties: {}
+
+    PasswordUpdate:
+      type: object
+      required:
+        - oldPassword
+        - newPassword
+        - repeatPassword
+      properties:
+        oldPassword:
+          type: string
+          format: password
+          example: "oldPassword123"
+        newPassword:
+          type: string
+          format: password
+          minLength: 8
+          example: "newPassword123"
+        repeatPassword:
+          type: string
+          format: password
+          minLength: 8
+          example: "newPassword123"
+      
+    NotificationSettings:
+      type: object
+      properties:
+        advertEmailSubscription:
+          description: "Subscribe to promotional emails"
+          type: boolean
+          example: true
+          
     Movies:
       type: object
       properties:
@@ -333,7 +574,7 @@ components:
         name:
           type: string
           example: "Leonardo DiCaprio"
-        birthday:
+        dateOfBirth:
           type: string
           format: date
           example: "1974-11-11"
@@ -431,3 +672,5 @@ components:
         details:
           type: string
           description: Internal error details (if any)
+          
+          
