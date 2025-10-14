@@ -2,9 +2,9 @@
 
 CREATE TABLE "user" (
     user_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    username TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE CHECK (LENGTH(username) <= 50),
+    email TEXT NOT NULL UNIQUE CHECK (LENGTH(email) <= 255 AND email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
+    password_hash TEXT NOT NULL CHECK (LENGTH(password_hash) <= 255),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -13,8 +13,8 @@ CREATE TABLE "user" (
 CREATE TABLE playlist (
     playlist_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
-    name TEXT NOT NULL,
-    description TEXT,
+    name TEXT NOT NULL CHECK (LENGTH(name) <= 128),
+    description TEXT CHECK (LENGTH(description) <= 1024),
     visibility TEXT NOT NULL CHECK (visibility IN ('public','private','unlisted')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -25,8 +25,8 @@ CREATE TABLE playlist (
 CREATE TABLE media (
     media_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     media_type TEXT NOT NULL CHECK (media_type IN ('movie','series','episode')),
-    title TEXT NOT NULL,
-    description TEXT,
+    title TEXT NOT NULL CHECK (LENGTH(title) <= 256),
+    description TEXT CHECK (LENGTH(description) <= 2048),
     release_date DATE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -35,8 +35,8 @@ CREATE TABLE media (
 -- Genres
 CREATE TABLE genre (
     genre_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name TEXT NOT NULL UNIQUE,
-    description TEXT,
+    name TEXT NOT NULL UNIQUE CHECK (LENGTH(name) <= 64),
+    description TEXT CHECK (LENGTH(description) <= 1024),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -68,8 +68,8 @@ CREATE TABLE playlist_media (
 CREATE TABLE media_episode (
     episode_id BIGINT PRIMARY KEY,
     series_id BIGINT NOT NULL,
-    season_number INTEGER NOT NULL,
-    episode_number INTEGER NOT NULL,
+    season_number INTEGER NOT NULL CHECK (season_number > 0),
+    episode_number INTEGER NOT NULL CHECK (episode_number > 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_episode_media FOREIGN KEY (episode_id) REFERENCES media (media_id) ON DELETE CASCADE,
@@ -91,8 +91,8 @@ CREATE TABLE media_episode (
 -- Media <-> Images
 CREATE TABLE asset (
     asset_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    s3_key TEXT NOT NULL UNIQUE,
-    mime_type TEXT NOT NULL,
+    s3_key TEXT NOT NULL UNIQUE CHECK (LENGTH(s3_key) <= 255),
+    mime_type TEXT NOT NULL CHECK (LENGTH(mime_type) <= 100),
     size_mb NUMERIC(12,3) NOT NULL CHECK (size_mb >= 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -101,8 +101,8 @@ CREATE TABLE asset (
 CREATE TABLE asset_image (
     asset_image_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     asset_id BIGINT NOT NULL UNIQUE,
-    resolution_width INTEGER,
-    resolution_height INTEGER,
+    resolution_width INTEGER CHECK (resolution_width > 0),
+    resolution_height INTEGER CHECK (resolution_height > 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_asset_image_asset FOREIGN KEY (asset_id) REFERENCES asset (asset_id) ON DELETE CASCADE
@@ -123,9 +123,9 @@ CREATE TABLE media_image (
 CREATE TABLE asset_video (
     asset_video_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     asset_id BIGINT NOT NULL UNIQUE,
-    quality TEXT NOT NULL,
-    resolution_width INTEGER,
-    resolution_height INTEGER,
+    quality TEXT NOT NULL CHECK (LENGTH(quality) <= 64),
+    resolution_width INTEGER CHECK (resolution_width > 0),
+    resolution_height INTEGER CHECK (resolution_height > 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_asset_video_asset FOREIGN KEY (asset_id) REFERENCES asset (asset_id) ON DELETE CASCADE
@@ -155,7 +155,7 @@ CREATE TABLE media_video_asset (
 CREATE TABLE asset_audio (
     asset_audio_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     asset_id BIGINT NOT NULL UNIQUE,
-    language TEXT,
+    language TEXT CHECK (LENGTH(language) <= 64),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_asset_audio_asset FOREIGN KEY (asset_id) REFERENCES asset (asset_id) ON DELETE CASCADE
@@ -176,8 +176,8 @@ CREATE TABLE media_audio (
 CREATE TABLE asset_subtitle (
     asset_subtitle_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     asset_id BIGINT NOT NULL UNIQUE,
-    language TEXT NOT NULL,
-    format TEXT NOT NULL,
+    language TEXT NOT NULL CHECK (LENGTH(language) <= 64),
+    format TEXT NOT NULL CHECK (LENGTH(format) <= 64),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_asset_subtitle_asset FOREIGN KEY (asset_id) REFERENCES asset (asset_id) ON DELETE CASCADE
@@ -197,9 +197,9 @@ CREATE TABLE media_subtitle (
 -- Actors and roles
 CREATE TABLE actor (
     actor_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name TEXT NOT NULL,
+    name TEXT NOT NULL CHECK (LENGTH(name) <= 512),
     birth_date DATE,
-    bio TEXT,
+    bio TEXT CHECK (LENGTH(bio) <= 8192),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -219,7 +219,7 @@ CREATE TABLE actor_role (
     actor_role_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     actor_id BIGINT NOT NULL,
     media_id BIGINT NOT NULL,
-    role_name TEXT,
+    role_name TEXT CHECK (LENGTH(role_name) <= 128),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_actor_role_actor FOREIGN KEY (actor_id) REFERENCES actor (actor_id) ON DELETE CASCADE,
@@ -227,11 +227,13 @@ CREATE TABLE actor_role (
 );
 
 -- User-playlist link (collaboration/role)
+CREATE TYPE playlist_role AS ENUM ('owner', 'collaborator', 'viewer');
+
 CREATE TABLE user_playlist (
     user_playlist_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
     playlist_id BIGINT NOT NULL,
-    role TEXT NOT NULL CHECK (role IN ('owner','collaborator','viewer')),
+    role playlist_role NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_up_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
@@ -245,7 +247,7 @@ CREATE TABLE user_watch_history (
     user_id BIGINT NOT NULL,
     media_id BIGINT NOT NULL,
     watched_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    progress_seconds INTEGER DEFAULT 0,
+    progress_seconds INTEGER DEFAULT 0 CHECK (progress_seconds >= 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_wh_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
@@ -291,7 +293,7 @@ CREATE TABLE user_comment_media (
     user_comment_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
     media_id BIGINT NOT NULL,
-    content TEXT NOT NULL,
+    content TEXT NOT NULL CHECK (LENGTH(content) <= 2000),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_ucm_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
@@ -302,7 +304,7 @@ CREATE TABLE user_comment_actor (
     user_comment_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id BIGINT NOT NULL,
     actor_id BIGINT NOT NULL,
-    content TEXT NOT NULL,
+    content TEXT NOT NULL CHECK (LENGTH(content) <= 2048),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_uca_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE,
