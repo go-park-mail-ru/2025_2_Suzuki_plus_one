@@ -1,5 +1,5 @@
 // This file contains data models for the application.
-// It have to correspond to database schema and API spec.
+// It has to correspond to database schema and API spec.
 
 package models
 

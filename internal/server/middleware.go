@@ -7,15 +7,21 @@ import (
 	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/auth"
+	"go.uber.org/zap"
 )
 
 // Middleware for handling CORS
-func corsMiddleware(next http.Handler, frontendOrigin string) http.Handler {
+func corsMiddleware(next http.Handler, frontendOrigin string, logger *zap.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger.Debug("CORS Middleware",
+			zap.String("origin", r.Header.Get("Origin")),
+			zap.String("method", r.Method))
+
 		w.Header().Set("Access-Control-Allow-Origin", frontendOrigin)
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		if r.Method == "OPTIONS" {
+			logger.Debug("CORS OPTIONS")
 			w.WriteHeader(http.StatusOK)
 			return
 		}
@@ -24,12 +30,25 @@ func corsMiddleware(next http.Handler, frontendOrigin string) http.Handler {
 }
 
 // Middleware for logging requests
-func loggingMiddleware(next http.Handler) http.Handler {
+func loggingMiddleware(next http.Handler, logger *zap.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		log.Printf("<<< REQUEST: %s %s : from %s", r.Method, r.RequestURI, r.RemoteAddr)
+
+		logger.Info("Request started",
+			zap.String("method", r.Method),
+			zap.String("path", r.URL.Path),
+			zap.String("remote_addr", r.RemoteAddr),
+			zap.String("user_agent", r.UserAgent()),
+		)
+
 		next.ServeHTTP(w, r)
-		log.Printf(">>> REPLY: Completed in %v", time.Since(start))
+		duration := time.Since(start)
+
+		logger.Info("Request completed",
+			zap.String("method", r.Method),
+			zap.String("path", r.URL.Path),
+			zap.Duration("duration", duration),
+			zap.String("remote_addr", r.RemoteAddr))
 	})
 }
 
@@ -44,10 +63,13 @@ func forceJSONMiddleware(next http.Handler) http.Handler {
 // Middleware that checks for authentication
 // It parses and validates JWT token from Authorization header
 // Set context [server.AuthContextKey] whether token is valid or not
-func authMiddleware(next http.Handler, secret string) http.Handler {
+func authMiddleware(next http.Handler, secret string, logger *zap.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger.Debug("Auth Middleware",
+			zap.String("path", r.URL.Path),
+			zap.String("method", r.Method))
 		// Get token from Authorization header
-		authenticator := auth.NewAuth(secret)
+		authenticator := auth.NewAuth(secret, logger)
 		var NoTokenFound bool
 		var TokenFailed bool
 		var JWTClaims auth.JWTClaims
@@ -56,17 +78,27 @@ func authMiddleware(next http.Handler, secret string) http.Handler {
 		// Update context fields
 		if authenticator.TokenMgr.Exists(r) == false {
 			NoTokenFound = true
+			logger.Debug("No token found")
 		} else {
 			token := authenticator.TokenMgr.Get(r)
 			if token == "" {
 				TokenFailed = true
+				logger.Debug("Empty token found")
 			} else {
 				claims, err := authenticator.ValidateToken(token)
 				if err != nil {
+					logger.Warn("Token validation failed",
+						zap.String("token_prefix", safeTokenPrefix(token)),
+						zap.Error(err))
 					log.Println("authMiddleware: error parsing token:", err)
+
 					TokenFailed = true
 				}
 				JWTClaims = claims
+
+				logger.Debug("Token validation successful",
+					zap.String("subject", claims.Subject),
+					zap.String("type", claims.Type))
 			}
 		}
 
@@ -81,28 +113,46 @@ func authMiddleware(next http.Handler, secret string) http.Handler {
 	})
 }
 
+// Function that helps safely logging token
+func safeTokenPrefix(tokenString string) string {
+	if (len(tokenString)) < 8 {
+		return "[short]"
+	}
+
+	return tokenString[:8] + "..."
+}
+
 // Wrapper that ensures authentication is valid
 // If not, returns 401 Unauthorized and JSON error [models.ErrorResponse]
-func withAuthRequired(nextFunc func(http.ResponseWriter, *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+func withAuthRequired(nextFunc func(http.ResponseWriter, *http.Request), logger *zap.Logger) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		logger.Debug("Auth required check",
+			zap.String("path", r.URL.Path))
+
 		val := r.Context().Value(AuthContextKey)
 		if val == nil {
-			log.Println("withAuthRequired: val is nil")
-			responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired)
+			logger.Warn("withAuthRequired: val is nil")
+
+			responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired, logger)
 			return
 		}
 		authCtx, ok := val.(*authContext)
 		if !ok {
-			log.Println("withAuthRequired: no auth context found in request context")
-			responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired)
+			logger.Error("Invalid context type")
+
+			responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired, logger)
 			return
 		}
 
 		if authCtx == nil || authCtx.NoTokenFound {
-			responseWithError(w, http.StatusUnauthorized, ErrNoTokenProvided)
+			logger.Warn("No token provided for protected route")
+
+			responseWithError(w, http.StatusUnauthorized, ErrNoTokenProvided, logger)
 			return
 		} else if authCtx.TokenFailed {
-			responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired)
+			logger.Warn("Invalid or expired token")
+
+			responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired, logger)
 			return
 		}
 		http.HandlerFunc(nextFunc).ServeHTTP(w, r)
