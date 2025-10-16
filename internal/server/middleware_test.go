@@ -16,6 +16,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap/zaptest"
 )
 
 const SECRET = "secret"
@@ -79,13 +80,19 @@ func setNoToken(t *testing.T, req *http.Request) {
 
 // Set invalid token
 func setInvalidToken(t *testing.T, req *http.Request) {
-	authenticator := auth.NewAuth(SECRET)
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
+	authenticator := auth.NewAuth(SECRET, logger)
 	authenticator.TokenMgr.Set(req, BADTOKEN)
 }
 
 // Set token using auth logic
 func setValidToken(t *testing.T, req *http.Request, claims auth.JWTClaims) {
-	authenticator := auth.NewAuth(SECRET)
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
+	authenticator := auth.NewAuth(SECRET, logger)
 	token, err := authenticator.GenerateToken(&claims)
 	require.NoError(t, err)
 	authenticator.TokenMgr.Set(req, token)
@@ -100,6 +107,8 @@ func testAuthMiddleware(
 	expectTokenFailed bool,
 	expectClaims auth.JWTClaims,
 ) {
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
 
 	// Prepare request and response recorder
 	rr := httptest.NewRecorder()
@@ -125,7 +134,7 @@ func testAuthMiddleware(
 			"expectClaims=%v, got %v", expectClaims, authCtx.Claims)
 	})
 
-	handler := authMiddleware(next, SECRET)
+	handler := authMiddleware(next, SECRET, logger)
 	handler.ServeHTTP(rr, req)
 	assert.True(t, called)
 }
@@ -142,9 +151,12 @@ func TestAuthMiddleware_InvalidTokenFormat(t *testing.T) {
 
 // Expect token to be valid
 func TestAuthMiddleware_ValidToken(t *testing.T) {
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
 	// Prepare claims for token
 	claims := getValidClaims(t)
-	authenticator := auth.NewAuth(SECRET)
+	authenticator := auth.NewAuth(SECRET, logger)
 	token, err := authenticator.GenerateToken(&claims)
 	require.NoError(t, err)
 
@@ -158,6 +170,9 @@ func TestAuthMiddleware_ValidToken(t *testing.T) {
 
 // Call withAuthRequired with params injected into context
 func testWithAuthRequired(t *testing.T, noTokenFound, tokenFailed bool, claims auth.JWTClaims) {
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
 	rr := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/", nil)
 	ctx := context.WithValue(req.Context(), AuthContextKey, &authContext{
@@ -168,7 +183,7 @@ func testWithAuthRequired(t *testing.T, noTokenFound, tokenFailed bool, claims a
 	req = req.WithContext(ctx)
 
 	// Call response handler with withAuthRequired middleware
-	http.HandlerFunc(withAuthRequired(getValidHandlerFunc(t, claims))).ServeHTTP(rr, req)
+	http.HandlerFunc(withAuthRequired(getValidHandlerFunc(t, claims), logger)).ServeHTTP(rr, req)
 
 	if noTokenFound || tokenFailed {
 		assert.Equal(t, http.StatusUnauthorized, rr.Code)
@@ -198,8 +213,11 @@ func TestWithAuthRequired_ValidToken(t *testing.T) {
 }
 
 // Add valid token in Authorization header, not in the context
-// To get 200 withAuthRequired has to be prepended with authMiddleware but it is not, then got 401
+// To get 200 withAuthRequired has to be prepended with authMiddleware, but it is not, then got 401
 func TestWithAuthRequired_ValidHeader(t *testing.T) {
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
 	// Prepare request and response recorder
 	rr := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
@@ -207,7 +225,7 @@ func TestWithAuthRequired_ValidHeader(t *testing.T) {
 
 	// Set valid token in header
 	claims := getValidClaims(t)
-	authenticator := auth.NewAuth(SECRET)
+	authenticator := auth.NewAuth(SECRET, logger)
 	token, err := authenticator.GenerateToken(&claims)
 	require.NoError(t, err)
 	authenticator.TokenMgr.Set(req, token)
@@ -215,7 +233,7 @@ func TestWithAuthRequired_ValidHeader(t *testing.T) {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		t.Fatal("Can't reach handler without authContext in request")
 	}
-	http.HandlerFunc(withAuthRequired(handler)).ServeHTTP(rr, req)
+	http.HandlerFunc(withAuthRequired(handler, logger)).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusUnauthorized, rr.Code)
 }
@@ -229,17 +247,21 @@ func TestWithAuthRequired_ValidHeader(t *testing.T) {
 func testAuthChain[ResponseType any](t *testing.T,
 	tokenSetter func(*testing.T, *http.Request),
 	expectedClaims auth.JWTClaims, expectedStatus int, expectedResponse ResponseType) {
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
 
 	// Prepare server
 	server := http.NewServeMux()
-	server.HandleFunc("/", withAuthRequired(getValidHandlerFunc(t, expectedClaims)))
+	server.HandleFunc("/", withAuthRequired(getValidHandlerFunc(t, expectedClaims), logger))
 
 	// Set middleware chain
 	finalHandler := loggingMiddleware(
 		authMiddleware(
 			server,
 			SECRET,
+			logger,
 		),
+		logger,
 	)
 
 	// Send request with invalid token

@@ -6,13 +6,17 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap/zaptest"
 )
 
 const SECRET = "secret"
 const TOKEN = "test_token"
 
 func TestTokenHeader(t *testing.T) {
-	authenticator := NewAuthHeader(SECRET)
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
+	authenticator := NewAuthHeader(SECRET, logger)
 	// Convert to TokenHeader to access its fields
 	th, ok := authenticator.TokenMgr.(*TokenHeader)
 	require.True(t, ok)
@@ -37,7 +41,10 @@ func TestTokenHeader(t *testing.T) {
 }
 
 func TestTokenCookie(t *testing.T) {
-	authenticator := NewAuthCookie(SECRET)
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
+	authenticator := NewAuthCookie(SECRET, logger)
 	tc, ok := authenticator.TokenMgr.(*TokenCookie)
 	require.True(t, ok)
 	cookieName := tc.CookieName

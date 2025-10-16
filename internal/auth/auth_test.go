@@ -3,16 +3,21 @@ package auth
 import (
 	"testing"
 	"time"
+
+	"go.uber.org/zap/zaptest"
 )
 
 func TestGenerateAndValidateToken(t *testing.T) {
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
 	secret := "mysecret"
 	userID := "user123"
 	tokenType := "access"
 	expiration := time.Minute * 5
 	appName := "testApp"
 
-	auth := NewAuth(secret)
+	auth := NewAuth(secret, logger)
 	claims := NewJWTClaims(userID, tokenType, expiration, appName)
 
 	tokenString, err := auth.GenerateToken(claims)
@@ -37,6 +42,9 @@ func TestGenerateAndValidateToken(t *testing.T) {
 }
 
 func TestValidateToken_InvalidSignature(t *testing.T) {
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
 	secret := "mysecret"
 	badSecret := "badsecret"
 	userID := "user123"
@@ -44,8 +52,8 @@ func TestValidateToken_InvalidSignature(t *testing.T) {
 	expiration := time.Minute * 5
 	appName := "testApp"
 
-	auth := NewAuth(secret)
-	badAuth := NewAuth(badSecret)
+	auth := NewAuth(secret, logger)
+	badAuth := NewAuth(badSecret, logger)
 	claims := NewJWTClaims(userID, tokenType, expiration, appName)
 
 	tokenString, err := auth.GenerateToken(claims)
@@ -60,13 +68,16 @@ func TestValidateToken_InvalidSignature(t *testing.T) {
 }
 
 func TestValidateToken_ExpiredToken(t *testing.T) {
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
 	secret := "mysecret"
 	userID := "user123"
 	tokenType := "access"
 	expiration := -time.Minute // already expired
 	appName := "testApp"
 
-	auth := NewAuth(secret)
+	auth := NewAuth(secret, logger)
 	claims := NewJWTClaims(userID, tokenType, expiration, appName)
 
 	tokenString, err := auth.GenerateToken(claims)
