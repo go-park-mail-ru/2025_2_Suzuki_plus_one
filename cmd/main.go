@@ -27,6 +27,8 @@ func main() {
 	logger.Info("Server created")
 
 	// Start the server
-	server.Serve()
+	if err := server.Serve(); err != nil {
+		logger.Fatal("Server not started 'cause of error", zap.Error(err))
+	}
 	logger.Info("Server started serving")
 }

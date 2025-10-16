@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"go.uber.org/zap"
@@ -49,6 +50,10 @@ func NewServer(cfg *config.Config, database *db.DataBase, logger *zap.Logger) *S
 
 // Get all movies from database
 func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
+	s.logger.Info("Fetching movies",
+		zap.String("method", r.Method),
+		zap.String("query", r.URL.RawQuery))
+
 	request := models.MoviesRequest{}
 
 	// Parse query parameters
@@ -56,6 +61,10 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	if offStr := query.Get("offset"); offStr != "" {
 		// If parameter is blank we leave it as default 0
 		if _, err := fmt.Sscanf(offStr, "%d", &request.Offset); err != nil {
+			s.logger.Warn("Invalid offset parameter",
+				zap.String("offset", offStr),
+				zap.Error(err))
+
 			responseWithError(w, http.StatusBadRequest, ErrMoviesInvalidParams, s.logger)
 			return
 		}
@@ -63,6 +72,10 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	if limStr := query.Get("limit"); limStr != "" {
 		// If parameter is blank we leave it as default 0 (means no limit)
 		if _, err := fmt.Sscanf(limStr, "%d", &request.Limit); err != nil {
+			s.logger.Warn("Invalid limit parameter",
+				zap.String("limit", limStr),
+				zap.Error(err))
+
 			responseWithError(w, http.StatusBadRequest, ErrMoviesInvalidParams, s.logger)
 			return
 		}
@@ -70,22 +83,28 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 
 	movies := s.db.FindMovies(request.Offset, request.Limit)
 
-	log.Printf("Fetched %d movies from database", len(movies))
+	s.logger.Info("Fetching completed successfully",
+		zap.String("count", strconv.FormatInt(int64(len(movies)), 10)),
+		zap.String("offset", strconv.FormatUint(uint64(request.Offset), 10)),
+		zap.String("limit", strconv.FormatUint(uint64(request.Limit), 10)))
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(movies)
 }
 
 func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
+	s.logger.Info("Sign up request")
 	request := models.SignUpRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		s.logger.Warn("Failed to decode request", zap.Error(err))
 		responseWithError(w, http.StatusBadRequest, ErrSignUpWrongData, s.logger)
 		return
 	}
 
 	if request.Email == "" || request.Password == "" {
 		// TODO: create a fancy logger
-		log.Println("SignUp: Email or password is empty")
+		s.logger.Warn("Email or Password is empty")
 		responseWithError(w, http.StatusBadRequest, ErrSignUpWrongData, s.logger)
 		return
 	}
@@ -94,19 +113,33 @@ func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 	user, err, created := s.db.CreateUser(request.Email, request.Password, s.logger)
 	if err != nil {
 		if !created {
+			s.logger.Warn("User already exists",
+				zap.String("email", request.Email),
+				zap.Error(err))
+
 			responseWithError(w, http.StatusConflict, errorWithDetails(ErrSignUpUserExists, err.Error()), s.logger)
 		} else {
+			s.logger.Warn("Signup internal error",
+				zap.String("email", request.Email),
+				zap.Error(err))
+
 			responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignUpInternal, err.Error()), s.logger)
 		}
 		return
 	}
-	log.Println("SignUp: Created new user:", user.Email)
+	s.logger.Info("User created successfully",
+		zap.String("id", user.ID),
+		zap.String("email", request.Email))
 
 	// Create token for the new user
 	authenticator := auth.NewAuth(s.authSecret, s.logger)
 	claims := auth.NewJWTClaims(user.ID, "access", s.accessTokenExpiry, s.serverName)
 	token, err := authenticator.GenerateToken(claims)
 	if err != nil {
+		s.logger.Warn("Failed to generate token",
+			zap.String("id", user.ID),
+			zap.Error(err))
+
 		responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignUpInternal, err.Error()), s.logger)
 		return
 	}
@@ -122,12 +155,18 @@ func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	authenticator.TokenMgr.ResponseWithAuth(w, token, response)
+
+	s.logger.Info("User signed up successfully",
+		zap.String("id", user.ID))
 }
 
 func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
+	s.logger.Info("Sign in request")
 	request := models.SignInRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		s.logger.Warn("Failed to decode request", zap.Error(err))
+
 		responseWithError(w, http.StatusBadRequest, ErrSignInWrongData, s.logger)
 		return
 	}
@@ -135,12 +174,19 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 	// Query user from database
 	user := s.db.FindUserByEmail(request.Email)
 	if user == nil {
+		s.logger.Warn("User does not exist",
+			zap.String("email", request.Email))
+
 		responseWithError(w, http.StatusUnauthorized, ErrSignInWrongData, s.logger)
 		return
 	}
 
 	// Check password
 	if err := utils.ValidateHashedPasswordBcrypt(user.PasswordHash, request.Password); err != nil {
+		s.logger.Warn("Invalid password",
+			zap.String("email", request.Email),
+			zap.Error(err))
+
 		responseWithError(w, http.StatusUnauthorized, ErrSignInWrongData, s.logger)
 		return
 	}
@@ -150,6 +196,9 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 	claims := auth.NewJWTClaims(user.ID, "access", s.accessTokenExpiry, s.serverName)
 	token, err := authenticator.GenerateToken(claims)
 	if err != nil {
+		s.logger.Warn("Failed to generate token",
+			zap.String("id", user.ID),
+			zap.String("email", request.Email))
 		responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignInInternal, err.Error()), s.logger)
 		return
 	}
@@ -168,6 +217,7 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
+	s.logger.Info("Sign out request")
 	// Since we use stateless JWT, sign-out is handled on the client side by deleting the token.
 	// Context is already checked by withAuthRequired middleware
 
@@ -175,8 +225,9 @@ func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
 	// TODO: Implement refresh tokens with short-lived access tokens
 	authentication := auth.NewAuth(s.authSecret, s.logger)
 	w.WriteHeader(http.StatusOK)
-	log.Println("SignOut: User signed out")
 	authentication.TokenMgr.ResponseWithDeauth(w)
+
+	s.logger.Info("User signed out successfully")
 }
 
 func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
@@ -185,11 +236,17 @@ func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
 
 	user := s.db.FindUserByID(authCtx.Claims.Subject)
 	if user == nil {
-		log.Println("Auth: User not found")
+		s.logger.Warn("Auth user does not find",
+			zap.String("user_id", authCtx.Claims.Subject))
+
 		responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired, s.logger)
 		return
 	}
-	log.Println("Auth: User authenticated:", user.Email)
+
+	s.logger.Debug("User authenticated",
+		zap.String("user_id", authCtx.Claims.Subject),
+		zap.String("email", user.Email))
+
 	response := models.AuthResponse{
 		User: models.UserAPI{
 			ID:       user.ID,
@@ -203,7 +260,7 @@ func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
 
 // Add handlers to routes
 // Prefix is used for versioning, e.g. /api/v1/
-func (s *Server) setupRoutes(prefix string) {
+func (s *Server) setupRoutes(prefix string) error {
 	s.server.HandleFunc(prefix+"/movies", s.getAllMovies)
 	s.server.HandleFunc(prefix+"/auth/signup", s.signUp)
 	s.server.HandleFunc(prefix+"/auth/signin", s.signIn)
@@ -211,7 +268,7 @@ func (s *Server) setupRoutes(prefix string) {
 	s.server.HandleFunc(prefix+"/auth", withAuthRequired(s.auth, s.logger))
 }
 
-func (s *Server) Serve() {
+func (s *Server) Serve() error {
 	s.setupRoutes(s.prefix)
 
 	// Add middleware, the order is important
@@ -229,6 +286,14 @@ func (s *Server) Serve() {
 		s.logger,
 	)
 
-	log.Println("Server starting on", s.address)
-	log.Fatal(http.ListenAndServe(s.address, handler))
+	s.logger.Info("Server started",
+		zap.String("address", s.address),
+		zap.String("prefix", s.prefix))
+
+	if err := http.ListenAndServe(s.address, handler); err != nil {
+		s.logger.Error("Failed to start server", zap.Error(err))
+		return err
+	}
+
+	return nil
 }
