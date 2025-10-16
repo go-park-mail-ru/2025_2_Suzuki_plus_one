@@ -5,9 +5,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap/zaptest"
 )
 
 func TestCreateUser(t *testing.T) {
+	logger := zaptest.NewLogger(t)
+	defer logger.Sync()
+
 	db := NewMockDB()
 
 	tests := []struct {
@@ -50,7 +54,7 @@ func TestCreateUser(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.email, func(t *testing.T) {
-			user, err, created := db.CreateUser(tt.email, tt.password)
+			user, err, created := db.CreateUser(tt.email, tt.password, logger)
 			if tt.wantErr {
 				require.NotNil(t, err, "expected error but got none")
 				require.False(t, created, "expected user not to be created")
