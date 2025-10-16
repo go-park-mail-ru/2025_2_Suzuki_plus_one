@@ -3,7 +3,7 @@
 package auth
 
 import (
-	"log"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/utils"
 	"net/http"
 	"time"
 
@@ -89,12 +89,27 @@ func NewAuth(secret string, logger *zap.Logger) *Auth {
 
 // Returns signed token (JWT) from the given claims
 func (a *Auth) GenerateToken(claims *JWTClaims) (string, error) {
+	a.logger.Debug("Generating JWT token",
+		zap.String("subject", claims.Subject),
+		zap.String("type", claims.Type),
+		zap.String("issuer", claims.Issuer),
+		zap.Time("expires_at", claims.ExpiresAt.Time))
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, *claims)
 	tokenString, err := token.SignedString(a.secret)
 
 	if err != nil {
+		a.logger.Error("Failed to generate token",
+			zap.String("subject", claims.Subject),
+			zap.String("type", claims.Type),
+			zap.Error(err))
+
 		return "", err
 	}
+
+	a.logger.Debug("Successfully generated token",
+		zap.String("subject", claims.Subject),
+		zap.String("type", claims.Type))
 
 	return tokenString, nil
 }
@@ -106,19 +121,34 @@ func (a *Auth) GenerateToken(claims *JWTClaims) (string, error) {
 //	auth.JWTClaims - if token is valid, otherwise empty claims
 //	error - if token is invalid or expired, otherwise nil
 func (a *Auth) ValidateToken(tokenString string) (JWTClaims, error) {
+	a.logger.Debug("Validating token",
+		zap.String("token_prefix", utils.SafeTokenPrefix(tokenString)))
 	var claims JWTClaims
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (any, error) {
 		return a.secret, nil
 	})
 
 	if err != nil {
-		log.Println("ValidateToken: error parsing token: ", token)
+		a.logger.Warn("Failed to validate token",
+			zap.String("token_prefix", utils.SafeTokenPrefix(tokenString)),
+			zap.Error(err),
+			zap.Bool("token_valid", token != nil && token.Valid))
+
 		return JWTClaims{}, err
 	}
 
 	if claims, ok := token.Claims.(*JWTClaims); ok && token.Valid {
+		a.logger.Debug("Successfully validated token",
+			zap.String("subject", claims.Subject),
+			zap.String("type", claims.Type),
+			zap.Time("expires_at", claims.ExpiresAt.Time))
+
 		return *claims, nil
 	} else {
+		a.logger.Warn("Failed to validate token",
+			zap.String("token_prefix", utils.SafeTokenPrefix(tokenString)),
+			zap.Bool("token_valid", token.Valid))
+
 		return JWTClaims{}, err
 	}
 }
