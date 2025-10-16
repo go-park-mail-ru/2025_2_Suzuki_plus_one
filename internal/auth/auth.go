@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/models"
 	"github.com/golang-jwt/jwt/v5"
+	"go.uber.org/zap"
 )
 
 // JWTClaims represents the claims for both access and refresh tokens
@@ -48,41 +49,54 @@ type TokenHandler interface {
 type Auth struct {
 	TokenMgr TokenHandler
 	secret   []byte
+	logger   *zap.Logger
 }
 
 // Returns new Auth instance using Authorization header for token storage
-func NewAuthHeader(secret string) *Auth {
+func NewAuthHeader(secret string, logger *zap.Logger) *Auth {
 	token := NewTokenHeader()
+
+	logger.Debug("Creating new auth header")
 
 	// Returns new Auth instance saving secret key
 	return &Auth{
 		secret:   []byte(secret),
 		TokenMgr: token,
+		logger:   logger,
 	}
 }
 
 // Returns new Auth instance using Cookie for token storage
-func NewAuthCookie(secret string) *Auth {
+func NewAuthCookie(secret string, logger *zap.Logger) *Auth {
 	token := NewTokenCookie()
+
+	logger.Debug("Creating new auth cookie")
 
 	// Returns new Auth instance saving secret key
 	return &Auth{
 		secret:   []byte(secret),
 		TokenMgr: token,
+		logger:   logger,
 	}
 }
 
 // Returns new Auth instance using Authorization header for token storage
-func NewAuth(secret string) *Auth {
+func NewAuth(secret string, logger *zap.Logger) *Auth {
 	// Note: change to NewAuthCookie to use cookies instead of headers
-	return NewAuthCookie(secret)
+	return NewAuthCookie(secret, logger)
 	// return NewAuthHeader(secret)
 }
 
 // Returns signed token (JWT) from the given claims
 func (a *Auth) GenerateToken(claims *JWTClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, *claims)
-	return token.SignedString(a.secret)
+	tokenString, err := token.SignedString(a.secret)
+
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }
 
 // Checks JWT token in the string.

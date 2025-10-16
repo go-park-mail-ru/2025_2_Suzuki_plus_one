@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"go.uber.org/zap"
+
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/auth"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/config"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/db"
@@ -23,9 +25,10 @@ type Server struct {
 	frontendOrigin    string         // Frontend origin for CORS
 	db                *db.DataBase   // Database connection
 	server            *http.ServeMux // HTTP request multiplexer
+	logger            *zap.Logger
 }
 
-func NewServer(cfg *config.Config, database *db.DataBase) *Server {
+func NewServer(cfg *config.Config, database *db.DataBase, logger *zap.Logger) *Server {
 	mux := http.NewServeMux()
 	return &Server{
 		address:           cfg.SERVER_SERVE_STRING,
@@ -36,6 +39,7 @@ func NewServer(cfg *config.Config, database *db.DataBase) *Server {
 		frontendOrigin:    cfg.SERVER_FRONTEND_URL,
 		db:                database,
 		server:            mux,
+		logger:            logger,
 	}
 	// TODO: store auth instance in Server struct (like db connection)
 	// Note: Now, we call NewAuth(authSecret) anytime we need auth service
@@ -52,14 +56,14 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	if offStr := query.Get("offset"); offStr != "" {
 		// If parameter is blank we leave it as default 0
 		if _, err := fmt.Sscanf(offStr, "%d", &request.Offset); err != nil {
-			responseWithError(w, http.StatusBadRequest, ErrMoviesInvalidParams)
+			responseWithError(w, http.StatusBadRequest, ErrMoviesInvalidParams, s.logger)
 			return
 		}
 	}
 	if limStr := query.Get("limit"); limStr != "" {
 		// If parameter is blank we leave it as default 0 (means no limit)
 		if _, err := fmt.Sscanf(limStr, "%d", &request.Limit); err != nil {
-			responseWithError(w, http.StatusBadRequest, ErrMoviesInvalidParams)
+			responseWithError(w, http.StatusBadRequest, ErrMoviesInvalidParams, s.logger)
 			return
 		}
 	}
@@ -75,35 +79,35 @@ func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 	request := models.SignUpRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		responseWithError(w, http.StatusBadRequest, ErrSignUpWrongData)
+		responseWithError(w, http.StatusBadRequest, ErrSignUpWrongData, s.logger)
 		return
 	}
 
 	if request.Email == "" || request.Password == "" {
 		// TODO: create a fancy logger
 		log.Println("SignUp: Email or password is empty")
-		responseWithError(w, http.StatusBadRequest, ErrSignUpWrongData)
+		responseWithError(w, http.StatusBadRequest, ErrSignUpWrongData, s.logger)
 		return
 	}
 
 	// Create user in database or get existing one
-	user, err, created := s.db.CreateUser(request.Email, request.Password)
+	user, err, created := s.db.CreateUser(request.Email, request.Password, s.logger)
 	if err != nil {
 		if !created {
-			responseWithError(w, http.StatusConflict, errorWithDetails(ErrSignUpUserExists, err.Error()))
+			responseWithError(w, http.StatusConflict, errorWithDetails(ErrSignUpUserExists, err.Error()), s.logger)
 		} else {
-			responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignUpInternal, err.Error()))
+			responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignUpInternal, err.Error()), s.logger)
 		}
 		return
 	}
 	log.Println("SignUp: Created new user:", user.Email)
 
 	// Create token for the new user
-	authenticator := auth.NewAuth(s.authSecret)
+	authenticator := auth.NewAuth(s.authSecret, s.logger)
 	claims := auth.NewJWTClaims(user.ID, "access", s.accessTokenExpiry, s.serverName)
 	token, err := authenticator.GenerateToken(claims)
 	if err != nil {
-		responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignUpInternal, err.Error()))
+		responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignUpInternal, err.Error()), s.logger)
 		return
 	}
 
@@ -124,29 +128,29 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 	request := models.SignInRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		responseWithError(w, http.StatusBadRequest, ErrSignInWrongData)
+		responseWithError(w, http.StatusBadRequest, ErrSignInWrongData, s.logger)
 		return
 	}
 
 	// Query user from database
 	user := s.db.FindUserByEmail(request.Email)
 	if user == nil {
-		responseWithError(w, http.StatusUnauthorized, ErrSignInWrongData)
+		responseWithError(w, http.StatusUnauthorized, ErrSignInWrongData, s.logger)
 		return
 	}
 
 	// Check password
 	if err := utils.ValidateHashedPasswordBcrypt(user.PasswordHash, request.Password); err != nil {
-		responseWithError(w, http.StatusUnauthorized, ErrSignInWrongData)
+		responseWithError(w, http.StatusUnauthorized, ErrSignInWrongData, s.logger)
 		return
 	}
 
 	// Right credentials, create token
-	authenticator := auth.NewAuth(s.authSecret)
+	authenticator := auth.NewAuth(s.authSecret, s.logger)
 	claims := auth.NewJWTClaims(user.ID, "access", s.accessTokenExpiry, s.serverName)
 	token, err := authenticator.GenerateToken(claims)
 	if err != nil {
-		responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignInInternal, err.Error()))
+		responseWithError(w, http.StatusInternalServerError, errorWithDetails(ErrSignInInternal, err.Error()), s.logger)
 		return
 	}
 
@@ -169,7 +173,7 @@ func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: Think about token blacklisting for token key
 	// TODO: Implement refresh tokens with short-lived access tokens
-	authentication := auth.NewAuth(s.authSecret)
+	authentication := auth.NewAuth(s.authSecret, s.logger)
 	log.Println("SignOut: User signed out")
 	authentication.TokenMgr.ResponseWithDeauth(w)
 	w.WriteHeader(http.StatusOK)
@@ -182,7 +186,7 @@ func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
 	user := s.db.FindUserByID(authCtx.Claims.Subject)
 	if user == nil {
 		log.Println("Auth: User not found")
-		responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired)
+		responseWithError(w, http.StatusUnauthorized, ErrInvalidOrExpired, s.logger)
 		return
 	}
 	log.Println("Auth: User authenticated:", user.Email)
@@ -203,8 +207,8 @@ func (s *Server) setupRoutes(prefix string) {
 	s.server.HandleFunc(prefix+"/movies", s.getAllMovies)
 	s.server.HandleFunc(prefix+"/auth/signup", s.signUp)
 	s.server.HandleFunc(prefix+"/auth/signin", s.signIn)
-	s.server.HandleFunc(prefix+"/auth/signout", withAuthRequired(s.signOut))
-	s.server.HandleFunc(prefix+"/auth", withAuthRequired(s.auth))
+	s.server.HandleFunc(prefix+"/auth/signout", withAuthRequired(s.signOut, s.logger))
+	s.server.HandleFunc(prefix+"/auth", withAuthRequired(s.auth, s.logger))
 }
 
 func (s *Server) Serve() {
@@ -217,9 +221,12 @@ func (s *Server) Serve() {
 			authMiddleware(
 				forceJSONMiddleware(s.server),
 				s.authSecret,
+				s.logger,
 			),
 			s.frontendOrigin,
+			s.logger,
 		),
+		s.logger,
 	)
 
 	log.Println("Server starting on", s.address)

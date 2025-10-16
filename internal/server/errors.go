@@ -2,10 +2,10 @@ package server
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/models"
+	"go.uber.org/zap"
 )
 
 var (
@@ -21,8 +21,13 @@ var (
 )
 
 // Helper function to respond with an error in JSON format
-func responseWithError(w http.ResponseWriter, statusCode int, err models.ErrorResponse) {
-	log.Printf("Error: %s - %s", err.Type, err.Message)
+func responseWithError(w http.ResponseWriter, statusCode int, err models.ErrorResponse, logger *zap.Logger) {
+	logger.Error("HTTP error response",
+		zap.Int("status_code", statusCode),
+		zap.String("error_type", err.Type),
+		zap.String("error_message", err.Message),
+	)
+
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(err)
 }
