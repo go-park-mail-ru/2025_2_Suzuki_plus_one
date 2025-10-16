@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -204,7 +203,9 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("SignIn: User signed in:", user.Email)
+	s.logger.Info("User signed in successfully",
+		zap.String("id", user.ID),
+		zap.String("email", request.Email))
 	// TODO: move this to internal/models converter DB -> API Response
 	response := models.SignInResponse{
 		User: models.UserAPI{
