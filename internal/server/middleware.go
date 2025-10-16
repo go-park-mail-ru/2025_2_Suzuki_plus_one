@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/auth"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/utils"
 	"go.uber.org/zap"
 )
 
@@ -90,7 +91,7 @@ func authMiddleware(next http.Handler, secret string, logger *zap.Logger) http.H
 				claims, err := authenticator.ValidateToken(token)
 				if err != nil {
 					logger.Warn("Token validation failed",
-						zap.String("token_prefix", safeTokenPrefix(token)),
+						zap.String("token_prefix", utils.SafeTokenPrefix(token)),
 						zap.Error(err))
 					log.Println("authMiddleware: error parsing token:", err)
 
@@ -113,15 +114,6 @@ func authMiddleware(next http.Handler, secret string, logger *zap.Logger) http.H
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-}
-
-// Function that helps safely logging token
-func safeTokenPrefix(tokenString string) string {
-	if (len(tokenString)) < 8 {
-		return "[short]"
-	}
-
-	return tokenString[:8] + "..."
 }
 
 // Wrapper that ensures authentication is valid
