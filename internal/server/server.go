@@ -261,7 +261,7 @@ func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
 
 // Add handlers to routes
 // Prefix is used for versioning, e.g. /api/v1/
-func (s *Server) setupRoutes(prefix string) error {
+func (s *Server) setupRoutes(prefix string) {
 	s.server.HandleFunc(prefix+"/movies", s.getAllMovies)
 	s.server.HandleFunc(prefix+"/auth/signup", s.signUp)
 	s.server.HandleFunc(prefix+"/auth/signin", s.signIn)
