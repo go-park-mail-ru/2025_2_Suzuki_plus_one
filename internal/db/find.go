@@ -71,3 +71,21 @@ func (db *DataBase) FindMovies(offset uint, limit uint) []models.Movie {
 	}()
 	return <-result
 }
+
+func (db *DataBase) FindActorByID(actorID string) *models.Actor {
+	result := make(chan *models.Actor)
+
+	go func() {
+		defer close(result)
+		db.mu.RLock()
+		defer db.mu.RUnlock()
+
+		for _, actor := range db.actors {
+			if actor.ID == actorID {
+				result <- &actor
+				return
+			}
+		}
+	}()
+	return <-result
+}

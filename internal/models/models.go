@@ -26,3 +26,16 @@ type Movie struct {
 	Genres  []string `json:"genres"`
 	Preview string   `json:"preview"`
 }
+
+type Actor struct {
+	ID           string `json:"id"`
+	Name         string `json:"name"`
+	DateOfBirth  string `json:"dateOfBirth"`
+	PlaceOfBirth string `json:"placeOfBirth"`
+	Biography    string `json:"biography"`
+	Preview      string `json:"preview"`
+}
+
+type ActorRequest struct {
+	ActorID string `json:"actorId"`
+}

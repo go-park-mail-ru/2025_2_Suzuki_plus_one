@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
@@ -89,6 +90,53 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(movies)
+}
+
+func (s *Server) actorHandler(w http.ResponseWriter, r *http.Request) {
+	path := strings.TrimPrefix(r.URL.Path, "/actor/")
+	parts := strings.Split(path, "/")
+
+	if len(path) == 0 || parts[0] == "" {
+		s.logger.Warn("Empty actor ID")
+		responseWithError(w, http.StatusBadRequest, ErrActorIdIsRequired, s.logger)
+		return
+	}
+
+	actorID := parts[0]
+
+	request := models.ActorRequest{
+		ActorID: actorID,
+	}
+
+	s.getActorById(w, r, request)
+}
+
+func (s *Server) getActorById(w http.ResponseWriter, r *http.Request, request models.ActorRequest) {
+	s.logger.Info("Fetching actor by id",
+		zap.String("actor_id", request.ActorID))
+
+	actorID := request.ActorID
+
+	if actorID == "" {
+		s.logger.Warn("ActorID is required")
+		responseWithError(w, http.StatusBadRequest, ErrActorIdIsRequired, s.logger)
+		return
+	}
+
+	actor := s.db.FindActorByID(actorID)
+	if actor == nil {
+		s.logger.Error("Could not find actor by id",
+			zap.String("actorID", actorID))
+		responseWithError(w, http.StatusNotFound, ErrACtorNotFound, s.logger)
+		return
+	}
+
+	s.logger.Info("Actor found successfully",
+		zap.String("actor_id", actorID),
+		zap.String("actor_name", actor.Name))
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(actor)
 }
 
 func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
@@ -265,6 +313,7 @@ func (s *Server) setupRoutes(prefix string) {
 	s.server.HandleFunc(prefix+"/movies", s.getAllMovies)
 	s.server.HandleFunc(prefix+"/auth/signup", s.signUp)
 	s.server.HandleFunc(prefix+"/auth/signin", s.signIn)
+	s.server.HandleFunc(prefix+"/actor/", s.actorHandler)
 	s.server.HandleFunc(prefix+"/auth/signout", withAuthRequired(s.signOut, s.logger))
 	s.server.HandleFunc(prefix+"/auth", withAuthRequired(s.auth, s.logger))
 }

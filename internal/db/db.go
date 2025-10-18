@@ -10,6 +10,7 @@ import (
 type DataBase struct {
 	movies []models.Movie
 	users  []models.UserDB
+	actors []models.Actor
 	mu     sync.RWMutex // Mutex for thread-safe access
 }
 
@@ -19,6 +20,7 @@ func NewDataBase() *DataBase {
 	return &DataBase{
 		movies: models.MockMovies(),
 		users:  models.MockUsers(),
+		actors: models.MockActors(),
 	}
 }
 
@@ -26,6 +28,7 @@ func NewMockDB() *DataBase {
 	return &DataBase{
 		movies: models.MockMovies(),
 		users:  models.MockUsers(),
+		actors: models.MockActors(),
 	}
 }
 

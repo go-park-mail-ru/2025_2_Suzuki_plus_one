@@ -26,6 +26,10 @@ type MoviesRequest struct {
 	Offset uint `query:"offset,omitempty"`
 }
 
+type ActorsRequest struct {
+	ActorID string `json:"actorId"`
+}
+
 // # Responses
 
 type Responder interface {

@@ -578,20 +578,16 @@ components:
           type: string
           format: date
           example: "1974-11-11"
-        place_of_birth:
+        placeOfBirth:
           type: string
           example: "Los Angeles, CA, USA"
         biography:
           type: string
           example: "Leonardo Wilhelm DiCaprio is an American actor and film producer."
-        photo:
+        preview:
           type: string
           format: uri
           example: https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Leonardo_Dicaprio_-_World_Premiere_%E2%80%98One_Battle_after_Another%E2%80%99.jpg/800px-Leonardo_Dicaprio_-_World_Premiere_%E2%80%98One_Battle_after_Another%E2%80%99.jpg
-        character:
-          type: string
-          example: "Cobb"
-          description: "Character name played by the actor (for movie cast)"
 
     ActorPage:
       type: object

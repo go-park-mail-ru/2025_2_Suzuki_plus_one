@@ -144,3 +144,56 @@ func MockAuthResponse() SignInResponse {
 		},
 	}
 }
+
+func MockActors() []Actor {
+	return []Actor{
+		{
+			ID:           "1",
+			Name:         "Leonardo DiCaprio",
+			DateOfBirth:  "1974-11-11",
+			PlaceOfBirth: "Los Angeles, California, USA",
+			Biography:    "Leonardo Wilhelm DiCaprio is an American actor and film producer. Known for his work in biopics and period films, he is the recipient of numerous accolades, including an Academy Award, a British Academy Film Award, and three Golden Globe Awards.",
+			Preview:      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Leonardo_Dicaprio_-_World_Premiere_%E2%80%98One_Battle_after_Another%E2%80%99.jpg/800px-Leonardo_Dicaprio_-_World_Premiere_%E2%80%98One_Battle_after_Another%E2%80%99.jpg",
+		},
+		{
+			ID:           "2",
+			Name:         "Tom Hanks",
+			DateOfBirth:  "1956-07-09",
+			PlaceOfBirth: "Concord, California, USA",
+			Biography:    "Thomas Jeffrey Hanks is an American actor and filmmaker. Known for both his comedic and dramatic roles, he is one of the most popular and recognizable film stars worldwide, and is regarded as an American cultural icon.",
+			Preview:      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/TomHanksPrincEdw031223_%2811_of_41%29_%28cropped%29.jpg/800px-TomHanksPrincEdw031223_%2811_of_41%29_%28cropped%29.jpg",
+		},
+		{
+			ID:           "3",
+			Name:         "Meryl Streep",
+			DateOfBirth:  "1949-06-22",
+			PlaceOfBirth: "Summit, New Jersey, USA",
+			Biography:    "Mary Louise Streep is an American actress. Often described as the best actress of her generation, Streep is particularly known for her versatility and accent adaptation. She has received numerous accolades throughout her career.",
+			Preview:      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Meryl_Streep_interview_at_Festival_de_Cannes_2024_%28cropped_2%29.jpg/800px-Meryl_Streep_interview_at_Festival_de_Cannes_2024_%28cropped_2%29.jpg",
+		},
+		{
+			ID:           "4",
+			Name:         "Robert Downey Jr.",
+			DateOfBirth:  "1965-04-04",
+			PlaceOfBirth: "Manhattan, New York City, USA",
+			Biography:    "Robert John Downey Jr. is an American actor. His career has been characterized by critical and popular success in his youth, followed by a period of substance abuse and legal troubles, before a resurgence of commercial success in middle age.",
+			Preview:      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Robert_Downey_Jr._2014_Comic-Con.jpg/800px-Robert_Downey_Jr._2014_Comic-Con.jpg",
+		},
+		{
+			ID:           "5",
+			Name:         "Scarlett Johansson",
+			DateOfBirth:  "1984-11-22",
+			PlaceOfBirth: "Manhattan, New York City, USA",
+			Biography:    "Scarlett Ingrid Johansson is an American actress. The world's highest-paid actress in 2018 and 2019, she has featured multiple times on the Forbes Celebrity 100 list. Her films have grossed over $14.3 billion worldwide.",
+			Preview:      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Scarlett_Johansson-8588.jpg/800px-Scarlett_Johansson-8588.jpg",
+		},
+		{
+			ID:           "6",
+			Name:         "Denzel Washington",
+			DateOfBirth:  "1954-12-28",
+			PlaceOfBirth: "Mount Vernon, New York, USA",
+			Biography:    "Denzel Hayes Washington Jr. is an American actor, director, and producer. He has been described as an actor who reconfigured the concept of classic movie stardom. Throughout his career, Washington has received numerous accolades.",
+			Preview:      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Denzel_Washington_at_the_2025_Cannes_Film_Festival.jpg/800px-Denzel_Washington_at_the_2025_Cannes_Film_Festival.jpg",
+		},
+	}
+}

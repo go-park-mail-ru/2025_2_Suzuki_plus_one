@@ -18,6 +18,8 @@ var (
 	ErrSignUpInternal   = models.ErrorResponse{Type: "auth", Message: "internal server error"}
 
 	ErrMoviesInvalidParams = models.ErrorResponse{Type: "content", Message: "invalid request parameters"}
+	ErrActorIdIsRequired   = models.ErrorResponse{Type: "content", Message: "ActorID is required"}
+	ErrACtorNotFound       = models.ErrorResponse{Type: "content", Message: "Actor not found"}
 )
 
 // Helper function to respond with an error in JSON format
