@@ -50,7 +50,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /movies/{id}:
+  /movie/{id}:
     get:
       summary: "Get movie details by ID"
       tags:

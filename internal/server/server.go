@@ -92,6 +92,53 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(movies)
 }
 
+func (s *Server) movieHandler(w http.ResponseWriter, r *http.Request) {
+	path := strings.TrimPrefix(r.URL.Path, "/movie/")
+	parts := strings.Split(path, "/")
+
+	if len(path) == 0 || parts[0] == "" {
+		s.logger.Warn("Empty movie ID")
+		responseWithError(w, http.StatusBadRequest, ErrMovieIdIsRequired, s.logger)
+		return
+	}
+
+	movieID := parts[0]
+
+	request := models.MovieIDRequest{
+		MovieID: movieID,
+	}
+
+	s.getMovieById(w, r, request)
+}
+
+func (s *Server) getMovieById(w http.ResponseWriter, r *http.Request, request models.MovieIDRequest) {
+	s.logger.Info("Fetching movie by id",
+		zap.String("movie_id", request.MovieID))
+
+	movieID := request.MovieID
+
+	if movieID == "" {
+		s.logger.Warn("MovieID is required")
+		responseWithError(w, http.StatusBadRequest, ErrMovieIdIsRequired, s.logger)
+		return
+	}
+
+	movie := s.db.FindActorByID(movieID)
+	if movie == nil {
+		s.logger.Error("Could not find movie by id",
+			zap.String("movieID", movieID))
+		responseWithError(w, http.StatusNotFound, ErrMovieNotFound, s.logger)
+		return
+	}
+
+	s.logger.Info("Actor found successfully",
+		zap.String("actor_id", movieID),
+		zap.String("actor_name", movie.Name))
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(movie)
+}
+
 func (s *Server) actorHandler(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimPrefix(r.URL.Path, "/actor/")
 	parts := strings.Split(path, "/")
@@ -104,14 +151,14 @@ func (s *Server) actorHandler(w http.ResponseWriter, r *http.Request) {
 
 	actorID := parts[0]
 
-	request := models.ActorRequest{
+	request := models.ActorIDRequest{
 		ActorID: actorID,
 	}
 
 	s.getActorById(w, r, request)
 }
 
-func (s *Server) getActorById(w http.ResponseWriter, r *http.Request, request models.ActorRequest) {
+func (s *Server) getActorById(w http.ResponseWriter, r *http.Request, request models.ActorIDRequest) {
 	s.logger.Info("Fetching actor by id",
 		zap.String("actor_id", request.ActorID))
 
@@ -127,7 +174,7 @@ func (s *Server) getActorById(w http.ResponseWriter, r *http.Request, request mo
 	if actor == nil {
 		s.logger.Error("Could not find actor by id",
 			zap.String("actorID", actorID))
-		responseWithError(w, http.StatusNotFound, ErrACtorNotFound, s.logger)
+		responseWithError(w, http.StatusNotFound, ErrActorNotFound, s.logger)
 		return
 	}
 
@@ -311,6 +358,7 @@ func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
 // Prefix is used for versioning, e.g. /api/v1/
 func (s *Server) setupRoutes(prefix string) {
 	s.server.HandleFunc(prefix+"/movies", s.getAllMovies)
+	s.server.HandleFunc(prefix+"/movie/", s.movieHandler)
 	s.server.HandleFunc(prefix+"/auth/signup", s.signUp)
 	s.server.HandleFunc(prefix+"/auth/signin", s.signIn)
 	s.server.HandleFunc(prefix+"/actor/", s.actorHandler)
