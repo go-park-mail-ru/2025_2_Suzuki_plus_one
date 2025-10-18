@@ -359,11 +359,16 @@ func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
 func (s *Server) setupRoutes(prefix string) {
 	s.server.HandleFunc(prefix+"/movies", s.getAllMovies)
 	s.server.HandleFunc(prefix+"/movie/", s.movieHandler)
+	s.server.HandleFunc(prefix+"/actor/", s.actorHandler)
 	s.server.HandleFunc(prefix+"/auth/signup", s.signUp)
 	s.server.HandleFunc(prefix+"/auth/signin", s.signIn)
-	s.server.HandleFunc(prefix+"/actor/", s.actorHandler)
 	s.server.HandleFunc(prefix+"/auth/signout", withAuthRequired(s.signOut, s.logger))
 	s.server.HandleFunc(prefix+"/auth", withAuthRequired(s.auth, s.logger))
+
+	// TODO
+	//s.server.HandleFunc(prefix+"/user/account", s.actorHandler)                               <----------------
+	//s.server.HandleFunc(prefix+"/user/security", s.actorHandler)
+	//s.server.HandleFunc(prefix+"/user/notifications", s.actorHandler)
 }
 
 func (s *Server) Serve() error {
