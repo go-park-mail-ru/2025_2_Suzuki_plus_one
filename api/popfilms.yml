@@ -50,7 +50,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /movies/{id}:
+  /movie/{id}:
     get:
       summary: "Get movie details by ID"
       tags:
@@ -427,7 +427,7 @@ components:
         username:
           type: string
           example: "testuser"
-    
+
     UserAccount:
       type: object
       properties:
@@ -470,7 +470,7 @@ components:
         phone:
           type: string
           example: "+79999999999"
-    
+
     SecuritySettings:
       type: object
       description: Empty object representing security settings from structure
@@ -481,7 +481,6 @@ components:
       required:
         - oldPassword
         - newPassword
-        - repeatPassword
       properties:
         oldPassword:
           type: string
@@ -492,12 +491,7 @@ components:
           format: password
           minLength: 8
           example: "newPassword123"
-        repeatPassword:
-          type: string
-          format: password
-          minLength: 8
-          example: "newPassword123"
-      
+
     NotificationSettings:
       type: object
       properties:
@@ -505,7 +499,7 @@ components:
           description: "Subscribe to promotional emails"
           type: boolean
           example: true
-          
+
     Movies:
       type: object
       properties:
@@ -578,20 +572,16 @@ components:
           type: string
           format: date
           example: "1974-11-11"
-        place_of_birth:
+        placeOfBirth:
           type: string
           example: "Los Angeles, CA, USA"
         biography:
           type: string
           example: "Leonardo Wilhelm DiCaprio is an American actor and film producer."
-        photo:
+        preview:
           type: string
           format: uri
           example: https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Leonardo_Dicaprio_-_World_Premiere_%E2%80%98One_Battle_after_Another%E2%80%99.jpg/800px-Leonardo_Dicaprio_-_World_Premiere_%E2%80%98One_Battle_after_Another%E2%80%99.jpg
-        character:
-          type: string
-          example: "Cobb"
-          description: "Character name played by the actor (for movie cast)"
 
     ActorPage:
       type: object

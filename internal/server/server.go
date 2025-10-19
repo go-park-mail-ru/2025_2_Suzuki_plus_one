@@ -282,7 +282,6 @@ func (s *Server) Serve() error {
 				s.logger,
 			),
 			s.frontendOrigin,
-			s.logger,
 		),
 		s.logger,
 	)
