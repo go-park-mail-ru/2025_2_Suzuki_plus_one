@@ -12,19 +12,14 @@ import (
 )
 
 // Middleware for handling CORS
-func corsMiddleware(next http.Handler, frontendOrigin string, logger *zap.Logger) http.Handler {
+func corsMiddleware(next http.Handler, frontendOrigin string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger.Debug("CORS Middleware",
-			zap.String("origin", r.Header.Get("Origin")),
-			zap.String("method", r.Method))
-
 		w.Header().Set("Access-Control-Allow-Origin", frontendOrigin)
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		// Allow cookies to be sent in cross-origin requests
 		// w.Header().Set("Access-Control-Allow-Credentials", "true") // Requires Allow-origin not '*'
 		if r.Method == "OPTIONS" {
-			logger.Debug("CORS OPTIONS")
 			w.WriteHeader(http.StatusOK)
 			return
 		}
