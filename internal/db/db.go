@@ -37,3 +37,24 @@ func NewMockDB() *DataBase {
 func (db *DataBase) getNewID() string {
 	return strconv.Itoa(len(db.users) + 1)
 }
+
+// All these functions must be completed when postgres will be connected
+func (db *DataBase) UpdateUserAccount(id string, request models.UserAccountUpdate) error {
+	// Just doin nothing rn
+	return nil
+}
+
+func (db *DataBase) FindUserNotifications(id string) interface{} {
+	// Just doin nothing rn
+	return nil
+}
+
+func (db *DataBase) UpdateUserNotifications(id string, request models.NotificationSettings) error {
+	// Just doin nothing rn
+	return nil
+}
+
+func (db *DataBase) UpdateUserPassword(id string, password string, password2 string) error {
+	// Just doin nothing rn
+	return nil
+}

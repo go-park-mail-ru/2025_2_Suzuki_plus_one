@@ -18,6 +18,23 @@ type UserAPI struct {
 	Username string `json:"username"`
 }
 
+type UserAccountUpdate struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
+type SecuritySettings struct {
+}
+
+type PasswordUpdate struct {
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
+}
+
+type NotificationSettings struct {
+	AdvertEmailSubscription bool `json:"AdvertEmailSubscription"'`
+}
+
 // MovieAPI and MovieDB coincide
 type Movie struct {
 	ID      string   `json:"id"`

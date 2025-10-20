@@ -354,21 +354,210 @@ func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func (s *Server) userAccountHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		s.getUserAccount(w, r)
+	case http.MethodPut:
+		s.updateUserAccount(w, r)
+	default:
+		responseWithError(w, http.StatusMethodNotAllowed, ErrMethodNotAllowed, s.logger)
+	}
+}
+
+func (s *Server) getUserAccount(w http.ResponseWriter, r *http.Request) {
+	authCtx := r.Context().Value(AuthContextKey).(*authContext)
+	userID := authCtx.Claims.Subject
+
+	s.logger.Info("User account",
+		zap.String("user_id", userID))
+
+	user := s.db.FindUserByID(userID)
+	if user == nil {
+		s.logger.Warn("User account not found",
+			zap.String("user_id", userID))
+
+		responseWithError(w, http.StatusNotFound, ErrUserNotFound, s.logger)
+		return
+	}
+
+	accountInfo := models.UserAPI{
+		ID:       user.ID,
+		Email:    user.Email,
+		Username: user.Username,
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(accountInfo)
+}
+
+func (s *Server) updateUserAccount(w http.ResponseWriter, r *http.Request) {
+	authCtx := r.Context().Value(AuthContextKey).(*authContext)
+	userID := authCtx.Claims.Subject
+
+	s.logger.Info("User account",
+		zap.String("user_id", userID))
+
+	var updateRequest models.UserAccountUpdate
+	if err := json.NewDecoder(r.Body).Decode(&updateRequest); err != nil {
+		s.logger.Warn("Failed to decode request body", zap.Error(err))
+		responseWithError(w, http.StatusBadRequest, ErrInvalidRequestData, s.logger)
+		return
+	}
+
+	err := s.db.UpdateUserAccount(userID, updateRequest)
+	if err != nil {
+		s.logger.Warn("Failed to update user account",
+			zap.String("user_id", userID),
+			zap.Error(err))
+		responseWithError(w, http.StatusInternalServerError, ErrInternalServer, s.logger)
+		return
+	}
+
+	s.logger.Info("User account updated successfully",
+		zap.String("user_id", userID))
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"status": "updated"})
+}
+
+func (s *Server) userSecurityHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		s.getUserSecutiry(w, r)
+	case http.MethodPut:
+		s.updateUserSecurity(w, r)
+	default:
+		responseWithError(w, http.StatusMethodNotAllowed, ErrMethodNotAllowed, s.logger)
+	}
+}
+
+func (s *Server) getUserSecutiry(w http.ResponseWriter, r *http.Request) {
+	authCtx := r.Context().Value(AuthContextKey).(*authContext)
+	userID := authCtx.Claims.Subject
+
+	s.logger.Debug("Getting user security form", zap.String("user_id", userID))
+
+	securityForm := models.SecuritySettings{}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(securityForm)
+}
+
+func (s *Server) updateUserSecurity(w http.ResponseWriter, r *http.Request) {
+	authCtx := r.Context().Value(AuthContextKey).(*authContext)
+	userID := authCtx.Claims.Subject
+
+	s.logger.Info("Updating User Security",
+		zap.String("user_id", userID))
+
+	var passwordRequest models.PasswordUpdate
+	if err := json.NewDecoder(r.Body).Decode(&passwordRequest); err != nil {
+		s.logger.Warn("Failed to decode password request", zap.Error(err))
+		responseWithError(w, http.StatusBadRequest, ErrInvalidRequestData, s.logger)
+		return
+	}
+
+	//NOT SAFE must be changed later
+	err := s.db.UpdateUserPassword(userID, passwordRequest.OldPassword, passwordRequest.NewPassword)
+	if err != nil {
+		s.logger.Warn("Failed to update password",
+			zap.String("user_id", userID),
+			zap.Error(err))
+
+		responseWithError(w, http.StatusInternalServerError, ErrInternalServer, s.logger)
+		return
+	}
+
+	s.logger.Info("User password updated successfully",
+		zap.String("user_id", userID))
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"status": "updated"})
+}
+
+func (s *Server) userNotificationsHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		s.getUserNotifications(w, r)
+	case http.MethodPut:
+		s.updateUserNotifications(w, r)
+	default:
+		responseWithError(w, http.StatusMethodNotAllowed, ErrMethodNotAllowed, s.logger)
+	}
+}
+
+func (s *Server) getUserNotifications(w http.ResponseWriter, r *http.Request) {
+	authCtx := r.Context().Value(AuthContextKey).(*authContext)
+	userID := authCtx.Claims.Subject
+
+	s.logger.Debug("Getting user notifications",
+		zap.String("user_id", userID))
+
+	notifications := s.db.FindUserNotifications(userID)
+	if notifications == nil {
+		notifications = &models.NotificationSettings{
+			AdvertEmailSubscription: false,
+		}
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(notifications)
+}
+
+func (s *Server) updateUserNotifications(w http.ResponseWriter, r *http.Request) {
+	authCtx := r.Context().Value(AuthContextKey).(*authContext)
+	userID := authCtx.Claims.Subject
+
+	s.logger.Info("Updating user notifications",
+		zap.String("user_id", userID))
+
+	var notificationRequest models.NotificationSettings
+	if err := json.NewDecoder(r.Body).Decode(&notificationRequest); err != nil {
+		s.logger.Warn("Failed to decode notification request",
+			zap.Error(err))
+		responseWithError(w, http.StatusBadRequest, ErrInvalidRequestData, s.logger)
+		return
+	}
+
+	err := s.db.UpdateUserNotifications(userID, notificationRequest)
+	if err != nil {
+		s.logger.Warn("Failed to update user notifications",
+			zap.String("user_id", userID),
+			zap.Error(err))
+		responseWithError(w, http.StatusInternalServerError, ErrInternalServer, s.logger)
+		return
+	}
+
+	s.logger.Info("User notifications updated successfully",
+		zap.String("user_id", userID))
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(notificationRequest)
+}
+
 // Add handlers to routes
 // Prefix is used for versioning, e.g. /api/v1/
 func (s *Server) setupRoutes(prefix string) {
 	s.server.HandleFunc(prefix+"/movies", s.getAllMovies)
 	s.server.HandleFunc(prefix+"/movie/", s.movieHandler)
+
 	s.server.HandleFunc(prefix+"/actor/", s.actorHandler)
+
 	s.server.HandleFunc(prefix+"/auth/signup", s.signUp)
 	s.server.HandleFunc(prefix+"/auth/signin", s.signIn)
 	s.server.HandleFunc(prefix+"/auth/signout", withAuthRequired(s.signOut, s.logger))
 	s.server.HandleFunc(prefix+"/auth", withAuthRequired(s.auth, s.logger))
 
-	// TODO
-	//s.server.HandleFunc(prefix+"/user/account", s.actorHandler)                               <----------------
-	//s.server.HandleFunc(prefix+"/user/security", s.actorHandler)
-	//s.server.HandleFunc(prefix+"/user/notifications", s.actorHandler)
+	/*
+	   	s.server.HandleFunc(prefix+"/user/account", withAuthRequired(s.userAccountHandler, s.logger))
+	   	s.server.HandleFunc(prefix+"/user/security", withAuthRequired(s.userSecurityHandler, s.logger))
+	   	s.server.HandleFunc(prefix+"/user/notifications", withAuthRequired(s.userNotificationsHandler, s.logger))
+	   DEBUG
+	*/
+
+	s.server.HandleFunc(prefix+"/user/account", s.userAccountHandler)
+	s.server.HandleFunc(prefix+"/user/security", s.userSecurityHandler)
+	s.server.HandleFunc(prefix+"/user/notifications", s.userNotificationsHandler)
 }
 
 func (s *Server) Serve() error {

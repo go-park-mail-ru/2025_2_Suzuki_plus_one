@@ -23,6 +23,12 @@ var (
 
 	ErrMovieIdIsRequired = models.ErrorResponse{Type: "content", Message: "MovieID is required"}
 	ErrMovieNotFound     = models.ErrorResponse{Type: "content", Message: "Movie not found"}
+
+	ErrMethodNotAllowed   = models.ErrorResponse{Type: "content", Message: "Method not allowed"}
+	ErrUserNotFound       = models.ErrorResponse{Type: "content", Message: "User not found"}
+	ErrWrongPassword      = models.ErrorResponse{Type: "content", Message: "Wrong password"}
+	ErrInvalidRequestData = models.ErrorResponse{Type: "content", Message: "Invalid request data"}
+	ErrInternalServer     = models.ErrorResponse{Type: "content", Message: "Internal server error"}
 )
 
 // Helper function to respond with an error in JSON format
