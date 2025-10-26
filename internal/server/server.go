@@ -89,7 +89,6 @@ func (s *Server) getAllMovies(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(movies)
-	w.WriteHeader(http.StatusOK)
 }
 
 func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
@@ -214,8 +213,8 @@ func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
 			Username: user.Username,
 		},
 	}
-	authenticator.TokenMgr.ResponseWithAuth(w, token, response)
 	w.WriteHeader(http.StatusOK)
+	authenticator.TokenMgr.ResponseWithAuth(w, token, response)
 }
 
 func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
@@ -226,9 +225,9 @@ func (s *Server) signOut(w http.ResponseWriter, r *http.Request) {
 	// TODO: Think about token blacklisting for token key
 	// TODO: Implement refresh tokens with short-lived access tokens
 	authentication := auth.NewAuth(s.authSecret, s.logger)
-	w.WriteHeader(http.StatusOK)
 	authentication.TokenMgr.ResponseWithDeauth(w)
-
+	w.WriteHeader(http.StatusOK)
+	
 	s.logger.Info("User signed out successfully")
 }
 
@@ -256,8 +255,8 @@ func (s *Server) auth(w http.ResponseWriter, r *http.Request) {
 			Username: user.Username,
 		},
 	}
-	json.NewEncoder(w).Encode(response)
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
 }
 
 // Add handlers to routes
