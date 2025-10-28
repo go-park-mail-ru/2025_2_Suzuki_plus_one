@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+// TODO: resturucture config if it grows too big.
+// See https://github.com/evrone/go-clean-template/blob/master/config/config.go for reference.
+
 // Config holds all environment-driven settings.
 // Please keep fields as in .env file for easier reference.
 // See .env.example for documentation.
@@ -19,6 +22,7 @@ type Config struct {
 	SERVER_JWT_REFRESH_EXPIRATION time.Duration
 	SERVER_NAME                   string
 	SERVER_FRONTEND_URL           string
+	POPFILMS_ENVIRONMENT          string
 }
 
 // Load loads config from env vars with defaults and validation.
@@ -31,6 +35,7 @@ func Load() Config {
 		SERVER_JWT_REFRESH_EXPIRATION: parseDuration(getEnv("SERVER_JWT_REFRESH_EXPIRATION", "1440m")),
 		SERVER_NAME:                   getEnv("SERVER_NAME", "Localhost"),
 		SERVER_FRONTEND_URL:           trimTrailingSlash(mustEnv("SERVER_FRONTEND_URL")),
+		POPFILMS_ENVIRONMENT:          getEnv("POPFILMS_ENVIRONMENT", "development"),
 	}
 
 	return cfg
