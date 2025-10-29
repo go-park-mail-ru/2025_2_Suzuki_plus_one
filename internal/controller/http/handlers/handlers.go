@@ -13,7 +13,7 @@ type Handlers struct {
 
 func NewHandlers(getMoviesUsecase controller.GetMoviesUsecase, logger logger.Logger) *Handlers {
 	return &Handlers{
-		logger: logger,
+		logger:           logger,
 		GetMoviesUseCase: getMoviesUsecase,
 	}
 }

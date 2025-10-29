@@ -13,4 +13,3 @@ func NewError(errType string, err error, details string) Error {
 		Details: details,
 	}
 }
-

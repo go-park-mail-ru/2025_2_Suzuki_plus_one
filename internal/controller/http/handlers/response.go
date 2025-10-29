@@ -7,6 +7,12 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 )
 
+// [dto.Error] wrapper for HTTP handlers
+type ResponseError struct {
+	Code    int
+	Message string
+}
+
 // Encodes and sends a JSON response with the given status code and data
 func (h *Handlers) Response(w http.ResponseWriter, status int, data any) {
 	h.logger.Info("HTTP response",
@@ -17,6 +23,7 @@ func (h *Handlers) Response(w http.ResponseWriter, status int, data any) {
 	json.NewEncoder(w).Encode(data)
 }
 
+// Sets error type and sends a JSON error response
 func (h *Handlers) ResponseWithError(w http.ResponseWriter, err ResponseError, details string) {
 	dto := dto.Error{
 		Type:    "controller/http",

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,52 +10,39 @@ import (
 var (
 	ErrMoviesInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: "Invalid query parameters for movies",
+		Message: "Invalid parameters for movies",
 	}
 )
 
 // Get all movies from database
 func (h *Handlers) GetMovies(w http.ResponseWriter, r *http.Request) {
+	// Hadndle input parameters
 	input := dto.GetMoviesInput{}
-
-	// TODO: add validation middleware
-	// Parse query parameters
-	query := r.URL.Query()
-	if offStr := query.Get("offset"); offStr != "" {
-		// If parameter is blank we leave it as default 0
-		if _, err := fmt.Sscanf(offStr, "%d", &input.Offset); err != nil {
-			h.logger.Warn("Invalid offset parameter",
-				h.logger.ToString("offset", offStr),
-				h.logger.ToError(err))
-
-			h.ResponseWithError(w, ErrMoviesInvalidParams, "Invalid offset parameter")
-			return
-		}
-	}
-	if limStr := query.Get("limit"); limStr != "" {
-		// If parameter is blank we leave it as default 0 (means no limit)
-		if _, err := fmt.Sscanf(limStr, "%d", &input.Limit); err != nil {
-			h.logger.Warn("Invalid limit parameter",
-				h.logger.ToString("limit", limStr),
-				h.logger.ToError(err))
-			h.ResponseWithError(w, ErrMoviesInvalidParams, "Invalid limit parameter")
-			return
-		}
-	}
-
-	// Execute use case
-	output, err := h.GetMoviesUseCase.Execute(input)
-	if err != nil {
-		h.logger.Error("Failed to fetch movies",
-			h.logger.ToString("error", err.Message))
-		h.ResponseWithError(w, ErrMoviesInvalidParams, "Failed to fetch movies")
+	rp := NewRequestParams(h.logger, r, &input)
+	rp.AddQuery("offset", &input.Offset)
+	rp.AddQuery("limit", &input.Limit)
+	if err := rp.Parse(); err != nil {
+		h.logger.Error("Failed to parse query parameters",
+			h.logger.ToString("error", err.Error()))
+		h.ResponseWithError(w, ErrMoviesInvalidParams, err.Error())
 		return
 	}
 
-	h.logger.Info("Fetching completed successfully",
+	// Execute use case
+	output, err := h.GetMoviesUseCase.Execute(rp.GetContext(), input)
+	if err != nil {
+		h.logger.Error("Failed to fetch movies",
+			h.logger.ToString("error", err.Message))
+		// Respond with error
+		h.Response(w, ErrMoviesInvalidParams.Code, err)
+		return
+	}
+
+	h.logger.Info("Fetching movies completed successfully",
 		h.logger.ToString("count", strconv.FormatInt(int64(len(output.Movies)), 10)),
 		h.logger.ToString("offset", strconv.FormatUint(uint64(input.Offset), 10)),
 		h.logger.ToString("limit", strconv.FormatUint(uint64(input.Limit), 10)))
 
+	// Respond with output
 	h.Response(w, http.StatusOK, output)
 }

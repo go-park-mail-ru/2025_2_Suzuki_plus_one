@@ -1,7 +1,8 @@
 package middleware
 
-
-import "net/http"
+import (
+	"net/http"
+)
 
 // Middleware to always set Content-Type to application/json
 func SetJSON(next http.Handler) http.Handler {

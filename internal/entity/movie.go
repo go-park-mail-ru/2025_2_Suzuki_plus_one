@@ -1,6 +1,8 @@
 package entity
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Movie struct {
 	ID      string   `json:"id"`
@@ -22,4 +24,14 @@ func NewMovie(id, title string, year int, genres []string, preview string) (Movi
 		return Movie{}, fmt.Errorf("invalid movie entity validation: %w", err)
 	}
 	return m, nil
+}
+
+func NewTestMovie(id string) Movie {
+	return Movie{
+		ID:      id,
+		Title:   "Test Movie",
+		Year:    2023,
+		Genres:  []string{"Drama", "Action"},
+		Preview: "http://example.com/preview.jpg",
+	}
 }

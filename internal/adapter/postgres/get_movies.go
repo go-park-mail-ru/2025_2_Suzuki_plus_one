@@ -8,4 +8,3 @@ func (db *DataBase) FindMovies(offset uint, limit uint) []entity.Movie {
 	// Implementation for fetching movies from Postgres database
 	return []entity.Movie{}
 }
-
