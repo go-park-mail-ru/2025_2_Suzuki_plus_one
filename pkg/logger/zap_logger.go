@@ -15,14 +15,14 @@ type zapLogger struct {
 // Create a new Logger instance using zap
 //
 // Panics if zap logger initialization fails
-func NewZapLogger(development bool) (Logger) {
+func NewZapLogger(development bool) Logger {
 	var zapLog *zap.Logger
 	var err error
 
 	if development {
-		zapLog, err = zap.NewDevelopment()
+		zapLog, err = zap.NewDevelopment(zap.AddCaller(), zap.AddCallerSkip(1))
 	} else {
-		zapLog, err = zap.NewProduction()
+		zapLog, err = zap.NewProduction(zap.AddCaller(), zap.AddCallerSkip(1))
 	}
 
 	if err != nil {
@@ -79,7 +79,6 @@ func (z *zapLogger) Sync() error {
 // Helper converters to create zap.Field values that can be passed through
 // the public helper methods. We return zap.Field as interface{} so it
 // satisfies the Logger interface contract.
-
 
 func (z *zapLogger) ToString(key, value string) interface{} {
 	return zap.String(key, value)
