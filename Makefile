@@ -1,30 +1,14 @@
-# .PHONY: run build test
-
-# ENTRYPOINT=./cmd/main.go
-# APP_EXECUTABLE=server
-
-# run:
-# 	go run $(ENTRYPOINT)
-
-# build:
-# 	go build -o $(APP_EXECUTABLE) $(ENTRYPOINT)
-
-# test:
-# 	go test ./... -cover
-
+# Makefile for Go projects template
 # https://www.mohitkhare.com/blog/go-makefile/
 
-# update app name. this is the name of binary
+# Makefile settings
+SHELL := /bin/bash # Use bash syntax
+
+# Go settings
+ALL_PACKAGES=$(shell go list ./... | grep -v /vendor)
 APP=server
 APP_EXECUTABLE="./build/$(APP)"
 ENTRYPOINT=./cmd/main.go
-ALL_PACKAGES=$(shell go list ./... | grep -v /vendor)
-SHELL := /bin/bash # Use bash syntax
-
-# Optional if you need DB and migration commands
-# DB_HOST=$(shell cat config/application.yml | grep -m 1 -i HOST | cut -d ":" -f2)
-# DB_NAME=$(shell cat config/application.yml | grep -w -i NAME  | cut -d ":" -f2)
-# DB_USER=$(shell cat config/application.yml | grep -i USERNAME | cut -d ":" -f2)
 
 # Optional colors to beautify output
 GREEN  := $(shell tput -Txterm setaf 2)
@@ -32,6 +16,9 @@ YELLOW := $(shell tput -Txterm setaf 3)
 WHITE  := $(shell tput -Txterm setaf 7)
 CYAN   := $(shell tput -Txterm setaf 6)
 RESET  := $(shell tput -Txterm sgr0)
+
+.PHONY: all test build vendor
+
 
 ## Quality
 check-quality: ## runs code quality checks
@@ -61,8 +48,6 @@ coverage: ## displays test coverage report in html mode
 	make test
 	go tool cover -html=coverage.out -o coverage.html
 
-environment: ## Source environment file
-	@if [ ! -f .env ]; then cp .env.example .env; fi
 
 ## Build
 build: ## build the go application
@@ -70,11 +55,17 @@ build: ## build the go application
 	go build -o $(APP_EXECUTABLE) $(ENTRYPOINT)
 	@echo "Build passed"
 
-run: ## runs the go binary. use additional options if required.
+start: ## starts the application (requires built binary)
+	@echo "Starting $(APP_EXECUTABLE)..."
+	source .env && $(APP_EXECUTABLE)
+
+live: ## launch the application using air for live reloading
+	source .env && air
+
+run: ## builds and starts the application
 	make build
 	chmod +x $(APP_EXECUTABLE)
-	@echo "Starting $(APP_EXECUTABLE)..."
-	$(APP_EXECUTABLE)
+	make start
 
 clean: ## cleans binary and other generated files
 	go clean
@@ -84,12 +75,48 @@ clean: ## cleans binary and other generated files
 vendor: ## all packages required to support builds and tests in the /vendor directory
 	go mod vendor
 
-.PHONY: all test build vendor
-## All
-all: ## runs setup, quality checks and builds
-	make check-quality
-	make test
-	make build
+## Database
+
+# Postgres commands using docker-compose
+db-start: ## starts the database using docker-compose
+	source .env && docker compose up -d db
+db-stop: ## stops the database using docker-compose
+	source .env && docker compose down db
+db-wipe: ## wipes the database container and its volume
+	source .env && docker compose down -v db
+db-logs: ## views database logs
+	source .env && docker compose logs -f db
+db-ps:   ## lists docker status of the database container
+	source .env && docker compose ps db
+
+# Psql shell command
+db-shell: ## connects to the database shell with psql
+	source .env && \
+	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB
+
+db-check: ## checks database connection
+	source .env && \
+	pg_isready -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB
+
+## Migrations
+migrate-create: ## creates a new migration file. Usage: make migrate-create NAME=<name>
+	@if [ -z "$(NAME)" ]; then \
+		echo "NAME is undefined. Usage: make migrate-create NAME=<name>"; \
+		exit 1; \
+	fi
+	@echo "Creating new migration: $(NAME)"
+	migrate create -ext sql -dir ./migrations -seq $(NAME)
+
+migrate-up: ## applies all up migrations
+	source .env && \
+	POSTGRESQL_URL="postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@localhost:5432/$$POSTGRES_DB?sslmode=disable" && \
+	migrate -path ./migrations -database $$POSTGRESQL_URL up
+
+migrate-down: ## applies all down migrations
+	source .env && \
+	POSTGRESQL_URL="postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@localhost:5432/$$POSTGRES_DB?sslmode=disable" && \
+	migrate -path ./migrations -database $$POSTGRESQL_URL down
+
 
 .PHONY: help
 ## Help
