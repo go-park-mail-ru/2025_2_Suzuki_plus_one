@@ -69,26 +69,33 @@ CREATE TABLE media_episode (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_episode_media FOREIGN KEY (episode_id) REFERENCES media (media_id) ON DELETE CASCADE,
-    CONSTRAINT fk_episode_series FOREIGN KEY (series_id) REFERENCES media (media_id) ON DELETE CASCADE,
-    -- Ensure episode_id refers to a media row with media_type='episode'
-    CONSTRAINT chk_episode_id_is_episode CHECK (
-        EXISTS (
-            SELECT 1
-            FROM media m
-            WHERE m.media_id = episode_id
-                AND m.media_type = 'episode'
-        )
-    ),
-    -- Ensure series_id refers to a media row with media_type='series'
-    CONSTRAINT chk_series_id_is_series CHECK (
-        EXISTS (
-            SELECT 1
-            FROM media m
-            WHERE m.media_id = series_id
-                AND m.media_type = 'series'
-        )
-    )
+    CONSTRAINT fk_episode_series FOREIGN KEY (series_id) REFERENCES media (media_id) ON DELETE CASCADE
 );
+
+-- Trigger function to enforce media_type constraints on media_episode
+CREATE OR REPLACE FUNCTION check_media_episode_types()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Ensure episode_id refers to a media row with media_type='episode'
+    IF NOT EXISTS (SELECT 1 FROM media WHERE media_id = NEW.episode_id AND media_type = 'episode') THEN
+        RAISE EXCEPTION 'episode_id % does not refer to an episode media entry', NEW.episode_id;
+    END IF;
+
+    -- Ensure series_id refers to a media row with media_type='series'
+    IF NOT EXISTS (SELECT 1 FROM media WHERE media_id = NEW.series_id AND media_type = 'series') THEN
+        RAISE EXCEPTION 'series_id % does not refer to a series media entry', NEW.series_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Attach check_media_episode_types trigger to media_episode table
+CREATE TRIGGER trg_check_media_episode_types
+BEFORE INSERT OR UPDATE ON media_episode
+FOR EACH ROW
+EXECUTE FUNCTION check_media_episode_types();
+
 -- Media <-> Images
 CREATE TABLE asset (
     asset_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
