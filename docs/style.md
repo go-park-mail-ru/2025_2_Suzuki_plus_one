@@ -7,10 +7,36 @@ We use [hooks](./githooks.md) to enforce every commit has passed `go fmt`, `go v
 Follow [standard](https://github.com/golang-standards/project-layout) project layout.
 
 - `api` - API definitions (OpenAPI, protobuf, etc)
-- `cmd` - applications entry points
+- `cmd` - application entry points
 - `docs` - documentation
 - `githooks` - git hooks (pre-commit)
-- `internal` - applications code
+- `internal` - application code
+- `config` - configuration
+- `deployments` - deployment files (docker, k8s. TODO: separate to `deployments/docker`, `deployments/k8s`, `deployments/ansible`)
+
+### Clean architecture
+
+Follow [clean architecture](https://github.com/evrone/go-clean-template) template.
+
+- `cmd/<app-name>` - application entry point
+- `internal/<app-name>/controller` - HTTP, gRPC handlers. Implement controller interfaces.
+- `internal/<app-name>/usecase` - business logic layer, tiny and clear.
+  Defines application flow. Defines controller and adapter interfaces. Depends on entity.
+- `internal/<app-name>/entity` - domain specific entities.
+  Defines domain constants, models and their validation. Depends on nothing.
+- `internal/<app-name>/adapter` - data access layer. Implements adapter interfaces.
+- `internal/<app-name>/dto` - data transfer objects. Depends on entity.
+
+Follow Golang rule: Declare interfaces where you use them.
+
+### Microservices
+
+TODO: Add `popfilms` folder, where all microservices will be located.
+Note that, each microservice should follow clean architecture too.
+
+TODO: Edit `makefile` and `docker-compose.yml` to support microservices.
+
+Use `pkg` folder for shared code between microservices.
 
 ## Code style
 
