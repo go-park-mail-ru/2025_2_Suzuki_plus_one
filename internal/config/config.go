@@ -23,6 +23,20 @@ type Config struct {
 	SERVER_NAME                   string
 	SERVER_FRONTEND_URL           string
 	POPFILMS_ENVIRONMENT          string
+
+	// Database
+	POSTGRES_HOST     string
+	POSTGRES_USER     string
+	POSTGRES_PASSWORD string
+	POSTGRES_DB       string
+
+	// Redis
+	REDIS_HOST string
+
+	// Minio
+	MINIO_HOST          string
+	MINIO_ROOT_USER     string
+	MINIO_ROOT_PASSWORD string
 }
 
 // Load loads config from env vars with defaults and validation.
@@ -36,6 +50,20 @@ func Load() Config {
 		SERVER_NAME:                   getEnv("SERVER_NAME", "Localhost"),
 		SERVER_FRONTEND_URL:           trimTrailingSlash(mustEnv("SERVER_FRONTEND_URL")),
 		POPFILMS_ENVIRONMENT:          getEnv("POPFILMS_ENVIRONMENT", "development"),
+
+		// Database
+		POSTGRES_HOST:     mustEnv("POSTGRES_HOST"),
+		POSTGRES_USER:     mustEnv("POSTGRES_USER"),
+		POSTGRES_PASSWORD: mustEnv("POSTGRES_PASSWORD"),
+		POSTGRES_DB:       mustEnv("POSTGRES_DB"),
+
+		// Redis
+		REDIS_HOST: mustEnv("REDIS_HOST"),
+
+		// Minio
+		MINIO_HOST:          mustEnv("MINIO_HOST"),
+		MINIO_ROOT_USER:     mustEnv("MINIO_ROOT_USER"),
+		MINIO_ROOT_PASSWORD: mustEnv("MINIO_ROOT_PASSWORD"),
 	}
 
 	return cfg

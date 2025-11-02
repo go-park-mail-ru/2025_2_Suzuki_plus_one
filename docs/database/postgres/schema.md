@@ -212,6 +212,7 @@ erDiagram
         bigint user_id PK
         %% ---
         text username
+        bigint asset_image_id FK
         text email
         text password_hash
         %% ---
@@ -346,6 +347,8 @@ erDiagram
 
     USER ||--o{ USER_PLAYLIST : "user has playlists"
         USER_PLAYLIST ||--|| PLAYLIST : "user_playlist links user and playlist"
+
+    USER }o-|| ASSET_IMAGE : "user has profile image"
 
     %% ## Likes
     USER ||--o{ USER_LIKE_MEDIA : "user likes media"

@@ -1,14 +1,37 @@
 package postgres
 
-// TODO: implement actual database connection and methods
+import (
+	"context"
+
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+	"github.com/jackc/pgx/v5"
+)
 
 type DataBase struct {
-	// Database connection and other fields
+	logger     logger.Logger
+	conn       *pgx.Conn
+	connString string
+	context    context.Context
 }
 
 // Initialize a new Postgres database connection
-func NewDataBase() *DataBase {
+func NewDataBase(logger logger.Logger, dbUrl string) *DataBase {
 	return &DataBase{
-		// Initialize connection
+		logger:     logger,
+		connString: dbUrl,
 	}
+}
+
+func (db *DataBase) Connect() error {
+	db.context = context.Background()
+	conn, err := pgx.Connect(db.context, db.connString)
+	if err != nil {
+		return err
+	}
+	db.conn = conn
+	return nil
+}
+
+func (db *DataBase) Close() error {
+	return db.conn.Close(db.context)
 }

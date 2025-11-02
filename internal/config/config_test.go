@@ -62,4 +62,19 @@ func TestLoadEnvExample(t *testing.T) {
 	require.Equal(t, parseDuration(envVars["SERVER_JWT_REFRESH_EXPIRATION"]), config.SERVER_JWT_REFRESH_EXPIRATION)
 	require.Equal(t, envVars["SERVER_NAME"], config.SERVER_NAME)
 	require.Equal(t, envVars["SERVER_FRONTEND_URL"], config.SERVER_FRONTEND_URL)
+	require.Equal(t, envVars["POPFILMS_ENVIRONMENT"], config.POPFILMS_ENVIRONMENT)
+
+	// Database
+	require.Equal(t, envVars["POSTGRES_HOST"], config.POSTGRES_HOST)
+	require.Equal(t, envVars["POSTGRES_USER"], config.POSTGRES_USER)
+	require.Equal(t, envVars["POSTGRES_PASSWORD"], config.POSTGRES_PASSWORD)
+	require.Equal(t, envVars["POSTGRES_DB"], config.POSTGRES_DB)
+
+	// Redis
+	require.Equal(t, envVars["REDIS_HOST"], config.REDIS_HOST)
+
+	// Minio
+	require.Equal(t, envVars["MINIO_HOST"], config.MINIO_HOST)
+	require.Equal(t, envVars["MINIO_ROOT_USER"], config.MINIO_ROOT_USER)
+	require.Equal(t, envVars["MINIO_ROOT_PASSWORD"], config.MINIO_ROOT_PASSWORD)
 }

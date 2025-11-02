@@ -12,7 +12,7 @@
 
 [Ссылка](http://217.16.18.125/) на деплой приложения
 
-> ДЗ по курсу баз данных можно найти в папке [docs/database](./docs/database/database.md)
+> ДЗ по курсу баз данных можно найти в папке [docs/database/postgres](./docs/database/postgres/postgres.md)
 
 ## Реализованные функции
 

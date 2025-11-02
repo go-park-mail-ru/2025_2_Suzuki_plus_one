@@ -1,6 +1,6 @@
-- Add db test data (cmd/seed/main.go) + GetMovies impl for postgres
-- Add auth with JWT (chi middleware) and Redis (simple, no refresh tokens)
-- Add minio or timeweb s3 + test films + avatars (change db schema)
+- Add auth with JWT. Access + Refresh see docs/auth + Redis session store
+- Upload avatars to S3
+- Rewrite openAPI
 - Implement API handlers
 - Ensure test coverage >60%
 - Enhance API and database to support movies s3 links

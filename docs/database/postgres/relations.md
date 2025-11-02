@@ -1,7 +1,7 @@
 ## USER
 ### Таблица пользователей
 ```
-{user_id} → username, email, password_hash, created_at, updated_at
+{user_id} → username, email, asset_image_id, password_hash, created_at, updated_at
 {email} → user_id, username, password_hash, created_at, updated_at
 ```
 ### Соответствие нормальным формам

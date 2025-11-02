@@ -1,26 +1,3 @@
--- User
-CREATE TABLE "user" (
-    user_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    username TEXT NOT NULL UNIQUE CHECK (LENGTH(username) <= 50),
-    email TEXT NOT NULL UNIQUE CHECK (
-        LENGTH(email) <= 255
-        AND email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
-    ),
-    password_hash TEXT NOT NULL CHECK (LENGTH(password_hash) <= 255),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
--- Playlists
-CREATE TABLE playlist (
-    playlist_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    user_id BIGINT NOT NULL,
-    name TEXT NOT NULL CHECK (LENGTH(name) <= 128),
-    description TEXT CHECK (LENGTH(description) <= 1024),
-    visibility TEXT NOT NULL CHECK (visibility IN ('public', 'private', 'unlisted')),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_playlist_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE
-);
 -- Core media entity (movie / series / episode)
 CREATE TABLE media (
     media_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -50,16 +27,6 @@ CREATE TABLE media_genre (
     CONSTRAINT fk_mg_genre FOREIGN KEY (genre_id) REFERENCES genre (genre_id) ON DELETE CASCADE,
     CONSTRAINT unique_media_genre UNIQUE (media_id, genre_id)
 );
-CREATE TABLE playlist_media (
-    playlist_media_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    playlist_id BIGINT NOT NULL,
-    media_id BIGINT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_pm_playlist FOREIGN KEY (playlist_id) REFERENCES playlist (playlist_id) ON DELETE CASCADE,
-    CONSTRAINT fk_pm_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE,
-    CONSTRAINT unique_playlist_media UNIQUE (playlist_id, media_id)
-);
 -- Episode-specific details (episode.media_id references media.media_id)
 CREATE TABLE media_episode (
     episode_id BIGINT PRIMARY KEY,
@@ -71,31 +38,33 @@ CREATE TABLE media_episode (
     CONSTRAINT fk_episode_media FOREIGN KEY (episode_id) REFERENCES media (media_id) ON DELETE CASCADE,
     CONSTRAINT fk_episode_series FOREIGN KEY (series_id) REFERENCES media (media_id) ON DELETE CASCADE
 );
-
 -- Trigger function to enforce media_type constraints on media_episode
-CREATE OR REPLACE FUNCTION check_media_episode_types()
-RETURNS TRIGGER AS $$
-BEGIN
-    -- Ensure episode_id refers to a media row with media_type='episode'
-    IF NOT EXISTS (SELECT 1 FROM media WHERE media_id = NEW.episode_id AND media_type = 'episode') THEN
-        RAISE EXCEPTION 'episode_id % does not refer to an episode media entry', NEW.episode_id;
-    END IF;
-
-    -- Ensure series_id refers to a media row with media_type='series'
-    IF NOT EXISTS (SELECT 1 FROM media WHERE media_id = NEW.series_id AND media_type = 'series') THEN
-        RAISE EXCEPTION 'series_id % does not refer to a series media entry', NEW.series_id;
-    END IF;
-
-    RETURN NEW;
+CREATE OR REPLACE FUNCTION check_media_episode_types() RETURNS TRIGGER AS $$ BEGIN -- Ensure episode_id refers to a media row with media_type='episode'
+    IF NOT EXISTS (
+        SELECT 1
+        FROM media
+        WHERE media_id = NEW.episode_id
+            AND media_type = 'episode'
+    ) THEN RAISE EXCEPTION 'episode_id % does not refer to an episode media entry',
+    NEW.episode_id;
+END IF;
+-- Ensure series_id refers to a media row with media_type='series'
+IF NOT EXISTS (
+    SELECT 1
+    FROM media
+    WHERE media_id = NEW.series_id
+        AND media_type = 'series'
+) THEN RAISE EXCEPTION 'series_id % does not refer to a series media entry',
+NEW.series_id;
+END IF;
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Attach check_media_episode_types trigger to media_episode table
-CREATE TRIGGER trg_check_media_episode_types
-BEFORE INSERT OR UPDATE ON media_episode
-FOR EACH ROW
-EXECUTE FUNCTION check_media_episode_types();
-
+CREATE TRIGGER trg_check_media_episode_types BEFORE
+INSERT
+    OR
+UPDATE ON media_episode FOR EACH ROW EXECUTE FUNCTION check_media_episode_types();
 -- Media <-> Images
 CREATE TABLE asset (
     asset_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -138,7 +107,9 @@ CREATE TABLE asset_video (
 CREATE TABLE media_video (
     media_video_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     media_id BIGINT NOT NULL,
-    video_type TEXT NOT NULL CHECK (video_type IN ('main_video', 'trailer', 'teaser')),
+    video_type TEXT NOT NULL CHECK (
+        video_type IN ('main_video', 'trailer', 'teaser')
+    ),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_media_video_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE
@@ -220,6 +191,43 @@ CREATE TABLE actor_role (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_actor_role_actor FOREIGN KEY (actor_id) REFERENCES actor (actor_id) ON DELETE CASCADE,
     CONSTRAINT fk_actor_role_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE
+);
+-- User
+CREATE TABLE "user" (
+    user_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    username TEXT NOT NULL UNIQUE CHECK (LENGTH(username) <= 50),
+    asset_image_id BIGINT,
+    CONSTRAINT fk_user_asset_image FOREIGN KEY (asset_image_id) REFERENCES asset_image (asset_image_id) ON DELETE
+    SET NULL,
+        email TEXT NOT NULL UNIQUE CHECK (
+            LENGTH(email) <= 255
+            AND email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+        ),
+        password_hash TEXT NOT NULL CHECK (LENGTH(password_hash) <= 255),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+-- Playlists
+CREATE TABLE playlist (
+    playlist_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id BIGINT NOT NULL,
+    name TEXT NOT NULL CHECK (LENGTH(name) <= 128),
+    description TEXT CHECK (LENGTH(description) <= 1024),
+    visibility TEXT NOT NULL CHECK (visibility IN ('public', 'private', 'unlisted')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_playlist_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE
+);
+-- Connects playlist with media (many-to-many)
+CREATE TABLE playlist_media (
+    playlist_media_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    playlist_id BIGINT NOT NULL,
+    media_id BIGINT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_pm_playlist FOREIGN KEY (playlist_id) REFERENCES playlist (playlist_id) ON DELETE CASCADE,
+    CONSTRAINT fk_pm_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE,
+    CONSTRAINT unique_playlist_media UNIQUE (playlist_id, media_id)
 );
 -- User-playlist link (collaboration/role)
 CREATE TYPE playlist_role AS ENUM ('owner', 'collaborator', 'viewer');

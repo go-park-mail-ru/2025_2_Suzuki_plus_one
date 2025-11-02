@@ -8,6 +8,10 @@ import (
 
 //go:generate mockgen -source=contract.go -destination=./contract_mock.go -package=usecase
 type (
+	Repository interface {
+		Connect() error
+		Close() error
+	}
 	MovieRepository interface {
 		GetMovies(ctx context.Context, limit, offset uint) ([]entity.Movie, error)
 	}

@@ -16,6 +16,27 @@ services:
     # Only expose ports if we are in dev mode
     ports:
       - "${DB_PORT_MAPPING}"
+  s3:
+    image: minio/minio:latest
+    container_name: popfilms_s3
+    ports:
+      - ${MINIO_PORT_MAPPING} # S3 API
+      - ${MINIOUI_PORT_MAPPING} # Web Console
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - s3_data:/data
+  redis:
+    image: redis:alpine
+    container_name: popfilms_redis
+    ports:
+      - ${REDIS_PORT_MAPPING}
+    volumes:
+      - redis_data:/data
 
 volumes:
   db_data:
+  s3_data:
+  redis_data:

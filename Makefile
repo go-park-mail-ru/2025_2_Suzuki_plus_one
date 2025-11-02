@@ -88,6 +88,15 @@ db-logs: ## views database logs
 	source .env && docker compose logs -f db
 db-ps:   ## lists docker status of the database container
 	source .env && docker compose ps db
+db-fill: ## fills the database with test data from testdata/postgres
+	@echo "Filling Postgres with test data..."
+	source .env && \
+	sql_files=$$(ls -1 testdata/postgres/*.sql | sort); \
+	for file in $$sql_files; do \
+		echo "Executing $$file..."; \
+		PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB -f $$file; \
+	done
+	@echo "Test data inserted"
 
 # Psql shell command
 db-shell: ## connects to the database shell with psql
@@ -117,6 +126,68 @@ migrate-down: ## applies all down migrations
 	POSTGRESQL_URL="postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@localhost:5432/$$POSTGRES_DB?sslmode=disable" && \
 	migrate -path ./migrations -database $$POSTGRESQL_URL down
 
+## Redis
+redis-start: ## starts the redis using docker-compose
+	source .env && docker compose up -d redis
+redis-stop: ## stops the redis using docker-compose
+	source .env && docker compose down redis
+redis-wipe: ## wipes the redis container and its volume
+	source .env && docker compose down -v redis
+
+## Minio
+minio-start: ## starts the minio using docker-compose
+	source .env && docker compose up -d s3
+minio-stop: ## stops the minio using docker-compose
+	source .env && docker compose down s3
+minio-wipe: ## wipes the minio container and its volume
+	source .env && docker compose down -v s3
+minio-create: ## creates required buckets in minio
+	@echo "Creating buckets in Minio..."
+	source .env && \
+	docker compose exec s3 /bin/sh -c " \
+	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
+	mc mb local/avatars || true && \
+	mc mb local/posters || true && \
+	mc mb local/trailers || true && \
+	mc mb local/medias || true && \
+	mc anonymous set public local/avatars || true && \
+	mc anonymous set public local/posters || true && \
+	mc anonymous set public local/trailers || true && \
+	mc anonymous set none local/medias || true && \
+	echo 'Buckets created' \
+	"
+minio-list: ## lists buckets in minio
+	@echo "Listing buckets in Minio..."
+	source .env && \
+	docker compose exec s3 /bin/sh -c " \
+	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
+	mc ls local \
+	"
+minio-fill: ## fills minio with test data from testdata/minio using docker cp
+	@echo "Filling Minio with test data using docker cp..."
+	source .env && \
+	docker cp testdata/minio/. $$(docker compose ps -q s3):/testdata/
+	@echo "Test data uploaded"
+	@echo "Filling Minio with test data using mc cp..."
+	source .env && \
+	docker compose exec s3 /bin/sh -c " \
+	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
+	mc cp --recursive /testdata/ local "
+	@echo "Test data uploaded"
+
+## All Services
+all-start: ## starts all services using docker-compose
+	source .env && docker compose up -d
+
+all-stop: ## stops all services using docker-compose
+	source .env && docker compose down
+
+all-wipe: ## wipes all services containers and their volumes
+	source .env && docker compose down -v
+
+all-fill: ## fills all services with test data
+	make minio-fill
+	make db-fill
 
 .PHONY: help
 ## Help
