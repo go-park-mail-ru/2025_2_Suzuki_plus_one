@@ -5,5 +5,5 @@ type User struct {
 	Email        string `json:"email"`
 	Username     string `json:"username"`
 	PasswordHash string `json:"password_hash"`
-	AssetImageID uint
+	AssetImageID uint   `json:"asset_image_id"`
 }

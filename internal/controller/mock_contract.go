@@ -250,3 +250,42 @@ func (mr *MockGetAuthSignOutUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetAuthSignOutUseCase)(nil).Execute), arg0, arg1)
 }
+
+// MockGetUserMeUseCase is a mock of GetUserMeUseCase interface.
+type MockGetUserMeUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetUserMeUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetUserMeUseCaseMockRecorder is the mock recorder for MockGetUserMeUseCase.
+type MockGetUserMeUseCaseMockRecorder struct {
+	mock *MockGetUserMeUseCase
+}
+
+// NewMockGetUserMeUseCase creates a new mock instance.
+func NewMockGetUserMeUseCase(ctrl *gomock.Controller) *MockGetUserMeUseCase {
+	mock := &MockGetUserMeUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetUserMeUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetUserMeUseCase) EXPECT() *MockGetUserMeUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetUserMeUseCase) Execute(arg0 context.Context, arg1 dto.GetUserMeInput) (dto.GetUserMeOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetUserMeOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetUserMeUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetUserMeUseCase)(nil).Execute), arg0, arg1)
+}

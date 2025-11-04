@@ -21,4 +21,7 @@ var (
 	ErrUserNotFound = errors.New("user not found")
 
 	ErrGetAuthRefreshInvalidParams = errors.New("invalid get_auth_refresh request parameters")
+
+	ErrGetUserMeParamsInvalid   = errors.New("invalid get_user_me request parameters")
+	ErrGetUserMeSessionNotFound = errors.New("session not found for given access token")
 )

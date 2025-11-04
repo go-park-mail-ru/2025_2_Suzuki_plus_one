@@ -14,6 +14,7 @@ type Handlers struct {
 	GetAuthRefreshUseCase          controller.GetAuthRefreshUseCase
 	PostAuthSignUpUseCase          controller.PostAuthSignUpUseCase
 	GetAuthSignOutUseCase          controller.GetAuthSignOutUseCase
+	GetUserMeUseCase               controller.GetUserMeUseCase
 }
 
 func NewHandlers(
@@ -24,6 +25,7 @@ func NewHandlers(
 	getAuthRefreshUseCase controller.GetAuthRefreshUseCase,
 	postAuthSignupUseCase controller.PostAuthSignUpUseCase,
 	getAuthSignOutUseCase controller.GetAuthSignOutUseCase,
+	getUserMeUseCase controller.GetUserMeUseCase,
 ) *Handlers {
 	return &Handlers{
 		Logger:                         logger,
@@ -33,5 +35,6 @@ func NewHandlers(
 		GetAuthRefreshUseCase:          getAuthRefreshUseCase,
 		PostAuthSignUpUseCase:          postAuthSignupUseCase,
 		GetAuthSignOutUseCase:          getAuthSignOutUseCase,
+		GetUserMeUseCase:               getUserMeUseCase,
 	}
 }

@@ -1,0 +1,15 @@
+UserResponse:
+  summary: User profile response
+  type: object
+  properties:
+    id:
+      type: string
+      format: int
+      example: "1"
+    username:
+      type: string
+      example: "johndoe"
+    email:
+      type: string
+      format: email
+      example: "johndoe@example.com"

@@ -16,7 +16,7 @@
         required: false
         schema:
           type: string
-          enum: [avatars, posters, trailers, media]
+          enum: [avatars, posters, trailers, media, actors]
         description: Name of the s3 bucket
     responses:
       "200":

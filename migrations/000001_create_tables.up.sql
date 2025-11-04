@@ -203,14 +203,15 @@ CREATE TABLE "user" (
     username TEXT NOT NULL UNIQUE CHECK (LENGTH(username) <= 50),
     asset_image_id BIGINT, -- user avatar
     password_hash TEXT NOT NULL CHECK (LENGTH(password_hash) <= 255),
+    date_of_birth DATE,
+    phone_number TEXT CHECK (LENGTH(phone_number) <= 32),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_user_asset_image FOREIGN KEY (asset_image_id) REFERENCES asset_image (asset_image_id) ON DELETE
-    SET NULL,
-        email TEXT NOT NULL UNIQUE CHECK (
-            LENGTH(email) <= 255
-            AND email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
-        )
+    CONSTRAINT fk_user_asset_image FOREIGN KEY (asset_image_id) REFERENCES asset_image (asset_image_id) ON DELETE SET NULL,
+    email TEXT NOT NULL UNIQUE CHECK (
+        LENGTH(email) <= 255
+        AND email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+    )
 );
 -- User session
 CREATE TABLE user_session (

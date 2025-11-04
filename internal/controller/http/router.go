@@ -37,6 +37,7 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Authenticator(common.TokenAuth))
 		r.Get("/auth/signout", h.GetAuthSignOut)
+		r.Get("/user/me", h.GetUserMe)
 	})
 
 	return r

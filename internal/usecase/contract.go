@@ -22,6 +22,7 @@ type (
 	}
 
 	UserRepository interface {
+		GetUserByID(ctx context.Context, userID uint) (*entity.User, error)
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		GetUserAvatarURL(ctx context.Context, userID uint) (string, error)
 		CreateUser(ctx context.Context, user entity.User) (uint, error)

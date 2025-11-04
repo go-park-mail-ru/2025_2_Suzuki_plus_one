@@ -31,4 +31,8 @@ type (
 	GetAuthSignOutUseCase interface {
 		Execute(context.Context, dto.GetAuthSignOutInput) (dto.GetAuthSignOutOutput, *dto.Error)
 	}
+
+	GetUserMeUseCase interface {
+		Execute(context.Context, dto.GetUserMeInput) (dto.GetUserMeOutput, *dto.Error)
+	}
 )

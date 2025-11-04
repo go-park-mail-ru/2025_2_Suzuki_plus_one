@@ -58,36 +58,32 @@ func main() {
 	}
 	logger.Info("Minio connection established")
 
-	// Usecases. Just follow openAPI order here
-
-	// # Content
-
-	// --- Get /movies ---
+	// Cast Postgres to MovieRepository
 	movieRepository, ok := databaseAdapter.(uc.MovieRepository)
 	if !ok {
 		logger.Fatal("Database can't be converted to MovieRepository")
 	}
+	// Cast Postgres to UserRepository
+	userRepository, ok := databaseAdapter.(uc.UserRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to UserRepository")
+	}
+	// Cast Postgres to TokenRepository
+	tokenRepository, ok := databaseAdapter.(uc.TokenRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to TokenRepository")
+	}
 
-	// --- Get /object ---
+	// Cast Minio to ObjectRepository
 	objectRepository, ok := s3.(uc.ObjectRepository)
 	if !ok {
 		logger.Fatal("Database can't be converted to ObjectRepository")
 	}
 
-	// --- Get /auth/signin ---
-	// Cast Postgres
-	userRepository, ok := databaseAdapter.(uc.UserRepository)
-	if !ok {
-		logger.Fatal("Database can't be converted to UserRepository")
-	}
-	// Cast Redis
+	// Cast Redis to SessionRepository
 	sessionRepository, ok := cache.(uc.SessionRepository)
 	if !ok {
 		logger.Fatal("Cache can't be converted to SessionRepository")
-	}
-	tokenRepository, ok := databaseAdapter.(uc.TokenRepository)
-	if !ok {
-		logger.Fatal("Database can't be converted to TokenRepository")
 	}
 
 	// Inject usecases into handler
@@ -99,6 +95,7 @@ func main() {
 		uc.NewGetAuthRefreshUseCase(logger, tokenRepository),
 		uc.NewPostAuthSignUpUsecase(logger, userRepository, tokenRepository, sessionRepository),
 		uc.NewGetAuthSignOutUsecase(logger, tokenRepository, sessionRepository),
+		uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository),
 	)
 
 	// Initialize JWT middleware engine
