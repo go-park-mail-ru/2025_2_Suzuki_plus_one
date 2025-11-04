@@ -6,12 +6,24 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 	"github.com/minio/minio-go/v7"
 )
 
 // GetObject retrieves an object from MinIO and generates a presigned URL for access.
 func (m *Minio) GetObject(ctx context.Context, objectName string, bucketName string, expiration time.Duration) (*entity.Object, error) {
+	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
+	if !ok {
+		m.logger.Warn("GetObject: failed to get requestID from context")
+		requestID = "unknown"
+	}
+	m.logger.Info("GetObject called",
+		m.logger.ToString("requestID", requestID),
+		m.logger.ToString("bucketName", bucketName),
+		m.logger.ToString("objectName", objectName),
+	)
+
 	// Check if the object exists
 	info, err := m.client.StatObject(ctx, bucketName, objectName, minio.StatObjectOptions{})
 	if err != nil {

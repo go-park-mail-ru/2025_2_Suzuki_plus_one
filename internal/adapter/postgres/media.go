@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 )
 
@@ -20,6 +21,18 @@ func (db *DataBase) GetMediaCount(ctx context.Context, media_type string) (int, 
 
 // GetMedia retrieves a media item by its ID from the database
 func (db *DataBase) GetMedia(ctx context.Context, media_id uint) (*entity.Media, error) {
+	// Log the request ID from context for tracing
+	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
+	if !ok {
+		db.logger.Warn("GetMovieRecommendations: failed to get requestID from context")
+		requestID = "unknown"
+	}
+	db.logger.Info("GetMovieRecommendations called",
+		db.logger.ToString("requestID", requestID),
+		db.logger.ToInt("media_id", int(media_id)),
+	)
+
+	// Prepare the media entity to be filled
 	var media entity.Media
 
 	query := `
