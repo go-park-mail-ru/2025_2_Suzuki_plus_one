@@ -11,4 +11,8 @@ type (
 	GetMovieRecommendationsUsecase interface {
 		Execute(context.Context, dto.GetMovieRecommendationsInput) (dto.GetMovieRecommendationsOutput, *dto.Error)
 	}
+
+	GetObjectUsecase interface {
+		Execute(context.Context, dto.GetObjectInput) (dto.GetObjectOutput, *dto.Error)
+	}
 )

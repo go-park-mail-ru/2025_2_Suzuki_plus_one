@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"testing"
@@ -55,12 +56,13 @@ func TestGetMovieRecommendations(t *testing.T) {
 		Times(1)
 
 	// Initialize server with the mock usecase
-	handlers := NewHandlers(mockGetMovieRecommendationsUsecase, logger)
+	handlers := NewHandlers(logger, mockGetMovieRecommendationsUsecase, nil)
 	router := srv.InitRouter(handlers, logger, "/")
 	server := srv.NewServer(router)
 
 	// Create a New Request
-	req, err := http.NewRequest("GET", "/movie/recommendations?limit=2&offset=3", nil)
+	requestURL := fmt.Sprintf("/movie/recommendations?limit=%d&offset=%d", input.Limit, input.Offset)
+	req, err := http.NewRequest("GET", requestURL, nil)
 	require.NoError(t, err)
 
 	// Execute Request

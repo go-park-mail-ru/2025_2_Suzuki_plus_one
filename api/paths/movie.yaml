@@ -13,8 +13,8 @@ recommendations:
               type: array
               items:
                 $ref: "../schemas/movie.yaml#/MovieResponse"
-      "500":
-        description: Internal server error
+      "400":
+        description: Bad request
         content:
           application/json:
             schema:

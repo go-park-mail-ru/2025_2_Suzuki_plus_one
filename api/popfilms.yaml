@@ -29,10 +29,8 @@ paths:
   /auth/signout:
     $ref: "./paths/auth.yaml#/signout"
   # object.yaml
-  /object/media:
-    $ref: "./paths/object.yaml#/media"
-  /object/avatar:
-    $ref: "./paths/object.yaml#/avatar"
+  /object:
+    $ref: "./paths/object.yaml#/.self"
   # movie.yaml
   /movie/recommendations:
     $ref: "./paths/movie.yaml#/recommendations"

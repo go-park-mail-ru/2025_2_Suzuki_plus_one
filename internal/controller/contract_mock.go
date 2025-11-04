@@ -55,3 +55,42 @@ func (mr *MockGetMovieRecommendationsUsecaseMockRecorder) Execute(arg0, arg1 any
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMovieRecommendationsUsecase)(nil).Execute), arg0, arg1)
 }
+
+// MockGetObjectUsecase is a mock of GetObjectUsecase interface.
+type MockGetObjectUsecase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetObjectUsecaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetObjectUsecaseMockRecorder is the mock recorder for MockGetObjectUsecase.
+type MockGetObjectUsecaseMockRecorder struct {
+	mock *MockGetObjectUsecase
+}
+
+// NewMockGetObjectUsecase creates a new mock instance.
+func NewMockGetObjectUsecase(ctrl *gomock.Controller) *MockGetObjectUsecase {
+	mock := &MockGetObjectUsecase{ctrl: ctrl}
+	mock.recorder = &MockGetObjectUsecaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetObjectUsecase) EXPECT() *MockGetObjectUsecaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetObjectUsecase) Execute(arg0 context.Context, arg1 dto.GetObjectInput) (dto.GetObjectOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetObjectOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetObjectUsecaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetObjectUsecase)(nil).Execute), arg0, arg1)
+}

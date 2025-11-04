@@ -44,12 +44,18 @@ func main() {
 	logger.Info("Redis connection established")
 
 	// Create s3 connection
-	s3, err := minio.NewMinio(logger, config.MINIO_HOST, config.MINIO_ROOT_USER, config.MINIO_ROOT_PASSWORD, false)
+	var s3 uc.S3
+	s3, err = minio.NewMinio(
+		logger,
+		config.MINIO_HOST,
+		config.MINIO_ROOT_USER,
+		config.MINIO_ROOT_PASSWORD,
+		false,
+	)
 	if err != nil {
 		logger.Fatal("Failed to connect to Minio: " + err.Error())
 	}
 	logger.Info("Minio connection established")
-	_ = s3 // TODO: Use s3
 
 	// Usecases. Just follow openAPI order here
 
@@ -62,17 +68,23 @@ func main() {
 	}
 	movieRecommendations := uc.NewGetMovieRecommendationsUsecase(logger, movieRepository)
 
-	// Get /movie/{id}
+	// Get /object
+	objectRepository, ok := s3.(uc.ObjectRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to ObjectRepository")
+	}
+	getObjectMedia := uc.NewGetObjectUsecase(logger, objectRepository)
 
 	// Get /actor/{id}
 
-	// Handlers
-
-	// Inject usecase into handler
-	handler := handlers.NewHandlers(movieRecommendations, logger)
+	// Inject usecases into handler
+	handler := handlers.NewHandlers(
+		logger,
+		movieRecommendations,
+		getObjectMedia,
+	)
 
 	// Inject handler into router
 	router := srv.InitRouter(handler, logger, config.SERVER_FRONTEND_URL)
-
 	srv.StartServer(router, config.SERVER_SERVE_STRING, logger)
 }

@@ -12,6 +12,7 @@ package usecase
 import (
 	context "context"
 	reflect "reflect"
+	time "time"
 
 	entity "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 	gomock "go.uber.org/mock/gomock"
@@ -151,4 +152,67 @@ func (m *MockMovieRepository) GetMediaPostersLinks(ctx context.Context, media_id
 func (mr *MockMovieRepositoryMockRecorder) GetMediaPostersLinks(ctx, media_id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaPostersLinks", reflect.TypeOf((*MockMovieRepository)(nil).GetMediaPostersLinks), ctx, media_id)
+}
+
+// MockS3 is a mock of S3 interface.
+type MockS3 struct {
+	ctrl     *gomock.Controller
+	recorder *MockS3MockRecorder
+	isgomock struct{}
+}
+
+// MockS3MockRecorder is the mock recorder for MockS3.
+type MockS3MockRecorder struct {
+	mock *MockS3
+}
+
+// NewMockS3 creates a new mock instance.
+func NewMockS3(ctrl *gomock.Controller) *MockS3 {
+	mock := &MockS3{ctrl: ctrl}
+	mock.recorder = &MockS3MockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockS3) EXPECT() *MockS3MockRecorder {
+	return m.recorder
+}
+
+// MockObjectRepository is a mock of ObjectRepository interface.
+type MockObjectRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockObjectRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockObjectRepositoryMockRecorder is the mock recorder for MockObjectRepository.
+type MockObjectRepositoryMockRecorder struct {
+	mock *MockObjectRepository
+}
+
+// NewMockObjectRepository creates a new mock instance.
+func NewMockObjectRepository(ctrl *gomock.Controller) *MockObjectRepository {
+	mock := &MockObjectRepository{ctrl: ctrl}
+	mock.recorder = &MockObjectRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockObjectRepository) EXPECT() *MockObjectRepositoryMockRecorder {
+	return m.recorder
+}
+
+// GetObject mocks base method.
+func (m *MockObjectRepository) GetObject(ctx context.Context, key, bucketName string, expiration time.Duration) (*entity.Object, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetObject", ctx, key, bucketName, expiration)
+	ret0, _ := ret[0].(*entity.Object)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetObject indicates an expected call of GetObject.
+func (mr *MockObjectRepositoryMockRecorder) GetObject(ctx, key, bucketName, expiration any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObject", reflect.TypeOf((*MockObjectRepository)(nil).GetObject), ctx, key, bucketName, expiration)
 }

@@ -55,7 +55,7 @@ func (rp *RequestParams) Parse() error {
 		val := query.Get(param)
 
 		// Scan value into the given storage
-		if _, err := fmt.Sscanf(val, "%d", storage); err != nil {
+		if _, err := fmt.Sscanf(val, "%v", storage); err != nil {
 			rp.logger.Warn("Invalid query parameter",
 				rp.logger.ToString("param", param),
 				rp.logger.ToString("value", val),

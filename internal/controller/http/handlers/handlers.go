@@ -9,14 +9,17 @@ type Handlers struct {
 	logger logger.Logger
 
 	GetMovieRecommendationsUseCase controller.GetMovieRecommendationsUsecase
+	GetObjectMediaUseCase          controller.GetObjectUsecase
 }
 
 func NewHandlers(
-	getMovieRecommendationsUsecase controller.GetMovieRecommendationsUsecase,
 	logger logger.Logger,
+	getMovieRecommendationsUsecase controller.GetMovieRecommendationsUsecase,
+	getObjectMediaUsecase controller.GetObjectUsecase,
 ) *Handlers {
 	return &Handlers{
 		logger:                         logger,
 		GetMovieRecommendationsUseCase: getMovieRecommendationsUsecase,
+		GetObjectMediaUseCase:          getObjectMediaUsecase,
 	}
 }
