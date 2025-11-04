@@ -47,6 +47,11 @@ erDiagram
         text title
         text description
         date release_date
+        float rating
+        integer duration_minutes
+        integer age_rating
+        text country
+        text plot_summary
         %% ---
         timestamptz created_at
         timestamptz updated_at

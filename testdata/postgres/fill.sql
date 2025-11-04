@@ -33,12 +33,27 @@ VALUES (
     'testuser@example.com'
   );
 -- 3) Media: Inception
-INSERT INTO media (media_type, title, description, release_date)
+INSERT INTO media (
+    media_type,
+    title,
+    description,
+    release_date,
+    rating,
+    duration_minutes,
+    age_rating,
+    country,
+    plot_summary
+  )
 VALUES (
     'movie',
     'Inception',
-    'A mind-bending thriller',
-    '2010-07-16'
+    'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O., but his tragic past may doom the project and his team to disaster.',
+    '2010-07-16',
+    8.8,
+    148,
+    13,
+    'USA',
+    'Dom Cobb is a skilled thief, the absolute best in the dangerous art of extraction: stealing valuable secrets from deep within the subconscious during the dream state when the mind is at its most vulnerable. Cobb''s rare ability has made him a coveted player in this treacherous new world of corporate espionage, but it has also made him an international fugitive and cost him everything he has ever loved. Now Cobb is being offered a chance at redemption. One last job could give him his life back but only if he can accomplish the impossible - inception. Instead of the perfect heist, Cobb and his team of specialists have to pull off the reverse: their task is not to steal an idea but to plant one. If they succeed, it could be the perfect crime. But no amount of careful planning or expertise can prepare the team for the dangerous enemy that seems to predict their every move. An enemy that only Cobb could have seen coming.'
   );
 -- 4) Poster asset and image
 INSERT INTO asset (s3_key, size_mb, mime_type)

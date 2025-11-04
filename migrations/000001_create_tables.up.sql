@@ -5,6 +5,11 @@ CREATE TABLE media (
     title TEXT NOT NULL CHECK (LENGTH(title) <= 256),
     description TEXT CHECK (LENGTH(description) <= 2048),
     release_date DATE,
+    rating FLOAT,
+    duration_minutes INTEGER CHECK (duration_minutes >= 0),
+    age_rating INTEGER CHECK (age_rating >= 0),
+    country TEXT CHECK (LENGTH(country) <= 64),
+    plot_summary TEXT CHECK (LENGTH(plot_summary) <= 4096),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
