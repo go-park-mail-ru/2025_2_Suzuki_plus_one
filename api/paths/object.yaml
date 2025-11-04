@@ -1,0 +1,53 @@
+media:
+  get:
+    summary: Get s3 video link
+    description: Given media ID, return pre-signed S3 URL for accessing the series or video file
+    tags:
+      - object
+    parameters:
+      - in: query
+        name: media_id
+        required: true
+        schema:
+          type: string
+        description: ID from Media table in database
+    responses:
+      "200":
+        description: The s3 media link
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/object.yaml#/ObjectResponse"
+      "400":
+        description: Invalid media ID
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+avatar:
+  get:
+    summary: Get s3 avatar link
+    description: Given user ID, return pre-signed S3 URL for accessing the avatar image file
+    tags:
+      - object
+    parameters:
+      - in: query
+        name: user_id
+        required: true
+        schema:
+          type: string
+        description: User ID from database
+    responses:
+      "200":
+        description: The s3 avatar link
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/object.yaml#/ObjectResponse"
+
+      "400":
+        description: Invalid avatar ID
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

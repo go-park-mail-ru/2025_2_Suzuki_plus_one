@@ -1,0 +1,74 @@
+openapi: "3.0.3"
+info:
+  title: PopFilms API
+  version: "1.0"
+  description: |
+    This is the main API specification for PopFilms endpoints.
+
+    See PopFilms [github](https://github.com/go-park-mail-ru/2025_2_Suzuki_plus_one) for more information.
+servers:
+  - url: http://217.16.18.125/api/v1/
+    description: Production server
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: content
+    description: Endpoints related to UI data content
+  - name: object
+    description: Endpoints for accessing S3 media links
+  - name: auth
+    description: Authentication endpoints
+paths:
+  # auth.yaml
+  /auth/refresh:
+    $ref: "./paths/auth.yaml#/refresh"
+  /auth/signin:
+    $ref: "./paths/auth.yaml#/signin"
+  /auth/signup:
+    $ref: "./paths/auth.yaml#/signup"
+  /auth/signout:
+    $ref: "./paths/auth.yaml#/signout"
+  # object.yaml
+  /object/media:
+    $ref: "./paths/object.yaml#/media"
+  /object/avatar:
+    $ref: "./paths/object.yaml#/avatar"
+  # movie.yaml
+  /movie/recommendations:
+    $ref: "./paths/movie.yaml#/recommendations"
+  /movie/{movie_id}:
+    $ref: "./paths/movie.yaml#/certain"
+
+components:
+  securitySchemes:
+    RefreshToken:
+      description: JWT refresh token stored in Strict HttpOnly cookie
+      type: apiKey
+      in: cookie
+      name: RefreshToken
+    AccessToken:
+      description: JWT access token stored in JS memory
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    # error.yaml
+    ErrorResponse:
+      $ref: "./schemas/error.yaml#/ErrorResponse"
+    # auth.yaml
+    RefreshResponse:
+      $ref: "./schemas/auth.yaml#/RefreshResponse"
+    SignInRequest:
+      $ref: "./schemas/auth.yaml#/SignInRequest"
+    SignInResponse:
+      $ref: "./schemas/auth.yaml#/SignInResponse"
+    SignUpRequest:
+      $ref: "./schemas/auth.yaml#/SignUpRequest"
+    SignUpResponse:
+      $ref: "./schemas/auth.yaml#/SignUpResponse"
+    # object.yaml
+    ObjectResponse:
+      $ref: "./schemas/object.yaml#/ObjectResponse"
+    # movie.yaml
+    MovieResponse:
+      $ref: "./schemas/movie.yaml#/MovieResponse"

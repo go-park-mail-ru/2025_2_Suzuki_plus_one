@@ -1,0 +1,117 @@
+# Cookie names (popfilms.yaml#/components/securitySchemes/RefreshToken):
+# - RefreshToken
+
+refresh:
+  get:
+    tags:
+      - auth
+    summary: Get new access token
+    description: Using refresh token from HttpOnly cookie, issue a new access token
+    security:
+      - RefreshToken: []
+    responses:
+      "200":
+        description: New access token issued
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/auth.yaml#/RefreshResponse"
+      "401":
+        description: Unauthorized (invalid or missing refresh token)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+signup:
+  post:
+    tags:
+      - auth
+    summary: User registration
+    description: Create a new user account
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/auth.yaml#/SignUpRequest"
+    responses:
+      "201":
+        description: User created successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/auth.yaml#/SignUpResponse"
+      "400":
+        description: Bad request (invalid input)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+      # "409":
+      #   description: User already exists
+      #   content:
+      #     application/json:
+      #       schema:
+      #         $ref: "#/components/schemas/ErrorResponse"
+      # "500":
+      #   description: Internal server error (with details)
+      #   content:
+      #     application/json:
+      #       schema:
+      #         $ref: "#/components/schemas/ErrorResponse"
+
+signin:
+  post:
+    tags:
+      - auth
+    summary: User login
+    description: Authenticate user, issue refresh token
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/auth.yaml#/SignInRequest"
+    responses:
+      "200":
+        summary: Authentication successful
+        description: Returns refresh cookie and access token
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/auth.yaml#/SignInResponse"
+        headers:
+          Set-Cookie:
+            schema:
+              type: string
+              # TODO: Add Secure attribute in production
+              example: RefreshToken=abcde12345; HttpOnly; SameSite=Strict
+      "401":
+        description: Invalid credentials
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+signout:
+  post:
+    security:
+      - RefreshToken: []
+    tags:
+      - auth
+    summary: User logout
+    description: Invalidate user session/token
+    responses:
+      "200":
+        description: Successfully signed out
+        headers:
+          Set-Cookie:
+            schema:
+              type: string
+              example: RefreshToken=; HttpOnly; Max-Age=0
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

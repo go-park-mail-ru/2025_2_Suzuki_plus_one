@@ -1,0 +1,59 @@
+MovieResponse:
+  type: object
+  required:
+    - id
+    - title
+    - genre
+    - rating
+  properties:
+    id:
+      type: string
+      description: Movie ID
+      example: "1"
+    title:
+      type: string
+      description: Movie title
+      example: "Inception"
+    description:
+      type: string
+      description: Movie description
+      example: "A thief uses dream-sharing technology to plant an idea into a CEO's mind."
+    rating:
+      type: number
+      format: float
+      description: Movie rating
+      example: 8.8
+    release_date:
+      type: string
+      format: date
+      description: Release date of the movie
+      example: "2010-07-16"
+    duration_minutes:
+      type: integer
+      description: Duration of the movie in minutes
+      example: 148
+    age_rating:
+      type: integer
+      description: Age rating for the movie
+      example: 13
+    country:
+      type: string
+      description: Country of origin for the movie
+      example: "USA"
+    plot_summary:
+      type: string
+      description: A brief summary of the movie plot
+      example: "Dom Cobb is a skilled thief who steals secrets from the subconscious during dreams."
+    genres:
+      type: array
+      items:
+        type: string
+      description: Movie genres
+      example: ["Sci-Fi", "Action"]
+    posters:
+      type: array
+      items:
+        type: string
+        format: uri
+      description: URLs to the movie poster images
+      example: ["http://example.com/posters/inception.jpg"]

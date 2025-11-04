@@ -1,0 +1,69 @@
+# Authentication schemas for paths/auth.yaml
+
+### Refresh ###
+
+# RefreshRequest contains cookie with refresh token
+
+RefreshResponse:
+  type: object
+  required:
+    - accessToken
+  properties:
+    accessToken:
+      type: string
+      example: "<NewAccessToken>"
+      description: New JWT access token
+
+
+### Sign up ###
+
+SignUpRequest:
+  type: object
+  required:
+    - email
+    - password
+    - username
+  properties:
+    email:
+      type: string
+      format: email
+      example: "user@example.com"
+    password:
+      type: string
+      format: password
+      minLength: 6
+      example: "securepassword123"
+    username:
+      type: string
+      minLength: 3
+      example: "john_doe"
+    firstName:
+      type: string
+      example: "John"
+    lastName:
+      type: string
+      example: "Doe"
+
+SignUpResponse:
+  $ref: "./auth.yaml#/RefreshResponse"
+
+
+### Sign in ###
+
+SignInRequest:
+  type: object
+  required:
+    - email
+    - password
+  properties:
+    email:
+      type: string
+      format: email
+      example: "test@example.com"
+    password:
+      type: string
+      format: password
+      example: "Password123!"
+
+SignInResponse:
+  $ref: "./auth.yaml#/RefreshResponse"

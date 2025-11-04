@@ -1,0 +1,56 @@
+User:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "user1"
+    email:
+      type: string
+      format: email
+      example: "test@example.com"
+    username:
+      type: string
+      example: "testuser"
+
+UserAccount:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "user1"
+    name:
+      type: string
+      example: "John Doe"
+    username:
+      type: string
+      example: "johndoe"
+    email:
+      type: string
+      example: "john@doe.com"
+    dateOfBirth:
+      type: string
+      format: date
+      example: "1990-01-01"
+    phone:
+      type: string
+      example: "+79999999999"
+
+UserAccountUpdate:
+  type: object
+  properties:
+    name:
+      type: string
+      example: "John Doe"
+    username:
+      type: string
+      example: "johndoe"
+    email:
+      type: string
+      example: "john@doe.com"
+    dateOfBirth:
+      type: string
+      format: date
+      example: "1990-01-01"
+    phone:
+      type: string
+      example: "+79999999999"

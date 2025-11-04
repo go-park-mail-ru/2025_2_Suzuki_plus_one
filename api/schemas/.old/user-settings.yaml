@@ -1,0 +1,28 @@
+SecuritySettings:
+  type: object
+  description: Empty object representing security settings from structure
+  properties: {}
+
+PasswordUpdate:
+  type: object
+  required:
+    - oldPassword
+    - newPassword
+  properties:
+    oldPassword:
+      type: string
+      format: password
+      example: "oldPassword123"
+    newPassword:
+      type: string
+      format: password
+      minLength: 8
+      example: "newPassword123"
+
+NotificationSettings:
+  type: object
+  properties:
+    advertEmailSubscription:
+      description: "Subscribe to promotional emails"
+      type: boolean
+      example: true

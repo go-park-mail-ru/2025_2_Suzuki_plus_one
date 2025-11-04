@@ -1,0 +1,54 @@
+recommendations:
+  get:
+    tags:
+      - content
+    summary: Get movie recommendations
+    description: Retrieve a list of recommended movies based on user preferences or popular trends
+    responses:
+      "200":
+        description: A list of recommended movies
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/movie.yaml#/MovieResponse"
+      "500":
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+certain:
+  get:
+    tags:
+      - content
+    summary: Get details of a specific movie
+    description: Retrieve detailed information about a movie given its ID
+    parameters:
+      - in: path
+        name: movie_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the movie
+    responses:
+      "200":
+        description: Movie details retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/movie.yaml#/MovieResponse"
+      "404":
+        description: Movie not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+      "500":
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

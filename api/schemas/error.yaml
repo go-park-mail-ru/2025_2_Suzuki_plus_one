@@ -1,0 +1,17 @@
+ErrorResponse:
+  type: object
+  required:
+    - type
+    - message
+  properties:
+    type:
+      type: string
+      example: "auth"
+      description: Type of error
+    message:
+      type: string
+      example: "Invalid credentials"
+      description: Error description
+    details:
+      type: string
+      description: Internal error details (if any)
