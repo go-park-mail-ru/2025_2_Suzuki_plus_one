@@ -6,21 +6,25 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 )
 
-//go:generate mockgen -source=contract.go -destination=./contract_mock.go -package=controller
+//go:generate mockgen -source=contract.go -destination=./mock_contract.go -package=controller
 type (
-	GetMovieRecommendationsUsecase interface {
+	GetMovieRecommendationsUseCase interface {
 		Execute(context.Context, dto.GetMovieRecommendationsInput) (dto.GetMovieRecommendationsOutput, *dto.Error)
 	}
 
-	GetObjectUsecase interface {
+	GetObjectUseCase interface {
 		Execute(context.Context, dto.GetObjectInput) (dto.GetObjectOutput, *dto.Error)
 	}
 
-	PostAuthSignInUsecase interface {
+	PostAuthSignInUseCase interface {
 		Execute(context.Context, dto.PostAuthSignInInput) (dto.PostAuthSignInOutput, *dto.Error)
 	}
 
-	GetAuthRefreshUsecase interface {
+	GetAuthRefreshUseCase interface {
 		Execute(context.Context, dto.GetAuthRefreshInput) (dto.GetAuthRefreshOutput, *dto.Error)
+	}
+
+	PostAuthSignUpUseCase interface {
+		Execute(context.Context, dto.PostAuthSignUpInput) (dto.PostAuthSignUpOutput, *dto.Error)
 	}
 )

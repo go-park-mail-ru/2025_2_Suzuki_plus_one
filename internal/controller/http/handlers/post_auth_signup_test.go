@@ -17,32 +17,33 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-func getMockPostAuthSignInInput() dto.PostAuthSignInInput {
-	return dto.PostAuthSignInInput{
+func getMockPostAuthSignUpInput() dto.PostAuthSignUpInput {
+	return dto.PostAuthSignUpInput{
 		Email:    "test@example.com",
 		Password: "password123",
+		Username: "testuser",
 	}
 }
 
-func getMockPostAuthSignInOutput() dto.PostAuthSignInOutput {
-	return dto.PostAuthSignInOutput{
+func getMockPostAuthSignUpOutput() dto.PostAuthSignUpOutput {
+	return dto.PostAuthSignUpOutput{
 		AccessToken:  "accessTokenValue",
 		RefreshToken: "refreshTokenValue",
 	}
 }
 
-// Call PostAuthSignIn handler and check response
-func TestPostAuthSignIn(t *testing.T) {
+// Call PostAuthSignUp handler and check response
+func TestPostAuthSignUp(t *testing.T) {
 	logger := logger.NewZapLogger(true)
 
 	// Define input and expected output
-	input := getMockPostAuthSignInInput()
-	output := getMockPostAuthSignInOutput()
+	input := getMockPostAuthSignUpInput()
+	output := getMockPostAuthSignUpOutput()
 
-	// Create mock PostAuthSignInUsecase
+	// Create mock PostAuthSignUpUseCase
 	mockCtrl := gomock.NewController(t)
-	mockPostAuthSignInUsecase := controller.NewMockPostAuthSignInUseCase(mockCtrl)
-	mockPostAuthSignInUsecase.EXPECT().
+	mockPostAuthSignUpUsecase := controller.NewMockPostAuthSignUpUseCase(mockCtrl)
+	mockPostAuthSignUpUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(output, nil).
 		Times(1)
@@ -50,7 +51,7 @@ func TestPostAuthSignIn(t *testing.T) {
 	// Initialize server with the mock usecase
 	handlers := &Handlers{
 		Logger:                logger,
-		PostAuthSignInUseCase: mockPostAuthSignInUsecase,
+		PostAuthSignUpUseCase: mockPostAuthSignUpUsecase,
 	}
 	router := srv.InitRouter(handlers, logger, "/")
 	server := srv.NewServer(router)
@@ -61,7 +62,7 @@ func TestPostAuthSignIn(t *testing.T) {
 	reader := io.NopCloser(bytes.NewReader(body))
 
 	// Create request
-	req, err := http.NewRequest("POST", "/auth/signin", reader)
+	req, err := http.NewRequest("POST", "/auth/signup", reader)
 	req.Header.Set("Content-Type", "application/json")
 	require.NoError(t, err)
 
@@ -69,5 +70,5 @@ func TestPostAuthSignIn(t *testing.T) {
 	response := executeRequest(logger, server, req)
 
 	// Assert the response
-	checkResponse(t, logger, response, http.StatusOK, UpdatePostAuthSignInOutput(output))
+	checkResponse(t, logger, response, http.StatusOK, UpdatePostAuthSignUpOutput(output))
 }

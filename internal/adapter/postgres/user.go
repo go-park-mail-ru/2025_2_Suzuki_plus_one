@@ -16,12 +16,17 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 		WHERE email = $1
 	`
 	row := db.conn.QueryRow(query, email)
-	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.AssetImageID)
+	var assetImageID sql.NullInt64
+
+	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &assetImageID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, entity.ErrUserNotFound
 		}
 		return nil, err
+	}
+	if assetImageID.Valid {
+		user.AssetImageID = uint(assetImageID.Int64)
 	}
 
 	return &user, nil
@@ -36,12 +41,16 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 		WHERE user_id = $1
 	`
 	row := db.conn.QueryRow(query, userID)
-	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.AssetImageID)
+	var assetImageID sql.NullInt64
+	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &assetImageID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, entity.ErrUserNotFound
 		}
 		return nil, err
+	}
+	if assetImageID.Valid {
+		user.AssetImageID = uint(assetImageID.Int64)
 	}
 
 	return &user, nil
@@ -68,4 +77,20 @@ func (db *DataBase) GetUserAvatarURL(ctx context.Context, userID uint) (string, 
 	}
 
 	return avatarURL, nil
+}
+
+func (db *DataBase) CreateUser(ctx context.Context, user entity.User) (uint, error) {
+	var userID uint
+
+	query := `
+		INSERT INTO "user" (email, username, password_hash)
+		VALUES ($1, $2, $3)
+		RETURNING user_id
+	`
+	err := db.conn.QueryRow(query, user.Email, user.Username, user.PasswordHash).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return userID, nil
 }

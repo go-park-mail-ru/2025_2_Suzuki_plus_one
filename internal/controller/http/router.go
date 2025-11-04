@@ -32,6 +32,7 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	// Auth routes
 	r.Post("/auth/signin", h.PostAuthSignIn)
 	r.Get("/auth/refresh", h.GetAuthRefresh)
+	r.Post("/auth/signup", h.PostAuthSignUp)
 
 	return r
 }

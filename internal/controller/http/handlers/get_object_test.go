@@ -38,7 +38,7 @@ func TestGetObject(t *testing.T) {
 
 	// Create mock GetObjectUsecase
 	mockCtrl := gomock.NewController(t)
-	mockGetObjectUsecase := controller.NewMockGetObjectUsecase(mockCtrl)
+	mockGetObjectUsecase := controller.NewMockGetObjectUseCase(mockCtrl)
 	mockGetObjectUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(output, nil).

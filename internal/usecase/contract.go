@@ -7,7 +7,7 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 )
 
-//go:generate mockgen -source=contract.go -destination=./contract_mock.go -package=usecase
+//go:generate mockgen -source=contract.go -destination=./mock_contract.go -package=usecase
 type (
 	// Postgres
 	Repository interface {
@@ -24,6 +24,7 @@ type (
 	UserRepository interface {
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		GetUserAvatarURL(ctx context.Context, userID uint) (string, error)
+		CreateUser(ctx context.Context, user entity.User) (uint, error)
 	}
 
 	TokenRepository interface {

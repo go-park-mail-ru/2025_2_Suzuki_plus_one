@@ -31,7 +31,13 @@ func NewPostAuthSignInUsecase(
 	}
 }
 
-func (uc *PostAuthSignInUsecase) Execute(ctx context.Context, input dto.PostAuthSignInInput) (dto.PostAuthSignInOutput, *dto.Error) {
+func (uc *PostAuthSignInUsecase) Execute(
+	ctx context.Context,
+	input dto.PostAuthSignInInput,
+) (
+	dto.PostAuthSignInOutput,
+	*dto.Error,
+) {
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -48,7 +54,7 @@ func (uc *PostAuthSignInUsecase) Execute(ctx context.Context, input dto.PostAuth
 		derr := dto.NewError(
 			"usecase/post_auth_signin",
 			entity.ErrPostAuthSignInParamsInvalid,
-			"invalid email or password",
+			"invalid email or password: "+err.Error(),
 		)
 		uc.logger.Warn("Invalid email attempt", uc.logger.ToString("email", input.Email))
 		return dto.PostAuthSignInOutput{}, &derr
@@ -61,9 +67,11 @@ func (uc *PostAuthSignInUsecase) Execute(ctx context.Context, input dto.PostAuth
 			entity.ErrPostAuthSignInParamsInvalid,
 			"invalid email or password",
 		)
-		uc.logger.Warn("Invalid password attempt",
+		uc.logger.Warn(
+			"Invalid password attempt",
 			uc.logger.ToString("password", input.Password),
-			uc.logger.ToError(err))
+			uc.logger.ToError(err),
+		)
 		return dto.PostAuthSignInOutput{}, &derr
 	}
 

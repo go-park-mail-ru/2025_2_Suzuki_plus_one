@@ -36,7 +36,7 @@ func TestGetAuthRefresh(t *testing.T) {
 
 	// Create mock GetAuthRefreshUsecase
 	mockCtrl := gomock.NewController(t)
-	mockGetAuthRefreshUsecase := controller.NewMockGetAuthRefreshUsecase(mockCtrl)
+	mockGetAuthRefreshUsecase := controller.NewMockGetAuthRefreshUseCase(mockCtrl)
 	mockGetAuthRefreshUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(movies, nil).

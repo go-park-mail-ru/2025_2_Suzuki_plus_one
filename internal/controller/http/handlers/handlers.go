@@ -8,18 +8,20 @@ import (
 type Handlers struct {
 	Logger logger.Logger
 
-	GetMovieRecommendationsUseCase controller.GetMovieRecommendationsUsecase
-	GetObjectMediaUseCase          controller.GetObjectUsecase
-	PostAuthSignInUseCase          controller.PostAuthSignInUsecase
-	GetAuthRefreshUseCase          controller.GetAuthRefreshUsecase
+	GetMovieRecommendationsUseCase controller.GetMovieRecommendationsUseCase
+	GetObjectMediaUseCase          controller.GetObjectUseCase
+	PostAuthSignInUseCase          controller.PostAuthSignInUseCase
+	GetAuthRefreshUseCase          controller.GetAuthRefreshUseCase
+	PostAuthSignUpUseCase          controller.PostAuthSignUpUseCase
 }
 
 func NewHandlers(
 	logger logger.Logger,
-	getMovieRecommendationsUseCase controller.GetMovieRecommendationsUsecase,
-	getObjectMediaUseCase controller.GetObjectUsecase,
-	postAuthSignInUseCase controller.PostAuthSignInUsecase,
-	getAuthRefreshUseCase controller.GetAuthRefreshUsecase,
+	getMovieRecommendationsUseCase controller.GetMovieRecommendationsUseCase,
+	getObjectMediaUseCase controller.GetObjectUseCase,
+	postAuthSignInUseCase controller.PostAuthSignInUseCase,
+	getAuthRefreshUseCase controller.GetAuthRefreshUseCase,
+	postAuthSignupUseCase controller.PostAuthSignUpUseCase,
 ) *Handlers {
 	return &Handlers{
 		Logger:                         logger,
@@ -27,5 +29,6 @@ func NewHandlers(
 		GetObjectMediaUseCase:          getObjectMediaUseCase,
 		PostAuthSignInUseCase:          postAuthSignInUseCase,
 		GetAuthRefreshUseCase:          getAuthRefreshUseCase,
+		PostAuthSignUpUseCase:          postAuthSignupUseCase,
 	}
 }

@@ -37,12 +37,6 @@ SignUpRequest:
       type: string
       minLength: 3
       example: "john_doe"
-    firstName:
-      type: string
-      example: "John"
-    lastName:
-      type: string
-      example: "Doe"
 
 SignUpResponse:
   $ref: "./auth.yaml#/RefreshResponse"

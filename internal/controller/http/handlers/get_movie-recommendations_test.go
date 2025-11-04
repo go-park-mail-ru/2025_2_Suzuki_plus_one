@@ -49,7 +49,7 @@ func TestGetMovieRecommendations(t *testing.T) {
 
 	// Create mock GetMovieRecommendationsUsecase
 	mockCtrl := gomock.NewController(t)
-	mockGetMovieRecommendationsUsecase := controller.NewMockGetMovieRecommendationsUsecase(mockCtrl)
+	mockGetMovieRecommendationsUsecase := controller.NewMockGetMovieRecommendationsUseCase(mockCtrl)
 	mockGetMovieRecommendationsUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(movies, nil).

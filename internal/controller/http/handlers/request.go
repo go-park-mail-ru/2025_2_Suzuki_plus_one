@@ -46,7 +46,8 @@ func (rp *RequestParams) AddQuery(key string, valueStorage any) {
 	rp.queryParamsStorage = append(rp.queryParamsStorage, valueStorage)
 }
 
-// * This is unused in favor of full dto param
+// This is unused in favor of full dto param.
+// However, it is needed to call it for all input body parameters to mark them for parsing.
 func (rp *RequestParams) AddBody(key string, valueStorage any) {
 	rp.bodyParams = append(rp.bodyParams, key)
 	rp.bodyParamsStorage = append(rp.bodyParamsStorage, valueStorage)
