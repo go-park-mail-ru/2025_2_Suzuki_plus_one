@@ -94,9 +94,9 @@ signin:
               $ref: "../schemas/error.yaml#/ErrorResponse"
 
 signout:
-  post:
+  get:
     security:
-      - refresh_token: []
+      - access_token: []
     tags:
       - auth
     summary: User logout
@@ -108,7 +108,7 @@ signout:
           Set-Cookie:
             schema:
               type: string
-              example: refresh_token=; HttpOnly; Max-Age=0
+              example: refresh_token=; HttpOnly; Strict; Max-Age=0
       "401":
         description: Unauthorized
         content:

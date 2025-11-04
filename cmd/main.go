@@ -98,10 +98,15 @@ func main() {
 		uc.NewPostAuthSignInUsecase(logger, userRepository, tokenRepository, sessionRepository),
 		uc.NewGetAuthRefreshUseCase(logger, tokenRepository),
 		uc.NewPostAuthSignUpUsecase(logger, userRepository, tokenRepository, sessionRepository),
+		uc.NewGetAuthSignOutUsecase(logger, tokenRepository, sessionRepository),
 	)
 
 	// Initialize JWT middleware engine
-	common.InitJWT(config.SERVER_JWT_SECRET, common.AccessTokenTTL, common.RefreshTokenTTL)
+	common.InitJWT(config.SERVER_JWT_SECRET, config.SERVER_JWT_ACCESS_EXPIRATION, config.SERVER_JWT_REFRESH_EXPIRATION)
+	logger.Info("JWT middleware initialized",
+		logger.ToString("access_token_ttl", common.AccessTokenTTL.String()),
+		logger.ToString("refresh_token_ttl", common.RefreshTokenTTL.String()),
+	)
 	// Inject handler into router
 	router := srv.InitRouter(handler, logger, config.SERVER_FRONTEND_URL)
 	srv.StartServer(router, config.SERVER_SERVE_STRING, logger)

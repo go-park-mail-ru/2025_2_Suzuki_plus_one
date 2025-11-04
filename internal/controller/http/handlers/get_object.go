@@ -37,7 +37,7 @@ func (h *Handlers) GetObjectMedia(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Logger.Info("Fetching movie recommendations completed successfully",
+	h.Logger.Debug("Fetching movie recommendations completed successfully",
 		h.Logger.ToString("url", output.URL))
 
 	// Respond with output

@@ -276,6 +276,20 @@ func (mr *MockTokenRepositoryMockRecorder) GetRefreshTokensForUser(ctx, userID a
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRefreshTokensForUser", reflect.TypeOf((*MockTokenRepository)(nil).GetRefreshTokensForUser), ctx, userID)
 }
 
+// RemoveRefreshToken mocks base method.
+func (m *MockTokenRepository) RemoveRefreshToken(ctx context.Context, userID uint, refreshToken string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveRefreshToken", ctx, userID, refreshToken)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveRefreshToken indicates an expected call of RemoveRefreshToken.
+func (mr *MockTokenRepositoryMockRecorder) RemoveRefreshToken(ctx, userID, refreshToken any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveRefreshToken", reflect.TypeOf((*MockTokenRepository)(nil).RemoveRefreshToken), ctx, userID, refreshToken)
+}
+
 // MockS3 is a mock of S3 interface.
 type MockS3 struct {
 	ctrl     *gomock.Controller
@@ -399,4 +413,33 @@ func (m *MockSessionRepository) AddSession(ctx context.Context, userID uint, acc
 func (mr *MockSessionRepositoryMockRecorder) AddSession(ctx, userID, accessToken, expiration any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddSession", reflect.TypeOf((*MockSessionRepository)(nil).AddSession), ctx, userID, accessToken, expiration)
+}
+
+// DeleteSession mocks base method.
+func (m *MockSessionRepository) DeleteSession(ctx context.Context, userID uint, accessToken string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteSession", ctx, userID, accessToken)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteSession indicates an expected call of DeleteSession.
+func (mr *MockSessionRepositoryMockRecorder) DeleteSession(ctx, userID, accessToken any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSession", reflect.TypeOf((*MockSessionRepository)(nil).DeleteSession), ctx, userID, accessToken)
+}
+
+// GetUserIDByToken mocks base method.
+func (m *MockSessionRepository) GetUserIDByToken(ctx context.Context, accessToken string) (uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserIDByToken", ctx, accessToken)
+	ret0, _ := ret[0].(uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserIDByToken indicates an expected call of GetUserIDByToken.
+func (mr *MockSessionRepositoryMockRecorder) GetUserIDByToken(ctx, accessToken any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserIDByToken", reflect.TypeOf((*MockSessionRepository)(nil).GetUserIDByToken), ctx, accessToken)
 }

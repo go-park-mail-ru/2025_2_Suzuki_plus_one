@@ -27,7 +27,7 @@ func (h *Handlers) GetAuthRefresh(w http.ResponseWriter, r *http.Request) {
 		h.ResponseWithError(w, ErrGetAuthRefreshInvalidParams, err.Error())
 		return
 	}
-	h.Logger.Info("GetAuthRefresh called",
+	h.Logger.Debug("GetAuthRefresh called",
 		h.Logger.ToString(RefreshTokenCookieName, input.RefreshToken),
 	)
 
@@ -41,7 +41,7 @@ func (h *Handlers) GetAuthRefresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Logger.Info("GetAuthRefresh succeeded",
+	h.Logger.Debug("GetAuthRefresh succeeded",
 		h.Logger.ToString("refresh_token", input.RefreshToken),
 		h.Logger.ToString("access_token", output.AccessToken),
 	)

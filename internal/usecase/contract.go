@@ -30,6 +30,7 @@ type (
 	TokenRepository interface {
 		AddNewRefreshToken(ctx context.Context, userID uint, refreshToken string, expiresAt time.Time) error
 		GetRefreshTokensForUser(ctx context.Context, userID uint) ([]entity.RefreshToken, error)
+		RemoveRefreshToken(ctx context.Context, userID uint, refreshToken string) error
 	}
 
 	// Minio
@@ -44,5 +45,7 @@ type (
 
 	SessionRepository interface {
 		AddSession(ctx context.Context, userID uint, accessToken string, expiration time.Duration) error
+		DeleteSession(ctx context.Context, userID uint, accessToken string) error
+		GetUserIDByToken(ctx context.Context, accessToken string) (uint, error)
 	}
 )

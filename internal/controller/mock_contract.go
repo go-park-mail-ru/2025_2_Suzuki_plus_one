@@ -211,3 +211,42 @@ func (mr *MockPostAuthSignUpUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostAuthSignUpUseCase)(nil).Execute), arg0, arg1)
 }
+
+// MockGetAuthSignOutUseCase is a mock of GetAuthSignOutUseCase interface.
+type MockGetAuthSignOutUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetAuthSignOutUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetAuthSignOutUseCaseMockRecorder is the mock recorder for MockGetAuthSignOutUseCase.
+type MockGetAuthSignOutUseCaseMockRecorder struct {
+	mock *MockGetAuthSignOutUseCase
+}
+
+// NewMockGetAuthSignOutUseCase creates a new mock instance.
+func NewMockGetAuthSignOutUseCase(ctrl *gomock.Controller) *MockGetAuthSignOutUseCase {
+	mock := &MockGetAuthSignOutUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetAuthSignOutUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetAuthSignOutUseCase) EXPECT() *MockGetAuthSignOutUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetAuthSignOutUseCase) Execute(arg0 context.Context, arg1 dto.GetAuthSignOutInput) (dto.GetAuthSignOutOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetAuthSignOutOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetAuthSignOutUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetAuthSignOutUseCase)(nil).Execute), arg0, arg1)
+}

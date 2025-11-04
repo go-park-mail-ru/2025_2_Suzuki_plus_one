@@ -27,4 +27,8 @@ type (
 	PostAuthSignUpUseCase interface {
 		Execute(context.Context, dto.PostAuthSignUpInput) (dto.PostAuthSignUpOutput, *dto.Error)
 	}
+
+	GetAuthSignOutUseCase interface {
+		Execute(context.Context, dto.GetAuthSignOutInput) (dto.GetAuthSignOutOutput, *dto.Error)
+	}
 )

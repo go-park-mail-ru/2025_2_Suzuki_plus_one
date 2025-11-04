@@ -14,7 +14,6 @@ import (
 
 func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handler {
 	r := chi.NewRouter()
-
 	// Middlewares, in the correct order
 	r.Use(middleware.GetLogging(l)) // Logger have to be first
 	r.Use(middleware.SetCors(origin))
@@ -33,6 +32,12 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Post("/auth/signin", h.PostAuthSignIn)
 	r.Get("/auth/refresh", h.GetAuthRefresh)
 	r.Post("/auth/signup", h.PostAuthSignUp)
+
+	// Protected routes
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Authenticator(common.TokenAuth))
+		r.Get("/auth/signout", h.GetAuthSignOut)
+	})
 
 	return r
 }

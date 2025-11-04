@@ -38,7 +38,7 @@ func (h *Handlers) GetMovieRecommendations(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	h.Logger.Info("Fetching movie recommendations completed successfully",
+	h.Logger.Debug("Fetching movie recommendations completed successfully",
 		h.Logger.ToString("count", strconv.FormatInt(int64(len(output.Movies)), 10)),
 		h.Logger.ToString("offset", strconv.FormatUint(uint64(input.Offset), 10)),
 		h.Logger.ToString("limit", strconv.FormatUint(uint64(input.Limit), 10)))

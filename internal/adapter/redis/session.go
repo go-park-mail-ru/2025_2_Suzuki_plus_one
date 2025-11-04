@@ -87,8 +87,8 @@ func (r *Redis) GetUserIDByToken(ctx context.Context, accessToken string) (uint,
 	return userID, nil
 }
 
-// DeleteSession removes all session data associated with the given userID from Redis
-func (r *Redis) DeleteSession(ctx context.Context, userID uint) error {
+// DeleteAllSession removes all session data associated with the given userID from Redis
+func (r *Redis) DeleteAllSession(ctx context.Context, userID uint) error {
 	// Get user access keys
 	userKey := generateUserKey(userID)
 	tokens, err := r.client.SMembers(r.context, userKey).Result()
@@ -119,5 +119,30 @@ func (r *Redis) DeleteSession(ctx context.Context, userID uint) error {
 	}
 
 	r.logger.Info("redis deleted user key", r.logger.ToString("userKey", userKey))
+	return nil
+}
+
+// Remove ONE session (access token) for the given userID from Redis
+func (r *Redis) DeleteSession(ctx context.Context, userID uint, accessToken string) error {
+	// Delete access key
+	accessKey := generateAccessKey(accessToken)
+	err := r.client.Del(r.context, accessKey).Err()
+	if err != nil {
+		r.logger.Error("redis delete access key error", r.logger.ToString("accessKey", accessKey),
+			r.logger.ToString("error", err.Error()))
+		return err
+	}
+	r.logger.Info("redis deleted access key", r.logger.ToString("accessKey", accessKey))
+
+	// Remove token from user set
+	userKey := generateUserKey(userID)
+	err = r.client.SRem(r.context, userKey, accessToken).Err()
+	if err != nil {
+		r.logger.Error("redis remove token from user set error", r.logger.ToString("userKey", userKey),
+			r.logger.ToString("error", err.Error()))
+		return err
+	}
+	r.logger.Info("redis removed token from user set", r.logger.ToString("userKey", userKey))
+
 	return nil
 }

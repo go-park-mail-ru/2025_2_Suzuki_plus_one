@@ -15,7 +15,7 @@ func (db *DataBase) AddNewRefreshToken(ctx context.Context, userID uint, refresh
 		db.logger.Warn("AddNewRefreshToken: failed to get requestID from context")
 		requestID = "unknown"
 	}
-	db.logger.Info("AddNewRefreshToken called",
+	db.logger.Debug("AddNewRefreshToken called",
 		db.logger.ToString("requestID", requestID),
 		db.logger.ToInt("user_id", int(userID)),
 	)
@@ -41,7 +41,7 @@ func (db *DataBase) GetRefreshTokensForUser(ctx context.Context, userID uint) ([
 		db.logger.Warn("GetRefreshTokens: failed to get requestID from context")
 		requestID = "unknown"
 	}
-	db.logger.Info("GetRefreshTokens called",
+	db.logger.Debug("GetRefreshTokens called",
 		db.logger.ToString("requestID", requestID),
 		db.logger.ToInt("user_id", int(userID)),
 	)
@@ -72,4 +72,29 @@ func (db *DataBase) GetRefreshTokensForUser(ctx context.Context, userID uint) ([
 	}
 
 	return tokens, nil
+}
+
+func (db *DataBase) RemoveRefreshToken(ctx context.Context, userID uint, refreshToken string) error {
+	// Log the request ID from context for tracing
+	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
+	if !ok {
+		db.logger.Warn("RemoveRefreshToken: failed to get requestID from context")
+		requestID = "unknown"
+	}
+	db.logger.Debug("RemoveRefreshToken called",
+		db.logger.ToString("requestID", requestID),
+		db.logger.ToInt("user_id", int(userID)),
+	)
+
+	query := `
+		DELETE FROM user_session
+		WHERE user_id = $1 AND session_token = $2
+	`
+
+	_, err := db.conn.Exec(query, userID, refreshToken)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

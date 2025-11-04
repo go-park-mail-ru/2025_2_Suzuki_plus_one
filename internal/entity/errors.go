@@ -16,6 +16,8 @@ var (
 	ErrPostAuthSignUpParamsInvalid = errors.New("invalid post_auth_sign_up request parameters")
 	ErrPostAuthSignUpAlreadyExists = errors.New("user with given email already exists")
 
+	ErrGetAuthSignOutInvalidParams = errors.New("invalid get_auth_signout request parameters")
+
 	ErrUserNotFound = errors.New("user not found")
 
 	ErrGetAuthRefreshInvalidParams = errors.New("invalid get_auth_refresh request parameters")

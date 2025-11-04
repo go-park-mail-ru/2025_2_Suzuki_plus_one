@@ -35,6 +35,7 @@ func (u *GetAuthRefreshUseCase) Execute(
 			entity.ErrGetAuthRefreshInvalidParams,
 			err.Error(),
 		)
+		u.logger.Error("GetAuthRefreshUseCase failed on validation")
 		return dto.GetAuthRefreshOutput{}, &derr
 	}
 	u.logger.Info("GetAuthRefreshUseCase called",
@@ -50,8 +51,11 @@ func (u *GetAuthRefreshUseCase) Execute(
 			entity.ErrGetAuthRefreshInvalidParams,
 			err.Error(),
 		)
+		u.logger.Error("GetAuthRefreshUseCase failed on refresh token validation")
 		return dto.GetAuthRefreshOutput{}, &derr
 	}
+
+	// TODO: remove old access tokens in redis
 
 	// Check for user existence
 	tokens, err := u.tokenRepo.GetRefreshTokensForUser(ctx, userID)
@@ -60,6 +64,9 @@ func (u *GetAuthRefreshUseCase) Execute(
 			"usecase/get_auth_refresh",
 			entity.ErrGetAuthRefreshInvalidParams,
 			err.Error(),
+		)
+		u.logger.Error("GetAuthRefreshUseCase failed on getting refresh tokens for user",
+			u.logger.ToInt("user_id", int(userID)),
 		)
 		return dto.GetAuthRefreshOutput{}, &derr
 	}

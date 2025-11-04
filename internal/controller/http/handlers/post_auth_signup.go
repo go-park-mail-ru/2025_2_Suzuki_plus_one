@@ -46,7 +46,7 @@ func (h *Handlers) PostAuthSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Logger.Info("Signed up user successfully",
+	h.Logger.Debug("Signed up user successfully",
 		h.Logger.ToString("accessToken", output.AccessToken),
 		h.Logger.ToString("refreshToken", output.RefreshToken),
 	)

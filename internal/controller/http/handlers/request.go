@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
@@ -21,6 +22,8 @@ type RequestParams struct {
 	bodyParamsStorage   []any
 	cookieParams        []string
 	cookieParamsStorage []any
+	accessToken         string
+	accessTokenStorage  *string
 	request             *http.Request
 	dto                 *dto.DTO
 }
@@ -57,6 +60,13 @@ func (rp *RequestParams) AddBody(key string, valueStorage any) {
 func (rp *RequestParams) AddCookie(key string, valueStorage any) {
 	rp.cookieParams = append(rp.cookieParams, key)
 	rp.cookieParamsStorage = append(rp.cookieParamsStorage, valueStorage)
+}
+
+// Parses Authorization header Bearer token into internal string
+// Parse methiod have to be called to scan it into given storage.
+func (rp *RequestParams) AddAuthHeader(valueStorage *string) {
+	rp.accessToken = jwtauth.TokenFromHeader(rp.request)
+	rp.accessTokenStorage = valueStorage
 }
 
 // Parse all registered parameters from the request into their storages.
@@ -113,6 +123,14 @@ func (rp *RequestParams) Parse() error {
 				rp.logger.ToError(err))
 			// If can't scan just set zero value
 		}
+	}
+
+	// Parse access token to given storage
+	if _, err := fmt.Sscanf(rp.accessToken, "%s", rp.accessTokenStorage); err != nil {
+		rp.logger.Warn("Invalid access token",
+			rp.logger.ToString("access_token", rp.accessToken),
+			rp.logger.ToError(err))
+		// If can't scan just set zero value
 	}
 
 	return nil
