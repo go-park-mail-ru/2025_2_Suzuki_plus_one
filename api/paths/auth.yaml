@@ -85,7 +85,7 @@ signin:
             schema:
               type: string
               # TODO: Add Secure attribute in production
-              example: RefreshToken=abcde12345; HttpOnly; SameSite=Strict
+              example: refresh_token=<TOKEN>; HttpOnly; SameSite=Strict
       "401":
         description: Invalid credentials
         content:

@@ -9,6 +9,7 @@ import (
 
 //go:generate mockgen -source=contract.go -destination=./contract_mock.go -package=usecase
 type (
+	// Postgres
 	Repository interface {
 		Connect() error
 		Close() error
@@ -20,9 +21,23 @@ type (
 		GetMediaPostersLinks(ctx context.Context, media_id uint) ([]string, error)
 	}
 
+	UserRepository interface {
+		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
+		GetUserAvatarURL(ctx context.Context, userID uint) (string, error)
+		AddNewRefreshToken(ctx context.Context, userID uint, refreshToken string, expiresAt time.Time) error
+	}
+
+	// Minio
 	S3 interface{}
 
 	ObjectRepository interface {
 		GetObject(ctx context.Context, key string, bucketName string, expiration time.Duration) (*entity.Object, error)
+	}
+
+	// Redis
+	Cache interface{}
+
+	SessionRepository interface {
+		AddSession(ctx context.Context, userID uint, accessToken string, expiration time.Duration) error
 	}
 )

@@ -25,6 +25,7 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	// Handlers
 	r.Get("/movie/recommendations", h.GetMovieRecommendations)
 	r.Get("/object", h.GetObjectMedia)
+	r.Post("/auth/signin", h.PostAuthSignIn)
 
 	return r
 }

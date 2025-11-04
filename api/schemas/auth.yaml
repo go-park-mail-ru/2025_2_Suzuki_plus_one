@@ -7,9 +7,9 @@
 RefreshResponse:
   type: object
   required:
-    - accessToken
+    - access_token
   properties:
-    accessToken:
+    access_token:
       type: string
       example: "<NewAccessToken>"
       description: New JWT access token

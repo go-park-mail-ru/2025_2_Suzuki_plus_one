@@ -4,6 +4,8 @@ Minimal media access flow using signed URLs:
 
 Client requests signed and short-lived URL from server to access media chunks (which \<video\> tag will use seamlessly):
 
+> User has multiple refresh tokens for different devices
+
 ```mermaid
 sequenceDiagram
     note right of Client: Client requests access to media resource

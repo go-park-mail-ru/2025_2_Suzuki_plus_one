@@ -29,6 +29,7 @@ func (db *DataBase) Connect() error {
 	if err != nil {
 		return err
 	}
+	db.logger.Info("Database connection established")
 	db.conn = conn
 	return nil
 }

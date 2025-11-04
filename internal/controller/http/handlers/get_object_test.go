@@ -45,7 +45,10 @@ func TestGetObject(t *testing.T) {
 		Times(1)
 
 	// Initialize server with the mock usecase
-	handlers := NewHandlers(logger, nil, mockGetObjectUsecase)
+	handlers := &Handlers{
+		Logger:                logger,
+		GetObjectMediaUseCase: mockGetObjectUsecase,
+	}
 	router := srv.InitRouter(handlers, logger, "/")
 	server := srv.NewServer(router)
 

@@ -17,12 +17,12 @@ var (
 func (h *Handlers) GetObjectMedia(w http.ResponseWriter, r *http.Request) {
 	// Handle input parameters
 	input := dto.GetObjectInput{}
-	rp := NewRequestParams(h.logger, r, &input)
+	rp := NewRequestParams(h.Logger, r, &input)
 	rp.AddQuery("key", &input.Key)
 	rp.AddQuery("bucket_name", &input.BucketName)
 	if err := rp.Parse(); err != nil {
-		h.logger.Error("Failed to parse query parameters",
-			h.logger.ToString("error", err.Error()))
+		h.Logger.Error("Failed to parse query parameters",
+			h.Logger.ToString("error", err.Error()))
 		h.ResponseWithError(w, ErrObjectMediaInvalidParams, err.Error())
 		return
 	}
@@ -30,15 +30,15 @@ func (h *Handlers) GetObjectMedia(w http.ResponseWriter, r *http.Request) {
 	// Execute use case
 	output, err := h.GetObjectMediaUseCase.Execute(rp.GetContext(), input)
 	if err != nil {
-		h.logger.Error("Failed to fetch movie recommendations",
-			h.logger.ToString("error", err.Message))
+		h.Logger.Error("Failed to fetch movie recommendations",
+			h.Logger.ToString("error", err.Message))
 		// Respond with error
 		h.Response(w, ErrObjectMediaInvalidParams.Code, err)
 		return
 	}
 
-	h.logger.Info("Fetching movie recommendations completed successfully",
-		h.logger.ToString("url", output.URL))
+	h.Logger.Info("Fetching movie recommendations completed successfully",
+		h.Logger.ToString("url", output.URL))
 
 	// Respond with output
 	h.Response(w, http.StatusOK, output)

@@ -8,9 +8,11 @@ import (
 )
 
 type Minio struct {
-	logger  logger.Logger
-	client  *minio.Client
-	context context.Context
+	logger   logger.Logger
+	client   *minio.Client
+	context  context.Context
+	secure   bool
+	endpoint string
 }
 
 func NewMinio(logger logger.Logger, endpoint string, login string, password string, useSSL bool) (*Minio, error) {
@@ -23,8 +25,10 @@ func NewMinio(logger logger.Logger, endpoint string, login string, password stri
 		return nil, err
 	}
 	return &Minio{
-		logger:  logger,
-		client:  minioClient,
-		context: context.Background(),
+		logger:   logger,
+		client:   minioClient,
+		context:  context.Background(),
+		endpoint: endpoint,
+		secure:   useSSL,
 	}, nil
 }

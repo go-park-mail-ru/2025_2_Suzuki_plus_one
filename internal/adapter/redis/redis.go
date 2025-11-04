@@ -13,9 +13,9 @@ type Redis struct {
 	context context.Context
 }
 
-func NewRedis(logger logger.Logger, connString string, password string) *Redis {
+func NewRedis(logger logger.Logger, addrString string, password string) *Redis {
 	client := redis.NewClient(&redis.Options{
-		Addr:     connString,
+		Addr:     addrString,
 		Password: password,
 		DB:       0, // Use default DB
 		Protocol: 2, // Connection protocol

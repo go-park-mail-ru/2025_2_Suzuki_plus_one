@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/redis"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
-	"github.com/redis/go-redis/v9"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/minio"
 	db "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/postgres"
@@ -32,16 +32,16 @@ func main() {
 		logger.Fatal("Failed to connect to database: " + err.Error())
 	}
 	defer databaseAdapter.Close()
-	logger.Info("Database connection established")
 
 	// Create redis connection
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     config.REDIS_HOST + ":6379",
-		Password: "", // no password set, cuz it is always local and doesn't store sensitive data
-		DB:       0,
-	})
+	var cache uc.Cache
+	redisClient := redis.NewRedis(logger, config.REDIS_HOST+":6379", "")
 	defer redisClient.Close()
-	logger.Info("Redis connection established")
+	err = redisClient.CheckConnection()
+	if err != nil {
+		logger.Fatal("Failed to connect to Redis: " + err.Error())
+	}
+	cache = redisClient
 
 	// Create s3 connection
 	var s3 uc.S3
@@ -61,28 +61,40 @@ func main() {
 
 	// # Content
 
-	// Get /movies
+	// --- Get /movies ---
 	movieRepository, ok := databaseAdapter.(uc.MovieRepository)
 	if !ok {
 		logger.Fatal("Database can't be converted to MovieRepository")
 	}
 	movieRecommendations := uc.NewGetMovieRecommendationsUsecase(logger, movieRepository)
 
-	// Get /object
+	// --- Get /object ---
 	objectRepository, ok := s3.(uc.ObjectRepository)
 	if !ok {
 		logger.Fatal("Database can't be converted to ObjectRepository")
 	}
 	getObjectMedia := uc.NewGetObjectUsecase(logger, objectRepository)
 
-	// Get /actor/{id}
+	// --- Get /auth/signin ---
+	// Cast Postgres
+	userRepository, ok := databaseAdapter.(uc.UserRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to UserRepository")
+	}
+	// Cast Redis
+	sessionRepository, ok := cache.(uc.SessionRepository)
+	if !ok {
+		logger.Fatal("Cache can't be converted to SessionRepository")
+	}
+	postAuthSignIn := uc.NewPostAuthSignInUsecase(logger, userRepository, sessionRepository)
 
 	// Inject usecases into handler
-	handler := handlers.NewHandlers(
-		logger,
-		movieRecommendations,
-		getObjectMedia,
-	)
+	handler := &handlers.Handlers{
+		Logger:                         logger,
+		GetMovieRecommendationsUseCase: movieRecommendations,
+		GetObjectMediaUseCase:          getObjectMedia,
+		PostAuthSignInUseCase:          postAuthSignIn,
+	}
 
 	// Inject handler into router
 	router := srv.InitRouter(handler, logger, config.SERVER_FRONTEND_URL)

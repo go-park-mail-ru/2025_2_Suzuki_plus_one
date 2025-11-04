@@ -15,8 +15,8 @@ type ResponseError struct {
 
 // Encodes and sends a JSON response with the given status code and data
 func (h *Handlers) Response(w http.ResponseWriter, status int, data any) {
-	h.logger.Info("HTTP response",
-		h.logger.ToInt("status_code", status),
+	h.Logger.Info("HTTP response",
+		h.Logger.ToInt("status_code", status),
 	)
 
 	w.WriteHeader(status)
@@ -31,11 +31,11 @@ func (h *Handlers) ResponseWithError(w http.ResponseWriter, err ResponseError, d
 		Details: details,
 	}
 
-	h.logger.Error("HTTP response",
-		h.logger.ToInt("status_code", err.Code),
-		h.logger.ToString("error_type", dto.Type),
-		h.logger.ToString("error_message", dto.Message),
-		h.logger.ToString("error_details", dto.Details),
+	h.Logger.Error("HTTP response",
+		h.Logger.ToInt("status_code", err.Code),
+		h.Logger.ToString("error_type", dto.Type),
+		h.Logger.ToString("error_message", dto.Message),
+		h.Logger.ToString("error_details", dto.Details),
 	)
 
 	w.WriteHeader(err.Code)

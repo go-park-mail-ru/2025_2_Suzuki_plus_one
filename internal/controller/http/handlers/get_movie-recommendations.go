@@ -18,12 +18,12 @@ var (
 func (h *Handlers) GetMovieRecommendations(w http.ResponseWriter, r *http.Request) {
 	// Handle input parameters
 	input := dto.GetMovieRecommendationsInput{}
-	rp := NewRequestParams(h.logger, r, &input)
+	rp := NewRequestParams(h.Logger, r, &input)
 	rp.AddQuery("offset", &input.Offset)
 	rp.AddQuery("limit", &input.Limit)
 	if err := rp.Parse(); err != nil {
-		h.logger.Error("Failed to parse query parameters",
-			h.logger.ToString("error", err.Error()))
+		h.Logger.Error("Failed to parse query parameters",
+			h.Logger.ToString("error", err.Error()))
 		h.ResponseWithError(w, ErrMoviesInvalidParams, err.Error())
 		return
 	}
@@ -31,17 +31,17 @@ func (h *Handlers) GetMovieRecommendations(w http.ResponseWriter, r *http.Reques
 	// Execute use case
 	output, err := h.GetMovieRecommendationsUseCase.Execute(rp.GetContext(), input)
 	if err != nil {
-		h.logger.Error("Failed to fetch movie recommendations",
-			h.logger.ToString("error", err.Message))
+		h.Logger.Error("Failed to fetch movie recommendations",
+			h.Logger.ToString("error", err.Message))
 		// Respond with error
 		h.Response(w, ErrMoviesInvalidParams.Code, err)
 		return
 	}
 
-	h.logger.Info("Fetching movie recommendations completed successfully",
-		h.logger.ToString("count", strconv.FormatInt(int64(len(output.Movies)), 10)),
-		h.logger.ToString("offset", strconv.FormatUint(uint64(input.Offset), 10)),
-		h.logger.ToString("limit", strconv.FormatUint(uint64(input.Limit), 10)))
+	h.Logger.Info("Fetching movie recommendations completed successfully",
+		h.Logger.ToString("count", strconv.FormatInt(int64(len(output.Movies)), 10)),
+		h.Logger.ToString("offset", strconv.FormatUint(uint64(input.Offset), 10)),
+		h.Logger.ToString("limit", strconv.FormatUint(uint64(input.Limit), 10)))
 
 	// Respond with output
 	h.Response(w, http.StatusOK, output)

@@ -6,8 +6,10 @@ Minimal authentication flow using JWT access/refresh tokens:
 
 ## Frontend
 
-- Access token keeps in JS memory
-- Refresh token keeps in HttpOnly Secure SameSite=strict cookie
+If JS has Access token, then User is considered authenticated.
+
+- Access token keeps in JS memory (to obtain hit `/auth/refresh`)
+- Refresh token keeps in HttpOnly Secure SameSite=strict cookie (to obtain hit `/auth/signin`)
 
 ## Backend
 
@@ -39,7 +41,7 @@ sequenceDiagram
     end
 
     note right of Client: Client refreshes access token when expired
-    Client->>Server: POST /auth/refresh + Authorization: Bearer <JWT REFRESH Token>
+    Client->>Server: GET /auth/refresh + Authorization: Bearer <JWT REFRESH Token>
     Server<<->>Postgres: Validate refresh token
     alt refresh token invalid
         Server->>Client: 403 Forbidden

@@ -47,3 +47,37 @@ func (m *Minio) GetObject(ctx context.Context, objectName string, bucketName str
 		URL: presignedURL.String(),
 	}, nil
 }
+
+func (m *Minio) GetPublicObject(ctx context.Context, objectName string, bucketName string) (*entity.Object, error) {
+	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
+	if !ok {
+		m.logger.Warn("GetPublicObject: failed to get requestID from context")
+		requestID = "unknown"
+	}
+	m.logger.Info("GetPublicObject called",
+		m.logger.ToString("requestID", requestID),
+		m.logger.ToString("bucketName", bucketName),
+		m.logger.ToString("objectName", objectName),
+	)
+
+	// Check if the object exists
+	info, err := m.client.StatObject(ctx, bucketName, objectName, minio.StatObjectOptions{})
+	if err != nil {
+		m.logger.Error("Failed to stat object: " + err.Error())
+		return nil, err
+	}
+	if info.Size == 0 {
+		m.logger.Error("Object not found or is empty")
+		return nil, fmt.Errorf("object not found or is empty")
+	}
+
+	// Construct public URL
+	scheme := "http"
+	if m.secure {
+		scheme = "https"
+	}
+	objectURL := fmt.Sprintf("%s://%s/%s/%s", scheme, m.endpoint, bucketName, objectName)
+	return &entity.Object{
+		URL: objectURL,
+	}, nil
+}

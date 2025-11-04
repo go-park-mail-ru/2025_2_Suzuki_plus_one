@@ -15,4 +15,8 @@ type (
 	GetObjectUsecase interface {
 		Execute(context.Context, dto.GetObjectInput) (dto.GetObjectOutput, *dto.Error)
 	}
+
+	PostAuthSignInUsecase interface {
+		Execute(context.Context, dto.PostAuthSignInInput) (dto.PostAuthSignInOutput, *dto.Error)
+	}
 )

@@ -201,16 +201,26 @@ CREATE TABLE actor_role (
 CREATE TABLE "user" (
     user_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username TEXT NOT NULL UNIQUE CHECK (LENGTH(username) <= 50),
-    asset_image_id BIGINT,
+    asset_image_id BIGINT, -- user avatar
+    password_hash TEXT NOT NULL CHECK (LENGTH(password_hash) <= 255),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_asset_image FOREIGN KEY (asset_image_id) REFERENCES asset_image (asset_image_id) ON DELETE
     SET NULL,
         email TEXT NOT NULL UNIQUE CHECK (
             LENGTH(email) <= 255
             AND email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
-        ),
-        password_hash TEXT NOT NULL CHECK (LENGTH(password_hash) <= 255),
-        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+);
+-- User session
+CREATE TABLE user_session (
+    user_session_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id BIGINT NOT NULL,
+    session_token TEXT NOT NULL UNIQUE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user_session_user FOREIGN KEY (user_id) REFERENCES "user" (user_id) ON DELETE CASCADE
 );
 -- Playlists
 CREATE TABLE playlist (

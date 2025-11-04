@@ -56,7 +56,10 @@ func TestGetMovieRecommendations(t *testing.T) {
 		Times(1)
 
 	// Initialize server with the mock usecase
-	handlers := NewHandlers(logger, mockGetMovieRecommendationsUsecase, nil)
+	handlers := &Handlers{
+		Logger:                         logger,
+		GetMovieRecommendationsUseCase: mockGetMovieRecommendationsUsecase,
+	}
 	router := srv.InitRouter(handlers, logger, "/")
 	server := srv.NewServer(router)
 

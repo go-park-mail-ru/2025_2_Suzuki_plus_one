@@ -29,8 +29,8 @@ VALUES (
           WHERE s3_key = '/avatars/Chris.png'
         )
     ),
-    '$2y$10$7BI4Kx26CoOF5iI6q5RxVOUzROFxsbYpxwrtUxnOG5YL17zDFjaVm',
-    'testuser@example.com'
+    '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', -- plaintext: 'Password123!'
+    'test@example.com'
   );
 -- 3) Media: Inception
 INSERT INTO media (

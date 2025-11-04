@@ -225,6 +225,17 @@ erDiagram
         timestamptz updated_at
     }
 
+    USER_SESSION {
+        bigint user_session_id PK
+        bigint user_id FK
+        %% ---
+        text session_token
+        timestamptz expires_at
+        %% ---
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
     USER_PLAYLIST {
         bigint user_playlist_id PK
         bigint user_id FK
@@ -354,6 +365,8 @@ erDiagram
         USER_PLAYLIST ||--|| PLAYLIST : "user_playlist links user and playlist"
 
     USER }o-|| ASSET_IMAGE : "user has profile image"
+
+    USER ||--o{ USER_SESSION : "user has sessions"
 
     %% ## Likes
     USER ||--o{ USER_LIKE_MEDIA : "user likes media"
