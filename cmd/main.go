@@ -2,8 +2,10 @@ package main
 
 import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+	"github.com/redis/go-redis/v9"
 
-	db "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/inmemory"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/minio"
+	db "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/postgres"
 	cfg "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/config"
 	srv "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/handlers"
@@ -21,15 +23,53 @@ func main() {
 
 	logger.Info("Config loaded")
 
-	// Create databaseAdapter connection
-	databaseAdapter := db.NewDataBase(logger)
-	logger.Info("Database created")
+	// Create Postgres connection
+	dbURL := "postgres://" + config.POSTGRES_USER + ":" + config.POSTGRES_PASSWORD +
+		"@" + config.POSTGRES_HOST + ":" + "5432" + "/" + config.POSTGRES_DB + "?sslmode=disable"
+	var databaseAdapter uc.Repository = db.NewDataBase(logger, dbURL)
+	err := databaseAdapter.Connect()
+	if err != nil {
+		logger.Fatal("Failed to connect to database: " + err.Error())
+	}
+	defer databaseAdapter.Close()
+	logger.Info("Database connection established")
 
-	// Usecase
-	getMovies := uc.NewGetMoviesUsecase(databaseAdapter)
+	// Create redis connection
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     config.REDIS_HOST + ":6379",
+		Password: "", // no password set, cuz it is always local and doesn't store sensitive data
+		DB:       0,
+	})
+	defer redisClient.Close()
+	logger.Info("Redis connection established")
+
+	// Create s3 connection
+	s3, err := minio.NewMinio(logger, config.MINIO_HOST, config.MINIO_ROOT_USER, config.MINIO_ROOT_PASSWORD, false)
+	if err != nil {
+		logger.Fatal("Failed to connect to Minio: " + err.Error())
+	}
+	logger.Info("Minio connection established")
+	_ = s3 // TODO: Use s3
+
+	// Usecases. Just follow openAPI order here
+
+	// # Content
+
+	// Get /movies
+	movieRepository, ok := databaseAdapter.(uc.MovieRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to MovieRepository")
+	}
+	movieRecommendations := uc.NewGetMovieRecommendationsUsecase(logger, movieRepository)
+
+	// Get /movie/{id}
+
+	// Get /actor/{id}
+
+	// Handlers
 
 	// Inject usecase into handler
-	handler := handlers.NewHandlers(getMovies, logger)
+	handler := handlers.NewHandlers(movieRecommendations, logger)
 
 	// Inject handler into router
 	router := srv.InitRouter(handler, logger, config.SERVER_FRONTEND_URL)

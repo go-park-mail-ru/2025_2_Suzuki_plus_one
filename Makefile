@@ -189,6 +189,35 @@ all-fill: ## fills all services with test data
 	make minio-fill
 	make db-fill
 
+all-migrate: ## migrates database and minio services
+	make migrate-up
+	make minio-create
+
+all-bootstrap: ## bootstraps all services: starts, migrates, fills with test data
+	make all-start
+	@echo "Waiting for services to be ready..."
+	@timeout=60; \
+	while [ $$timeout -gt 0 ]; do \
+		ready=true; \
+		source .env && pg_isready -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB || ready=false; \
+		docker compose exec redis redis-cli ping | grep -q PONG || ready=false; \
+		docker compose exec s3 mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD >/dev/null 2>&1 && \
+		docker compose exec s3 mc ls local >/dev/null 2>&1 || ready=false; \
+		if [ "$$ready" = true ]; then \
+			echo "All services are ready."; \
+			break; \
+		fi; \
+		sleep 2; \
+		timeout=$$((timeout-2)); \
+	done; \
+	if [ "$$ready" != true ]; then \
+		echo "Timeout waiting for services to be ready."; \
+		exit 1; \
+	fi
+	make all-migrate
+	make all-fill
+	@echo "All services bootstrapped."
+
 .PHONY: help
 ## Help
 help: ## Show this help.

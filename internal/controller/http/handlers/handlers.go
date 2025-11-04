@@ -8,12 +8,15 @@ import (
 type Handlers struct {
 	logger logger.Logger
 
-	GetMoviesUseCase controller.GetMoviesUsecase
+	GetMovieRecommendationsUseCase controller.GetMovieRecommendationsUsecase
 }
 
-func NewHandlers(getMoviesUsecase controller.GetMoviesUsecase, logger logger.Logger) *Handlers {
+func NewHandlers(
+	getMovieRecommendationsUsecase controller.GetMovieRecommendationsUsecase,
+	logger logger.Logger,
+) *Handlers {
 	return &Handlers{
-		logger:           logger,
-		GetMoviesUseCase: getMoviesUsecase,
+		logger:                         logger,
+		GetMovieRecommendationsUseCase: getMovieRecommendationsUsecase,
 	}
 }

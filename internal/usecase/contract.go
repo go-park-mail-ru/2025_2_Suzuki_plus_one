@@ -13,6 +13,9 @@ type (
 		Close() error
 	}
 	MovieRepository interface {
-		GetMovies(ctx context.Context, limit, offset uint) ([]entity.Movie, error)
+		GetMediaCount(ctx context.Context, media_type string) (int, error)
+		GetMedia(ctx context.Context, media_id uint) (*entity.Media, error)
+		GetMediaGenres(ctx context.Context, media_id uint) ([]entity.Genre, error)
+		GetMediaPostersLinks(ctx context.Context, media_id uint) ([]string, error)
 	}
 )

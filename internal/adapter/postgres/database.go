@@ -2,14 +2,15 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
-	"github.com/jackc/pgx/v5"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type DataBase struct {
 	logger     logger.Logger
-	conn       *pgx.Conn
+	conn       *sql.DB
 	connString string
 	context    context.Context
 }
@@ -24,7 +25,7 @@ func NewDataBase(logger logger.Logger, dbUrl string) *DataBase {
 
 func (db *DataBase) Connect() error {
 	db.context = context.Background()
-	conn, err := pgx.Connect(db.context, db.connString)
+	conn, err := sql.Open("pgx", db.connString)
 	if err != nil {
 		return err
 	}
@@ -33,5 +34,5 @@ func (db *DataBase) Connect() error {
 }
 
 func (db *DataBase) Close() error {
-	return db.conn.Close(db.context)
+	return db.conn.Close()
 }

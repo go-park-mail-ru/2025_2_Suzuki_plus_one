@@ -23,7 +23,7 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Use(chiMiddleware.RequestID)
 
 	// Handlers
-	r.Get("/movies", h.GetMovies)
+	r.Get("/movie/recommendations", h.GetMovieRecommendations)
 
 	return r
 }

@@ -13,5 +13,5 @@ var (
 
 	// ErrMoviesInvalidParams = models.ErrorResponse{Type: "content", Message: "invalid request parameters"}
 
-	ErrGetMoviesParamsInvalid = errors.New("invalid get_movies request parameters")
+	ErrGetMovieRecommendationsParamsInvalid = errors.New("invalid get_movie_recommendations request parameters")
 )

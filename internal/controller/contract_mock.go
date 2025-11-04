@@ -17,41 +17,41 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockGetMoviesUsecase is a mock of GetMoviesUsecase interface.
-type MockGetMoviesUsecase struct {
+// MockGetMovieRecommendationsUsecase is a mock of GetMovieRecommendationsUsecase interface.
+type MockGetMovieRecommendationsUsecase struct {
 	ctrl     *gomock.Controller
-	recorder *MockGetMoviesUsecaseMockRecorder
+	recorder *MockGetMovieRecommendationsUsecaseMockRecorder
 	isgomock struct{}
 }
 
-// MockGetMoviesUsecaseMockRecorder is the mock recorder for MockGetMoviesUsecase.
-type MockGetMoviesUsecaseMockRecorder struct {
-	mock *MockGetMoviesUsecase
+// MockGetMovieRecommendationsUsecaseMockRecorder is the mock recorder for MockGetMovieRecommendationsUsecase.
+type MockGetMovieRecommendationsUsecaseMockRecorder struct {
+	mock *MockGetMovieRecommendationsUsecase
 }
 
-// NewMockGetMoviesUsecase creates a new mock instance.
-func NewMockGetMoviesUsecase(ctrl *gomock.Controller) *MockGetMoviesUsecase {
-	mock := &MockGetMoviesUsecase{ctrl: ctrl}
-	mock.recorder = &MockGetMoviesUsecaseMockRecorder{mock}
+// NewMockGetMovieRecommendationsUsecase creates a new mock instance.
+func NewMockGetMovieRecommendationsUsecase(ctrl *gomock.Controller) *MockGetMovieRecommendationsUsecase {
+	mock := &MockGetMovieRecommendationsUsecase{ctrl: ctrl}
+	mock.recorder = &MockGetMovieRecommendationsUsecaseMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockGetMoviesUsecase) EXPECT() *MockGetMoviesUsecaseMockRecorder {
+func (m *MockGetMovieRecommendationsUsecase) EXPECT() *MockGetMovieRecommendationsUsecaseMockRecorder {
 	return m.recorder
 }
 
 // Execute mocks base method.
-func (m *MockGetMoviesUsecase) Execute(arg0 context.Context, arg1 dto.GetMoviesInput) (dto.GetMoviesOutput, *dto.Error) {
+func (m *MockGetMovieRecommendationsUsecase) Execute(arg0 context.Context, arg1 dto.GetMovieRecommendationsInput) (dto.GetMovieRecommendationsOutput, *dto.Error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
-	ret0, _ := ret[0].(dto.GetMoviesOutput)
+	ret0, _ := ret[0].(dto.GetMovieRecommendationsOutput)
 	ret1, _ := ret[1].(*dto.Error)
 	return ret0, ret1
 }
 
 // Execute indicates an expected call of Execute.
-func (mr *MockGetMoviesUsecaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+func (mr *MockGetMovieRecommendationsUsecaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMoviesUsecase)(nil).Execute), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMovieRecommendationsUsecase)(nil).Execute), arg0, arg1)
 }

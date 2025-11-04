@@ -28,7 +28,13 @@ func executeRequest(logger logger.Logger, s http.Handler, req *http.Request) *ht
 }
 
 // checkResponseCode is a simple utility to assert the response code and body
-func checkResponse(t *testing.T, logger logger.Logger, response *httptest.ResponseRecorder, expectedCode int, expectedBody dto.DTO) {
+func checkResponse[T dto.DTO](
+	t *testing.T,
+	logger logger.Logger,
+	response *httptest.ResponseRecorder,
+	expectedCode int,
+	expectedBody T,
+) {
 	logger.Debug("Checking response: ", "response", response)
 
 	// Check the response code
@@ -38,10 +44,10 @@ func checkResponse(t *testing.T, logger logger.Logger, response *httptest.Respon
 	require.NotNil(t, response.Body, "Response body is nil")
 
 	// Read and unmarshal the response body
-	var actualMovies dto.GetMoviesOutput
-	err := json.NewDecoder(response.Body).Decode(&actualMovies)
+	decodeBuffer := new(T)
+	err := json.NewDecoder(response.Body).Decode(&decodeBuffer)
 	require.NoError(t, err, "Error unmarshaling response body")
 
 	// Assert the response body
-	require.Equal(t, expectedBody, actualMovies, "Response body is not as expected")
+	require.Equal(t, expectedBody, *decodeBuffer, "Response body is not as expected")
 }

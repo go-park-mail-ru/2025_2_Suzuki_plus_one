@@ -17,6 +17,58 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
+// MockRepository is a mock of Repository interface.
+type MockRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockRepositoryMockRecorder is the mock recorder for MockRepository.
+type MockRepositoryMockRecorder struct {
+	mock *MockRepository
+}
+
+// NewMockRepository creates a new mock instance.
+func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
+	mock := &MockRepository{ctrl: ctrl}
+	mock.recorder = &MockRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
+	return m.recorder
+}
+
+// Close mocks base method.
+func (m *MockRepository) Close() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Close indicates an expected call of Close.
+func (mr *MockRepositoryMockRecorder) Close() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockRepository)(nil).Close))
+}
+
+// Connect mocks base method.
+func (m *MockRepository) Connect() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Connect")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Connect indicates an expected call of Connect.
+func (mr *MockRepositoryMockRecorder) Connect() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockRepository)(nil).Connect))
+}
+
 // MockMovieRepository is a mock of MovieRepository interface.
 type MockMovieRepository struct {
 	ctrl     *gomock.Controller
@@ -41,17 +93,62 @@ func (m *MockMovieRepository) EXPECT() *MockMovieRepositoryMockRecorder {
 	return m.recorder
 }
 
-// GetMovies mocks base method.
-func (m *MockMovieRepository) GetMovies(ctx context.Context, limit, offset uint) ([]entity.Movie, error) {
+// GetMedia mocks base method.
+func (m *MockMovieRepository) GetMedia(ctx context.Context, media_id uint) (*entity.Media, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMovies", ctx, limit, offset)
-	ret0, _ := ret[0].([]entity.Movie)
+	ret := m.ctrl.Call(m, "GetMedia", ctx, media_id)
+	ret0, _ := ret[0].(*entity.Media)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetMovies indicates an expected call of GetMovies.
-func (mr *MockMovieRepositoryMockRecorder) GetMovies(ctx, limit, offset any) *gomock.Call {
+// GetMedia indicates an expected call of GetMedia.
+func (mr *MockMovieRepositoryMockRecorder) GetMedia(ctx, media_id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMovies", reflect.TypeOf((*MockMovieRepository)(nil).GetMovies), ctx, limit, offset)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMedia", reflect.TypeOf((*MockMovieRepository)(nil).GetMedia), ctx, media_id)
+}
+
+// GetMediaCount mocks base method.
+func (m *MockMovieRepository) GetMediaCount(ctx context.Context, media_type string) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMediaCount", ctx, media_type)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMediaCount indicates an expected call of GetMediaCount.
+func (mr *MockMovieRepositoryMockRecorder) GetMediaCount(ctx, media_type any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaCount", reflect.TypeOf((*MockMovieRepository)(nil).GetMediaCount), ctx, media_type)
+}
+
+// GetMediaGenres mocks base method.
+func (m *MockMovieRepository) GetMediaGenres(ctx context.Context, media_id uint) ([]entity.Genre, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMediaGenres", ctx, media_id)
+	ret0, _ := ret[0].([]entity.Genre)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMediaGenres indicates an expected call of GetMediaGenres.
+func (mr *MockMovieRepositoryMockRecorder) GetMediaGenres(ctx, media_id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaGenres", reflect.TypeOf((*MockMovieRepository)(nil).GetMediaGenres), ctx, media_id)
+}
+
+// GetMediaPostersLinks mocks base method.
+func (m *MockMovieRepository) GetMediaPostersLinks(ctx context.Context, media_id uint) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMediaPostersLinks", ctx, media_id)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMediaPostersLinks indicates an expected call of GetMediaPostersLinks.
+func (mr *MockMovieRepositoryMockRecorder) GetMediaPostersLinks(ctx, media_id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaPostersLinks", reflect.TypeOf((*MockMovieRepository)(nil).GetMediaPostersLinks), ctx, media_id)
 }

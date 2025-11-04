@@ -15,48 +15,52 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-func getMockGetMoviesInput() dto.GetMoviesInput {
-	return dto.GetMoviesInput{
+func getMockGetMovieRecommendationsInput() dto.GetMovieRecommendationsInput {
+	return dto.GetMovieRecommendationsInput{
 		Limit:  2,
 		Offset: 3,
 	}
 }
 
-func getMockGetMoviesOutput() dto.GetMoviesOutput {
+func getMockGetMovieRecommendationsOutput() dto.GetMovieRecommendationsOutput {
 	// Create 5 mock movies
 	movies := []dto.Movie{}
 	for i := 0; i < 5; i++ {
-		movie := dto.NewTestMovie("movie_id_" + strconv.Itoa(i))
+		// Create new movie with ID and Title
+		movie := dto.Movie{}
+		movie.ID = i + 1
+		movie.Title = "Movie " + strconv.Itoa(i+1)
 		movies = append(movies, movie)
 	}
 
-	return dto.GetMoviesOutput{
+	return dto.GetMovieRecommendationsOutput{
 		Movies: movies,
 	}
 }
 
-func TestGetMovies(t *testing.T) {
+// Call GetMovieRecommendations handler and check response with query parameters limit and offset
+func TestGetMovieRecommendations(t *testing.T) {
 	logger := logger.NewZapLogger(true)
 
 	// Define input and expected output
-	input := getMockGetMoviesInput()
-	movies := getMockGetMoviesOutput()
+	input := getMockGetMovieRecommendationsInput()
+	movies := getMockGetMovieRecommendationsOutput()
 
-	// Create mock GetMoviesUsecase
+	// Create mock GetMovieRecommendationsUsecase
 	mockCtrl := gomock.NewController(t)
-	mockGetMoviesUsecase := controller.NewMockGetMoviesUsecase(mockCtrl)
-	mockGetMoviesUsecase.EXPECT().
+	mockGetMovieRecommendationsUsecase := controller.NewMockGetMovieRecommendationsUsecase(mockCtrl)
+	mockGetMovieRecommendationsUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(movies, nil).
 		Times(1)
 
 	// Initialize server with the mock usecase
-	handlers := NewHandlers(mockGetMoviesUsecase, logger)
+	handlers := NewHandlers(mockGetMovieRecommendationsUsecase, logger)
 	router := srv.InitRouter(handlers, logger, "/")
 	server := srv.NewServer(router)
 
 	// Create a New Request
-	req, err := http.NewRequest("GET", "/movies?limit=2&offset=3", nil)
+	req, err := http.NewRequest("GET", "/movie/recommendations?limit=2&offset=3", nil)
 	require.NoError(t, err)
 
 	// Execute Request

@@ -8,7 +8,7 @@ import (
 
 //go:generate mockgen -source=contract.go -destination=./contract_mock.go -package=controller
 type (
-	GetMoviesUsecase interface {
-		Execute(context.Context, dto.GetMoviesInput) (dto.GetMoviesOutput, *dto.Error)
+	GetMovieRecommendationsUsecase interface {
+		Execute(context.Context, dto.GetMovieRecommendationsInput) (dto.GetMovieRecommendationsOutput, *dto.Error)
 	}
 )

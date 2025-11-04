@@ -15,9 +15,9 @@ var (
 )
 
 // Get all movies from database
-func (h *Handlers) GetMovies(w http.ResponseWriter, r *http.Request) {
-	// Hadndle input parameters
-	input := dto.GetMoviesInput{}
+func (h *Handlers) GetMovieRecommendations(w http.ResponseWriter, r *http.Request) {
+	// Handle input parameters
+	input := dto.GetMovieRecommendationsInput{}
 	rp := NewRequestParams(h.logger, r, &input)
 	rp.AddQuery("offset", &input.Offset)
 	rp.AddQuery("limit", &input.Limit)
@@ -29,16 +29,16 @@ func (h *Handlers) GetMovies(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Execute use case
-	output, err := h.GetMoviesUseCase.Execute(rp.GetContext(), input)
+	output, err := h.GetMovieRecommendationsUseCase.Execute(rp.GetContext(), input)
 	if err != nil {
-		h.logger.Error("Failed to fetch movies",
+		h.logger.Error("Failed to fetch movie recommendations",
 			h.logger.ToString("error", err.Message))
 		// Respond with error
 		h.Response(w, ErrMoviesInvalidParams.Code, err)
 		return
 	}
 
-	h.logger.Info("Fetching movies completed successfully",
+	h.logger.Info("Fetching movie recommendations completed successfully",
 		h.logger.ToString("count", strconv.FormatInt(int64(len(output.Movies)), 10)),
 		h.logger.ToString("offset", strconv.FormatUint(uint64(input.Offset), 10)),
 		h.logger.ToString("limit", strconv.FormatUint(uint64(input.Limit), 10)))
