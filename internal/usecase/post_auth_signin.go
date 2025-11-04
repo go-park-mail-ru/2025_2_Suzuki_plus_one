@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
@@ -13,17 +12,20 @@ import (
 
 type PostAuthSignInUsecase struct {
 	logger      logger.Logger
-	authRepo    UserRepository
+	userRepo    UserRepository
+	authRepo    TokenRepository
 	sessionRepo SessionRepository
 }
 
 func NewPostAuthSignInUsecase(
 	logger logger.Logger,
-	authRepo UserRepository,
+	userRepo UserRepository,
+	authRepo TokenRepository,
 	sessionRepo SessionRepository,
 ) *PostAuthSignInUsecase {
 	return &PostAuthSignInUsecase{
 		logger:      logger,
+		userRepo:    userRepo,
 		authRepo:    authRepo,
 		sessionRepo: sessionRepo,
 	}
@@ -41,7 +43,7 @@ func (uc *PostAuthSignInUsecase) Execute(ctx context.Context, input dto.PostAuth
 	}
 
 	// Check user credentials in repository and get user id
-	user, err := uc.authRepo.GetUserByEmail(ctx, input.Email)
+	user, err := uc.userRepo.GetUserByEmail(ctx, input.Email)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/post_auth_signin",
@@ -65,11 +67,20 @@ func (uc *PostAuthSignInUsecase) Execute(ctx context.Context, input dto.PostAuth
 		return dto.PostAuthSignInOutput{}, &derr
 	}
 
-	// Add refresh refreshToken for user in repository
-	refreshToken := generateRefreshToken(user.ID)
-	expiresAt := time.Now().Add(7 * 24 * time.Hour) // TODO: 7 days expiration, can be changed later if needed
+	// Generate refresh token
+	refreshToken, err := common.GenerateToken(user.ID, common.RefreshTokenTTL)
+	if err != nil {
+		derr := dto.NewError(
+			"usecase/post_auth_signin",
+			entity.ErrPostAuthSignInNewRefreshTokenFailed,
+			err.Error(),
+		)
+		return dto.PostAuthSignInOutput{}, &derr
+	}
 
-	if err := uc.authRepo.AddNewRefreshToken(ctx, user.ID, refreshToken, expiresAt); err != nil {
+	// Add refresh refreshToken for user in repository
+	expiration := time.Now().Add(common.RefreshTokenTTL)
+	if err := uc.authRepo.AddNewRefreshToken(ctx, user.ID, refreshToken, expiration); err != nil {
 		derr := dto.NewError(
 			"usecase/post_auth_signin",
 			entity.ErrPostAuthSignInNewRefreshTokenFailed,
@@ -79,11 +90,18 @@ func (uc *PostAuthSignInUsecase) Execute(ctx context.Context, input dto.PostAuth
 	}
 
 	// Generate access token
-	accessToken := generateAccessToken(user.ID)
-	accessTokenExpiration := time.Hour // TODO: 1 hour expiration, can be changed later if needed
+	accessToken, err := common.GenerateToken(user.ID, common.AccessTokenTTL)
+	if err != nil {
+		derr := dto.NewError(
+			"usecase/post_auth_signin",
+			entity.ErrPostAuthSignInNewAccessTokenFailed,
+			err.Error(),
+		)
+		return dto.PostAuthSignInOutput{}, &derr
+	}
 
 	// Create session in cache (Redis)
-	if err := uc.sessionRepo.AddSession(ctx, user.ID, accessToken, accessTokenExpiration); err != nil {
+	if err := uc.sessionRepo.AddSession(ctx, user.ID, accessToken, common.AccessTokenTTL); err != nil {
 		derr := dto.NewError(
 			"usecase/post_auth_signin",
 			entity.ErrPostAuthSignInAddSessionFailed,
@@ -96,14 +114,4 @@ func (uc *PostAuthSignInUsecase) Execute(ctx context.Context, input dto.PostAuth
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil
-}
-
-func generateRefreshToken(userID uint) string {
-	// Placeholder implementation for refresh token generation
-	return fmt.Sprintf("refresh-token-for-user-%d", userID)
-}
-
-func generateAccessToken(userID uint) string {
-	// Placeholder implementation for access token generation
-	return fmt.Sprintf("access-token-for-user-%d", userID)
 }

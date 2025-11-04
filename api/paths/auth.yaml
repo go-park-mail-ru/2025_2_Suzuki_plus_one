@@ -1,5 +1,5 @@
-# Cookie names (popfilms.yaml#/components/securitySchemes/RefreshToken):
-# - RefreshToken
+# Cookie names (popfilms.yaml#/components/securitySchemes/refresh_token):
+# - refresh_token
 
 refresh:
   get:
@@ -8,7 +8,7 @@ refresh:
     summary: Get new access token
     description: Using refresh token from HttpOnly cookie, issue a new access token
     security:
-      - RefreshToken: []
+      - refresh_token: []
     responses:
       "200":
         description: New access token issued
@@ -96,7 +96,7 @@ signin:
 signout:
   post:
     security:
-      - RefreshToken: []
+      - refresh_token: []
     tags:
       - auth
     summary: User logout
@@ -108,7 +108,7 @@ signout:
           Set-Cookie:
             schema:
               type: string
-              example: RefreshToken=; HttpOnly; Max-Age=0
+              example: refresh_token=; HttpOnly; Max-Age=0
       "401":
         description: Unauthorized
         content:

@@ -56,7 +56,11 @@ func (h *Handlers) PostAuthSignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Logger.Info("User signed in successfully", h.Logger.ToString("email", input.Email))
+	h.Logger.Info("User signed in successfully",
+		h.Logger.ToString("email", input.Email),
+		h.Logger.ToString("accessToken", output.AccessToken),
+		h.Logger.ToString("refreshToken", output.RefreshToken),
+	)
 
 	// Set refresh token in cookie
 	RefreshTokenCookie := NewRefreshTokenCookie(output.RefreshToken)

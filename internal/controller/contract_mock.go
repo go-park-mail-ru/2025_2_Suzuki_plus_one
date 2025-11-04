@@ -133,3 +133,42 @@ func (mr *MockPostAuthSignInUsecaseMockRecorder) Execute(arg0, arg1 any) *gomock
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostAuthSignInUsecase)(nil).Execute), arg0, arg1)
 }
+
+// MockGetAuthRefreshUsecase is a mock of GetAuthRefreshUsecase interface.
+type MockGetAuthRefreshUsecase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetAuthRefreshUsecaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetAuthRefreshUsecaseMockRecorder is the mock recorder for MockGetAuthRefreshUsecase.
+type MockGetAuthRefreshUsecaseMockRecorder struct {
+	mock *MockGetAuthRefreshUsecase
+}
+
+// NewMockGetAuthRefreshUsecase creates a new mock instance.
+func NewMockGetAuthRefreshUsecase(ctrl *gomock.Controller) *MockGetAuthRefreshUsecase {
+	mock := &MockGetAuthRefreshUsecase{ctrl: ctrl}
+	mock.recorder = &MockGetAuthRefreshUsecaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetAuthRefreshUsecase) EXPECT() *MockGetAuthRefreshUsecaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetAuthRefreshUsecase) Execute(arg0 context.Context, arg1 dto.GetAuthRefreshInput) (dto.GetAuthRefreshOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetAuthRefreshOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetAuthRefreshUsecaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetAuthRefreshUsecase)(nil).Execute), arg0, arg1)
+}

@@ -24,7 +24,11 @@ type (
 	UserRepository interface {
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		GetUserAvatarURL(ctx context.Context, userID uint) (string, error)
+	}
+
+	TokenRepository interface {
 		AddNewRefreshToken(ctx context.Context, userID uint, refreshToken string, expiresAt time.Time) error
+		GetRefreshTokensForUser(ctx context.Context, userID uint) ([]entity.RefreshToken, error)
 	}
 
 	// Minio

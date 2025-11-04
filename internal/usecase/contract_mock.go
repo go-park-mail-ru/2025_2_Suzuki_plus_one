@@ -154,6 +154,113 @@ func (mr *MockMovieRepositoryMockRecorder) GetMediaPostersLinks(ctx, media_id an
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaPostersLinks", reflect.TypeOf((*MockMovieRepository)(nil).GetMediaPostersLinks), ctx, media_id)
 }
 
+// MockUserRepository is a mock of UserRepository interface.
+type MockUserRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockUserRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockUserRepositoryMockRecorder is the mock recorder for MockUserRepository.
+type MockUserRepositoryMockRecorder struct {
+	mock *MockUserRepository
+}
+
+// NewMockUserRepository creates a new mock instance.
+func NewMockUserRepository(ctrl *gomock.Controller) *MockUserRepository {
+	mock := &MockUserRepository{ctrl: ctrl}
+	mock.recorder = &MockUserRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
+	return m.recorder
+}
+
+// GetUserAvatarURL mocks base method.
+func (m *MockUserRepository) GetUserAvatarURL(ctx context.Context, userID uint) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserAvatarURL", ctx, userID)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserAvatarURL indicates an expected call of GetUserAvatarURL.
+func (mr *MockUserRepositoryMockRecorder) GetUserAvatarURL(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserAvatarURL", reflect.TypeOf((*MockUserRepository)(nil).GetUserAvatarURL), ctx, userID)
+}
+
+// GetUserByEmail mocks base method.
+func (m *MockUserRepository) GetUserByEmail(ctx context.Context, email string) (*entity.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByEmail", ctx, email)
+	ret0, _ := ret[0].(*entity.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByEmail indicates an expected call of GetUserByEmail.
+func (mr *MockUserRepositoryMockRecorder) GetUserByEmail(ctx, email any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetUserByEmail), ctx, email)
+}
+
+// MockTokenRepository is a mock of TokenRepository interface.
+type MockTokenRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockTokenRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockTokenRepositoryMockRecorder is the mock recorder for MockTokenRepository.
+type MockTokenRepositoryMockRecorder struct {
+	mock *MockTokenRepository
+}
+
+// NewMockTokenRepository creates a new mock instance.
+func NewMockTokenRepository(ctrl *gomock.Controller) *MockTokenRepository {
+	mock := &MockTokenRepository{ctrl: ctrl}
+	mock.recorder = &MockTokenRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTokenRepository) EXPECT() *MockTokenRepositoryMockRecorder {
+	return m.recorder
+}
+
+// AddNewRefreshToken mocks base method.
+func (m *MockTokenRepository) AddNewRefreshToken(ctx context.Context, userID uint, refreshToken string, expiresAt time.Time) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddNewRefreshToken", ctx, userID, refreshToken, expiresAt)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddNewRefreshToken indicates an expected call of AddNewRefreshToken.
+func (mr *MockTokenRepositoryMockRecorder) AddNewRefreshToken(ctx, userID, refreshToken, expiresAt any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewRefreshToken", reflect.TypeOf((*MockTokenRepository)(nil).AddNewRefreshToken), ctx, userID, refreshToken, expiresAt)
+}
+
+// GetRefreshTokensForUser mocks base method.
+func (m *MockTokenRepository) GetRefreshTokensForUser(ctx context.Context, userID uint) ([]entity.RefreshToken, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRefreshTokensForUser", ctx, userID)
+	ret0, _ := ret[0].([]entity.RefreshToken)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRefreshTokensForUser indicates an expected call of GetRefreshTokensForUser.
+func (mr *MockTokenRepositoryMockRecorder) GetRefreshTokensForUser(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRefreshTokensForUser", reflect.TypeOf((*MockTokenRepository)(nil).GetRefreshTokensForUser), ctx, userID)
+}
+
 // MockS3 is a mock of S3 interface.
 type MockS3 struct {
 	ctrl     *gomock.Controller
@@ -215,4 +322,66 @@ func (m *MockObjectRepository) GetObject(ctx context.Context, key, bucketName st
 func (mr *MockObjectRepositoryMockRecorder) GetObject(ctx, key, bucketName, expiration any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObject", reflect.TypeOf((*MockObjectRepository)(nil).GetObject), ctx, key, bucketName, expiration)
+}
+
+// MockCache is a mock of Cache interface.
+type MockCache struct {
+	ctrl     *gomock.Controller
+	recorder *MockCacheMockRecorder
+	isgomock struct{}
+}
+
+// MockCacheMockRecorder is the mock recorder for MockCache.
+type MockCacheMockRecorder struct {
+	mock *MockCache
+}
+
+// NewMockCache creates a new mock instance.
+func NewMockCache(ctrl *gomock.Controller) *MockCache {
+	mock := &MockCache{ctrl: ctrl}
+	mock.recorder = &MockCacheMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockCache) EXPECT() *MockCacheMockRecorder {
+	return m.recorder
+}
+
+// MockSessionRepository is a mock of SessionRepository interface.
+type MockSessionRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockSessionRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockSessionRepositoryMockRecorder is the mock recorder for MockSessionRepository.
+type MockSessionRepositoryMockRecorder struct {
+	mock *MockSessionRepository
+}
+
+// NewMockSessionRepository creates a new mock instance.
+func NewMockSessionRepository(ctrl *gomock.Controller) *MockSessionRepository {
+	mock := &MockSessionRepository{ctrl: ctrl}
+	mock.recorder = &MockSessionRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockSessionRepository) EXPECT() *MockSessionRepositoryMockRecorder {
+	return m.recorder
+}
+
+// AddSession mocks base method.
+func (m *MockSessionRepository) AddSession(ctx context.Context, userID uint, accessToken string, expiration time.Duration) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddSession", ctx, userID, accessToken, expiration)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddSession indicates an expected call of AddSession.
+func (mr *MockSessionRepositoryMockRecorder) AddSession(ctx, userID, accessToken, expiration any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddSession", reflect.TypeOf((*MockSessionRepository)(nil).AddSession), ctx, userID, accessToken, expiration)
 }

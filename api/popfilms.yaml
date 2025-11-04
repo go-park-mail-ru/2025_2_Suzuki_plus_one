@@ -39,12 +39,12 @@ paths:
 
 components:
   securitySchemes:
-    RefreshToken:
+    refresh_token:
       description: JWT refresh token stored in Strict HttpOnly cookie
       type: apiKey
       in: cookie
-      name: RefreshToken
-    AccessToken:
+      name: refresh_token
+    access_token:
       description: JWT access token stored in JS memory
       type: http
       scheme: bearer

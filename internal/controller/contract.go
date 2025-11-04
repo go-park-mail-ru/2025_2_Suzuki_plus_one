@@ -19,4 +19,8 @@ type (
 	PostAuthSignInUsecase interface {
 		Execute(context.Context, dto.PostAuthSignInInput) (dto.PostAuthSignInOutput, *dto.Error)
 	}
+
+	GetAuthRefreshUsecase interface {
+		Execute(context.Context, dto.GetAuthRefreshInput) (dto.GetAuthRefreshOutput, *dto.Error)
+	}
 )

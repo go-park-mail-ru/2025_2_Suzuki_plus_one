@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/redis"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/minio"
@@ -66,14 +67,12 @@ func main() {
 	if !ok {
 		logger.Fatal("Database can't be converted to MovieRepository")
 	}
-	movieRecommendations := uc.NewGetMovieRecommendationsUsecase(logger, movieRepository)
 
 	// --- Get /object ---
 	objectRepository, ok := s3.(uc.ObjectRepository)
 	if !ok {
 		logger.Fatal("Database can't be converted to ObjectRepository")
 	}
-	getObjectMedia := uc.NewGetObjectUsecase(logger, objectRepository)
 
 	// --- Get /auth/signin ---
 	// Cast Postgres
@@ -86,16 +85,22 @@ func main() {
 	if !ok {
 		logger.Fatal("Cache can't be converted to SessionRepository")
 	}
-	postAuthSignIn := uc.NewPostAuthSignInUsecase(logger, userRepository, sessionRepository)
-
-	// Inject usecases into handler
-	handler := &handlers.Handlers{
-		Logger:                         logger,
-		GetMovieRecommendationsUseCase: movieRecommendations,
-		GetObjectMediaUseCase:          getObjectMedia,
-		PostAuthSignInUseCase:          postAuthSignIn,
+	tokenRepository, ok := databaseAdapter.(uc.TokenRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to TokenRepository")
 	}
 
+	// Inject usecases into handler
+	handler := handlers.NewHandlers(
+		logger,
+		uc.NewGetMovieRecommendationsUsecase(logger, movieRepository),
+		uc.NewGetObjectUsecase(logger, objectRepository),
+		uc.NewPostAuthSignInUsecase(logger, userRepository, tokenRepository, sessionRepository),
+		uc.NewGetAuthRefreshUseCase(logger, tokenRepository),
+	)
+
+	// Initialize JWT middleware engine
+	common.InitJWT(config.SERVER_JWT_SECRET)
 	// Inject handler into router
 	router := srv.InitRouter(handler, logger, config.SERVER_FRONTEND_URL)
 	srv.StartServer(router, config.SERVER_SERVE_STRING, logger)
