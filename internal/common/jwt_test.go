@@ -2,12 +2,13 @@ package common
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestJWT(t *testing.T) {
-	InitJWT("secret")
+	InitJWT("secret", time.Hour, time.Hour*24*7)
 	token, err := GenerateToken(1, AccessTokenTTL)
 	require.NoError(t, err, "Failed to generate token")
 

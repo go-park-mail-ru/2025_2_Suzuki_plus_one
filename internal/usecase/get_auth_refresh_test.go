@@ -17,7 +17,7 @@ func TestGetAuthRefreshUsecase(t *testing.T) {
 	// Init repository mock
 	mockCtrl := gomock.NewController(t)
 	movieRepo := NewMockTokenRepository(mockCtrl)
-	common.InitJWT("secret")
+	common.InitJWT("secret", time.Hour, time.Hour*24*7)
 
 	userID := uint(1)
 	refreshTokens := make([]entity.RefreshToken, 1)

@@ -9,15 +9,16 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
+// Sets from main.go during initialization
 var TokenAuth *jwtauth.JWTAuth
-
-// TODO: move to config
-const AccessTokenTTL = time.Minute * 15
-const RefreshTokenTTL = time.Hour * 24 * 7
+var AccessTokenTTL time.Duration
+var RefreshTokenTTL time.Duration
 
 // InitJWT initializes the JWT authentication middleware with the given secret.
-func InitJWT(secret string) {
+func InitJWT(secret string, accessTokenTTL, refreshTokenTTL time.Duration) {
 	TokenAuth = jwtauth.New("HS256", []byte(secret), nil)
+	AccessTokenTTL = accessTokenTTL
+	RefreshTokenTTL = refreshTokenTTL
 }
 
 func GenerateToken(userID uint, duration time.Duration) (string, error) {

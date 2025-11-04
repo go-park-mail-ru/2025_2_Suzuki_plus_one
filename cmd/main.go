@@ -101,7 +101,7 @@ func main() {
 	)
 
 	// Initialize JWT middleware engine
-	common.InitJWT(config.SERVER_JWT_SECRET)
+	common.InitJWT(config.SERVER_JWT_SECRET, common.AccessTokenTTL, common.RefreshTokenTTL)
 	// Inject handler into router
 	router := srv.InitRouter(handler, logger, config.SERVER_FRONTEND_URL)
 	srv.StartServer(router, config.SERVER_SERVE_STRING, logger)
