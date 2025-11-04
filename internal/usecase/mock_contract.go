@@ -193,19 +193,19 @@ func (mr *MockUserRepositoryMockRecorder) CreateUser(ctx, user any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRepository)(nil).CreateUser), ctx, user)
 }
 
-// GetUserAvatarURL mocks base method.
-func (m *MockUserRepository) GetUserAvatarURL(ctx context.Context, userID uint) (string, error) {
+// GetUserAvatarKey mocks base method.
+func (m *MockUserRepository) GetUserAvatarKey(ctx context.Context, userID uint) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserAvatarURL", ctx, userID)
+	ret := m.ctrl.Call(m, "GetUserAvatarKey", ctx, userID)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetUserAvatarURL indicates an expected call of GetUserAvatarURL.
-func (mr *MockUserRepositoryMockRecorder) GetUserAvatarURL(ctx, userID any) *gomock.Call {
+// GetUserAvatarKey indicates an expected call of GetUserAvatarKey.
+func (mr *MockUserRepositoryMockRecorder) GetUserAvatarKey(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserAvatarURL", reflect.TypeOf((*MockUserRepository)(nil).GetUserAvatarURL), ctx, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserAvatarKey", reflect.TypeOf((*MockUserRepository)(nil).GetUserAvatarKey), ctx, userID)
 }
 
 // GetUserByEmail mocks base method.
@@ -366,6 +366,21 @@ func (m *MockObjectRepository) GetObject(ctx context.Context, key, bucketName st
 func (mr *MockObjectRepositoryMockRecorder) GetObject(ctx, key, bucketName, expiration any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObject", reflect.TypeOf((*MockObjectRepository)(nil).GetObject), ctx, key, bucketName, expiration)
+}
+
+// GetPublicObject mocks base method.
+func (m *MockObjectRepository) GetPublicObject(ctx context.Context, key, bucketName string) (*entity.Object, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPublicObject", ctx, key, bucketName)
+	ret0, _ := ret[0].(*entity.Object)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPublicObject indicates an expected call of GetPublicObject.
+func (mr *MockObjectRepositoryMockRecorder) GetPublicObject(ctx, key, bucketName any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPublicObject", reflect.TypeOf((*MockObjectRepository)(nil).GetPublicObject), ctx, key, bucketName)
 }
 
 // MockCache is a mock of Cache interface.

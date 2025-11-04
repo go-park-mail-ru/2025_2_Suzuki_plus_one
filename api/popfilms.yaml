@@ -36,6 +36,9 @@ paths:
     $ref: "./paths/movie.yaml#/recommendations"
   /movie/{movie_id}:
     $ref: "./paths/movie.yaml#/certain"
+  # user.yaml
+  /user/me:
+    $ref: "./paths/user.yaml#/me"
 
 components:
   securitySchemes:
@@ -70,3 +73,6 @@ components:
     # movie.yaml
     MovieResponse:
       $ref: "./schemas/movie.yaml#/MovieResponse"
+    # actor.yaml
+    ActorResponse:
+      $ref: "./schemas/actor.yaml#/ActorResponse"

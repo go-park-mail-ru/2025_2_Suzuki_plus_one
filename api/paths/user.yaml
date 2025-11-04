@@ -3,6 +3,8 @@ me:
     tags:
       - user
     summary: Get user profile
+    securitySchemes:
+      - access_token: []
     description: Retrieve the profile information of the authenticated user
     responses:
       "200":
@@ -18,6 +20,8 @@ me:
             schema:
               $ref: "../schemas/error.yaml#/ErrorResponse"
   post:
+    securitySchemes:
+      - access_token: []
     tags:
       - user
     summary: Update user profile
@@ -27,7 +31,7 @@ me:
       content:
         application/json:
           schema:
-          # TODO:
+            # TODO:
             $ref: "../schemas/user.yaml#/UserUpdateRequest"
     responses:
       "200":

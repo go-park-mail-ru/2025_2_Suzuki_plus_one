@@ -220,6 +220,8 @@ erDiagram
         bigint asset_image_id FK
         text email
         text password_hash
+        date date_of_birth
+        text phone_number
         %% ---
         timestamptz created_at
         timestamptz updated_at

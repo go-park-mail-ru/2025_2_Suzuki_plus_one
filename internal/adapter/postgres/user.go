@@ -56,9 +56,9 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 	return &user, nil
 }
 
-// Returns the S3 key (URL) of the user's avatar image
-func (db *DataBase) GetUserAvatarURL(ctx context.Context, userID uint) (string, error) {
-	var avatarURL string
+// Returns the S3 key of the user's avatar image
+func (db *DataBase) GetUserAvatarKey(ctx context.Context, userID uint) (string, error) {
+	var avatarKey string
 
 	query := `
 		SELECT s3_key
@@ -68,7 +68,7 @@ func (db *DataBase) GetUserAvatarURL(ctx context.Context, userID uint) (string, 
 		WHERE user_id = $1
 	`
 	row := db.conn.QueryRow(query, userID)
-	err := row.Scan(&avatarURL)
+	err := row.Scan(&avatarKey)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return "", entity.ErrUserNotFound
@@ -76,7 +76,7 @@ func (db *DataBase) GetUserAvatarURL(ctx context.Context, userID uint) (string, 
 		return "", err
 	}
 
-	return avatarURL, nil
+	return avatarKey, nil
 }
 
 func (db *DataBase) CreateUser(ctx context.Context, user entity.User) (uint, error) {

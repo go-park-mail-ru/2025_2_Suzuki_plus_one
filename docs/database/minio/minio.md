@@ -6,6 +6,7 @@
 
 ## Бакеты
 
+- actors (фотографии актёров)
 - avatars
 - posters
 - trailers

@@ -95,7 +95,7 @@ func main() {
 		uc.NewGetAuthRefreshUseCase(logger, tokenRepository),
 		uc.NewPostAuthSignUpUsecase(logger, userRepository, tokenRepository, sessionRepository),
 		uc.NewGetAuthSignOutUsecase(logger, tokenRepository, sessionRepository),
-		uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository),
+		uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository, objectRepository),
 	)
 
 	// Initialize JWT middleware engine
