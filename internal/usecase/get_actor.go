@@ -93,8 +93,8 @@ func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput)
 	}
 	// Get image URLs for output actor
 	for _, imageS3Key := range imageS3Keys {
-		bucketName, key := splitToBucketAndKey(imageS3Key)
-		imageURL, err := uc.getObjectUseCase.Execute(ctx, dto.GetObjectInput{Key: key, BucketName: bucketName})
+		imageURL, err := uc.getObjectUseCase.Execute(ctx,
+			dto.GetObjectInput{Key: imageS3Key.Key, BucketName: imageS3Key.BucketName})
 		if err != nil {
 			uc.logger.Error("Failed to get image URL", err)
 			continue

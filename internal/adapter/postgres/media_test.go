@@ -86,7 +86,7 @@ func TestGetMedia(t *testing.T) {
 	// Expect the query. Use a partial regex to avoid whitespace/newline mismatch.
 	mock.ExpectQuery(`FROM media\s+WHERE media_id = \$1`).WillReturnRows(rows)
 
-	media, err := database.GetMedia(ctx, 1)
+	media, err := database.GetMediaByID(ctx, 1)
 	require.NoError(t, err)
 
 	require.Equal(t, uint(1), media.MediaID)

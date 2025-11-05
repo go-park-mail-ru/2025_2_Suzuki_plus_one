@@ -367,3 +367,42 @@ func (mr *MockGetMediaUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call 
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMediaUseCase)(nil).Execute), arg0, arg1)
 }
+
+// MockGetMediaWatchUseCase is a mock of GetMediaWatchUseCase interface.
+type MockGetMediaWatchUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetMediaWatchUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetMediaWatchUseCaseMockRecorder is the mock recorder for MockGetMediaWatchUseCase.
+type MockGetMediaWatchUseCaseMockRecorder struct {
+	mock *MockGetMediaWatchUseCase
+}
+
+// NewMockGetMediaWatchUseCase creates a new mock instance.
+func NewMockGetMediaWatchUseCase(ctrl *gomock.Controller) *MockGetMediaWatchUseCase {
+	mock := &MockGetMediaWatchUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetMediaWatchUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetMediaWatchUseCase) EXPECT() *MockGetMediaWatchUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetMediaWatchUseCase) Execute(arg0 context.Context, arg1 dto.GetMediaWatchInput) (dto.GetMediaWatchOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetMediaWatchOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetMediaWatchUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMediaWatchUseCase)(nil).Execute), arg0, arg1)
+}

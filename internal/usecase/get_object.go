@@ -63,27 +63,3 @@ func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInpu
 		URL: object.URL,
 	}, nil
 }
-
-func splitToBucketAndKey(fullPath string) (string, string) {
-	// fullPath is in the format "bucket_name/key"
-	if fullPath[0] == '/' {
-		fullPath = fullPath[1:]
-	}
-
-	var bucketName, key string
-	splitIndex := -1
-	for i, char := range fullPath {
-		if char == '/' {
-			splitIndex = i
-			break
-		}
-	}
-	if splitIndex != -1 {
-		bucketName = fullPath[:splitIndex]
-		key = fullPath[splitIndex+1:]
-	} else {
-		bucketName = fullPath
-		key = ""
-	}
-	return bucketName, key
-}

@@ -13,6 +13,20 @@ import (
 	uc "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/usecase"
 )
 
+// Implements
+
+// Minio
+var _ uc.ObjectRepository = &minio.Minio{}
+
+// Postgres
+var _ uc.MediaRepository = &db.DataBase{}
+var _ uc.UserRepository = &db.DataBase{}
+var _ uc.TokenRepository = &db.DataBase{}
+var _ uc.ActorRepository = &db.DataBase{}
+
+// Redis
+var _ uc.SessionRepository = &redis.Redis{}
+
 func main() {
 
 	// Load configuration
@@ -102,7 +116,7 @@ func main() {
 
 	// Reusable usecases
 	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
-	getMediaUseCase := uc.NewGetMediaUseCase(logger, movieRepository, getObjectUseCase)
+	getMediaUseCase := uc.NewGetMediaUseCase(logger, movieRepository, actorRepository, getObjectUseCase)
 
 	// Inject usecases into handler
 	handler := handlers.NewHandlers(
@@ -116,6 +130,7 @@ func main() {
 		uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository, objectRepository),
 		uc.NewGetActorUseCase(logger, actorRepository, getMediaUseCase, getObjectUseCase),
 		getMediaUseCase,
+		uc.NewGetMediaWatchUseCase(logger, movieRepository, getObjectUseCase),
 	)
 
 	// Initialize JWT middleware engine

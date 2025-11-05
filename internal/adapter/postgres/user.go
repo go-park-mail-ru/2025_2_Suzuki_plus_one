@@ -57,7 +57,7 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 }
 
 // Returns the S3 key of the user's avatar image
-func (db *DataBase) GetUserAvatarKey(ctx context.Context, userID uint) (string, error) {
+func (db *DataBase) GetUserAvatarKey(ctx context.Context, userID uint) (*entity.S3Key, error) {
 	var avatarKey string
 
 	query := `
@@ -71,12 +71,17 @@ func (db *DataBase) GetUserAvatarKey(ctx context.Context, userID uint) (string, 
 	err := row.Scan(&avatarKey)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", entity.ErrUserNotFound
+			return nil, entity.ErrUserNotFound
 		}
-		return "", err
+		return nil, err
 	}
 
-	return avatarKey, nil
+	s3Key, err := splitS3Key(avatarKey)
+	if err != nil {
+		db.logger.Error("GetUserAvatarKey: failed to split S3 key", db.logger.ToError(err))
+		return nil, err
+	}
+	return &s3Key, nil
 }
 
 func (db *DataBase) CreateUser(ctx context.Context, user entity.User) (uint, error) {

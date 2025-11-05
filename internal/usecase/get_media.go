@@ -11,17 +11,20 @@ import (
 type GetMediaUseCase struct {
 	logger           logger.Logger
 	mediaRepo        MediaRepository
+	actorRepo        ActorRepository
 	getObjectUseCase *GetObjectUseCase
 }
 
 func NewGetMediaUseCase(
 	logger logger.Logger,
 	mediaRepo MediaRepository,
+	actorRepo ActorRepository,
 	getObjectUseCase *GetObjectUseCase,
 ) *GetMediaUseCase {
 	return &GetMediaUseCase{
 		logger:           logger,
 		mediaRepo:        mediaRepo,
+		actorRepo:        actorRepo,
 		getObjectUseCase: getObjectUseCase,
 	}
 }
@@ -38,7 +41,7 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 	}
 
 	// Get media from repository
-	media, err := uc.mediaRepo.GetMedia(ctx, input.MediaID)
+	media, err := uc.mediaRepo.GetMediaByID(ctx, input.MediaID)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/get_media",
@@ -78,20 +81,19 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 	// Get poster links from object storage
 	postersLinks := make([]string, 0, len(postersKeys))
 	for _, s3key := range postersKeys {
-		bucket, key := splitToBucketAndKey(s3key)
 		object, err := uc.getObjectUseCase.Execute(ctx, dto.GetObjectInput{
-			BucketName: bucket,
-			Key:        key,
+			BucketName: s3key.BucketName,
+			Key:        s3key.Key,
 		})
 		if err != nil {
-			uc.logger.Error("Failed to get poster object for "+key, err)
+			uc.logger.Error("Failed to get poster object for "+s3key.GetPath(), err)
 			continue
 		}
 		postersLinks = append(postersLinks, object.URL)
 	}
 
 	// Get actors
-	actors, err := uc.mediaRepo.GetActorsByMediaID(ctx, media.MediaID)
+	actors, err := uc.actorRepo.GetActorsByMediaID(ctx, media.MediaID)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/get_media",

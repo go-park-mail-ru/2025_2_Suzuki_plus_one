@@ -24,23 +24,29 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Use(chiMiddleware.RequestID)
 	r.Use(jwtauth.Verifier(common.TokenAuth))
 
-	// Media routes
-	r.Get("/media/{media_id}", h.GetMedia)
-	r.Get("/movie/recommendations", h.GetMovieRecommendations)
-	r.Get("/object", h.GetObjectMedia)
+	// Follow swagger order
 
-	// Actor routes
+	// Content
+	r.Get("/movie/recommendations", h.GetMovieRecommendations)
+	r.Get("/media/{media_id}", h.GetMedia)
 	r.Get("/actor/{actor_id}", h.GetActor)
 
-	// Auth routes
-	r.Post("/auth/signin", h.PostAuthSignIn)
-	r.Get("/auth/refresh", h.GetAuthRefresh)
-	r.Post("/auth/signup", h.PostAuthSignUp)
+	// Object
+	r.Get("/object", h.GetObjectMedia)
+	r.Get("/media/watch", h.GetMediaWatch)
 
-	// Protected routes
+	// Auth
+	r.Get("/auth/refresh", h.GetAuthRefresh)
+	r.Post("/auth/signin", h.PostAuthSignIn)
+	r.Post("/auth/signup", h.PostAuthSignUp)
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Authenticator(common.TokenAuth))
 		r.Get("/auth/signout", h.GetAuthSignOut)
+	})
+
+	// User
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Authenticator(common.TokenAuth))
 		r.Get("/user/me", h.GetUserMe)
 	})
 

@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
@@ -19,15 +20,15 @@ func (db *DataBase) GetMediaCount(ctx context.Context, media_type string) (int, 
 	return count, nil
 }
 
-// GetMedia retrieves a media item by its ID from the database
-func (db *DataBase) GetMedia(ctx context.Context, media_id uint) (*entity.Media, error) {
+// GetMediaByID retrieves a media item by its ID from the database
+func (db *DataBase) GetMediaByID(ctx context.Context, media_id uint) (*entity.Media, error) {
 	// Log the request ID from context for tracing
 	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
 	if !ok {
-		db.logger.Warn("GetMedia: failed to get requestID from context")
+		db.logger.Warn("GetMediaByID: failed to get requestID from context")
 		requestID = "unknown"
 	}
-	db.logger.Info("GetMedia called",
+	db.logger.Info("GetMediaByID called",
 		db.logger.ToString("requestID", requestID),
 		db.logger.ToInt("media_id", int(media_id)),
 	)
@@ -108,8 +109,8 @@ func (db *DataBase) GetMedia(ctx context.Context, media_id uint) (*entity.Media,
 }
 
 // Get posters s3 keys for the given media
-func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]string, error) {
-	var posters []string
+func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]entity.S3Key, error) {
+	var posters []entity.S3Key
 	query := `
 		SELECT s3_key
 		FROM media_image
@@ -127,7 +128,13 @@ func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]s
 		if err := rows.Scan(&url); err != nil {
 			return nil, err
 		}
-		posters = append(posters, url)
+		// Split bucket name and key from url
+		s3key, err := splitS3Key(url)
+		if err == nil {
+			posters = append(posters, s3key)
+		} else {
+			db.logger.Error("GetMediaPostersKeys: failed to split S3 key", db.logger.ToError(err))
+		}
 	}
 	return posters, nil
 }
@@ -156,30 +163,6 @@ func (db *DataBase) GetMediaGenres(ctx context.Context, media_id uint) ([]entity
 	return genres, nil
 }
 
-// Get actors for the given media
-func (db *DataBase) GetActorsByMediaID(ctx context.Context, media_id uint) ([]entity.Actor, error) {
-	var actors []entity.Actor
-	query := `
-		SELECT actor_id, name, birth_date, bio
-		FROM actor
-		JOIN actor_role USING (actor_id)
-		WHERE media_id = $1
-	`
-	rows, err := db.conn.Query(query, media_id)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var actor entity.Actor
-		if err := rows.Scan(&actor.ID, &actor.Name, &actor.BirthDate, &actor.Bio); err != nil {
-			return nil, err
-		}
-		actors = append(actors, actor)
-	}
-	return actors, nil
-}
-
 // Get random media IDs for recommendations using RANDOM()
 func (db *DataBase) GetMediaRandomIds(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error) {
 	var mediaIDs []uint
@@ -203,4 +186,56 @@ func (db *DataBase) GetMediaRandomIds(ctx context.Context, limit uint, offset ui
 		mediaIDs = append(mediaIDs, mediaID)
 	}
 	return mediaIDs, nil
+}
+
+func (db *DataBase) GetMediaWatchKey(ctx context.Context, media_id uint) (*entity.S3Key, error) {
+	var s3Key string
+	query := `
+		SELECT s3_key
+		FROM media
+		JOIN media_video USING (media_id)
+		JOIN asset_video USING (asset_video_id)
+		JOIN asset USING (asset_id)
+		WHERE media_id = $1
+	`
+	err := db.conn.QueryRow(query, media_id).Scan(&s3Key)
+	if err != nil {
+		return nil, err
+	}
+	// Split bucket name and key from s3Key
+	s3key, err := splitS3Key(s3Key)
+	if err != nil {
+		db.logger.Error("GetMediaWatchKey: failed to split S3 key", db.logger.ToError(err))
+		return nil, err
+	}
+	return &s3key, nil
+}
+
+var ErrInvalidS3KeyFormat = errors.New("invalid S3 key format")
+
+// Splits ""bucket_name/key"" into S3Key struct
+func splitS3Key(fullPath string) (entity.S3Key, error) {
+	// fullPath cannot start with '/'
+	if fullPath[0] == '/' {
+		fullPath = fullPath[1:]
+	}
+
+	var bucketName, key string
+	splitIndex := -1
+	for i, char := range fullPath {
+		if char == '/' {
+			splitIndex = i
+			break
+		}
+	}
+	if splitIndex != -1 {
+		bucketName = fullPath[:splitIndex]
+		key = fullPath[splitIndex+1:]
+	} else {
+		return entity.S3Key{}, ErrInvalidS3KeyFormat
+	}
+	return entity.S3Key{
+		BucketName: bucketName,
+		Key:        key,
+	}, nil
 }

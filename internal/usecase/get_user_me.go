@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"strings"
 	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
@@ -101,26 +100,10 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 	if err != nil {
 		uc.logger.Error("Failed to get presigned URL for user avatar", uc.logger.ToError(err))
 	} else {
-		// NOTE: This is fucking awful, please refactor later
-		// Split avatarKey into bucket and object name
-		// Trim first slash if exists
-		if len(avatarKey) > 0 && avatarKey[0] == '/' {
-			avatarKey = avatarKey[1:]
-		}
-		parts := strings.SplitN(avatarKey, "/", 2)
-		var bucket, key string
-		if len(parts) == 2 {
-			bucket = parts[0]
-			key = parts[1]
-		} else {
-			bucket = avatarKey
-			key = ""
-		}
-
-		// Generate presigned URL for avatar
-		avatarObject, err := uc.objectRepo.GetPublicObject(ctx, key, bucket)
+		// Generate public s3 URL for avatar
+		avatarObject, err := uc.objectRepo.GetPublicObject(ctx, avatarKey.BucketName, avatarKey.Key)
 		if err != nil {
-			uc.logger.Error("Failed to get presigned URL for user avatar", uc.logger.ToError(err))
+			uc.logger.Error("Failed to get public URL for user avatar", uc.logger.ToError(err))
 		} else {
 			output.AvatarURL = avatarObject.URL
 			uc.logger.Debug("Found s3 url for user", "url", output.AvatarURL, "userID", user.ID)

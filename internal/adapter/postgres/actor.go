@@ -24,8 +24,8 @@ func (db *DataBase) GetActorByID(ctx context.Context, actorID uint) (*entity.Act
 }
 
 // Get actor images S3 keys
-func (db *DataBase) GetActorImageS3(ctx context.Context, actorID uint) ([]string, error) {
-	var imageURLs []string
+func (db *DataBase) GetActorImageS3(ctx context.Context, actorID uint) ([]entity.S3Key, error) {
+	var imageURLs []entity.S3Key
 	query := `
 		SELECT s3_key
 		FROM actor
@@ -44,7 +44,12 @@ func (db *DataBase) GetActorImageS3(ctx context.Context, actorID uint) ([]string
 		if err := rows.Scan(&url); err != nil {
 			return nil, err
 		}
-		imageURLs = append(imageURLs, url)
+		s3Key, err := splitS3Key(url)
+		if err == nil {
+			imageURLs = append(imageURLs, s3Key)
+		} else {
+			db.logger.Error("GetActorImageS3: failed to split S3 key", db.logger.ToError(err))
+		}
 	}
 	return imageURLs, nil
 }
@@ -75,4 +80,28 @@ func (db *DataBase) GetMediasByActorID(ctx context.Context, actorID uint) ([]ent
 		medias = append(medias, media)
 	}
 	return medias, nil
+}
+
+// Get actors for the given media
+func (db *DataBase) GetActorsByMediaID(ctx context.Context, media_id uint) ([]entity.Actor, error) {
+	var actors []entity.Actor
+	query := `
+		SELECT actor_id, name, birth_date, bio
+		FROM actor
+		JOIN actor_role USING (actor_id)
+		WHERE media_id = $1
+	`
+	rows, err := db.conn.Query(query, media_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var actor entity.Actor
+		if err := rows.Scan(&actor.ID, &actor.Name, &actor.BirthDate, &actor.Bio); err != nil {
+			return nil, err
+		}
+		actors = append(actors, actor)
+	}
+	return actors, nil
 }

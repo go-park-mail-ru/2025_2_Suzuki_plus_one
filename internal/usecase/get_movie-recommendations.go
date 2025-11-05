@@ -54,6 +54,7 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 		return dto.GetMovieRecommendationsOutput{}, &derr
 	}
 
+	// Validate ?limit boundaries
 	if input.Limit < GET_MOVIE_RECOMMENDATION_LIMIT_MIN || input.Limit > GET_MOVIE_RECOMMENDATION_LIMIT_MAX {
 		derr := dto.NewError(
 			"adapter/get_movie_recommendations",

@@ -12,7 +12,7 @@ import (
 )
 
 // GetObject retrieves an object from MinIO and generates a presigned URL for access.
-func (m *Minio) GetObject(ctx context.Context, objectName string, bucketName string, expiration time.Duration) (*entity.Object, error) {
+func (m *Minio) GetObject(ctx context.Context, bucketName string, objectName string, expiration time.Duration) (*entity.Object, error) {
 	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
 	if !ok {
 		m.logger.Warn("GetObject: failed to get requestID from context")
@@ -60,7 +60,7 @@ func (m *Minio) GetObject(ctx context.Context, objectName string, bucketName str
 	}, nil
 }
 
-func (m *Minio) GetPublicObject(ctx context.Context, objectName string, bucketName string) (*entity.Object, error) {
+func (m *Minio) GetPublicObject(ctx context.Context, bucketName string, objectName string) (*entity.Object, error) {
 	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
 	if !ok {
 		m.logger.Warn("GetPublicObject: failed to get requestID from context")

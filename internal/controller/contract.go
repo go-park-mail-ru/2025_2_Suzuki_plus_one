@@ -43,4 +43,8 @@ type (
 	GetMediaUseCase interface {
 		Execute(context.Context, dto.GetMediaInput) (dto.GetMediaOutput, *dto.Error)
 	}
+
+	GetMediaWatchUseCase interface {
+		Execute(context.Context, dto.GetMediaWatchInput) (dto.GetMediaWatchOutput, *dto.Error)
+	}
 )

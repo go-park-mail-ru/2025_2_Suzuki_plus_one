@@ -13,6 +13,9 @@ func GetLogging(logger logger.Logger) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
 
+			// We can pass logger into context here if needed
+			// https://www.kaznacheev.me/posts/en/where-to-place-logger-in-golang/
+
 			logger.Info("Request started",
 				logger.ToString("method", r.Method),
 				logger.ToString("path", r.URL.Path),
