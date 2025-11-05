@@ -169,6 +169,21 @@ func (mr *MockMediaRepositoryMockRecorder) GetMediaPostersKeys(ctx, media_id any
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaPostersKeys", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaPostersKeys), ctx, media_id)
 }
 
+// GetMediaRandomIds mocks base method.
+func (m *MockMediaRepository) GetMediaRandomIds(ctx context.Context, limit, offset uint, media_type string) ([]uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMediaRandomIds", ctx, limit, offset, media_type)
+	ret0, _ := ret[0].([]uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMediaRandomIds indicates an expected call of GetMediaRandomIds.
+func (mr *MockMediaRepositoryMockRecorder) GetMediaRandomIds(ctx, limit, offset, media_type any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaRandomIds", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaRandomIds), ctx, limit, offset, media_type)
+}
+
 // MockActorRepository is a mock of ActorRepository interface.
 type MockActorRepository struct {
 	ctrl     *gomock.Controller

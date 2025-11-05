@@ -3,13 +3,14 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"math/rand"
-	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
+
+const GET_MOVIE_RECOMMENDATION_LIMIT_MIN = 1
+const GET_MOVIE_RECOMMENDATION_LIMIT_MAX = 20
 
 type GetMovieRecommendationsUsecase struct {
 	logger          logger.Logger
@@ -53,6 +54,20 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 		return dto.GetMovieRecommendationsOutput{}, &derr
 	}
 
+	if input.Limit < GET_MOVIE_RECOMMENDATION_LIMIT_MIN || input.Limit > GET_MOVIE_RECOMMENDATION_LIMIT_MAX {
+		derr := dto.NewError(
+			"adapter/get_movie_recommendations",
+			entity.ErrGetMovieRecommendationsCantReturnAll,
+			fmt.Sprintf(
+				"limit must be between %d and %d (not %d)",
+				GET_MOVIE_RECOMMENDATION_LIMIT_MIN,
+				GET_MOVIE_RECOMMENDATION_LIMIT_MAX,
+				input.Limit,
+			),
+		)
+		return dto.GetMovieRecommendationsOutput{}, &derr
+	}
+
 	// Return error if limit+offset exceeds total number of movies
 	if input.Offset+input.Limit > uint(movie_number) {
 		derr := dto.NewError(
@@ -69,7 +84,11 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 	}
 
 	// Calculate recommendation movie IDs (dummy logic for now)
-	movieIDs := getRecommendedMovieIDs(input.Limit, input.Offset, uint(movie_number))
+	movieIDs, err := uc.movieRepo.GetMediaRandomIds(ctx, input.Limit, input.Offset, "movie")
+	if err != nil {
+		derr := dto.NewError("adapter/get_movie_recommendations", err, "Can't get movie recommendations")
+		return dto.GetMovieRecommendationsOutput{}, &derr
+	}
 
 	// Convert []entity.Movie to []dto.Movie
 	dtoMovies := make([]dto.GetMediaOutput, 0, len(movieIDs))
@@ -87,25 +106,4 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 	}
 
 	return dto.GetMovieRecommendationsOutput{Movies: dtoMovies}, nil
-}
-
-// Dummy function to generate random recommended movie IDs
-func getRecommendedMovieIDs(limit, offset, totalMovies uint) []uint {
-	movieIDs := make([]uint, 0, limit)
-
-	// TODO: Add offset handling, add series support
-	// Simple random selection logic
-	// OPTIMIZATION: Use better randomization algorithm to avoid duplicates
-	// Or just switch to proper recommendation algorithm
-	random_source := rand.NewSource(time.Now().UnixNano())
-	rng := rand.New(random_source)
-	used := make(map[uint]struct{})
-	for uint(len(movieIDs)) < limit && totalMovies > 0 {
-		id := rng.Uint32()%uint32(totalMovies) + 1
-		if _, exists := used[uint(id)]; !exists {
-			movieIDs = append(movieIDs, uint(id))
-			used[uint(id)] = struct{}{}
-		}
-	}
-	return movieIDs
 }

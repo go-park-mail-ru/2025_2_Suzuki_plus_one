@@ -24,10 +24,10 @@ func (db *DataBase) GetMedia(ctx context.Context, media_id uint) (*entity.Media,
 	// Log the request ID from context for tracing
 	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
 	if !ok {
-		db.logger.Warn("GetMovieRecommendations: failed to get requestID from context")
+		db.logger.Warn("GetMedia: failed to get requestID from context")
 		requestID = "unknown"
 	}
-	db.logger.Info("GetMovieRecommendations called",
+	db.logger.Info("GetMedia called",
 		db.logger.ToString("requestID", requestID),
 		db.logger.ToInt("media_id", int(media_id)),
 	)
@@ -178,4 +178,29 @@ func (db *DataBase) GetActorsByMediaID(ctx context.Context, media_id uint) ([]en
 		actors = append(actors, actor)
 	}
 	return actors, nil
+}
+
+// Get random media IDs for recommendations using RANDOM()
+func (db *DataBase) GetMediaRandomIds(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error) {
+	var mediaIDs []uint
+	query := `
+		SELECT media_id
+		FROM media
+		WHERE media_type = $1
+		ORDER BY RANDOM()
+		LIMIT $2 OFFSET $3
+	`
+	rows, err := db.conn.Query(query, media_type, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var mediaID uint
+		if err := rows.Scan(&mediaID); err != nil {
+			return nil, err
+		}
+		mediaIDs = append(mediaIDs, mediaID)
+	}
+	return mediaIDs, nil
 }

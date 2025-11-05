@@ -24,6 +24,7 @@ func TestGetMovieRecommendationsUsecase(t *testing.T) {
 	movieRepo.EXPECT().GetMediaGenres(gomock.Any(), gomock.Any()).Return([]entity.Genre{}, nil).Times(times)
 	movieRepo.EXPECT().GetMediaPostersKeys(gomock.Any(), gomock.Any()).Return([]string{"posters/hi.png"}, nil).Times(times)
 	movieRepo.EXPECT().GetActorsByMediaID(gomock.Any(), gomock.Any()).Return([]entity.Actor{}, nil).Times(times)
+	movieRepo.EXPECT().GetMediaRandomIds(gomock.Any(), uint(times), uint(0), "movie").Return([]uint{1, 2, 3, 4, 5}, nil).Times(1)
 
 	// Object repository mock
 	objectRepo := NewMockObjectRepository(mockCtrl)

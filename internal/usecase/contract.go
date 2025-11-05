@@ -20,6 +20,7 @@ type (
 		GetMediaGenres(ctx context.Context, media_id uint) ([]entity.Genre, error)
 		GetMediaPostersKeys(ctx context.Context, media_id uint) ([]string, error)
 		GetActorsByMediaID(ctx context.Context, media_id uint) ([]entity.Actor, error)
+		GetMediaRandomIds(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error)
 	}
 
 	ActorRepository interface {

@@ -74,16 +74,18 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 		uc.logger.Error("Failed to get posters by media ID", uc.logger.ToError(err))
 		return dto.GetMediaOutput{}, &derr
 	}
+
+	// Get poster links from object storage
 	postersLinks := make([]string, 0, len(postersKeys))
-	for _, key := range postersKeys {
-		bucket, key := splitToBucketAndKey(key)
+	for _, s3key := range postersKeys {
+		bucket, key := splitToBucketAndKey(s3key)
 		object, err := uc.getObjectUseCase.Execute(ctx, dto.GetObjectInput{
 			BucketName: bucket,
 			Key:        key,
 		})
 		if err != nil {
-			uc.logger.Error("Failed to get poster object", err)
-			return dto.GetMediaOutput{}, err
+			uc.logger.Error("Failed to get poster object for "+key, err)
+			continue
 		}
 		postersLinks = append(postersLinks, object.URL)
 	}

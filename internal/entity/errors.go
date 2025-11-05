@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ErrGetMovieRecommendationsParamsInvalid = errors.New("invalid get_movie_recommendations request parameters")
+	ErrGetMovieRecommendationsCantReturnAll = errors.New("can't return too many movies, specify limit and offset")
 
 	ErrGetObjectParamsInvalid = errors.New("invalid get_object request parameters")
 	ErrGetObjectFailed        = errors.New("failed to get object from repository")
@@ -28,4 +29,6 @@ var (
 	ErrGetActorParamsInvalid = errors.New("invalid get_actor request parameters")
 
 	ErrGetMediaParamsInvalid = errors.New("invalid get_media request parameters")
+
+	ErrGetMediaPosterFailed = errors.New("failed to get media poster from object storage")
 )
