@@ -1,0 +1,19 @@
+---
+- hosts: back
+  tasks:
+    - name: Copy nginx configuration file to remote server
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/nginx.conf"
+        dest: /etc/nginx/sites-available/popfilms
+      become: true
+    - name: Enable nginx site configuration if not already enabled
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/popfilms
+        dest: /etc/nginx/sites-enabled/popfilms
+        state: link
+      become: true
+    - name: Reload nginx to apply new configuration
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+      become: true
