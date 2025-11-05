@@ -180,6 +180,14 @@ minio-fill: ## fills minio with test data from testdata/minio using docker cp
 all-start: ## starts all services using docker-compose
 	source .env && docker compose up -d
 
+all-deploy: ## deploys all services using docker-compose
+	@echo "Deploying all services..."
+	make all-wipe
+	source .env && docker compose -f compose.yaml up -d --build
+	@sleep 5
+	make all-migrate
+	make all-fill
+
 all-stop: ## stops all services using docker-compose
 	source .env && docker compose down
 

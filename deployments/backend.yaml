@@ -40,7 +40,11 @@
         dest: /home/{{ ansible_user }}/backend/.env
 
     - name: Start databases
-      command: make all-wipe && make all-bootstrap
+      become: yes
+      shell: |
+        make all-wipe && make all-bootstrap
+      args:
+        chdir: /home/{{ ansible_user }}/backend/
 
     - name: Restart server service
       become: yes
