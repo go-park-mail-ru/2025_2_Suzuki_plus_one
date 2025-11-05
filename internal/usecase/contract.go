@@ -7,7 +7,7 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 )
 
-//go:generate mockgen -source=contract.go -destination=./mock_contract.go -package=usecase
+//go:generate mockgen -source=contract.go -destination=./mocks/contract_mock.go -package=mocks
 type (
 	// Postgres
 	Repository interface {

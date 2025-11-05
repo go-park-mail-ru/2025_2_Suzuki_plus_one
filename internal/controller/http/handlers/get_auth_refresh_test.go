@@ -9,8 +9,9 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/stretchr/testify/require"
 
-	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller"
+	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/mocks"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
+
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -36,7 +37,7 @@ func TestGetAuthRefresh(t *testing.T) {
 
 	// Create mock GetAuthRefreshUsecase
 	mockCtrl := gomock.NewController(t)
-	mockGetAuthRefreshUsecase := controller.NewMockGetAuthRefreshUseCase(mockCtrl)
+	mockGetAuthRefreshUsecase := NewMockGetAuthRefreshUseCase(mockCtrl)
 	mockGetAuthRefreshUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(movies, nil).

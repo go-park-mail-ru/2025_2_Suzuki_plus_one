@@ -10,7 +10,8 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/stretchr/testify/require"
 
-	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller"
+	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/mocks"
+
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -35,7 +36,7 @@ func TestGetMedia(t *testing.T) {
 
 	// Create mock GetMediaUsecase
 	mockCtrl := gomock.NewController(t)
-	mockGetMediaUsecase := controller.NewMockGetMediaUseCase(mockCtrl)
+	mockGetMediaUsecase := NewMockGetMediaUseCase(mockCtrl)
 	mockGetMediaUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(movies, nil).

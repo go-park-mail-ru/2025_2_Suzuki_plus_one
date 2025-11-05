@@ -6,12 +6,13 @@ import (
 	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
-	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller"
 	srv "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http"
 	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/handlers"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/stretchr/testify/require"
 	gomock "go.uber.org/mock/gomock"
+
+	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/mocks"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 )
@@ -42,7 +43,7 @@ func TestGetAuthSignOut(t *testing.T) {
 
 	// Create mock GetAuthSignOutUsecase
 	mockCtrl := gomock.NewController(t)
-	mockGetAuthSignOutUsecase := controller.NewMockGetAuthSignOutUseCase(mockCtrl)
+	mockGetAuthSignOutUsecase := NewMockGetAuthSignOutUseCase(mockCtrl)
 	mockGetAuthSignOutUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(output, nil).

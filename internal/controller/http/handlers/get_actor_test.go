@@ -10,7 +10,7 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/stretchr/testify/require"
 
-	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller"
+	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/mocks"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -35,7 +35,7 @@ func TestGetActor(t *testing.T) {
 
 	// Create mock GetActorUsecase
 	mockCtrl := gomock.NewController(t)
-	mockGetActorUsecase := controller.NewMockGetActorUseCase(mockCtrl)
+	mockGetActorUsecase := NewMockGetActorUseCase(mockCtrl)
 	mockGetActorUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(movies, nil).

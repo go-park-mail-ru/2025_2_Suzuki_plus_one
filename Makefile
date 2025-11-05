@@ -41,11 +41,13 @@ tidy: ## runs tidy to fix go.mod dependencies
 
 ## Test
 test: ## runs tests and create generates coverage report
-	go test -v -timeout 10m ./... -coverprofile=coverage.out
-	go tool cover -func=coverage.out
+	@echo "Running tests excluding /mocks..."
+	PACKAGES=$$(go list ./... | grep -v '/mocks') &&  \
+	go test $$PACKAGES -coverprofile=coverage.out
 
 coverage: ## generate test coverage report in html mode
 	go tool cover -html=coverage.out -o coverage.html
+	go tool cover -func=coverage.out
 
 
 ## Build
@@ -179,14 +181,6 @@ minio-fill: ## fills minio with test data from testdata/minio using docker cp
 ## All Services
 all-start: ## starts all services using docker-compose
 	source .env && docker compose up -d
-
-all-deploy: ## deploys all services using docker-compose
-	@echo "Deploying all services..."
-	make all-wipe
-	source .env && docker compose -f compose.yaml up -d --build
-	@sleep 5
-	make all-migrate
-	make all-fill
 
 all-stop: ## stops all services using docker-compose
 	source .env && docker compose down

@@ -6,7 +6,7 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 )
 
-//go:generate mockgen -source=contract.go -destination=./mock_contract.go -package=controller
+//go:generate mockgen -source=contract.go -destination=./mocks/contract_mock.go -package=mocks
 type (
 	GetMovieRecommendationsUseCase interface {
 		Execute(context.Context, dto.GetMovieRecommendationsInput) (dto.GetMovieRecommendationsOutput, *dto.Error)

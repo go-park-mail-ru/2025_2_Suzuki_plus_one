@@ -8,6 +8,7 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
+	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/usecase/mocks"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/stretchr/testify/require"
 	gomock "go.uber.org/mock/gomock"
