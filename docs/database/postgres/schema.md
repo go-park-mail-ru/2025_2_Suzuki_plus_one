@@ -94,6 +94,7 @@ erDiagram
     MEDIA_VIDEO {
         bigint media_video_id PK
         bigint media_id FK
+        bigint asset_video_id FK
         %% ---
         text video_type   "main_video / trailer"
         %% ---

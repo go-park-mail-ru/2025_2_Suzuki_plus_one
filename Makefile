@@ -108,7 +108,7 @@ db-check: ## checks database connection
 	source .env && \
 	pg_isready -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB
 
-## Migrations
+## Database Migrations
 migrate-create: ## creates a new migration file. Usage: make migrate-create NAME=<name>
 	@if [ -z "$(NAME)" ]; then \
 		echo "NAME is undefined. Usage: make migrate-create NAME=<name>"; \
@@ -126,6 +126,19 @@ migrate-down: ## applies all down migrations
 	source .env && \
 	POSTGRESQL_URL="postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@localhost:5432/$$POSTGRES_DB?sslmode=disable" && \
 	migrate -path ./migrations -database $$POSTGRESQL_URL down
+
+remigrate: ## reapplies all migrations
+	@echo "Restarting database"
+	make db-wipe
+	make db-start
+	@echo "Waiting for database to be ready..."
+	@timeout=60; \
+	while [ $$timeout -gt 0 ]; do \
+		pg_isready -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB && break; \
+		sleep 2; \
+		timeout=$$((timeout-2)); \
+	done; \
+	make migrate-up
 
 ## Redis
 redis-start: ## starts the redis using docker-compose

@@ -112,12 +112,14 @@ CREATE TABLE asset_video (
 CREATE TABLE media_video (
     media_video_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     media_id BIGINT NOT NULL,
+    asset_video_id BIGINT NOT NULL,
     video_type TEXT NOT NULL CHECK (
         video_type IN ('main_video', 'trailer', 'teaser')
     ),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_media_video_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE
+    CONSTRAINT fk_media_video_media FOREIGN KEY (media_id) REFERENCES media (media_id) ON DELETE CASCADE,
+    CONSTRAINT fk_media_video_asset FOREIGN KEY (asset_video_id) REFERENCES asset_video (asset_video_id) ON DELETE CASCADE
 );
 CREATE TABLE media_video_asset (
     media_video_asset_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -205,13 +207,13 @@ CREATE TABLE "user" (
     password_hash TEXT NOT NULL CHECK (LENGTH(password_hash) <= 255),
     date_of_birth DATE,
     phone_number TEXT CHECK (LENGTH(phone_number) <= 32),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_user_asset_image FOREIGN KEY (asset_image_id) REFERENCES asset_image (asset_image_id) ON DELETE SET NULL,
     email TEXT NOT NULL UNIQUE CHECK (
         LENGTH(email) <= 255
         AND email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
-    )
+    ),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user_asset_image FOREIGN KEY (asset_image_id) REFERENCES asset_image (asset_image_id) ON DELETE CASCADE
 );
 -- User session
 CREATE TABLE user_session (
