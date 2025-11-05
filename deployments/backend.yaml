@@ -13,46 +13,10 @@
         update: yes
         version: deploy
 
-    - name: Ensure Go version matches go.mod
+    - name: Build and start backend containers
       shell: |
-        required_go_version=$(grep '^go ' go.mod | awk '{print $2}')
-        installed_go_version=$(go version | awk '{print $3}' | sed 's/go//')
-        if [ "$required_go_version" != "$installed_go_version" ]; then
-          echo "Go version mismatch: required $required_go_version, installed $installed_go_version"
-          exit 1
-        fi
-      args:
-        chdir: /home/{{ ansible_user }}/backend
-
-    - name: Install Go dependencies
-      command: go mod tidy
-      args:
-        chdir: /home/{{ ansible_user }}/backend
-
-    - name: Build Go server
-      command: go build -o build/server cmd/main.go
-      args:
-        chdir: /home/{{ ansible_user }}/backend
-
-    - name: Copy environment file
-      copy:
-        src: "{{ playbook_dir }}/prod.env"
-        dest: /home/{{ ansible_user }}/backend/.env
-
-    - name: Start databases
-      become: yes
-      shell: |
-        make all-wipe && make all-bootstrap
-      args:
-        chdir: /home/{{ ansible_user }}/backend/
-
-    - name: Restart server service
-      become: yes
-      systemd:
-        daemon_reload: yes
-        name: APIserver
-        state: restarted
-        enabled: yes
+        cd /home/{{ ansible_user }}/backend
+        make all-bootstrap
 
     - name: Wait for server to start
       uri:

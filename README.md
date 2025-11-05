@@ -34,26 +34,59 @@
 
 ### Как запустить проект локально
 
+#### Установка
+
+```bash
+# Установка docker и docker-compose
+[Ссылка](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+
+# Установка Go
+[Ссылка](https://go.dev/doc/install)
+
+# Установка migrate
+echo "export PATH=$PATH:$HOME/go/bin" >> ~/.bashrc
+source ~/.bashrc
+go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+# Установка PostgreSQL клиента
+sudo apt-get install -y postgresql-client
+```
+
+#### Запуск проекта
+
 ```bash
 # Инициализация проекта
 ## копируем .env.example в .env
 cp .env.example .env
-## загружаем переменные окружения из .env
-source .env
 
-# Удаление данных старого проекта
-make all-wipe
-
-# Запуск зависимостей (база данных, кеш, объектное хранилище)
-# Запуск миграции базы данных и создание схемы объектного хранилища
-# Заполнение базы данных тестовыми данными
+# Запуск docker контейнеров и миграций
 make all-bootstrap
+```
 
-# Запуск приложения
-## запускаем тесты + создаем отчет о покрытии
-make test
-## собираем и запускаем приложение
+#### Некоторые полезные команды
+
+```bash
+# Очистка старых данных
+docker compose down -v
+
+# Запуск баз данных
+make all-prepare
+
+## собираем и запускаем приложение без контейнера
 make run
+
+
+
+## запускаем тесты
+make test
+## собираем и проверяем покрытие тестами
+make coverage
+
+# Запуск докер компоса
+make all-deploy
+
+# Заполнение базы тестовыми данными и запуск приложения
+make all-bootstrap
 ```
 
 ## Другие ссылки

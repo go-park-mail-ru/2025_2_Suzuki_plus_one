@@ -56,10 +56,10 @@ build: ## build the go application
 
 start: ## starts the application (requires built binary)
 	@echo "Starting $(APP_EXECUTABLE)..."
-	source .env && $(APP_EXECUTABLE)
+	set -a && source .env && set +a && $(APP_EXECUTABLE)
 
 live: ## launch the application using air for live reloading
-	source .env && air
+	set -a && source .env && set +a && air
 
 run: ## builds and starts the application
 	make build
@@ -202,8 +202,10 @@ all-migrate: ## migrates database and minio services
 	make migrate-up
 	make minio-create
 
-all-bootstrap: ## bootstraps all services: starts, migrates, fills with test data
-	make all-start
+all-prepare: ## prepare all database: starts, migrates, fills with test data
+	docker compose down -v
+	docker compose up --build -d db redis minio
+
 	@echo "Waiting for services to be ready..."
 	@timeout=60; \
 	while [ $$timeout -gt 0 ]; do \
@@ -225,7 +227,17 @@ all-bootstrap: ## bootstraps all services: starts, migrates, fills with test dat
 	fi
 	make all-migrate
 	make all-fill
-	@echo "All services bootstrapped."
+	@echo "All services prepared"
+
+all-deploy: ## deploy all services using docker-compose
+	docker compose -f compose.yaml up --build -d
+
+all-bootstrap: ## bootstrap all: wipe, prepare, build and run
+	@echo "Filling data"
+	make all-prepare
+	make all-stop
+	@echo "Running application..."
+	make all-deploy
 
 .PHONY: help
 ## Help
