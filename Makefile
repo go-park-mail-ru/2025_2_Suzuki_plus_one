@@ -9,7 +9,6 @@ ALL_PACKAGES=$(shell go list ./... | grep -v /vendor)
 APP=server
 APP_EXECUTABLE="./build/$(APP)"
 ENTRYPOINT=./cmd/main.go
-MIGRATE := $(shell go env GOPATH)/bin/migrate
 
 # Optional colors to beautify output
 GREEN  := $(shell tput -Txterm setaf 2)
@@ -114,17 +113,17 @@ migrate-create: ## creates a new migration file. Usage: make migrate-create NAME
 		exit 1; \
 	fi
 	@echo "Creating new migration: $(NAME)"
-	$(MIGRATE) create -ext sql -dir ./migrations -seq $(NAME)
+	migrate create -ext sql -dir ./migrations -seq $(NAME)
 
 migrate-up: ## applies all up migrations
 	source .env && \
 	POSTGRESQL_URL="postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@localhost:5432/$$POSTGRES_DB?sslmode=disable" && \
-	$(MIGRATE) -path ./migrations -database $$POSTGRESQL_URL up
+	migrate -path ./migrations -database $$POSTGRESQL_URL up
 
 migrate-down: ## applies all down migrations
 	source .env && \
 	POSTGRESQL_URL="postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@localhost:5432/$$POSTGRES_DB?sslmode=disable" && \
-	$(MIGRATE) -path ./migrations -database $$POSTGRESQL_URL down
+	migrate -path ./migrations -database $$POSTGRESQL_URL down
 
 ## Redis
 redis-start: ## starts the redis using docker-compose
