@@ -36,8 +36,8 @@ services:
     networks:
       - app-network
   backend:
-    build: .
     container_name: popfilms_backend
+    image: "ghcr.io/sorrtory/popfilms-backend:latest"
     env_file:
       - .env
     ports:

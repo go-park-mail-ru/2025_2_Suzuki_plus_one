@@ -32,9 +32,9 @@
 - Логирование с помощью Zap
 - Тесты с использованием Testify и GoMock, SqlMock
 
-### Как запустить проект локально
+### Как запустить проект
 
-#### Установка
+#### Установка зависимостей
 
 ```bash
 # Установка docker и docker-compose
@@ -52,41 +52,46 @@ go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@lat
 sudo apt-get install -y postgresql-client
 ```
 
-#### Запуск проекта
+#### Запуск проекта на деплой
 
 ```bash
-# Инициализация проекта
-## копируем .env.example в .env
+# Настройка окружения
+cp deployments/prod.env.example .env
+
+# Запуск docker компаса и миграций
+make all-bootstrap
+```
+
+#### Запуск проекта на дев
+
+```bash
+# Настройка окружения
 cp .env.example .env
 
-# Запуск docker контейнеров и миграций
-make all-bootstrap
+# Запуск баз данных и их наполнение тестовыми данными
+make all-prepare
+# ИЛИ запуск баз без наполнения тестовыми данными
+    docker compose up -d db redis minio
+    # Применение миграций
+    make all-migrate
+
+# Запуск приложения
+make run
 ```
 
 #### Некоторые полезные команды
 
 ```bash
 # Очистка старых данных
-docker compose down -v
-
-# Запуск баз данных
-make all-prepare
-
-## собираем и запускаем приложение без контейнера
-make run
-
-
+make all-wipe
 
 ## запускаем тесты
 make test
 ## собираем и проверяем покрытие тестами
 make coverage
 
-# Запуск докер компоса
+# Запуск докер компосе без наполнения данными
 make all-deploy
-
-# Заполнение базы тестовыми данными и запуск приложения
-make all-bootstrap
 ```
 
 ## Другие ссылки
