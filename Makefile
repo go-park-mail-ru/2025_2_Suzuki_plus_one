@@ -41,11 +41,10 @@ tidy: ## runs tidy to fix go.mod dependencies
 
 ## Test
 test: ## runs tests and create generates coverage report
-	go tool cover -func=coverage.out
 	go test -v -timeout 10m ./... -coverprofile=coverage.out
+	go tool cover -func=coverage.out
 
-coverage: ## displays test coverage report in html mode
-	make test
+coverage: ## generate test coverage report in html mode
 	go tool cover -html=coverage.out -o coverage.html
 
 

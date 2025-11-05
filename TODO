@@ -1,8 +1,4 @@
-- Add auth with JWT. Access + Refresh see docs/auth + Redis session store
-- Upload avatars to S3
-- Rewrite openAPI
-- Implement API handlers
 - Ensure test coverage >60%
-- Enhance API and database to support movies s3 links
+- Add settings post requests
 - Add Golangci-lint
 - Search for another "TODO" comments
