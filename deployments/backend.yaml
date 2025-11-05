@@ -39,6 +39,9 @@
         src: "{{ playbook_dir }}/prod.env"
         dest: /home/{{ ansible_user }}/backend/.env
 
+    - name: Start databases
+      command: make all-wipe && make all-bootstrap
+
     - name: Restart server service
       become: yes
       systemd:
@@ -49,7 +52,7 @@
 
     - name: Wait for server to start
       uri:
-        url: "http://217.16.18.125/api/v1/movies?limit=1"
+        url: "http://217.16.18.125/api/v1/movie/recommendations?limit=1"
         status_code: 200
         timeout: 10
         validate_certs: no
