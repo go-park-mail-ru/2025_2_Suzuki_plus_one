@@ -36,6 +36,7 @@ func main() {
 
 	// Create redis connection
 	var cache uc.Cache
+	logger.Info("Connecting to redis", config.REDIS_HOST+":6379")
 	redisClient := redis.NewRedis(logger, config.REDIS_HOST+":6379", "")
 	defer redisClient.Close()
 	err = redisClient.CheckConnection()
@@ -46,9 +47,17 @@ func main() {
 
 	// Create s3 connection
 	var s3 uc.S3
+
+	// URL for media files will be like http(s)://SERVER_FRONTEND_URL/bucketName/objectName
+	minioServePrefix := config.SERVER_FRONTEND_URL
+	// must not end with /
+	if minioServePrefix[len(minioServePrefix)-1] == '/' {
+		minioServePrefix = minioServePrefix[:len(minioServePrefix)-1]
+	}
 	s3, err = minio.NewMinio(
 		logger,
-		config.MINIO_HOST,
+		config.MINIO_INTERNAL_HOST,
+		config.MINIO_EXTERNAL_HOST,
 		config.MINIO_ROOT_USER,
 		config.MINIO_ROOT_PASSWORD,
 		false,

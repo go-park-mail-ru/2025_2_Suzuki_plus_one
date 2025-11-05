@@ -34,7 +34,8 @@ type Config struct {
 	REDIS_HOST string
 
 	// Minio
-	MINIO_HOST          string
+	MINIO_INTERNAL_HOST string
+	MINIO_EXTERNAL_HOST string
 	MINIO_ROOT_USER     string
 	MINIO_ROOT_PASSWORD string
 }
@@ -61,7 +62,8 @@ func Load() Config {
 		REDIS_HOST: mustEnv("REDIS_HOST"),
 
 		// Minio
-		MINIO_HOST:          mustEnv("MINIO_HOST"),
+		MINIO_INTERNAL_HOST: mustEnv("MINIO_INTERNAL_HOST"),
+		MINIO_EXTERNAL_HOST: mustEnv("MINIO_EXTERNAL_HOST"),
 		MINIO_ROOT_USER:     mustEnv("MINIO_ROOT_USER"),
 		MINIO_ROOT_PASSWORD: mustEnv("MINIO_ROOT_PASSWORD"),
 	}

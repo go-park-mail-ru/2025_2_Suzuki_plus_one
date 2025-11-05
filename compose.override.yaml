@@ -2,9 +2,8 @@ services:
   db:
     ports:
       - "5432:5432"
-  s3:
+  minio:
     ports:
-      - "9000:9000"   # S3 API
       - "9001:9001" # Web Console
   redis:
     ports:

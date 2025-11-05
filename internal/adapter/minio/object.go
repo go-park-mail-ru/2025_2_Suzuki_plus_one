@@ -43,8 +43,20 @@ func (m *Minio) GetObject(ctx context.Context, objectName string, bucketName str
 		return nil, err
 	}
 
+	// Replace internal URL with public URL
+	parsedURL, err := url.Parse(presignedURL.String())
+	if err != nil {
+		m.logger.Error("Failed to parse presigned URL: " + err.Error())
+		return nil, err
+	}
+
+	// Use the host from public URL
+	publicParsedURL, _ := url.Parse(m.externalHost)
+	parsedURL.Host = publicParsedURL.Host
+	parsedURL.Scheme = publicParsedURL.Scheme
+
 	return &entity.Object{
-		URL: presignedURL.String(),
+		URL: parsedURL.String(),
 	}, nil
 }
 
@@ -72,11 +84,7 @@ func (m *Minio) GetPublicObject(ctx context.Context, objectName string, bucketNa
 	}
 
 	// Construct public URL
-	scheme := "http"
-	if m.secure {
-		scheme = "https"
-	}
-	objectURL := fmt.Sprintf("%s://%s/%s/%s", scheme, m.endpoint, bucketName, objectName)
+	objectURL := fmt.Sprintf("%s/%s/%s", m.externalHost, bucketName, objectName)
 	return &entity.Object{
 		URL: objectURL,
 	}, nil

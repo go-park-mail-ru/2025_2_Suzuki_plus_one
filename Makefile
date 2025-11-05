@@ -135,15 +135,15 @@ redis-wipe: ## wipes the redis container and its volume
 
 ## Minio
 minio-start: ## starts the minio using docker-compose
-	source .env && docker compose up -d s3
+	source .env && docker compose up -d minio
 minio-stop: ## stops the minio using docker-compose
-	source .env && docker compose down s3
+	source .env && docker compose down minio
 minio-wipe: ## wipes the minio container and its volume
-	source .env && docker compose down -v s3
+	source .env && docker compose down -v minio
 minio-create: ## creates required buckets in minio
 	@echo "Creating buckets in Minio..."
 	source .env && \
-	docker compose exec s3 /bin/sh -c " \
+	docker compose exec minio /bin/sh -c " \
 	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
 	mc mb local/actors || true && \
 	mc mb local/avatars || true && \
@@ -160,18 +160,18 @@ minio-create: ## creates required buckets in minio
 minio-list: ## lists buckets in minio
 	@echo "Listing buckets in Minio..."
 	source .env && \
-	docker compose exec s3 /bin/sh -c " \
+	docker compose exec minio /bin/sh -c " \
 	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
 	mc ls local \
 	"
 minio-fill: ## fills minio with test data from testdata/minio using docker cp
 	@echo "Filling Minio with test data using docker cp..."
 	source .env && \
-	docker cp testdata/minio/. $$(docker compose ps -q s3):/testdata/
+	docker cp testdata/minio/. $$(docker compose ps -q minio):/testdata/
 	@echo "Test data uploaded"
 	@echo "Filling Minio with test data using mc cp..."
 	source .env && \
-	docker compose exec s3 /bin/sh -c " \
+	docker compose exec minio /bin/sh -c " \
 	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
 	mc cp --recursive /testdata/ local "
 	@echo "Test data uploaded"
@@ -210,8 +210,8 @@ all-bootstrap: ## bootstraps all services: starts, migrates, fills with test dat
 		ready=true; \
 		source .env && pg_isready -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB || ready=false; \
 		docker compose exec redis redis-cli ping | grep -q PONG || ready=false; \
-		docker compose exec s3 mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD >/dev/null 2>&1 && \
-		docker compose exec s3 mc ls local >/dev/null 2>&1 || ready=false; \
+		docker compose exec minio mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD >/dev/null 2>&1 && \
+		docker compose exec minio mc ls local >/dev/null 2>&1 || ready=false; \
 		if [ "$$ready" = true ]; then \
 			echo "All services are ready."; \
 			break; \

@@ -18,9 +18,9 @@ func NewServer(router http.Handler) http.Handler {
 func StartServer(router http.Handler, serveString string, l logger.Logger) {
 	server := NewServer(router)
 
+	l.Info("Server started serving: " + serveString)
 	// Start the server
 	if err := http.ListenAndServe(serveString, server); err != nil {
 		l.Fatal("Server not started 'cause of error", l.ToError(err))
 	}
-	l.Info("Server started serving")
 }
