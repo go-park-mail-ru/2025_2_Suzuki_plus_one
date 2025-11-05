@@ -24,4 +24,8 @@ var (
 
 	ErrGetUserMeParamsInvalid   = errors.New("invalid get_user_me request parameters")
 	ErrGetUserMeSessionNotFound = errors.New("session not found for given access token")
+
+	ErrGetActorParamsInvalid = errors.New("invalid get_actor request parameters")
+
+	ErrGetMediaParamsInvalid = errors.New("invalid get_media request parameters")
 )

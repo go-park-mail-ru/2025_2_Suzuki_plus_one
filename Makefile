@@ -146,10 +146,12 @@ minio-create: ## creates required buckets in minio
 	source .env && \
 	docker compose exec s3 /bin/sh -c " \
 	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
+	mc mb local/actors || true && \
 	mc mb local/avatars || true && \
 	mc mb local/posters || true && \
 	mc mb local/trailers || true && \
 	mc mb local/medias || true && \
+	mc anonymous set public local/actors || true && \
 	mc anonymous set public local/avatars || true && \
 	mc anonymous set public local/posters || true && \
 	mc anonymous set public local/trailers || true && \

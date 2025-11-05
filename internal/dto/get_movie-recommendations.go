@@ -6,5 +6,5 @@ type GetMovieRecommendationsInput struct {
 }
 
 type GetMovieRecommendationsOutput struct {
-	Movies []Movie `json:"movies"`
+	Movies []GetMediaOutput `json:"movies"`
 }

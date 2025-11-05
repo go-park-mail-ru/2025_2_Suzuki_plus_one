@@ -13,3 +13,37 @@ UserResponse:
       type: string
       format: email
       example: "johndoe@example.com"
+    date_of_birth:
+      type: string
+      format: date
+      example: "1990-01-01"
+    phone_number:
+      type: string
+      example: "+1234567890"
+    avatar_url:
+      type: string
+      format: uri
+      example: "http://example.com/avatars/johndoe.jpg"
+
+UserUpdateRequest:
+  summary: User profile settings
+  type: object
+  properties:
+    id:
+      type: string
+      format: int
+      example: "1"
+    username:
+      type: string
+      example: "johndoe"
+    email:
+      type: string
+      format: email
+      example: "johndoe@example.com"
+    date_of_birth:
+      type: string
+      format: date
+      example: "1990-01-01"
+    phone_number:
+      type: string
+      example: "+1234567890"

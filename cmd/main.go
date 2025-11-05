@@ -59,9 +59,9 @@ func main() {
 	logger.Info("Minio connection established")
 
 	// Cast Postgres to MovieRepository
-	movieRepository, ok := databaseAdapter.(uc.MovieRepository)
+	movieRepository, ok := databaseAdapter.(uc.MediaRepository)
 	if !ok {
-		logger.Fatal("Database can't be converted to MovieRepository")
+		logger.Fatal("Database can't be converted to MediaRepository")
 	}
 	// Cast Postgres to UserRepository
 	userRepository, ok := databaseAdapter.(uc.UserRepository)
@@ -72,6 +72,11 @@ func main() {
 	tokenRepository, ok := databaseAdapter.(uc.TokenRepository)
 	if !ok {
 		logger.Fatal("Database can't be converted to TokenRepository")
+	}
+	// Cast Postgres to ActorRepository
+	actorRepository, ok := databaseAdapter.(uc.ActorRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to ActorRepository")
 	}
 
 	// Cast Minio to ObjectRepository
@@ -86,16 +91,22 @@ func main() {
 		logger.Fatal("Cache can't be converted to SessionRepository")
 	}
 
+	// Reusable usecases
+	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
+	getMediaUseCase := uc.NewGetMediaUseCase(logger, movieRepository, getObjectUseCase)
+
 	// Inject usecases into handler
 	handler := handlers.NewHandlers(
 		logger,
-		uc.NewGetMovieRecommendationsUsecase(logger, movieRepository),
-		uc.NewGetObjectUsecase(logger, objectRepository),
+		uc.NewGetMovieRecommendationsUsecase(logger, movieRepository, getMediaUseCase),
+		getObjectUseCase,
 		uc.NewPostAuthSignInUsecase(logger, userRepository, tokenRepository, sessionRepository),
 		uc.NewGetAuthRefreshUseCase(logger, tokenRepository),
 		uc.NewPostAuthSignUpUsecase(logger, userRepository, tokenRepository, sessionRepository),
 		uc.NewGetAuthSignOutUsecase(logger, tokenRepository, sessionRepository),
 		uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository, objectRepository),
+		uc.NewGetActorUseCase(logger, actorRepository, getMediaUseCase, getObjectUseCase),
+		getMediaUseCase,
 	)
 
 	// Initialize JWT middleware engine

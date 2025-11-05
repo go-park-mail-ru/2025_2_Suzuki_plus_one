@@ -19,36 +19,36 @@ me:
           application/json:
             schema:
               $ref: "../schemas/error.yaml#/ErrorResponse"
-  post:
-    securitySchemes:
-      - access_token: []
-    tags:
-      - user
-    summary: Update user profile
-    description: Update the profile information of the authenticated user
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            # TODO:
-            $ref: "../schemas/user.yaml#/UserUpdateRequest"
-    responses:
-      "200":
-        description: User profile updated successfully
-        content:
-          application/json:
-            schema:
-              $ref: "../schemas/user.yaml#/UserResponse"
-      "400":
-        description: Bad request (invalid input)
-        content:
-          application/json:
-            schema:
-              $ref: "../schemas/error.yaml#/ErrorResponse"
-      "401":
-        description: Unauthorized (invalid or missing access token)
-        content:
-          application/json:
-            schema:
-              $ref: "../schemas/error.yaml#/ErrorResponse"
+  # post:
+  #   securitySchemes:
+  #     - access_token: []
+  #   tags:
+  #     - user
+  #   summary: Update user profile
+  #   description: Update the profile information of the authenticated user
+  #   requestBody:
+  #     required: true
+  #     content:
+  #       application/json:
+  #         schema:
+  #           # TODO:
+  #           $ref: "../schemas/user.yaml#/UserUpdateRequest"
+  #   responses:
+  #     "200":
+  #       description: User profile updated successfully
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "../schemas/user.yaml#/UserResponse"
+  #     "400":
+  #       description: Bad request (invalid input)
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "../schemas/error.yaml#/ErrorResponse"
+  #     "401":
+  #       description: Unauthorized (invalid or missing access token)
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "../schemas/error.yaml#/ErrorResponse"

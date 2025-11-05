@@ -12,17 +12,20 @@ import (
 )
 
 type GetMovieRecommendationsUsecase struct {
-	logger    logger.Logger
-	movieRepo MovieRepository
+	logger          logger.Logger
+	movieRepo       MediaRepository
+	getMediaUseCase *GetMediaUseCase
 }
 
 func NewGetMovieRecommendationsUsecase(
 	logger logger.Logger,
-	movieRepo MovieRepository,
+	movieRepo MediaRepository,
+	getMediaUseCase *GetMediaUseCase,
 ) *GetMovieRecommendationsUsecase {
 	return &GetMovieRecommendationsUsecase{
-		logger:    logger,
-		movieRepo: movieRepo,
+		logger:          logger,
+		movieRepo:       movieRepo,
+		getMediaUseCase: getMediaUseCase,
 	}
 }
 
@@ -69,28 +72,18 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 	movieIDs := getRecommendedMovieIDs(input.Limit, input.Offset, uint(movie_number))
 
 	// Convert []entity.Movie to []dto.Movie
-	dtoMovies := make([]dto.Movie, 0, len(movieIDs))
+	dtoMovies := make([]dto.GetMediaOutput, 0, len(movieIDs))
 	for _, movieID := range movieIDs {
 		// OPTIMIZATION: Batch fetch movies by IDs to reduce number of queries
-		movie, err := uc.movieRepo.GetMedia(ctx, movieID)
-		if err != nil {
-			derr := dto.NewError("adapter/get_movie_recommendations", err, "Can't get movie by ID")
-			return dto.GetMovieRecommendationsOutput{}, &derr
+		movieDTO, derr := uc.getMediaUseCase.Execute(ctx, dto.GetMediaInput{MediaID: movieID})
+		if derr != nil {
+			uc.logger.Error(
+				"Failed to get movie by ID in recommendations",
+				derr,
+			)
+			return dto.GetMovieRecommendationsOutput{}, derr
 		}
-
-		// Fetch genres and posters for current movie
-		genres, err := uc.movieRepo.GetMediaGenres(ctx, movieID)
-		if err != nil {
-			derr := dto.NewError("adapter/get_movie_recommendations", err, "Can't get movie genres")
-			return dto.GetMovieRecommendationsOutput{}, &derr
-		}
-		posters, err := uc.movieRepo.GetMediaPostersLinks(ctx, movieID)
-		if err != nil {
-			derr := dto.NewError("adapter/get_movie_recommendations", err, "Can't get movie posters")
-			return dto.GetMovieRecommendationsOutput{}, &derr
-		}
-
-		dtoMovies = append(dtoMovies, dto.NewMovieFromEntity(movie, genres, posters))
+		dtoMovies = append(dtoMovies, movieDTO)
 	}
 
 	return dto.GetMovieRecommendationsOutput{Movies: dtoMovies}, nil
@@ -100,6 +93,7 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 func getRecommendedMovieIDs(limit, offset, totalMovies uint) []uint {
 	movieIDs := make([]uint, 0, limit)
 
+	// TODO: Add offset handling, add series support
 	// Simple random selection logic
 	// OPTIMIZATION: Use better randomization algorithm to avoid duplicates
 	// Or just switch to proper recommendation algorithm

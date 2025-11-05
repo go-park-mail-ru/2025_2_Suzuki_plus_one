@@ -35,4 +35,12 @@ type (
 	GetUserMeUseCase interface {
 		Execute(context.Context, dto.GetUserMeInput) (dto.GetUserMeOutput, *dto.Error)
 	}
+
+	GetActorUseCase interface {
+		Execute(context.Context, dto.GetActorInput) (dto.GetActorOutput, *dto.Error)
+	}
+
+	GetMediaUseCase interface {
+		Execute(context.Context, dto.GetMediaInput) (dto.GetMediaOutput, *dto.Error)
+	}
 )

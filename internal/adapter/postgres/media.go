@@ -79,7 +79,7 @@ func (db *DataBase) GetMedia(ctx context.Context, media_id uint) (*entity.Media,
 		return &entity.Media{}, err
 	}
 
-	media.ID = int(mediaID)
+	media.MediaID = uint(mediaID)
 	media.MediaType = mediaType
 	media.Title = title
 	if description.Valid {
@@ -107,8 +107,8 @@ func (db *DataBase) GetMedia(ctx context.Context, media_id uint) (*entity.Media,
 	return &media, nil
 }
 
-// Get posters s3 links for the given media
-func (db *DataBase) GetMediaPostersLinks(ctx context.Context, media_id uint) ([]string, error) {
+// Get posters s3 keys for the given media
+func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]string, error) {
 	var posters []string
 	query := `
 		SELECT s3_key
@@ -154,4 +154,28 @@ func (db *DataBase) GetMediaGenres(ctx context.Context, media_id uint) ([]entity
 		genres = append(genres, genre)
 	}
 	return genres, nil
+}
+
+// Get actors for the given media
+func (db *DataBase) GetActorsByMediaID(ctx context.Context, media_id uint) ([]entity.Actor, error) {
+	var actors []entity.Actor
+	query := `
+		SELECT actor_id, name, birth_date, bio
+		FROM actor
+		JOIN actor_role USING (actor_id)
+		WHERE media_id = $1
+	`
+	rows, err := db.conn.Query(query, media_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var actor entity.Actor
+		if err := rows.Scan(&actor.ID, &actor.Name, &actor.BirthDate, &actor.Bio); err != nil {
+			return nil, err
+		}
+		actors = append(actors, actor)
+	}
+	return actors, nil
 }

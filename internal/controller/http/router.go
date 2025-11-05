@@ -24,9 +24,13 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Use(chiMiddleware.RequestID)
 	r.Use(jwtauth.Verifier(common.TokenAuth))
 
-	// Handlers
+	// Media routes
+	r.Get("/media/{media_id}", h.GetMedia)
 	r.Get("/movie/recommendations", h.GetMovieRecommendations)
 	r.Get("/object", h.GetObjectMedia)
+
+	// Actor routes
+	r.Get("/actor/{actor_id}", h.GetActor)
 
 	// Auth routes
 	r.Post("/auth/signin", h.PostAuthSignIn)

@@ -24,30 +24,24 @@ certain:
   get:
     tags:
       - content
-    summary: Get details of a specific movie
-    description: Retrieve detailed information about a movie given its ID
+    summary: Get details of a specific media
+    description: Retrieve detailed information about a media given its ID
     parameters:
       - in: path
-        name: movie_id
+        name: media_id
         required: true
         schema:
           type: string
-        description: The unique identifier of the movie
+        description: The unique identifier of the media
     responses:
       "200":
-        description: Movie details retrieved successfully
+        description: Media details retrieved successfully
         content:
           application/json:
             schema:
               $ref: "../schemas/movie.yaml#/MovieResponse"
-      "404":
-        description: Movie not found
-        content:
-          application/json:
-            schema:
-              $ref: "../schemas/error.yaml#/ErrorResponse"
-      "500":
-        description: Internal server error
+      "400":
+        description: Bad request
         content:
           application/json:
             schema:

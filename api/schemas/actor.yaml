@@ -1,0 +1,46 @@
+ActorResponse:
+  type: object
+  required:
+    - id
+    - name
+    - date_of_birth
+  properties:
+    id:
+      type: string
+      description: Actor ID
+      example: "123"
+    name:
+      type: string
+      description: Actor full name
+      example: "Leonardo DiCaprio"
+    birth_date:
+      type: string
+      format: date
+      description: Actor's date of birth
+      example: "1974-11-11"
+    bio:
+      type: string
+      description: Short biography of the actor
+      example: "Leonardo Wilhelm DiCaprio is an American actor and film producer."
+    image_urls:
+      type: array
+      items:
+        type: string
+        format: uri
+      description: URLs to actor's images
+      example: ["https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Leonardo_Dicaprio.jpg"]
+
+ActorPageResponse:
+  summary: Movies related to actor
+  type: object
+  required:
+    - actor
+    - movies
+  properties:
+    actor:
+      $ref: "#/components/schemas/ActorResponse"
+    movies:
+      type: array
+      description: Movies featuring this actor
+      items:
+        $ref: "#/components/schemas/MovieResponse"

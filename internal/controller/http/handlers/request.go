@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
@@ -24,6 +25,8 @@ type RequestParams struct {
 	cookieParamsStorage []any
 	accessToken         string
 	accessTokenStorage  *string
+	pathParams          []string
+	pathParamsStorage   []any
 	request             *http.Request
 	dto                 *dto.DTO
 }
@@ -67,6 +70,12 @@ func (rp *RequestParams) AddCookie(key string, valueStorage any) {
 func (rp *RequestParams) AddAuthHeader(valueStorage *string) {
 	rp.accessToken = jwtauth.TokenFromHeader(rp.request)
 	rp.accessTokenStorage = valueStorage
+}
+
+// Registers a path parameter to be parsed with [RequestParams.Parse] into valueStorage (dto field).
+func (rp *RequestParams) AddPath(key string, valueStorage any) {
+	rp.pathParams = append(rp.pathParams, key)
+	rp.pathParamsStorage = append(rp.pathParamsStorage, valueStorage)
 }
 
 // Parse all registered parameters from the request into their storages.
@@ -131,6 +140,22 @@ func (rp *RequestParams) Parse() error {
 			rp.logger.ToString("access_token", rp.accessToken),
 			rp.logger.ToError(err))
 		// If can't scan just set zero value
+	}
+
+	// Parse path parameters
+	for i := range rp.pathParams {
+		param := rp.pathParams[i]
+		storage := rp.pathParamsStorage[i]
+		val := chi.URLParam(rp.request, param)
+
+		// Scan value into the given storage
+		if _, err := fmt.Sscanf(val, "%v", storage); err != nil {
+			rp.logger.Warn("Invalid path parameter",
+				rp.logger.ToString("param", param),
+				rp.logger.ToString("value", val),
+				rp.logger.ToError(err))
+			// If can't scan just set zero value
+		}
 	}
 
 	return nil

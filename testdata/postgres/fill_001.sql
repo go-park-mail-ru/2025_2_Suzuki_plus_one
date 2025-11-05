@@ -17,7 +17,7 @@ VALUES (
     256
   );
 -- 2) Test user referencing the avatar
-INSERT INTO "user" (username, asset_image_id, password_hash, email)
+INSERT INTO "user" (username, asset_image_id, password_hash, email, date_of_birth, phone_number)
 VALUES (
     'testuser',
     (
@@ -30,7 +30,9 @@ VALUES (
         )
     ),
     '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', -- plaintext: 'Password123!'
-    'test@example.com'
+    'test@example.com',
+    '1990-01-01',
+    '+1234567890'
   );
 -- 3) Media: Inception
 INSERT INTO media (

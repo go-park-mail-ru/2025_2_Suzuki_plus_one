@@ -14,7 +14,7 @@ import (
 func TestGetMovieRecommendationsUsecase(t *testing.T) {
 	// Init repository mock
 	mockCtrl := gomock.NewController(t)
-	movieRepo := NewMockMovieRepository(mockCtrl)
+	movieRepo := NewMockMediaRepository(mockCtrl)
 	times := 5
 
 	// Media count times*2
@@ -22,11 +22,27 @@ func TestGetMovieRecommendationsUsecase(t *testing.T) {
 	// Rest is times because of the limit input
 	movieRepo.EXPECT().GetMedia(gomock.Any(), gomock.Any()).Return(&entity.Media{}, nil).Times(times)
 	movieRepo.EXPECT().GetMediaGenres(gomock.Any(), gomock.Any()).Return([]entity.Genre{}, nil).Times(times)
-	movieRepo.EXPECT().GetMediaPostersLinks(gomock.Any(), gomock.Any()).Return([]string{}, nil).Times(times)
+	movieRepo.EXPECT().GetMediaPostersKeys(gomock.Any(), gomock.Any()).Return([]string{"posters/hi.png"}, nil).Times(times)
+	movieRepo.EXPECT().GetActorsByMediaID(gomock.Any(), gomock.Any()).Return([]entity.Actor{}, nil).Times(times)
+
+	// Object repository mock
+	objectRepo := NewMockObjectRepository(mockCtrl)
+	// For each poster key, GetObject will be called
+	objectRepo.EXPECT().GetPublicObject(gomock.Any(), gomock.Any(), "posters").Return(&entity.Object{
+		URL: "http://example.com/poster.jpg",
+	}, nil).Times(times)
 
 	// Call usecase
 	logger := logger.NewZapLogger(true)
-	usecase := NewGetMovieRecommendationsUsecase(logger, movieRepo)
+	usecase := NewGetMovieRecommendationsUsecase(
+		logger,
+		movieRepo,
+		NewGetMediaUseCase(
+			logger,
+			movieRepo,
+			NewGetObjectUseCase(logger, objectRepo),
+		),
+	)
 	ctx := context.Background()
 	output, err := usecase.Execute(ctx, dto.GetMovieRecommendationsInput{
 		Limit:  uint(times),

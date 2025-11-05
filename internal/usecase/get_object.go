@@ -9,22 +9,22 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
-type GetObjectUsecase struct {
+type GetObjectUseCase struct {
 	logger     logger.Logger
 	objectRepo ObjectRepository
 }
 
-func NewGetObjectUsecase(
+func NewGetObjectUseCase(
 	logger logger.Logger,
 	objectRepo ObjectRepository,
-) *GetObjectUsecase {
-	return &GetObjectUsecase{
+) *GetObjectUseCase {
+	return &GetObjectUseCase{
 		logger:     logger,
 		objectRepo: objectRepo,
 	}
 }
 
-func (uc *GetObjectUsecase) Execute(ctx context.Context, input dto.GetObjectInput) (dto.GetObjectOutput, *dto.Error) {
+func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInput) (dto.GetObjectOutput, *dto.Error) {
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -36,9 +36,19 @@ func (uc *GetObjectUsecase) Execute(ctx context.Context, input dto.GetObjectInpu
 	}
 
 	// Get object from repository
-	// TODO: linkAliveDuration is hardcoded here, can be changed later if needed
-	linkAliveDuration := time.Minute * 15
-	object, err := uc.objectRepo.GetObject(ctx, input.Key, input.BucketName, linkAliveDuration)
+
+	// Differentiate between public and private buckets
+	// For now only "medias" bucket is private
+	var object *entity.Object
+	var err error
+	if input.BucketName == "medias" {
+		// TODO: linkAliveDuration is hardcoded here, can be changed later if needed
+		linkAliveDuration := time.Minute * 15
+		object, err = uc.objectRepo.GetObject(ctx, input.Key, input.BucketName, linkAliveDuration)
+	} else {
+		object, err = uc.objectRepo.GetPublicObject(ctx, input.Key, input.BucketName)
+	}
+
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/get_object",
@@ -52,4 +62,28 @@ func (uc *GetObjectUsecase) Execute(ctx context.Context, input dto.GetObjectInpu
 	return dto.GetObjectOutput{
 		URL: object.URL,
 	}, nil
+}
+
+func splitToBucketAndKey(fullPath string) (string, string) {
+	// fullPath is in the format "bucket_name/key"
+	if fullPath[0] == '/' {
+		fullPath = fullPath[1:]
+	}
+
+	var bucketName, key string
+	splitIndex := -1
+	for i, char := range fullPath {
+		if char == '/' {
+			splitIndex = i
+			break
+		}
+	}
+	if splitIndex != -1 {
+		bucketName = fullPath[:splitIndex]
+		key = fullPath[splitIndex+1:]
+	} else {
+		bucketName = fullPath
+		key = ""
+	}
+	return bucketName, key
 }

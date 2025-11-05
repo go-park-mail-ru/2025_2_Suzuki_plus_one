@@ -34,11 +34,15 @@ paths:
   # movie.yaml
   /movie/recommendations:
     $ref: "./paths/movie.yaml#/recommendations"
-  /movie/{movie_id}:
+  /media/{media_id}:
     $ref: "./paths/movie.yaml#/certain"
+    # TODO: change movie to media
   # user.yaml
   /user/me:
     $ref: "./paths/user.yaml#/me"
+  # actor.yaml
+  /actor/{actor_id}:
+    $ref: "./paths/actor.yaml#/certain"
 
 components:
   securitySchemes:

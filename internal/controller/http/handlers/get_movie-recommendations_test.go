@@ -25,11 +25,11 @@ func getMockGetMovieRecommendationsInput() dto.GetMovieRecommendationsInput {
 
 func getMockGetMovieRecommendationsOutput() dto.GetMovieRecommendationsOutput {
 	// Create 5 mock movies
-	movies := []dto.Movie{}
+	movies := []dto.GetMediaOutput{}
 	for i := 0; i < 5; i++ {
 		// Create new movie with ID and Title
-		movie := dto.Movie{}
-		movie.ID = i + 1
+		movie := dto.GetMediaOutput{}
+		movie.MediaID = uint(i + 1)
 		movie.Title = "Movie " + strconv.Itoa(i+1)
 		movies = append(movies, movie)
 	}

@@ -89,7 +89,7 @@ func TestGetMedia(t *testing.T) {
 	media, err := database.GetMedia(ctx, 1)
 	require.NoError(t, err)
 
-	require.Equal(t, 1, media.ID)
+	require.Equal(t, uint(1), media.MediaID)
 	require.Equal(t, "movie", media.MediaType)
 	require.Equal(t, "Inception", media.Title)
 	require.Equal(t, "A mind-bending thriller", media.Description)

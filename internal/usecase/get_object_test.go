@@ -25,15 +25,22 @@ func TestGetObjectUsecase_Execute(t *testing.T) {
 		URL: "http://example.com/object1.jpg",
 	}
 
-	// Set up expectations
+	// Note: "posters" is a public bucket, so GetPublicObject will be called
 	objectRepo.EXPECT().
-		GetObject(gomock.Any(), input.Key, input.BucketName, gomock.Any()).
+		GetPublicObject(gomock.Any(), input.Key, input.BucketName).
 		Return(expectedObject, nil).
 		Times(1)
 
+	// For now only "medias" bucket is private and uses GetObject with linkAliveDuration
+	// Set up expectations
+	// objectRepo.EXPECT().
+	// 	GetObject(gomock.Any(), input.Key, input.BucketName, gomock.Any()).
+	// 	Return(expectedObject, nil).
+	// 	Times(1)
+
 	// Call usecase
 	logger := logger.NewZapLogger(true)
-	usecase := NewGetObjectUsecase(logger, objectRepo)
+	usecase := NewGetObjectUseCase(logger, objectRepo)
 	ctx := context.Background()
 	output, err := usecase.Execute(ctx, input)
 	var emptyErr *dto.Error

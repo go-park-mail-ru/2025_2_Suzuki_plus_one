@@ -6,7 +6,7 @@ import (
 )
 
 type Media struct {
-	ID          int       `json:"id"`
+	MediaID     uint      `json:"media_id"`
 	MediaType   string    `json:"media_type" validate:"required"`
 	Title       string    `json:"title" validate:"required,max=256"`
 	Description string    `json:"description,omitempty" validate:"max=2048"`
@@ -19,7 +19,7 @@ type Media struct {
 }
 
 func NewMedia(
-	id int,
+	mediaID uint,
 	mediaType string,
 	title string,
 	description string,
@@ -31,7 +31,7 @@ func NewMedia(
 	plotSummary string,
 ) (Media, error) {
 	m := Media{
-		ID:          id,
+		MediaID:     mediaID,
 		MediaType:   mediaType,
 		Title:       title,
 		Description: description,

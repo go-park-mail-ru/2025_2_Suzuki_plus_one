@@ -14,11 +14,18 @@ type (
 		Connect() error
 		Close() error
 	}
-	MovieRepository interface {
+	MediaRepository interface {
 		GetMediaCount(ctx context.Context, media_type string) (int, error)
 		GetMedia(ctx context.Context, media_id uint) (*entity.Media, error)
 		GetMediaGenres(ctx context.Context, media_id uint) ([]entity.Genre, error)
-		GetMediaPostersLinks(ctx context.Context, media_id uint) ([]string, error)
+		GetMediaPostersKeys(ctx context.Context, media_id uint) ([]string, error)
+		GetActorsByMediaID(ctx context.Context, media_id uint) ([]entity.Actor, error)
+	}
+
+	ActorRepository interface {
+		GetActorByID(ctx context.Context, actorID uint) (*entity.Actor, error)
+		GetMediasByActorID(ctx context.Context, actorID uint) ([]entity.Media, error)
+		GetActorImageS3(ctx context.Context, actorID uint) ([]string, error)
 	}
 
 	UserRepository interface {
