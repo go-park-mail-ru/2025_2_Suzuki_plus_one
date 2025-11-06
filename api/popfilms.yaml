@@ -37,9 +37,17 @@ paths:
   /media/{media_id}:
     $ref: "./paths/movie.yaml#/certain"
     # TODO: change movie to media
+  /media/watch:
+    $ref: "./paths/movie.yaml#/watch"
   # user.yaml
   /user/me:
     $ref: "./paths/user.yaml#/me"
+  /user/me/update:
+    $ref: "./paths/user.yaml#/me_update"
+  /user/me/update/avatar:
+    $ref: "./paths/user.yaml#/me_update_avatar"
+  /user/me/update/password:
+    $ref: "./paths/user.yaml#/me_update_password"
   # actor.yaml
   /actor/{actor_id}:
     $ref: "./paths/actor.yaml#/certain"
@@ -80,3 +88,12 @@ components:
     # actor.yaml
     ActorResponse:
       $ref: "./schemas/actor.yaml#/ActorResponse"
+    # user.yaml
+    UserResponse:
+      $ref: "./schemas/user.yaml#/UserResponse"
+    UserUpdateRequest:
+      $ref: "./schemas/user.yaml#/UserUpdateRequest"
+    UserAvatarUpdateRequest:
+      $ref: "./schemas/user.yaml#/UserAvatarUpdateRequest"
+    UserPasswordUpdateRequest:
+      $ref: "./schemas/user.yaml#/UserPasswordUpdateRequest"

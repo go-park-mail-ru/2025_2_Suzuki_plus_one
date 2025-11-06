@@ -3,7 +3,7 @@ me:
     tags:
       - user
     summary: Get user profile
-    securitySchemes:
+    security:
       - access_token: []
     description: Retrieve the profile information of the authenticated user
     responses:
@@ -19,36 +19,106 @@ me:
           application/json:
             schema:
               $ref: "../schemas/error.yaml#/ErrorResponse"
-  # post:
-  #   securitySchemes:
-  #     - access_token: []
-  #   tags:
-  #     - user
-  #   summary: Update user profile
-  #   description: Update the profile information of the authenticated user
-  #   requestBody:
-  #     required: true
-  #     content:
-  #       application/json:
-  #         schema:
-  #           # TODO:
-  #           $ref: "../schemas/user.yaml#/UserUpdateRequest"
-  #   responses:
-  #     "200":
-  #       description: User profile updated successfully
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: "../schemas/user.yaml#/UserResponse"
-  #     "400":
-  #       description: Bad request (invalid input)
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: "../schemas/error.yaml#/ErrorResponse"
-  #     "401":
-  #       description: Unauthorized (invalid or missing access token)
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: "../schemas/error.yaml#/ErrorResponse"
+me_update:
+  post:
+    security:
+      - access_token: []
+    tags:
+      - user
+    summary: Update user profile
+    description: Update the profile information of the authenticated user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/user.yaml#/UserUpdateRequest"
+    responses:
+      "200":
+        description: User profile updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user.yaml#/UserResponse"
+      "400":
+        description: Bad request (invalid input)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+      "401":
+        description: Unauthorized (invalid or missing access token)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+me_update_avatar:
+  post:
+    security:
+      - access_token: []
+    tags:
+      - user
+    summary: Update user avatar [UNIMPLEMENTED]
+    description: Update the avatar of the authenticated user
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../schemas/user.yaml#/UserAvatarUpdateRequest"
+    responses:
+      "200":
+        description: User avatar updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user.yaml#/UserResponse"
+      "400":
+        description: Bad request (invalid input)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+      "401":
+        description: Unauthorized (invalid or missing access token)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+me_update_password:
+  post:
+    security:
+      - access_token: []
+    tags:
+      - user
+    summary: Update user password [UNIMPLEMENTED]
+    description: Update the password of the authenticated user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/user.yaml#/UserPasswordUpdateRequest"
+    responses:
+      "200":
+        description: User password updated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Password updated successfully"
+      "400":
+        description: Wrong input (invalid/weak/do not match)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+      "401":
+        description: Unauthorized (invalid or missing access token)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
