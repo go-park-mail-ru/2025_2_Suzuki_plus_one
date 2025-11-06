@@ -34,6 +34,6 @@ func LoggerWithKey(logger Logger, ctx context.Context, key common.ContextKey) Lo
 	if value != nil {
 		return logger.With(key, value)
 	}
-	logger.Warn("LoggerWithKey: key not found in context for key: ", key)
+	logger.Error("LoggerWithKey: key not found in context for key: ", key)
 	return logger
 }

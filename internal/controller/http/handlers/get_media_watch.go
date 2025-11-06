@@ -27,7 +27,7 @@ var URLParamMediaWatchID = "media_id"
 // GetMediaWatch handler
 func (h *Handlers) GetMediaWatch(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
-	ctx := GetContext(r)
+	ctx := common.GetContext(r)
 	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
 	log.Debug("Handler called")
 

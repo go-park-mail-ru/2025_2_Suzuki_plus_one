@@ -29,7 +29,7 @@ var (
 // GetObjectMedia handler
 func (h *Handlers) GetObjectMedia(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
-	ctx := GetContext(r)
+	ctx := common.GetContext(r)
 	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
 	log.Debug("Handler called")
 

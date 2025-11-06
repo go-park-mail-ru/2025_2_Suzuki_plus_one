@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,7 +9,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
-	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
@@ -159,18 +157,4 @@ func (rp *RequestParams) Parse() error {
 	}
 
 	return nil
-}
-
-// GetContext extracts and returns a context with request ID from the HTTP request
-func GetContext(r *http.Request) context.Context {
-	// request_id is injected by chi, but we don't want to depend on chi internal naming
-	// so we create our own context with common.RequestIDContextKey
-	ctx := context.WithValue(
-		r.Context(),
-		common.ContexKeyRequestID,
-		middleware.GetReqID(r.Context()),
-	)
-	// We can add more fields to context here if needed
-
-	return ctx
 }

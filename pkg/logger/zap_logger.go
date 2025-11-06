@@ -73,8 +73,7 @@ func (z *zapLogger) Fatal(msg string, keysAndValues ...interface{}) {
 // Zap With wrapper
 func (z *zapLogger) With(keysAndValues ...interface{}) Logger {
 	fields := convertToZapFields(keysAndValues...)
-	z.logger = z.logger.With(fields...)
-	return z
+	return &zapLogger{logger: z.logger.With(fields...)}
 }
 
 // Sync flushes any buffered log entries

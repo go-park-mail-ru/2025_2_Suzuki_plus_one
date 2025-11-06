@@ -31,7 +31,7 @@ const PathParamGetActorID = "actor_id"
 // Get all movies from database
 func (h *Handlers) GetActor(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
-	ctx := GetContext(r)
+	ctx := common.GetContext(r)
 	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
 	log.Debug("Handler called")
 
