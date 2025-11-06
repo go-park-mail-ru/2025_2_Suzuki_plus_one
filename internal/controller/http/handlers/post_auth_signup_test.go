@@ -70,5 +70,5 @@ func TestPostAuthSignUp(t *testing.T) {
 	response := executeRequest(logger, server, req)
 
 	// Assert the response
-	checkResponse(t, logger, response, http.StatusOK, UpdatePostAuthSignUpOutput(output))
+	checkResponse(t, logger, response, http.StatusCreated, UpdatePostAuthSignUpOutput(output))
 }

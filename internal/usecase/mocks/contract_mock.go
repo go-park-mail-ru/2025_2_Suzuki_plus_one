@@ -352,6 +352,21 @@ func (mr *MockUserRepositoryMockRecorder) GetUserByID(ctx, userID any) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockUserRepository)(nil).GetUserByID), ctx, userID)
 }
 
+// UpdateUser mocks base method.
+func (m *MockUserRepository) UpdateUser(ctx context.Context, userID uint, username, email, dateOfBirth, phoneNumber string) (*entity.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUser", ctx, userID, username, email, dateOfBirth, phoneNumber)
+	ret0, _ := ret[0].(*entity.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateUser indicates an expected call of UpdateUser.
+func (mr *MockUserRepositoryMockRecorder) UpdateUser(ctx, userID, username, email, dateOfBirth, phoneNumber any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockUserRepository)(nil).UpdateUser), ctx, userID, username, email, dateOfBirth, phoneNumber)
+}
+
 // MockTokenRepository is a mock of TokenRepository interface.
 type MockTokenRepository struct {
 	ctrl     *gomock.Controller

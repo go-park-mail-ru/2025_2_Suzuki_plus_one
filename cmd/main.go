@@ -117,6 +117,7 @@ func main() {
 	// Reusable usecases
 	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
 	getMediaUseCase := uc.NewGetMediaUseCase(logger, movieRepository, actorRepository, getObjectUseCase)
+	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository, objectRepository)
 
 	// Inject usecases into handler
 	handler := handlers.NewHandlers(
@@ -127,10 +128,11 @@ func main() {
 		uc.NewGetAuthRefreshUseCase(logger, tokenRepository),
 		uc.NewPostAuthSignUpUsecase(logger, userRepository, tokenRepository, sessionRepository),
 		uc.NewGetAuthSignOutUsecase(logger, tokenRepository, sessionRepository),
-		uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository, objectRepository),
+		getUserUseCase,
 		uc.NewGetActorUseCase(logger, actorRepository, getMediaUseCase, getObjectUseCase),
 		getMediaUseCase,
 		uc.NewGetMediaWatchUseCase(logger, movieRepository, getObjectUseCase),
+		uc.NewPostUserMeUpdateUseCase(logger, userRepository, getUserUseCase),
 	)
 
 	// Initialize JWT middleware engine

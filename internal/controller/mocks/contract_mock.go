@@ -406,3 +406,42 @@ func (mr *MockGetMediaWatchUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMediaWatchUseCase)(nil).Execute), arg0, arg1)
 }
+
+// MockPostUserMeUpdateUseCase is a mock of PostUserMeUpdateUseCase interface.
+type MockPostUserMeUpdateUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockPostUserMeUpdateUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockPostUserMeUpdateUseCaseMockRecorder is the mock recorder for MockPostUserMeUpdateUseCase.
+type MockPostUserMeUpdateUseCaseMockRecorder struct {
+	mock *MockPostUserMeUpdateUseCase
+}
+
+// NewMockPostUserMeUpdateUseCase creates a new mock instance.
+func NewMockPostUserMeUpdateUseCase(ctrl *gomock.Controller) *MockPostUserMeUpdateUseCase {
+	mock := &MockPostUserMeUpdateUseCase{ctrl: ctrl}
+	mock.recorder = &MockPostUserMeUpdateUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPostUserMeUpdateUseCase) EXPECT() *MockPostUserMeUpdateUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockPostUserMeUpdateUseCase) Execute(arg0 context.Context, arg1 dto.PostUserMeUpdateInput) (dto.PostUserMeUpdateOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.PostUserMeUpdateOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockPostUserMeUpdateUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostUserMeUpdateUseCase)(nil).Execute), arg0, arg1)
+}

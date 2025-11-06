@@ -47,4 +47,8 @@ type (
 	GetMediaWatchUseCase interface {
 		Execute(context.Context, dto.GetMediaWatchInput) (dto.GetMediaWatchOutput, *dto.Error)
 	}
+
+	PostUserMeUpdateUseCase interface {
+		Execute(context.Context, dto.PostUserMeUpdateInput) (dto.PostUserMeUpdateOutput, *dto.Error)
+	}
 )

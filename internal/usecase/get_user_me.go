@@ -81,13 +81,13 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 		return dto.GetUserMeOutput{}, &derr
 	}
 
-	var dateOfBirth time.Time
+	var dateOfBirth dto.JSONDate
 	if user.DateOfBirth != "" {
 		parsedDOB, err := time.Parse("2006-01-02", user.DateOfBirth)
 		if err != nil {
-			log.Error("Failed to parse user date of birth", log.ToError(err))
+			log.Warn("Failed to parse user date of birth", log.ToError(err))
 		} else {
-			dateOfBirth = parsedDOB
+			dateOfBirth = dto.JSONDate{Time: parsedDOB}
 		}
 	}
 

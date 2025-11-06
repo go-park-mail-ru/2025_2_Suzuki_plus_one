@@ -126,3 +126,49 @@ func (db *DataBase) CreateUser(ctx context.Context, user entity.User) (uint, err
 
 	return userID, nil
 }
+
+func (db *DataBase) UpdateUser(
+	ctx context.Context,
+	userID uint,
+	username string,
+	email string,
+	dateOfBirth string,
+	phoneNumber string,
+) (*entity.User, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("UpdateUser called",
+		log.ToInt("user_id", int(userID)),
+		log.ToString("username", username),
+		log.ToString("email", email),
+		log.ToString("date_of_birth", dateOfBirth),
+		log.ToString("phone_number", phoneNumber),
+	)
+
+	query := `
+		UPDATE "user"
+		SET username = $1,
+		    email = $2,
+		    date_of_birth = $3,
+		    phone_number = $4
+		WHERE user_id = $5
+		RETURNING user_id, email, username, date_of_birth, phone_number, password_hash, asset_image_id
+	`
+	row := db.conn.QueryRow(query, username, email, dateOfBirth, phoneNumber, userID)
+
+	var updatedUser entity.User
+	var assetImageID sql.NullInt64
+	err := row.Scan(&updatedUser.ID, &updatedUser.Email, &updatedUser.Username, &updatedUser.DateOfBirth, &updatedUser.PhoneNumber, &updatedUser.PasswordHash, &assetImageID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Error("UpdateUser: user not found", log.ToInt("user_id", int(userID)))
+			return nil, entity.ErrUserNotFound
+		}
+		return nil, err
+	}
+	if assetImageID.Valid {
+		updatedUser.AssetImageID = uint(assetImageID.Int64)
+	}
+
+	return &updatedUser, nil
+}

@@ -49,6 +49,7 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Authenticator(common.TokenAuth))
 		r.Get("/user/me", h.GetUserMe)
+		r.Post("/user/me/update", h.PostUserMeUpdate)
 	})
 
 	return r

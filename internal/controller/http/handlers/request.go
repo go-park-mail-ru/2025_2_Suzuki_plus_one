@@ -103,12 +103,57 @@ func (rp *RequestParams) Parse() error {
 	}
 
 	// Read and parse body parameters if any
+	// TODO: we force user to list all body parameters even if we parse full dto
 	if len(rp.bodyParams) != 0 {
 		if err := json.NewDecoder(rp.request.Body).Decode(rp.dto); err != nil {
 			rp.logger.Warn("Failed to decode body parameters",
 				rp.logger.ToError(err))
 			return err
 		}
+
+		// for i := range rp.bodyParams {
+		// 	param := rp.bodyParams[i]
+		// 	storage := rp.bodyParamsStorage[i]
+
+		// 	// Parse body as JSON into a map
+		// 	var bodyMap map[string]any
+		// 	if err := json.NewDecoder(rp.request.Body).Decode(&bodyMap); err != nil {
+		// 		rp.logger.Warn("Failed to decode body parameters",
+		// 			rp.logger.ToError(err))
+		// 		return err
+		// 	}
+
+		// 	val, ok := bodyMap[param]
+		// 	if !ok {
+		// 		// If not present, set zero value
+		// 		continue
+		// 	}
+
+		// 	// Special handling for time fields: parse from "1990-01-01" format
+		// 	if strVal, ok := val.(string); ok {
+		// 		// Try to parse as date
+		// 		if t, err := time.Parse("2006-01-02", strVal); err == nil {
+		// 			if ptr, ok := storage.(*time.Time); ok {
+		// 				*ptr = t
+		// 				continue
+		// 			}
+		// 		}
+		// 	}
+		// 	rp.logger.Debug("Scanning body param",
+		// 		rp.logger.ToString("param", param),
+		// 		rp.logger.ToAny("value", val),
+		// 		rp.logger.ToAny("storage", storage),
+		// 	)
+
+		// 	// Scan value into the given storage
+		// 	if _, err := fmt.Sscanf(fmt.Sprintf("%v", val), "%v", storage); err != nil {
+		// 		rp.logger.Warn("Invalid body parameter",
+		// 			rp.logger.ToString("param", param),
+		// 			rp.logger.ToString("value", fmt.Sprintf("%v", val)),
+		// 			rp.logger.ToError(err))
+		// 		// If can't scan just set zero value
+		// 	}
+		// }
 	}
 
 	// Read and parse cookie parameters if any
@@ -156,5 +201,17 @@ func (rp *RequestParams) Parse() error {
 		}
 	}
 
+	rp.logger.Debug(
+		"Parsed request parameters successfully",
+		rp.logger.ToAny("queryParams", rp.queryParams),
+		rp.logger.ToAny("queryParamsStorage", rp.queryParamsStorage),
+		rp.logger.ToAny("bodyParams", rp.bodyParams),
+		rp.logger.ToAny("bodyParamsStorage", rp.bodyParamsStorage),
+		rp.logger.ToAny("cookieParams", rp.cookieParams),
+		rp.logger.ToAny("cookieParamsStorage", rp.cookieParamsStorage),
+		rp.logger.ToAny("pathParams", rp.pathParams),
+		rp.logger.ToAny("pathParamsStorage", rp.pathParamsStorage),
+		rp.logger.ToAny("accessToken", rp.accessToken),
+	)
 	return nil
 }

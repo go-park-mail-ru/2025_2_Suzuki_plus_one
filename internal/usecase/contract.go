@@ -43,6 +43,13 @@ type (
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		GetUserAvatarKey(ctx context.Context, userID uint) (*entity.S3Key, error)
 		CreateUser(ctx context.Context, user entity.User) (uint, error)
+		UpdateUser(ctx context.Context,
+			userID uint,
+			username string,
+			email string,
+			dateOfBirth string,
+			phoneNumber string,
+		) (*entity.User, error)
 	}
 
 	TokenRepository interface {

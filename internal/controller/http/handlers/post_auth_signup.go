@@ -16,7 +16,7 @@ var (
 		Message: errors.New("Invalid parameters for post-auth signup"),
 	}
 	ResponsePostAuthSignUp = Response{
-		Code: http.StatusOK,
+		Code: http.StatusCreated,
 	}
 )
 
