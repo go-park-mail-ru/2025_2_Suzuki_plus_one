@@ -10,14 +10,16 @@ import (
 )
 
 type GetAuthRefreshUseCase struct {
-	logger    logger.Logger
-	tokenRepo TokenRepository
+	logger      logger.Logger
+	tokenRepo   TokenRepository
+	sessionRepo SessionRepository
 }
 
-func NewGetAuthRefreshUseCase(logger logger.Logger, tokenRepo TokenRepository) *GetAuthRefreshUseCase {
+func NewGetAuthRefreshUseCase(logger logger.Logger, tokenRepo TokenRepository, sessionRepo SessionRepository) *GetAuthRefreshUseCase {
 	return &GetAuthRefreshUseCase{
-		logger:    logger,
-		tokenRepo: tokenRepo,
+		logger:      logger,
+		tokenRepo:   tokenRepo,
+		sessionRepo: sessionRepo,
 	}
 }
 
@@ -100,6 +102,18 @@ func (u *GetAuthRefreshUseCase) Execute(
 			err.Error(),
 		)
 		log.Error("Failed to generate access token", log.ToError(err))
+		return dto.GetAuthRefreshOutput{}, &derr
+	}
+
+	// Add new access token to session repository
+	err = u.sessionRepo.AddSession(ctx, userID, accessToken, common.AccessTokenTTL)
+	if err != nil {
+		derr := dto.NewError(
+			"usecase/get_auth_refresh",
+			entity.ErrGetAuthRefreshInvalidParams,
+			"failed to add session: "+err.Error(),
+		)
+		log.Error("Failed to add session", log.ToError(err))
 		return dto.GetAuthRefreshOutput{}, &derr
 	}
 

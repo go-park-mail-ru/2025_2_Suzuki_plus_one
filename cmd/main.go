@@ -125,7 +125,7 @@ func main() {
 		uc.NewGetMovieRecommendationsUsecase(logger, movieRepository, getMediaUseCase),
 		getObjectUseCase,
 		uc.NewPostAuthSignInUsecase(logger, userRepository, tokenRepository, sessionRepository),
-		uc.NewGetAuthRefreshUseCase(logger, tokenRepository),
+		uc.NewGetAuthRefreshUseCase(logger, tokenRepository, sessionRepository),
 		uc.NewPostAuthSignUpUsecase(logger, userRepository, tokenRepository, sessionRepository),
 		uc.NewGetAuthSignOutUsecase(logger, tokenRepository, sessionRepository),
 		getUserUseCase,

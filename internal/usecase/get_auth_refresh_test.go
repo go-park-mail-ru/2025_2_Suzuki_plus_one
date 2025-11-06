@@ -18,6 +18,7 @@ func TestGetAuthRefreshUsecase(t *testing.T) {
 	// Init repository mock
 	mockCtrl := gomock.NewController(t)
 	movieRepo := NewMockTokenRepository(mockCtrl)
+	sessionRepo := NewMockSessionRepository(mockCtrl)
 	common.InitJWT("secret", time.Hour, time.Hour*24*7)
 
 	userID := uint(1)
@@ -36,9 +37,11 @@ func TestGetAuthRefreshUsecase(t *testing.T) {
 	// Media count times*2
 	movieRepo.EXPECT().GetRefreshTokensForUser(gomock.Any(), userID).Return(refreshTokens, nil).Times(1)
 
+	sessionRepo.EXPECT().AddSession(gomock.Any(), userID, gomock.Any(), common.AccessTokenTTL).Return(nil).Times(1)
+
 	// Call usecase
 	logger := logger.NewZapLogger(true)
-	usecase := NewGetAuthRefreshUseCase(logger, movieRepo)
+	usecase := NewGetAuthRefreshUseCase(logger, movieRepo, sessionRepo)
 	ctx := context.Background()
 	output, err := usecase.Execute(ctx, dto.GetAuthRefreshInput{
 		RefreshToken: token,
