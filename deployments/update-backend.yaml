@@ -14,9 +14,12 @@
         version: deploy
 
     - name: Build and start backend containers
-      shell: |
-        cd /home/{{ ansible_user }}/backend
-        make all-bootstrap
+      community.general.make:
+        target: all-bootstrap
+      args:
+        chdir: /home/{{ ansible_user }}/backend
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/home/{{ ansible_user }}/go/bin"
 
     - name: Wait for server to start
       uri:
