@@ -39,7 +39,7 @@ func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInpu
 		log.Error("Invalid get object input parameters", log.ToError(err))
 		return dto.GetObjectOutput{}, &derr
 	}
-
+	log.Debug("Get object input parameters are valid", log.ToAny("input", input))
 	// Get object from repository
 
 	// Differentiate between public and private buckets
@@ -49,9 +49,9 @@ func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInpu
 	if input.BucketName == "medias" {
 		// TODO: linkAliveDuration is hardcoded here, can be changed later if needed
 		linkAliveDuration := time.Minute * 15
-		object, err = uc.objectRepo.GetObject(ctx, input.Key, input.BucketName, linkAliveDuration)
+		object, err = uc.objectRepo.GetObject(ctx, input.BucketName, input.Key, linkAliveDuration)
 	} else {
-		object, err = uc.objectRepo.GetPublicObject(ctx, input.Key, input.BucketName)
+		object, err = uc.objectRepo.GetPublicObject(ctx, input.BucketName, input.Key)
 	}
 
 	if err != nil {

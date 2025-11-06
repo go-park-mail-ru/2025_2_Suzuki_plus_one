@@ -39,7 +39,7 @@ func TestGetMovieRecommendationsUsecase(t *testing.T) {
 	// Object repository mock
 	objectRepo := NewMockObjectRepository(mockCtrl)
 	// For each poster key, GetObject will be called
-	objectRepo.EXPECT().GetPublicObject(gomock.Any(), gomock.Any(), "posters").Return(&entity.Object{
+	objectRepo.EXPECT().GetPublicObject(gomock.Any(), gomock.Any(), "posters/hi.png").Return(&entity.Object{
 		URL: "http://example.com/poster.jpg",
 	}, nil).Times(times)
 

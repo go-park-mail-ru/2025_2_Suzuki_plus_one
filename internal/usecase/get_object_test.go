@@ -28,7 +28,7 @@ func TestGetObjectUsecase_Execute(t *testing.T) {
 
 	// Note: "posters" is a public bucket, so GetPublicObject will be called
 	objectRepo.EXPECT().
-		GetPublicObject(gomock.Any(), input.Key, input.BucketName).
+		GetPublicObject(gomock.Any(), input.BucketName, input.Key).
 		Return(expectedObject, nil).
 		Times(1)
 

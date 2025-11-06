@@ -34,7 +34,7 @@ func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaW
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
-			"usecase/get_media",
+			"usecase/get_media_watch",
 			entity.ErrGetMediaParamsInvalid,
 			err.Error(),
 		)
@@ -53,6 +53,7 @@ func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaW
 		return dto.GetMediaWatchOutput{}, &derr
 	}
 
+	// TODO: CHECK USER PERMISSION RIGHT HERE
 	// Get presigned URL from object use case
 	object, derr := uc.getObjectUseCase.Execute(ctx, dto.GetObjectInput{
 		Key:        s3Key.Key,
