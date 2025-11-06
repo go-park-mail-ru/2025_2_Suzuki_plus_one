@@ -161,9 +161,16 @@ func (rp *RequestParams) Parse() error {
 	return nil
 }
 
-func (rp *RequestParams) GetContext() context.Context {
-	// request_id is injected by chi, but we don't want to depend on chi everywhere
+// GetContext extracts and returns a context with request ID from the HTTP request
+func GetContext(r *http.Request) context.Context {
+	// request_id is injected by chi, but we don't want to depend on chi internal naming
 	// so we create our own context with common.RequestIDContextKey
-	ctx := context.WithValue(rp.request.Context(), common.RequestIDContextKey, middleware.GetReqID(rp.request.Context()))
+	ctx := context.WithValue(
+		r.Context(),
+		common.ContexKeyRequestID,
+		middleware.GetReqID(r.Context()),
+	)
+	// We can add more fields to context here if needed
+
 	return ctx
 }

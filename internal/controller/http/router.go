@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -28,8 +29,8 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 
 	// Content
 	r.Get("/movie/recommendations", h.GetMovieRecommendations)
-	r.Get("/media/{media_id}", h.GetMedia)
-	r.Get("/actor/{actor_id}", h.GetActor)
+	r.Get(fmt.Sprintf("/media/{%s}", handlers.PathParamGetMediaID), h.GetMedia)
+	r.Get(fmt.Sprintf("/actor/{%s}", handlers.PathParamGetActorID), h.GetActor)
 
 	// Object
 	r.Get("/object", h.GetObjectMedia)

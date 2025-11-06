@@ -5,39 +5,59 @@ import (
 	"net/http"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
+
+type Response struct {
+	Code int
+	Data any
+}
 
 // [dto.Error] wrapper for HTTP handlers
 type ResponseError struct {
 	Code    int
-	Message string
+	Message error
+	Details string
 }
 
 // Encodes and sends a JSON response with the given status code and data
-func (h *Handlers) Response(w http.ResponseWriter, status int, data any) {
-	h.Logger.Info("HTTP response",
-		h.Logger.ToInt("status_code", status),
+func Respond(l logger.Logger, w http.ResponseWriter, status int, data any) {
+	l.Info("HTTP response",
+		l.ToInt("status_code", status),
 	)
 
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(data)
 }
 
-// Sets error type and sends a JSON error response
-func (h *Handlers) ResponseWithError(w http.ResponseWriter, err ResponseError, details string) {
+// Sends a JSON error ResponseError with override details
+func RespondWithError(l logger.Logger, w http.ResponseWriter, err ResponseError, details string) {
 	dto := dto.Error{
 		Type:    "controller/http",
-		Message: err.Message,
+		Message: err.Message.Error(),
 		Details: details,
 	}
 
-	h.Logger.Error("HTTP response",
-		h.Logger.ToInt("status_code", err.Code),
-		h.Logger.ToString("error_type", dto.Type),
-		h.Logger.ToString("error_message", dto.Message),
-		h.Logger.ToString("error_details", dto.Details),
+	l.Error("Error HTTP response",
+		l.ToInt("status_code", err.Code),
+		l.ToString("error_type", dto.Type),
+		l.ToString("error_message", dto.Message),
+		l.ToString("error_details", dto.Details),
 	)
 
 	w.WriteHeader(err.Code)
 	json.NewEncoder(w).Encode(dto)
+}
+
+// Sends a JSON error response using a dto.Error
+func RespondWithDTOError(l logger.Logger, w http.ResponseWriter, err ResponseError, dtoErr *dto.Error) {
+	l.Error("Error HTTP response",
+		l.ToInt("status_code", err.Code),
+		l.ToString("error_type", dtoErr.Type),
+		l.ToString("error_message", dtoErr.Message),
+		l.ToString("error_details", dtoErr.Details),
+	)
+
+	w.WriteHeader(err.Code)
+	json.NewEncoder(w).Encode(dtoErr)
 }

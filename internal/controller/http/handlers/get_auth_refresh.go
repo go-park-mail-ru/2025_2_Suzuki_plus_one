@@ -1,51 +1,71 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
+// All possible http responses for GetAuthRefresh handler
 var (
 	ErrGetAuthRefreshInvalidParams = ResponseError{
 		Code:    http.StatusUnauthorized,
-		Message: "Invalid parameters for auth refresh",
+		Message: errors.New("Invalid parameters for auth refresh"),
+	}
+	ResponseGetAuthRefresh = Response{
+		Code: http.StatusOK,
 	}
 )
 
-var RefreshTokenCookieName = "refresh_token"
+// Cookie input parameter
+var CookieParamGetAuthRefresh = CookieNameRefreshToken
 
-// Get all movies from database
+// GetAuthRefresh handler
 func (h *Handlers) GetAuthRefresh(w http.ResponseWriter, r *http.Request) {
+	// Extract context, bind logger with request ID
+	ctx := GetContext(r)
+	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
+	log.Debug("Handler called")
+
 	// Handle input parameters
 	input := dto.GetAuthRefreshInput{}
-	rp := NewRequestParams(h.Logger, r, &input)
-	rp.AddCookie(RefreshTokenCookieName, &input.RefreshToken)
+	rp := NewRequestParams(log, r, &input)
+	rp.AddCookie(CookieParamGetAuthRefresh, &input.RefreshToken)
+
+	// Parse request parameters
 	if err := rp.Parse(); err != nil {
-		h.Logger.Error("Failed to parse query parameters",
-			h.Logger.ToString("error", err.Error()))
-		h.ResponseWithError(w, ErrGetAuthRefreshInvalidParams, err.Error())
+		log.Error(
+			"Failed to parse query parameters",
+			log.ToString("error", err.Error()),
+		)
+		RespondWithError(log, w, ErrGetAuthRefreshInvalidParams, err.Error())
 		return
 	}
-	h.Logger.Debug("GetAuthRefresh called",
-		h.Logger.ToString(RefreshTokenCookieName, input.RefreshToken),
+	log.Debug(
+		"GetAuthRefresh called",
+		log.ToString(CookieParamGetAuthRefresh, input.RefreshToken),
 	)
 
 	// Execute use case
-	output, err := h.GetAuthRefreshUseCase.Execute(rp.GetContext(), input)
+	output, err := h.GetAuthRefreshUseCase.Execute(ctx, input)
 	if err != nil {
-		h.Logger.Error("Failed to fetch movie recommendations",
-			h.Logger.ToString("error", err.Message))
-		// Respond with error
-		h.Response(w, ErrGetAuthRefreshInvalidParams.Code, err)
+		log.Error(
+			"Failed to refresh auth",
+			log.ToString("error", err.Message),
+		)
+		RespondWithDTOError(log, w, ErrGetAuthRefreshInvalidParams, err)
 		return
 	}
 
-	h.Logger.Debug("GetAuthRefresh succeeded",
-		h.Logger.ToString("refresh_token", input.RefreshToken),
-		h.Logger.ToString("access_token", output.AccessToken),
+	log.Debug(
+		"GetAuthRefresh succeeded",
+		log.ToString("refresh_token", input.RefreshToken),
+		log.ToString("access_token", output.AccessToken),
 	)
 
 	// Respond with output
-	h.Response(w, http.StatusOK, output)
+	Respond(log, w, ResponseGetAuthRefresh.Code, output)
 }

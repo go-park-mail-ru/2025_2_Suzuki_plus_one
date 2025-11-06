@@ -62,7 +62,7 @@ func TestGetAuthSignOut(t *testing.T) {
 	req, err := http.NewRequest("GET", requestURL, nil)
 	require.NoError(t, err)
 	req.AddCookie(&http.Cookie{
-		Name:  RefreshTokenCookieName,
+		Name:  CookieNameRefreshToken,
 		Value: input.RefreshToken,
 	})
 	req.Header.Add("Authorization", "Bearer "+input.AccessToken)

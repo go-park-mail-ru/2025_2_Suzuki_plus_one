@@ -1,49 +1,74 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
+// All possible http responses for GetActor handler
+// Blank fields are not used and are filled in the handler
 var (
 	ErrGetActorInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: "Invalid parameters for actor",
+		Message: errors.New("Invalid parameters for actor"),
+	}
+	ErrGetActorNotFound = ResponseError{
+		Code: http.StatusBadRequest,
+	}
+	ResponseGetActor = Response{
+		Code: http.StatusOK,
 	}
 )
 
-const URLParamActorID = "actor_id"
+// Input path parameter
+const PathParamGetActorID = "actor_id"
 
 // Get all movies from database
 func (h *Handlers) GetActor(w http.ResponseWriter, r *http.Request) {
+	// Extract context, bind logger with request ID
+	ctx := GetContext(r)
+	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
+	log.Debug("Handler called")
+
 	// Handle input parameters
 	input := dto.GetActorInput{}
-	rp := NewRequestParams(h.Logger, r, &input)
-	rp.AddPath(URLParamActorID, &input.ActorID)
+	rp := NewRequestParams(log, r, &input)
+	rp.AddPath(PathParamGetActorID, &input.ActorID)
 
+	// Parse request parameters
 	if err := rp.Parse(); err != nil {
-		h.Logger.Error("Failed to parse query parameters",
-			h.Logger.ToString("error", err.Error()))
-		h.ResponseWithError(w, ErrGetActorInvalidParams, err.Error())
+		log.Error(
+			"Failed to parse query parameters",
+			log.ToString("error", err.Error()),
+		)
+		// Respond with error, if input parameters are invalid
+		RespondWithError(log, w, ErrGetActorInvalidParams, err.Error())
 		return
 	}
 
 	// Execute use case
-	output, err := h.GetActorUseCase.Execute(rp.GetContext(), input)
+	output, err := h.GetActorUseCase.Execute(ctx, input)
 	if err != nil {
-		h.Logger.Error("Failed to fetch actor",
-			h.Logger.ToString("error", err.Message))
-		// Respond with error
-		h.Response(w, ErrMoviesInvalidParams.Code, err)
+		log.Error("Failed to fetch actor",
+			log.ToString("error", err.Message),
+		)
+		// Respond with error, if use case execution fails
+		RespondWithDTOError(log, w, ErrGetActorInvalidParams, err)
 		return
 	}
 
-	h.Logger.Debug("Fetching actor details completed successfully",
-		h.Logger.ToString("actor_id", strconv.FormatUint(uint64(input.ActorID), 10)),
-		h.Logger.ToString("media_count", strconv.Itoa(len(output.Medias))))
+	// Log successful completion
+	log.Debug(
+		"Fetching actor details completed successfully",
+		log.ToString("actor_id", strconv.FormatUint(uint64(input.ActorID), 10)),
+		log.ToString("media_count", strconv.Itoa(len(output.Medias))),
+	)
 
 	// Respond with output
-	h.Response(w, http.StatusOK, output)
+	Respond(log, w, ResponseGetActor.Code, output)
 }

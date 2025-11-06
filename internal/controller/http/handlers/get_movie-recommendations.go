@@ -1,48 +1,78 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+)
+
+// All possible http responses for GetMovieRecommendations handler
+var (
+	ErrGetMovieRecommendationsInvalidParams = ResponseError{
+		Code:    http.StatusBadRequest,
+		Message: errors.New("Invalid parameters for movie recommendations"),
+	}
+	ResponseGetMovieRecommendations = Response{
+		Code: http.StatusOK,
+	}
 )
 
 var (
-	ErrMoviesInvalidParams = ResponseError{
-		Code:    http.StatusBadRequest,
-		Message: "Invalid parameters for movies",
-	}
+	// URL query parameters
+	QueryParamMovieRecommendationsOffset = "offset"
+	QueryParamMovieRecommendationsLimit  = "limit"
 )
 
-// Get all movies from database
+// GetMovieRecommendations handler
 func (h *Handlers) GetMovieRecommendations(w http.ResponseWriter, r *http.Request) {
+	// Extract context, bind logger with request ID
+	ctx := GetContext(r)
+	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
+	log.Debug("Handler called")
+
 	// Handle input parameters
 	input := dto.GetMovieRecommendationsInput{}
-	rp := NewRequestParams(h.Logger, r, &input)
-	rp.AddQuery("offset", &input.Offset)
-	rp.AddQuery("limit", &input.Limit)
+	rp := NewRequestParams(log, r, &input)
+	rp.AddQuery(QueryParamMovieRecommendationsLimit, &input.Limit)
+	rp.AddQuery(QueryParamMovieRecommendationsOffset, &input.Offset)
+
+	// Parse request parameters
 	if err := rp.Parse(); err != nil {
-		h.Logger.Error("Failed to parse query parameters",
-			h.Logger.ToString("error", err.Error()))
-		h.ResponseWithError(w, ErrMoviesInvalidParams, err.Error())
+		log.Error(
+			"Failed to parse query parameters",
+			log.ToString("error", err.Error()),
+		)
+		RespondWithError(log, w, ErrGetMovieRecommendationsInvalidParams, err.Error())
 		return
 	}
+	log.Debug(
+		"GetMovieRecommendations called with params",
+		log.ToString(QueryParamMovieRecommendationsOffset, strconv.FormatUint(uint64(input.Offset), 10)),
+		log.ToString(QueryParamMovieRecommendationsLimit, strconv.FormatUint(uint64(input.Limit), 10)),
+	)
 
 	// Execute use case
-	output, err := h.GetMovieRecommendationsUseCase.Execute(rp.GetContext(), input)
+	output, err := h.GetMovieRecommendationsUseCase.Execute(ctx, input)
 	if err != nil {
-		h.Logger.Error("Failed to fetch movie recommendations",
-			h.Logger.ToString("error", err.Message))
-		// Respond with error
-		h.Response(w, ErrMoviesInvalidParams.Code, err)
+		log.Error(
+			"Failed to fetch movie recommendations",
+			log.ToString("error", err.Message),
+		)
+		RespondWithDTOError(log, w, ErrGetMovieRecommendationsInvalidParams, err)
 		return
 	}
 
-	h.Logger.Debug("Fetching movie recommendations completed successfully",
-		h.Logger.ToString("count", strconv.FormatInt(int64(len(output.Movies)), 10)),
-		h.Logger.ToString("offset", strconv.FormatUint(uint64(input.Offset), 10)),
-		h.Logger.ToString("limit", strconv.FormatUint(uint64(input.Limit), 10)))
+	log.Debug(
+		"GetMovieRecommendations succeeded",
+		log.ToString("count", strconv.FormatInt(int64(len(output.Movies)), 10)),
+		log.ToString("offset", strconv.FormatUint(uint64(input.Offset), 10)),
+		log.ToString("limit", strconv.FormatUint(uint64(input.Limit), 10)),
+	)
 
 	// Respond with output
-	h.Response(w, http.StatusOK, output)
+	Respond(log, w, ResponseGetMovieRecommendations.Code, output)
 }

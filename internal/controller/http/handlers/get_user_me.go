@@ -1,42 +1,67 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
+// All possible http responses for GetUserMe handler
 var (
 	ErrGetUserMeInvalidParams = ResponseError{
-		http.StatusBadRequest,
-		"Invalid parameters for getting user info",
+		Code:    http.StatusBadRequest,
+		Message: errors.New("Invalid parameters for getting user info"),
+	}
+	ResponseGetUserMe = Response{
+		Code: http.StatusOK,
 	}
 )
 
+// GetUserMe handler
 func (h *Handlers) GetUserMe(w http.ResponseWriter, r *http.Request) {
-	input := dto.GetUserMeInput{}
+	// Extract context, bind logger with request ID
+	ctx := GetContext(r)
+	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
+	log.Debug("Handler called")
 
-	// Parse Access Token from header
-	rp := NewRequestParams(h.Logger, r, &input)
+	// Handle input parameters
+	input := dto.GetUserMeInput{}
+	rp := NewRequestParams(log, r, &input)
 	rp.AddAuthHeader(&input.AccessToken)
+
+	// Parse request parameters
 	if err := rp.Parse(); err != nil {
-		h.Logger.Error("Failed to parse token parameters",
-			h.Logger.ToString("error", err.Error()))
-		h.ResponseWithError(w, ErrGetUserMeInvalidParams, err.Error())
+		log.Error(
+			"Failed to parse token parameters",
+			log.ToString("error", err.Error()),
+		)
+		RespondWithError(log, w, ErrGetUserMeInvalidParams, err.Error())
 		return
 	}
-	h.Logger.Debug("GetUserMe called",
-		h.Logger.ToString("access_token", input.AccessToken),
+	log.Debug(
+		"GetUserMe called with params",
+		log.ToString("access_token", input.AccessToken),
 	)
 
 	// Execute use case
-	output, err := h.GetUserMeUseCase.Execute(r.Context(), input)
+	output, err := h.GetUserMeUseCase.Execute(ctx, input)
 	if err != nil {
-		h.Logger.Error("Failed to get user info",
-			h.Logger.ToString("error", err.Message))
-		h.Response(w, ErrGetUserMeInvalidParams.Code, err)
+		log.Error(
+			"Failed to get user info",
+			log.ToString("error", err.Message),
+		)
+		RespondWithDTOError(log, w, ErrGetUserMeInvalidParams, err)
 		return
 	}
 
-	h.Response(w, http.StatusOK, output)
+	log.Debug(
+		"GetUserMe succeeded for user ID",
+		log.ToInt("user_id", int(output.ID)),
+	)
+
+	// Respond with output
+	Respond(log, w, ResponseGetUserMe.Code, output)
 }
