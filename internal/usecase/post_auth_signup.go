@@ -38,6 +38,9 @@ func (uc *PostAuthSignUpUsecase) Execute(
 	dto.PostAuthSignUpOutput,
 	*dto.Error,
 ) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -45,6 +48,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 			entity.ErrPostAuthSignUpParamsInvalid,
 			err.Error(),
 		)
+		log.Error("Invalid sign up input parameters", log.ToError(err))
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
 
@@ -56,7 +60,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 			entity.ErrPostAuthSignUpAlreadyExists,
 			"user with given email already exists",
 		)
-		uc.logger.Warn("User already exists", uc.logger.ToString("email", input.Email))
+		log.Warn("User already exists", log.ToString("email", input.Email))
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
 
@@ -68,6 +72,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 			entity.ErrPostAuthSignUpParamsInvalid,
 			"failed to hash password",
 		)
+		log.Error("Failed to hash password", log.ToError(err))
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
 
@@ -83,6 +88,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 			entity.ErrPostAuthSignUpParamsInvalid,
 			"failed to create new user: "+err.Error(),
 		)
+		log.Error("Failed to create new user", log.ToError(err))
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
 	newUser.ID = userID
@@ -95,6 +101,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 			entity.ErrPostAuthSignInNewRefreshTokenFailed,
 			err.Error(),
 		)
+		log.Error("Failed to generate refresh token", log.ToError(err))
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
 
@@ -106,6 +113,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 			entity.ErrPostAuthSignInNewRefreshTokenFailed,
 			err.Error(),
 		)
+		log.Error("Failed to add new refresh token", log.ToError(err))
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
 
@@ -117,6 +125,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 			entity.ErrPostAuthSignInNewAccessTokenFailed,
 			err.Error(),
 		)
+		log.Error("Failed to generate access token", log.ToError(err))
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
 
@@ -127,6 +136,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 			entity.ErrPostAuthSignInAddSessionFailed,
 			err.Error(),
 		)
+		log.Error("Failed to add session", log.ToError(err))
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
 

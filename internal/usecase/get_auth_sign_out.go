@@ -34,6 +34,9 @@ func (uc *GetAuthSignOutUsecase) Execute(
 	dto.GetAuthSignOutOutput,
 	*dto.Error,
 ) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -67,7 +70,7 @@ func (uc *GetAuthSignOutUsecase) Execute(
 
 	// Compare user IDs from access and refresh tokens
 	if userIDAccess != userIDRefresh {
-		uc.logger.Error("Access token user ID does not match refresh token user ID")
+		log.Error("Access token user ID does not match refresh token user ID")
 		derr := dto.NewError(
 			"usecase/get_auth_signout",
 			entity.ErrGetAuthSignOutInvalidParams,
@@ -84,8 +87,7 @@ func (uc *GetAuthSignOutUsecase) Execute(
 			entity.ErrGetAuthSignOutInvalidParams,
 			"user is not authorized: "+err.Error(),
 		)
-		uc.logger.Error("User is not authorized",
-			uc.logger.ToString("error", err.Error()))
+		log.Error("User is not authorized", log.ToError(err))
 		return dto.GetAuthSignOutOutput{}, &derr
 	}
 
@@ -96,8 +98,7 @@ func (uc *GetAuthSignOutUsecase) Execute(
 			entity.ErrGetAuthSignOutInvalidParams,
 			"failed to remove refresh token: "+err.Error(),
 		)
-		uc.logger.Error("Failed to remove refresh token",
-			uc.logger.ToString("error", err.Error()))
+		log.Error("Failed to remove refresh token", log.ToError(err))
 		return dto.GetAuthSignOutOutput{}, &derr
 	}
 
@@ -108,8 +109,7 @@ func (uc *GetAuthSignOutUsecase) Execute(
 			entity.ErrGetAuthSignOutInvalidParams,
 			"failed to delete session: "+err.Error(),
 		)
-		uc.logger.Error("Failed to delete session",
-			uc.logger.ToString("error", err.Error()))
+		log.Error("Failed to delete session", log.ToError(err))
 		return dto.GetAuthSignOutOutput{}, &derr
 	}
 

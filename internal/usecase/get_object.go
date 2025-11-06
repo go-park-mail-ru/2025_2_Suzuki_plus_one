@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
@@ -25,6 +26,9 @@ func NewGetObjectUseCase(
 }
 
 func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInput) (dto.GetObjectOutput, *dto.Error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -32,6 +36,7 @@ func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInpu
 			entity.ErrGetObjectParamsInvalid,
 			err.Error(),
 		)
+		log.Error("Invalid get object input parameters", log.ToError(err))
 		return dto.GetObjectOutput{}, &derr
 	}
 
@@ -55,6 +60,7 @@ func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInpu
 			entity.ErrGetObjectFailed,
 			err.Error(),
 		)
+		log.Error("Failed to get object", log.ToError(err))
 		return dto.GetObjectOutput{}, &derr
 	}
 

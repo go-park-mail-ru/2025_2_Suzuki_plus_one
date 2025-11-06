@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
@@ -29,6 +30,9 @@ func NewGetActorUseCase(
 }
 
 func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput) (dto.GetActorOutput, *dto.Error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -47,7 +51,7 @@ func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput)
 			err,
 			"Failed to get actor by ID",
 		)
-		uc.logger.Error("Failed to get actor by ID", uc.logger.ToError(err))
+		log.Error("Failed to get actor by ID", log.ToError(err))
 		return dto.GetActorOutput{}, &derr
 	}
 
@@ -59,7 +63,7 @@ func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput)
 			err,
 			"Failed to get medias by actor ID",
 		)
-		uc.logger.Error("Failed to get medias by actor ID", uc.logger.ToError(err))
+		log.Error("Failed to get medias by actor ID", log.ToError(err))
 		return dto.GetActorOutput{}, &derr
 	}
 
@@ -71,7 +75,7 @@ func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput)
 			err,
 			"Failed to get actor images by actor ID",
 		)
-		uc.logger.Error("Failed to get actor images by actor ID", uc.logger.ToError(err))
+		log.Error("Failed to get actor images by actor ID", log.ToError(err))
 		return dto.GetActorOutput{}, &derr
 	}
 
@@ -86,7 +90,7 @@ func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput)
 	for _, media := range medias {
 		mediaOutput, err := uc.getMediaUseCase.Execute(ctx, dto.GetMediaInput{MediaID: media.MediaID})
 		if err != nil {
-			uc.logger.Error("Failed to get media output", err)
+			log.Error("Failed to get media output", err)
 			continue
 		}
 		output.Medias = append(output.Medias, mediaOutput)
@@ -96,7 +100,7 @@ func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput)
 		imageURL, err := uc.getObjectUseCase.Execute(ctx,
 			dto.GetObjectInput{Key: imageS3Key.Key, BucketName: imageS3Key.BucketName})
 		if err != nil {
-			uc.logger.Error("Failed to get image URL", err)
+			log.Error("Failed to get image URL", err)
 			continue
 		}
 		output.ImageURLs = append(output.ImageURLs, imageURL.URL)

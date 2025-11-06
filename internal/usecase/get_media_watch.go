@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
@@ -27,6 +28,9 @@ func NewGetMediaWatchUseCase(
 }
 
 func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaWatchInput) (dto.GetMediaWatchOutput, *dto.Error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -45,7 +49,7 @@ func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaW
 			err,
 			"Failed to get media watch URL by ID",
 		)
-		uc.logger.Error("Failed to get media watch URL by ID", uc.logger.ToError(err))
+		log.Error("Failed to get media watch URL by ID", log.ToError(err))
 		return dto.GetMediaWatchOutput{}, &derr
 	}
 
@@ -55,7 +59,7 @@ func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaW
 		BucketName: s3Key.BucketName,
 	})
 	if derr != nil {
-		uc.logger.Error("Failed to get presigned URL for media watch", derr)
+		log.Error("Failed to get presigned URL for media watch", derr)
 		return dto.GetMediaWatchOutput{}, derr
 	}
 

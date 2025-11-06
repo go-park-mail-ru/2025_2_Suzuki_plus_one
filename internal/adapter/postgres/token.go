@@ -6,18 +6,16 @@ import (
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
 func (db *DataBase) AddNewRefreshToken(ctx context.Context, userID uint, refreshToken string, expiresAt time.Time) error {
-	// Log the request ID from context for tracing
-	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
-	if !ok {
-		db.logger.Warn("AddNewRefreshToken: failed to get requestID from context")
-		requestID = "unknown"
-	}
-	db.logger.Debug("AddNewRefreshToken called",
-		db.logger.ToString("requestID", requestID),
-		db.logger.ToInt("user_id", int(userID)),
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Info("AddNewRefreshToken called",
+		log.ToInt("user_id", int(userID)),
+		log.ToString("refresh_token", refreshToken),
+		log.ToString("expires_at", expiresAt.GoString()),
 	)
 
 	query := `
@@ -27,6 +25,7 @@ func (db *DataBase) AddNewRefreshToken(ctx context.Context, userID uint, refresh
 
 	_, err := db.conn.Exec(query, userID, refreshToken, expiresAt)
 	if err != nil {
+		log.Error("Failed to add new refresh token: " + err.Error())
 		return err
 	}
 
@@ -35,15 +34,10 @@ func (db *DataBase) AddNewRefreshToken(ctx context.Context, userID uint, refresh
 
 // Return all refresh tokens for a given user
 func (db *DataBase) GetRefreshTokensForUser(ctx context.Context, userID uint) ([]entity.RefreshToken, error) {
-	// Log the request ID from context for tracing
-	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
-	if !ok {
-		db.logger.Warn("GetRefreshTokens: failed to get requestID from context")
-		requestID = "unknown"
-	}
-	db.logger.Debug("GetRefreshTokens called",
-		db.logger.ToString("requestID", requestID),
-		db.logger.ToInt("user_id", int(userID)),
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Info("GetRefreshTokensForUser called",
+		log.ToInt("user_id", int(userID)),
 	)
 
 	query := `
@@ -54,6 +48,7 @@ func (db *DataBase) GetRefreshTokensForUser(ctx context.Context, userID uint) ([
 
 	rows, err := db.conn.Query(query, userID)
 	if err != nil {
+		log.Error("Failed to get refresh tokens for user: " + err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -62,12 +57,14 @@ func (db *DataBase) GetRefreshTokensForUser(ctx context.Context, userID uint) ([
 	for rows.Next() {
 		var token entity.RefreshToken
 		if err := rows.Scan(&token.ID, &token.Token, &token.ExpiresAt); err != nil {
+			log.Error("Failed to scan refresh token: " + err.Error())
 			return nil, err
 		}
 		tokens = append(tokens, token)
 	}
 
 	if err := rows.Err(); err != nil {
+		log.Error("Row iteration error: " + err.Error())
 		return nil, err
 	}
 
@@ -75,15 +72,11 @@ func (db *DataBase) GetRefreshTokensForUser(ctx context.Context, userID uint) ([
 }
 
 func (db *DataBase) RemoveRefreshToken(ctx context.Context, userID uint, refreshToken string) error {
-	// Log the request ID from context for tracing
-	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
-	if !ok {
-		db.logger.Warn("RemoveRefreshToken: failed to get requestID from context")
-		requestID = "unknown"
-	}
-	db.logger.Debug("RemoveRefreshToken called",
-		db.logger.ToString("requestID", requestID),
-		db.logger.ToInt("user_id", int(userID)),
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Info("RemoveRefreshToken called",
+		log.ToInt("user_id", int(userID)),
+		log.ToString("refresh_token", refreshToken),
 	)
 
 	query := `
@@ -93,6 +86,7 @@ func (db *DataBase) RemoveRefreshToken(ctx context.Context, userID uint, refresh
 
 	_, err := db.conn.Exec(query, userID, refreshToken)
 	if err != nil {
+		log.Error("Failed to remove refresh token: " + err.Error())
 		return err
 	}
 

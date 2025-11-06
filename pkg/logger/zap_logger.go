@@ -6,7 +6,11 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
+
+// Ensure zapLogger implements Logger
+var _ Logger = (*zapLogger)(nil)
 
 type zapLogger struct {
 	logger *zap.Logger
@@ -19,11 +23,14 @@ func NewZapLogger(development bool) Logger {
 	var zapLog *zap.Logger
 	var err error
 
-	if development {
-		zapLog, err = zap.NewDevelopment(zap.AddCaller(), zap.AddCallerSkip(1))
-	} else {
-		zapLog, err = zap.NewProduction(zap.AddCaller(), zap.AddCallerSkip(1))
+	cfg := zap.NewDevelopmentConfig()
+	if !development {
+		cfg = zap.NewProductionConfig()
 	}
+	zapLog, err = cfg.Build(
+		zap.AddCaller(), zap.AddCallerSkip(1),
+		zap.AddStacktrace(zapcore.PanicLevel), // only for Error and above
+	)
 
 	if err != nil {
 		panic("Can't initialize zap logger: " + err.Error())
@@ -66,9 +73,8 @@ func (z *zapLogger) Fatal(msg string, keysAndValues ...interface{}) {
 // Zap With wrapper
 func (z *zapLogger) With(keysAndValues ...interface{}) Logger {
 	fields := convertToZapFields(keysAndValues...)
-	return &zapLogger{
-		logger: z.logger.With(fields...),
-	}
+	z.logger = z.logger.With(fields...)
+	return z
 }
 
 // Sync flushes any buffered log entries

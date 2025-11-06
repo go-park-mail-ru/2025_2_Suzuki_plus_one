@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
 // Get total number of media items in the database
@@ -22,15 +23,10 @@ func (db *DataBase) GetMediaCount(ctx context.Context, media_type string) (int, 
 
 // GetMediaByID retrieves a media item by its ID from the database
 func (db *DataBase) GetMediaByID(ctx context.Context, media_id uint) (*entity.Media, error) {
-	// Log the request ID from context for tracing
-	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
-	if !ok {
-		db.logger.Warn("GetMediaByID: failed to get requestID from context")
-		requestID = "unknown"
-	}
-	db.logger.Info("GetMediaByID called",
-		db.logger.ToString("requestID", requestID),
-		db.logger.ToInt("media_id", int(media_id)),
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Info("GetMediaByID called",
+		log.ToInt("media_id", int(media_id)),
 	)
 
 	// Prepare the media entity to be filled
@@ -123,6 +119,9 @@ func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]e
 		return nil, err
 	}
 	defer rows.Close()
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+
 	for rows.Next() {
 		var url string
 		if err := rows.Scan(&url); err != nil {
@@ -133,7 +132,7 @@ func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]e
 		if err == nil {
 			posters = append(posters, s3key)
 		} else {
-			db.logger.Error("GetMediaPostersKeys: failed to split S3 key", db.logger.ToError(err))
+			log.Error("GetMediaPostersKeys: failed to split S3 key", log.ToError(err))
 		}
 	}
 	return posters, nil
@@ -202,10 +201,13 @@ func (db *DataBase) GetMediaWatchKey(ctx context.Context, media_id uint) (*entit
 	if err != nil {
 		return nil, err
 	}
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+
 	// Split bucket name and key from s3Key
 	s3key, err := splitS3Key(s3Key)
 	if err != nil {
-		db.logger.Error("GetMediaWatchKey: failed to split S3 key", db.logger.ToError(err))
+		log.Error("GetMediaWatchKey: failed to split S3 key", log.ToError(err))
 		return nil, err
 	}
 	return &s3key, nil

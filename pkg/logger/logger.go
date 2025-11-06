@@ -1,5 +1,11 @@
 package logger
 
+import (
+	"context"
+
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
+)
+
 type Logger interface {
 	// Basic logging layers
 	Debug(msg string, keysAndValues ...interface{})
@@ -20,4 +26,14 @@ type Logger interface {
 	ToInt(key string, value int) interface{}
 	ToAny(key string, value interface{}) interface{}
 	ToError(err error) interface{}
+}
+
+// Returns logger that always includes value from context for the given key
+func LoggerWithKey(logger Logger, ctx context.Context, key common.ContextKey) Logger {
+	value := ctx.Value(key)
+	if value != nil {
+		return logger.With(key, value)
+	}
+	logger.Warn("LoggerWithKey: key not found in context for key: ", key)
+	return logger
 }

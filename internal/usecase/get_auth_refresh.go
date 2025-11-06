@@ -28,6 +28,9 @@ func (u *GetAuthRefreshUseCase) Execute(
 	dto.GetAuthRefreshOutput,
 	*dto.Error,
 ) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(u.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -35,23 +38,22 @@ func (u *GetAuthRefreshUseCase) Execute(
 			entity.ErrGetAuthRefreshInvalidParams,
 			err.Error(),
 		)
-		u.logger.Error("GetAuthRefreshUseCase failed on validation")
+		log.Error("GetAuthRefreshUseCase failed on validation", log.ToError(err))
 		return dto.GetAuthRefreshOutput{}, &derr
 	}
-	u.logger.Info("GetAuthRefreshUseCase called",
-		u.logger.ToString("refresh_token", input.RefreshToken),
+	log.Info("GetAuthRefreshUseCase called",
+		log.ToString("refresh_token", input.RefreshToken),
 	)
 
 	// Validate refresh token
 	userID, err := common.ValidateToken(input.RefreshToken)
-
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/get_auth_refresh",
 			entity.ErrGetAuthRefreshInvalidParams,
 			err.Error(),
 		)
-		u.logger.Error("GetAuthRefreshUseCase failed on refresh token validation")
+		log.Error("GetAuthRefreshUseCase failed on refresh token validation", log.ToError(err))
 		return dto.GetAuthRefreshOutput{}, &derr
 	}
 
@@ -65,8 +67,9 @@ func (u *GetAuthRefreshUseCase) Execute(
 			entity.ErrGetAuthRefreshInvalidParams,
 			err.Error(),
 		)
-		u.logger.Error("GetAuthRefreshUseCase failed on getting refresh tokens for user",
-			u.logger.ToInt("user_id", int(userID)),
+		log.Error("GetAuthRefreshUseCase failed on getting refresh tokens for user",
+			log.ToInt("user_id", int(userID)),
+			log.ToError(err),
 		)
 		return dto.GetAuthRefreshOutput{}, &derr
 	}
@@ -84,6 +87,7 @@ func (u *GetAuthRefreshUseCase) Execute(
 			entity.ErrGetAuthRefreshInvalidParams,
 			"refresh token not found for user",
 		)
+		log.Error("Refresh token not found for user", log.ToInt("user_id", int(userID)))
 		return dto.GetAuthRefreshOutput{}, &derr
 	}
 
@@ -95,6 +99,7 @@ func (u *GetAuthRefreshUseCase) Execute(
 			entity.ErrGetAuthRefreshInvalidParams,
 			err.Error(),
 		)
+		log.Error("Failed to generate access token", log.ToError(err))
 		return dto.GetAuthRefreshOutput{}, &derr
 	}
 

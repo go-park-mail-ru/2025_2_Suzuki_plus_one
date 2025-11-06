@@ -25,7 +25,7 @@ func generateUserKey(userID uint) string {
 //	access:user:<userID> -> Set(token1, token2, token3 ...)
 func (r *Redis) AddSession(ctx context.Context, userID uint, accessToken string, expiration time.Duration) error {
 	// Log the request ID from context for tracing
-	requestID, ok := ctx.Value(common.RequestIDContextKey).(string)
+	requestID, ok := ctx.Value(common.ContexKeyRequestID).(string)
 	if !ok {
 		r.logger.Warn("Redis AddSession: failed to get requestID from context")
 		requestID = "unknown"

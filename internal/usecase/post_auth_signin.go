@@ -38,6 +38,9 @@ func (uc *PostAuthSignInUsecase) Execute(
 	dto.PostAuthSignInOutput,
 	*dto.Error,
 ) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -56,7 +59,7 @@ func (uc *PostAuthSignInUsecase) Execute(
 			entity.ErrPostAuthSignInParamsInvalid,
 			"invalid email or password: "+err.Error(),
 		)
-		uc.logger.Warn("Invalid email attempt", uc.logger.ToString("email", input.Email))
+		log.Warn("Invalid email attempt", log.ToString("email", input.Email))
 		return dto.PostAuthSignInOutput{}, &derr
 	}
 
@@ -67,10 +70,10 @@ func (uc *PostAuthSignInUsecase) Execute(
 			entity.ErrPostAuthSignInParamsInvalid,
 			"invalid email or password",
 		)
-		uc.logger.Warn(
+		log.Warn(
 			"Invalid password attempt",
-			uc.logger.ToString("password", input.Password),
-			uc.logger.ToError(err),
+			log.ToString("password", input.Password),
+			log.ToError(err),
 		)
 		return dto.PostAuthSignInOutput{}, &derr
 	}
@@ -83,6 +86,7 @@ func (uc *PostAuthSignInUsecase) Execute(
 			entity.ErrPostAuthSignInNewRefreshTokenFailed,
 			err.Error(),
 		)
+		log.Error("Failed to generate refresh token", log.ToError(err))
 		return dto.PostAuthSignInOutput{}, &derr
 	}
 
@@ -94,6 +98,7 @@ func (uc *PostAuthSignInUsecase) Execute(
 			entity.ErrPostAuthSignInNewRefreshTokenFailed,
 			err.Error(),
 		)
+		log.Error("Failed to add new refresh token", log.ToError(err))
 		return dto.PostAuthSignInOutput{}, &derr
 	}
 
@@ -105,6 +110,7 @@ func (uc *PostAuthSignInUsecase) Execute(
 			entity.ErrPostAuthSignInNewAccessTokenFailed,
 			err.Error(),
 		)
+		log.Error("Failed to generate access token", log.ToError(err))
 		return dto.PostAuthSignInOutput{}, &derr
 	}
 
@@ -115,6 +121,7 @@ func (uc *PostAuthSignInUsecase) Execute(
 			entity.ErrPostAuthSignInAddSessionFailed,
 			err.Error(),
 		)
+		log.Error("Failed to add session", log.ToError(err))
 		return dto.PostAuthSignInOutput{}, &derr
 	}
 

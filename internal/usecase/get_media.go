@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
@@ -30,6 +31,9 @@ func NewGetMediaUseCase(
 }
 
 func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput) (dto.GetMediaOutput, *dto.Error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -48,11 +52,9 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 			err,
 			"Failed to get media by ID",
 		)
-		uc.logger.Error("Failed to get media by ID", uc.logger.ToError(err))
+		log.Error("Failed to get media by ID", log.ToError(err))
 		return dto.GetMediaOutput{}, &derr
 	}
-
-	// Convert entity.Media to dto.MediaOutput
 
 	// Get genres
 	genres, err := uc.mediaRepo.GetMediaGenres(ctx, media.MediaID)
@@ -62,7 +64,7 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 			err,
 			"Failed to get genres by media ID",
 		)
-		uc.logger.Error("Failed to get genres by media ID", uc.logger.ToError(err))
+		log.Error("Failed to get genres by media ID", log.ToError(err))
 		return dto.GetMediaOutput{}, &derr
 	}
 
@@ -74,7 +76,7 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 			err,
 			"Failed to get posters by media ID",
 		)
-		uc.logger.Error("Failed to get posters by media ID", uc.logger.ToError(err))
+		log.Error("Failed to get posters by media ID", log.ToError(err))
 		return dto.GetMediaOutput{}, &derr
 	}
 
@@ -86,7 +88,7 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 			Key:        s3key.Key,
 		})
 		if err != nil {
-			uc.logger.Error("Failed to get poster object for "+s3key.GetPath(), err)
+			log.Error("Failed to get poster object for "+s3key.GetPath(), err)
 			continue
 		}
 		postersLinks = append(postersLinks, object.URL)
@@ -100,7 +102,7 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 			err,
 			"Failed to get actors by media ID",
 		)
-		uc.logger.Error("Failed to get actors by media ID", uc.logger.ToError(err))
+		log.Error("Failed to get actors by media ID", log.ToError(err))
 		return dto.GetMediaOutput{}, &derr
 	}
 

@@ -32,6 +32,9 @@ func NewGetUserMeUseCase(
 }
 
 func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInput) (dto.GetUserMeOutput, *dto.Error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -50,7 +53,7 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 			entity.ErrGetUserMeSessionNotFound,
 			err.Error(),
 		)
-		uc.logger.Error("Failed to get user ID by token", uc.logger.ToError(err))
+		log.Error("Failed to get user ID by token", log.ToError(err))
 		return dto.GetUserMeOutput{}, &derr
 	}
 
@@ -62,7 +65,7 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 			entity.ErrGetUserMeSessionNotFound,
 			"access token is invalid",
 		)
-		uc.logger.Error("Failed to validate access token", uc.logger.ToError(err))
+		log.Error("Failed to validate access token", log.ToError(err))
 		return dto.GetUserMeOutput{}, &derr
 	}
 
@@ -74,7 +77,7 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 			entity.ErrUserNotFound,
 			err.Error(),
 		)
-		uc.logger.Error("Failed to get user by ID", uc.logger.ToError(err))
+		log.Error("Failed to get user by ID", log.ToError(err))
 		return dto.GetUserMeOutput{}, &derr
 	}
 
@@ -82,7 +85,7 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 	if user.DateOfBirth != "" {
 		parsedDOB, err := time.Parse("2006-01-02", user.DateOfBirth)
 		if err != nil {
-			uc.logger.Error("Failed to parse user date of birth", uc.logger.ToError(err))
+			log.Error("Failed to parse user date of birth", log.ToError(err))
 		} else {
 			dateOfBirth = parsedDOB
 		}
@@ -98,17 +101,16 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 	// Get s3 key for user avatar
 	avatarKey, err := uc.userRepo.GetUserAvatarKey(ctx, user.ID)
 	if err != nil {
-		uc.logger.Error("Failed to get presigned URL for user avatar", uc.logger.ToError(err))
+		log.Error("Failed to get presigned URL for user avatar", log.ToError(err))
 	} else {
 		// Generate public s3 URL for avatar
 		avatarObject, err := uc.objectRepo.GetPublicObject(ctx, avatarKey.BucketName, avatarKey.Key)
 		if err != nil {
-			uc.logger.Error("Failed to get public URL for user avatar", uc.logger.ToError(err))
+			log.Error("Failed to get public URL for user avatar", log.ToError(err))
 		} else {
 			output.AvatarURL = avatarObject.URL
-			uc.logger.Debug("Found s3 url for user", "url", output.AvatarURL, "userID", user.ID)
+			log.Debug("Found s3 url for user", "url", output.AvatarURL, "userID", user.ID)
 		}
 	}
 	return output, nil
-
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
@@ -37,6 +38,9 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 	dto.GetMovieRecommendationsOutput,
 	*dto.Error,
 ) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -51,6 +55,7 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 	movie_number, err := uc.movieRepo.GetMediaCount(ctx, "movie")
 	if err != nil {
 		derr := dto.NewError("adapter/get_movie_recommendations", err, "Can't get movie count")
+		log.Error("Can't get movie count", log.ToError(err))
 		return dto.GetMovieRecommendationsOutput{}, &derr
 	}
 
@@ -66,6 +71,7 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 				input.Limit,
 			),
 		)
+		log.Error("Invalid limit for movie recommendations", log.ToError(fmt.Errorf("limit: %d", input.Limit)))
 		return dto.GetMovieRecommendationsOutput{}, &derr
 	}
 
@@ -81,6 +87,7 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 				movie_number,
 			),
 		)
+		log.Error("limit+offset out of movies range", log.ToError(fmt.Errorf("offset: %d, limit: %d, total: %d", input.Offset, input.Limit, movie_number)))
 		return dto.GetMovieRecommendationsOutput{}, &derr
 	}
 
@@ -88,6 +95,7 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 	movieIDs, err := uc.movieRepo.GetMediaRandomIds(ctx, input.Limit, input.Offset, "movie")
 	if err != nil {
 		derr := dto.NewError("adapter/get_movie_recommendations", err, "Can't get movie recommendations")
+		log.Error("Can't get movie recommendations", log.ToError(err))
 		return dto.GetMovieRecommendationsOutput{}, &derr
 	}
 
@@ -97,10 +105,7 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 		// OPTIMIZATION: Batch fetch movies by IDs to reduce number of queries
 		movieDTO, derr := uc.getMediaUseCase.Execute(ctx, dto.GetMediaInput{MediaID: movieID})
 		if derr != nil {
-			uc.logger.Error(
-				"Failed to get movie by ID in recommendations",
-				derr,
-			)
+			log.Error("Failed to get movie by ID in recommendations", derr)
 			return dto.GetMovieRecommendationsOutput{}, derr
 		}
 		dtoMovies = append(dtoMovies, movieDTO)
