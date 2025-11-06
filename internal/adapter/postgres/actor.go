@@ -13,6 +13,9 @@ import (
 func (db *DataBase) GetActorByID(ctx context.Context, actorID uint) (*entity.Actor, error) {
 	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetActorByID called",
+		log.ToInt("actor_id", int(actorID)),
+	)
 
 	var actor entity.Actor
 	query := "SELECT actor_id, name, bio, birth_date FROM actor WHERE actor_id = $1"
@@ -33,6 +36,9 @@ func (db *DataBase) GetActorByID(ctx context.Context, actorID uint) (*entity.Act
 func (db *DataBase) GetActorImageS3(ctx context.Context, actorID uint) ([]entity.S3Key, error) {
 	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetActorImageS3 called",
+		log.ToInt("actor_id", int(actorID)),
+	)
 
 	var imageURLs []entity.S3Key
 	query := `
@@ -70,7 +76,7 @@ func (db *DataBase) GetMediasByActorID(ctx context.Context, actorID uint) ([]ent
 	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
 
-	log.Info("GetMediasByActorID called",
+	log.Debug("GetMediasByActorID called",
 		log.ToInt("actor_id", int(actorID)),
 	)
 
@@ -107,7 +113,7 @@ func (db *DataBase) GetActorsByMediaID(ctx context.Context, media_id uint) ([]en
 	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
 
-	log.Info("GetActorsByMediaID called",
+	log.Debug("GetActorsByMediaID called",
 		log.ToInt("media_id", int(media_id)),
 	)
 

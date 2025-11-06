@@ -60,7 +60,7 @@ func (m *Minio) GetObject(ctx context.Context, bucketName string, objectName str
 
 func (m *Minio) GetPublicObject(ctx context.Context, bucketName string, objectName string) (*entity.Object, error) {
 	log := logger.LoggerWithKey(m.logger, ctx, common.ContexKeyRequestID)
-	log.Info("GetPublicObject called",
+	log.Debug("GetPublicObject called",
 		log.ToString("bucketName", bucketName),
 		log.ToString("objectName", objectName),
 	)

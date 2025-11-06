@@ -4,10 +4,18 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
 func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.User, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetUserByEmail called",
+		log.ToString("email", email),
+	)
+
 	var user entity.User
 
 	query := `
@@ -33,6 +41,12 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 }
 
 func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetUserByID called",
+		log.ToInt("user_id", int(userID)),
+	)
+
 	var user entity.User
 
 	query := `
@@ -58,6 +72,12 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 
 // Returns the S3 key of the user's avatar image
 func (db *DataBase) GetUserAvatarKey(ctx context.Context, userID uint) (*entity.S3Key, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetUserAvatarKey called",
+		log.ToInt("user_id", int(userID)),
+	)
+
 	var avatarKey string
 
 	query := `
@@ -85,6 +105,13 @@ func (db *DataBase) GetUserAvatarKey(ctx context.Context, userID uint) (*entity.
 }
 
 func (db *DataBase) CreateUser(ctx context.Context, user entity.User) (uint, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("CreateUser called",
+		log.ToString("email", user.Email),
+		log.ToString("username", user.Username),
+	)
+
 	var userID uint
 
 	query := `

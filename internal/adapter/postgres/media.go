@@ -12,6 +12,11 @@ import (
 
 // Get total number of media items in the database
 func (db *DataBase) GetMediaCount(ctx context.Context, media_type string) (int, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetMediaCount called",
+		log.ToString("media_type", media_type),
+	)
 	var count int
 	query := "SELECT COUNT(*) FROM media WHERE media_type = $1"
 	err := db.conn.QueryRow(query, media_type).Scan(&count)
@@ -25,7 +30,7 @@ func (db *DataBase) GetMediaCount(ctx context.Context, media_type string) (int, 
 func (db *DataBase) GetMediaByID(ctx context.Context, media_id uint) (*entity.Media, error) {
 	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
-	log.Info("GetMediaByID called",
+	log.Debug("GetMediaByID called",
 		log.ToInt("media_id", int(media_id)),
 	)
 
@@ -106,6 +111,12 @@ func (db *DataBase) GetMediaByID(ctx context.Context, media_id uint) (*entity.Me
 
 // Get posters s3 keys for the given media
 func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]entity.S3Key, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetMediaPostersKeys called",
+		log.ToInt("media_id", int(media_id)),
+	)
+
 	var posters []entity.S3Key
 	query := `
 		SELECT s3_key
@@ -119,12 +130,11 @@ func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]e
 		return nil, err
 	}
 	defer rows.Close()
-	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
 
 	for rows.Next() {
 		var url string
 		if err := rows.Scan(&url); err != nil {
+			log.Error("GetMediaPostersKeys: failed to scan URL", log.ToError(err))
 			return nil, err
 		}
 		// Split bucket name and key from url
@@ -140,6 +150,12 @@ func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]e
 
 // Get genres for the given media
 func (db *DataBase) GetMediaGenres(ctx context.Context, media_id uint) ([]entity.Genre, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetMediaGenres called",
+		log.ToInt("media_id", int(media_id)),
+	)
+
 	var genres []entity.Genre
 	query := `
 		SELECT genre_id, name, description
@@ -149,12 +165,14 @@ func (db *DataBase) GetMediaGenres(ctx context.Context, media_id uint) ([]entity
 	`
 	rows, err := db.conn.Query(query, media_id)
 	if err != nil {
+		log.Error("GetMediaGenres: failed to execute query", log.ToError(err))
 		return nil, err
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var genre entity.Genre
 		if err := rows.Scan(&genre.ID, &genre.Name, &genre.Description); err != nil {
+			log.Error("GetMediaGenres: failed to scan genre", log.ToError(err))
 			return nil, err
 		}
 		genres = append(genres, genre)
@@ -164,6 +182,13 @@ func (db *DataBase) GetMediaGenres(ctx context.Context, media_id uint) ([]entity
 
 // Get random media IDs for recommendations using RANDOM()
 func (db *DataBase) GetMediaRandomIds(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetMediaRandomIds called",
+		log.ToInt("limit", int(limit)),
+		log.ToInt("offset", int(offset)),
+		log.ToString("media_type", media_type),
+	)
 	var mediaIDs []uint
 	query := `
 		SELECT media_id
@@ -174,12 +199,14 @@ func (db *DataBase) GetMediaRandomIds(ctx context.Context, limit uint, offset ui
 	`
 	rows, err := db.conn.Query(query, media_type, limit, offset)
 	if err != nil {
+		log.Error("GetMediaRandomIds: failed to execute query", log.ToError(err))
 		return nil, err
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var mediaID uint
 		if err := rows.Scan(&mediaID); err != nil {
+			log.Error("GetMediaRandomIds: failed to scan media ID", log.ToError(err))
 			return nil, err
 		}
 		mediaIDs = append(mediaIDs, mediaID)
@@ -188,6 +215,12 @@ func (db *DataBase) GetMediaRandomIds(ctx context.Context, limit uint, offset ui
 }
 
 func (db *DataBase) GetMediaWatchKey(ctx context.Context, media_id uint) (*entity.S3Key, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log.Debug("GetMediaWatchKey called",
+		log.ToInt("media_id", int(media_id)),
+	)
+
 	var s3Key string
 	query := `
 		SELECT s3_key
@@ -199,10 +232,9 @@ func (db *DataBase) GetMediaWatchKey(ctx context.Context, media_id uint) (*entit
 	`
 	err := db.conn.QueryRow(query, media_id).Scan(&s3Key)
 	if err != nil {
+		log.Error("GetMediaWatchKey: failed to execute query", log.ToError(err))
 		return nil, err
 	}
-	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
 
 	// Split bucket name and key from s3Key
 	s3key, err := splitS3Key(s3Key)
