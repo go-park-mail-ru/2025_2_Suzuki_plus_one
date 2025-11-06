@@ -47,9 +47,9 @@ MovieResponse:
     genres:
       type: array
       items:
-        type: string
-      description: Movie genres
-      example: ["Sci-Fi", "Action"]
+        $ref: './genre.yaml#/GenreResponse'
+      description: List of genres associated with the movie
+
     posters:
       type: array
       items:

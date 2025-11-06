@@ -1,0 +1,12 @@
+GenreResponse:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    name:
+      type: string
+      example: "Action"
+    description:
+      type: string
+      example: "Action films usually include high energy, big-budget physical stunts and chases."

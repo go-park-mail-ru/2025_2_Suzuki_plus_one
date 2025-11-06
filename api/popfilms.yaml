@@ -97,3 +97,6 @@ components:
       $ref: "./schemas/user.yaml#/UserAvatarUpdateRequest"
     UserPasswordUpdateRequest:
       $ref: "./schemas/user.yaml#/UserPasswordUpdateRequest"
+    # genre.yaml
+    GenreResponse:
+      $ref: "./schemas/genre.yaml#/GenreResponse"
