@@ -76,6 +76,22 @@ clean: ## cleans binary and other generated files
 vendor: ## all packages required to support builds and tests in the /vendor directory
 	go mod vendor
 
+
+## Image
+image-create: ## creates a docker image for the application
+	docker build -t ghcr.io/sorrtory/popfilms-backend:latest .
+
+image-push: ## pushes the docker image to the registry
+	docker push ghcr.io/sorrtory/popfilms-backend:latest
+
+## Ansible
+ansible-api: ## runs the ansible playbook to deploy the OpenAPI spec server
+	cd deployments && ansible-playbook update-api.yaml --vault-password-file=vault_password.sh
+ansible-nginx: ## runs the ansible playbook to deploy the nginx server
+	cd deployments && ansible-playbook update-nginx.yaml --vault-password-file=vault_password.sh
+ansible-backend: ## runs the ansible playbook to deploy the backend server
+	cd deployments && ansible-playbook update-backend.yaml --vault-password-file=vault_password.sh
+
 ## Database
 
 # Postgres commands using docker-compose
