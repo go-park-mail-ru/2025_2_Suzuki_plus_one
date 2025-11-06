@@ -42,43 +42,43 @@ INSERT INTO asset (s3_key, mime_type, size_mb) VALUES
 ('/actors/morgan.png', 'image/png', 2.3),
 -- Avatars
 ('/avatars/Chris.png', 'image/png', 1.8),
--- Media files
-('/medias/InceptionMovie.webm', 'video/webm', 1500.0),
-('/medias/MatrixMovie.webm', 'video/webm', 1400.0),
 -- Posters
 ('/posters/InceptionPoster.png', 'image/png', 3.2),
 ('/posters/MatrixPoster.png', 'image/png', 3.1),
+-- Media files
+('/medias/InceptionMovie.webm', 'video/webm', 1500.0),
+('/medias/MatrixMovie.webm', 'video/webm', 1400.0),
 -- Trailers
 ('/trailers/InceptionTrailer.webm', 'video/webm', 120.5),
 ('/trailers/MatrixTrailer.webm', 'video/webm', 110.3);
 
 -- Insert asset images
 INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
-(1, 300, 450),  -- leo.png
-(2, 300, 450),  -- morgan.png
-(3, 200, 200),  -- Chris.png (avatar)
-(6, 400, 600),  -- InceptionPoster.png
-(7, 400, 600);  -- MatrixPoster.png
+(2, 300, 450),  -- leo.png
+(3, 300, 450),  -- morgan.png
+(4, 200, 200),  -- Chris.png (avatar)
+(5, 400, 600),  -- InceptionPoster.png
+(6, 400, 600);  -- MatrixPoster.png
 
 -- Insert asset videos
 INSERT INTO asset_video (asset_id, quality, resolution_width, resolution_height) VALUES
-(4, '1080p', 1920, 1080),  -- InceptionMovie.webm
-(5, '1080p', 1920, 1080),  -- MatrixMovie.webm
-(8, '720p', 1280, 720),    -- InceptionTrailer.webm
-(9, '720p', 1280, 720);    -- MatrixTrailer.webm
+(7, '1080p', 1920, 1080),  -- InceptionMovie.webm
+(8, '1080p', 1920, 1080),  -- MatrixMovie.webm
+(9, '720p', 1280, 720),    -- InceptionTrailer.webm
+(10, '720p', 1280, 720);    -- MatrixTrailer.webm
 
 -- Link media to images (posters)
 INSERT INTO media_image (media_id, asset_image_id, image_type) VALUES
-(1, 4, 'poster'),  -- Inception poster
-(2, 5, 'poster'),  -- Matrix poster
-(3, 4, 'poster');  -- Breaking Bad uses Inception poster for example
+(1, 5, 'poster'),  -- Inception poster
+(2, 6, 'poster'),  -- Matrix poster
+(3, 5, 'poster');  -- Breaking Bad uses Inception poster for example
 
 -- Link media to videos
 INSERT INTO media_video (media_id, asset_video_id, video_type) VALUES
-(1, 1, 'main_video'),  -- Inception main video
-(1, 3, 'trailer'),     -- Inception trailer
-(2, 2, 'main_video'),  -- Matrix main video
-(2, 4, 'trailer');     -- Matrix trailer
+(1, 7, 'main_video'),  -- Inception main video
+(1, 9, 'trailer'),     -- Inception trailer
+(2, 8, 'main_video'),  -- Matrix main video
+(2, 10, 'trailer');     -- Matrix trailer
 
 -- Insert actors
 INSERT INTO actor (name, birth_date, bio) VALUES
@@ -88,8 +88,8 @@ INSERT INTO actor (name, birth_date, bio) VALUES
 
 -- Link actor images
 INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
-(1, 1, 'profile'),  -- Leo profile image
-(2, 2, 'profile');  -- Morgan profile image
+(1, 2, 'profile'),  -- Leo profile image
+(2, 3, 'profile');  -- Morgan profile image
 
 -- Insert actor roles
 INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
