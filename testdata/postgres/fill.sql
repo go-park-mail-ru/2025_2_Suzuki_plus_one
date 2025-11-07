@@ -36,7 +36,7 @@ INSERT INTO media_genre (media_id, genre_id) VALUES
 (3, 4), (3, 3);  -- Drama, Thriller
 
 -- Insert assets (files stored in S3)
-INSERT INTO asset (s3_key, mime_type, size_mb) VALUES
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
 -- Actor images
 ('/actors/leo.png', 'image/png', 2.5),
 ('/actors/morgan.png', 'image/png', 2.3),

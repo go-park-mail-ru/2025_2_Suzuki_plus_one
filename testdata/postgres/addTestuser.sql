@@ -1,6 +1,6 @@
 -- Test data for local development (minimal, matching migrations)
 -- 1) Avatar asset and image
-INSERT INTO asset (s3_key, size_mb, mime_type)
+INSERT INTO asset (s3_key, file_size_mb, mime_type)
 VALUES (
     '/avatars/dima.jpeg',
     204800::numeric / 1024 / 1024,
