@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
@@ -149,7 +150,7 @@ func (db *DataBase) UpdateUser(
 	userID uint,
 	username string,
 	email string,
-	dateOfBirth string,
+	dateOfBirth time.Time,
 	phoneNumber string,
 ) (*entity.User, error) {
 	// Bind logger with request ID
@@ -158,7 +159,7 @@ func (db *DataBase) UpdateUser(
 		log.ToInt("user_id", int(userID)),
 		log.ToString("username", username),
 		log.ToString("email", email),
-		log.ToString("date_of_birth", dateOfBirth),
+		log.ToAny("date_of_birth", dateOfBirth),
 		log.ToString("phone_number", phoneNumber),
 	)
 

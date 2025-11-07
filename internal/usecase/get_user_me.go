@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
@@ -81,21 +80,13 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 		return dto.GetUserMeOutput{}, &derr
 	}
 
-	var dateOfBirth dto.JSONDate
-	if user.DateOfBirth != "" {
-		parsedDOB, err := time.Parse("2006-01-02", user.DateOfBirth)
-		if err != nil {
-			log.Warn("Failed to parse user date of birth", log.ToError(err))
-		} else {
-			dateOfBirth = dto.JSONDate{Time: parsedDOB}
-		}
-	}
+	log.Debug("Fetched user info", "user", log.ToAny("user", user))
 
 	output := dto.GetUserMeOutput{
 		ID:          user.ID,
 		Username:    user.Username,
 		Email:       user.Email,
-		DateOfBirth: dateOfBirth,
+		DateOfBirth: dto.JSONDate{Time: user.DateOfBirth},
 		PhoneNumber: user.PhoneNumber,
 	}
 	// Get s3 key for user avatar

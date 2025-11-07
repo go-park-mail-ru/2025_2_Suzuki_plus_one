@@ -64,7 +64,7 @@ func (uc *PostUserMeUpdateUseCase) Execute(ctx context.Context, input dto.PostUs
 		userID,
 		input.Username,
 		input.Email,
-		input.DateOfBirth.GoString(),
+		input.DateOfBirth.Time,
 		input.PhoneNumber,
 	)
 

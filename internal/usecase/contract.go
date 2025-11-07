@@ -54,7 +54,7 @@ type (
 			userID uint,
 			username string,
 			email string,
-			dateOfBirth string,
+			dateOfBirth time.Time,
 			phoneNumber string,
 		) (*entity.User, error)
 		UpdateUserAvatarKey(ctx context.Context, userID uint, assetImageID uint) error
