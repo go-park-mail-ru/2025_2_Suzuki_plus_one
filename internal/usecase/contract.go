@@ -23,6 +23,8 @@ type (
 		GetMediaGenres(ctx context.Context, media_id uint) ([]entity.Genre, error)
 		// Get posters S3 keys related to specific media ID
 		GetMediaPostersKeys(ctx context.Context, media_id uint) ([]entity.S3Key, error)
+		// Get trailers S3 keys related to specific media ID
+		GetMediaTrailersKeys(ctx context.Context, media_id uint) ([]entity.S3Key, error)
 		// Get media s3 key for watching
 		GetMediaWatchKey(ctx context.Context, media_id uint) (*entity.S3Key, error)
 

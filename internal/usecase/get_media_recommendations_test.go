@@ -27,14 +27,10 @@ func TestGetMediaRecommendationsUsecase(t *testing.T) {
 	mediaRepo.EXPECT().GetMediaPostersKeys(gomock.Any(), gomock.Any()).Return([]entity.S3Key{
 		{Key: "posters/hi.png", BucketName: "posters"},
 	}, nil).Times(times)
+	mediaRepo.EXPECT().GetMediaTrailersKeys(gomock.Any(), gomock.Any()).Return([]entity.S3Key{
+		{Key: "trailers/hi.mp4", BucketName: "trailers"},
+	}, nil).Times(times)
 	mediaRepo.EXPECT().GetMediaSortedByName(gomock.Any(), uint(times), uint(0), "movie").Return([]uint{1, 2, 3, 4, 5}, nil).Times(1)
-
-	// Actor repository mock
-	actorRepo := NewMockActorRepository(mockCtrl)
-	actorRepo.EXPECT().GetActorsByMediaID(gomock.Any(), gomock.Any()).Return([]entity.Actor{}, nil).Times(times)
-	actorRepo.EXPECT().GetActorImageS3(gomock.Any(), gomock.Any()).Return([]entity.S3Key{
-		{Key: "actors/actor1.png", BucketName: "actors"},
-	}, nil).Times(times * 0) // No actors in media, so 0 times
 
 	// Object repository mock
 	objectRepo := NewMockObjectRepository(mockCtrl)
@@ -42,13 +38,15 @@ func TestGetMediaRecommendationsUsecase(t *testing.T) {
 	objectRepo.EXPECT().GeneratePublicURL(gomock.Any(), gomock.Any(), "posters/hi.png").Return(&entity.URL{
 		URL: "http://example.com/poster.jpg",
 	}, nil).Times(times)
+	objectRepo.EXPECT().GeneratePublicURL(gomock.Any(), gomock.Any(), "trailers/hi.mp4").Return(&entity.URL{
+		URL: "http://example.com/trailer.mp4",
+	}, nil).Times(times)
 
 	// Call usecase
 	logger := logger.NewZapLogger(true)
 	getMediaUseCase := NewGetMediaUseCase(
 		logger,
 		mediaRepo,
-		actorRepo,
 		NewGetObjectUseCase(logger, objectRepo),
 	)
 	usecase := NewGetMediaRecommendationsUsecase(

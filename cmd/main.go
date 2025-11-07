@@ -122,7 +122,7 @@ func main() {
 
 	// Reusable usecases
 	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
-	getMediaUseCase := uc.NewGetMediaUseCase(logger, movieRepository, actorRepository, getObjectUseCase)
+	getMediaUseCase := uc.NewGetMediaUseCase(logger, movieRepository, getObjectUseCase)
 	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository, objectRepository)
 	getActorUseCase := uc.NewGetActorUseCase(logger, actorRepository, getObjectUseCase)
 

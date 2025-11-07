@@ -19,13 +19,11 @@ type GetMediaUseCase struct {
 func NewGetMediaUseCase(
 	logger logger.Logger,
 	mediaRepo MediaRepository,
-	actorRepo ActorRepository,
 	getObjectUseCase *GetObjectUseCase,
 ) *GetMediaUseCase {
 	return &GetMediaUseCase{
 		logger:           logger,
 		mediaRepo:        mediaRepo,
-		actorRepo:        actorRepo,
 		getObjectUseCase: getObjectUseCase,
 	}
 }
@@ -68,6 +66,12 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 		return dto.GetMediaOutput{}, &derr
 	}
 
+	// Convert genres to DTO
+	genresDTO := make([]dto.GenreOutput, 0, len(genres))
+	for _, genre := range genres {
+		genresDTO = append(genresDTO, dto.GenreOutput{Genre: genre})
+	}
+
 	// Get posters
 	postersKeys, err := uc.mediaRepo.GetMediaPostersKeys(ctx, media.MediaID)
 	if err != nil {
@@ -94,30 +98,31 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 		postersLinks = append(postersLinks, object.URL)
 	}
 
-	// Get actors
-	actors, err := uc.actorRepo.GetActorsByMediaID(ctx, media.MediaID)
+	// Get trailers
+	trailersKeys, err := uc.mediaRepo.GetMediaTrailersKeys(ctx, media.MediaID)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/get_media",
 			err,
-			"Failed to get actors by media ID",
+			"Failed to get trailers by media ID",
 		)
-		log.Error("Failed to get actors by media ID", log.ToError(err))
+		log.Error("Failed to get trailers by media ID", log.ToError(err))
 		return dto.GetMediaOutput{}, &derr
 	}
 
-	// Convert genres to DTO
-	genresDTO := make([]dto.GenreOutput, 0, len(genres))
-	for _, genre := range genres {
-		genresDTO = append(genresDTO, dto.GenreOutput{Genre: genre})
+	// Get trailer links from object storage
+	trailersLinks := make([]string, 0, len(trailersKeys))
+	for _, s3key := range trailersKeys {
+		object, err := uc.getObjectUseCase.Execute(ctx, dto.GetObjectInput{
+			BucketName: s3key.BucketName,
+			Key:        s3key.Key,
+		})
+		if err != nil {
+			log.Error("Failed to get trailer object for "+s3key.GetPath(), err)
+			continue
+		}
+		trailersLinks = append(trailersLinks, object.URL)
 	}
 
-	// Skip movies conversion for actors
-	actorsDTO := make([]dto.GetActorOutput, 0, len(actors))
-	for _, actor := range actors {
-		actorsDTO = append(actorsDTO, dto.GetActorOutput{
-			Actor: actor,
-		})
-	}
-	return dto.GetMediaOutput{Media: *media, Genres: genresDTO, Posters: postersLinks}, nil
+	return dto.GetMediaOutput{Media: *media, Genres: genresDTO, Posters: postersLinks, Trailers: trailersLinks}, nil
 }

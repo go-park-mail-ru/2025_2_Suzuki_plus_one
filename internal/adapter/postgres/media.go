@@ -180,6 +180,45 @@ func (db *DataBase) GetMediaGenres(ctx context.Context, media_id uint) ([]entity
 	return genres, nil
 }
 
+// Get media trailer keys for the given media
+func (db *DataBase) GetMediaTrailersKeys(ctx context.Context, media_id uint) ([]entity.S3Key, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("GetMediaTrailerKeys called",
+		log.ToInt("media_id", int(media_id)),
+	)
+
+	var trailerKeys []entity.S3Key
+	query := `
+		SELECT s3_key
+		FROM MEDIA_VIDEO
+		JOIN ASSET_VIDEO USING (asset_video_id)
+		JOIN ASSET USING (asset_id)
+		WHERE media_id = $1 AND video_type = 'trailer'
+	`
+	rows, err := db.conn.Query(query, media_id)
+	if err != nil {
+		log.Error("GetMediaTrailerKeys: failed to execute query", log.ToError(err))
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var s3KeyString string
+		if err := rows.Scan(&s3KeyString); err != nil {
+			log.Error("GetMediaTrailersKeys: failed to scan S3 key", log.ToError(err))
+			return nil, err
+		}
+		s3Key, err := splitS3Key(s3KeyString)
+		if err != nil {
+			log.Error("GetMediaTrailersKeys: failed to split S3 key", log.ToError(err))
+			return nil, err
+		}
+		trailerKeys = append(trailerKeys, s3Key)
+	}
+	return trailerKeys, nil
+}
+
 // Get random media IDs for recommendations using RANDOM()
 func (db *DataBase) GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error) {
 	// Bind logger with request ID

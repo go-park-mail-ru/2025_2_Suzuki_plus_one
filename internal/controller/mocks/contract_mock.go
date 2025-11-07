@@ -562,3 +562,42 @@ func (mr *MockGetMediaActorUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMediaActorUseCase)(nil).Execute), arg0, arg1)
 }
+
+// MockPostUserMeUpdatePasswordUseCase is a mock of PostUserMeUpdatePasswordUseCase interface.
+type MockPostUserMeUpdatePasswordUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockPostUserMeUpdatePasswordUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockPostUserMeUpdatePasswordUseCaseMockRecorder is the mock recorder for MockPostUserMeUpdatePasswordUseCase.
+type MockPostUserMeUpdatePasswordUseCaseMockRecorder struct {
+	mock *MockPostUserMeUpdatePasswordUseCase
+}
+
+// NewMockPostUserMeUpdatePasswordUseCase creates a new mock instance.
+func NewMockPostUserMeUpdatePasswordUseCase(ctrl *gomock.Controller) *MockPostUserMeUpdatePasswordUseCase {
+	mock := &MockPostUserMeUpdatePasswordUseCase{ctrl: ctrl}
+	mock.recorder = &MockPostUserMeUpdatePasswordUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPostUserMeUpdatePasswordUseCase) EXPECT() *MockPostUserMeUpdatePasswordUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockPostUserMeUpdatePasswordUseCase) Execute(arg0 context.Context, arg1 dto.PostUserMeUpdatePasswordInput) (dto.PostUserMeUpdatePasswordOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.PostUserMeUpdatePasswordOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockPostUserMeUpdatePasswordUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostUserMeUpdatePasswordUseCase)(nil).Execute), arg0, arg1)
+}

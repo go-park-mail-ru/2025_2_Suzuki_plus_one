@@ -169,6 +169,21 @@ func (mr *MockMediaRepositoryMockRecorder) GetMediaSortedByName(ctx, limit, offs
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaSortedByName", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaSortedByName), ctx, limit, offset, media_type)
 }
 
+// GetMediaTrailersKeys mocks base method.
+func (m *MockMediaRepository) GetMediaTrailersKeys(ctx context.Context, media_id uint) ([]entity.S3Key, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMediaTrailersKeys", ctx, media_id)
+	ret0, _ := ret[0].([]entity.S3Key)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMediaTrailersKeys indicates an expected call of GetMediaTrailersKeys.
+func (mr *MockMediaRepositoryMockRecorder) GetMediaTrailersKeys(ctx, media_id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaTrailersKeys", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaTrailersKeys), ctx, media_id)
+}
+
 // GetMediaWatchKey mocks base method.
 func (m *MockMediaRepository) GetMediaWatchKey(ctx context.Context, media_id uint) (*entity.S3Key, error) {
 	m.ctrl.T.Helper()
@@ -379,6 +394,20 @@ func (m *MockUserRepository) UpdateUserAvatarKey(ctx context.Context, userID, as
 func (mr *MockUserRepositoryMockRecorder) UpdateUserAvatarKey(ctx, userID, assetImageID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserAvatarKey", reflect.TypeOf((*MockUserRepository)(nil).UpdateUserAvatarKey), ctx, userID, assetImageID)
+}
+
+// UpdateUserPassword mocks base method.
+func (m *MockUserRepository) UpdateUserPassword(ctx context.Context, userID uint, newHashedPassword string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserPassword", ctx, userID, newHashedPassword)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserPassword indicates an expected call of UpdateUserPassword.
+func (mr *MockUserRepositoryMockRecorder) UpdateUserPassword(ctx, userID, newHashedPassword any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserPassword", reflect.TypeOf((*MockUserRepository)(nil).UpdateUserPassword), ctx, userID, newHashedPassword)
 }
 
 // MockAssetRepository is a mock of AssetRepository interface.

@@ -85,7 +85,7 @@ watch:
       Retrieve a watch link for a media given its ID.
       NOTE: The link is TEMPORARY and will expire after a short period.
     parameters:
-      - in: path
+      - in: query
         name: media_id
         required: true
         schema:

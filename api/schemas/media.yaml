@@ -57,3 +57,10 @@ MediaResponse:
         format: uri
       description: URLs to the movie poster images
       example: ["http://example.com/posters/inception.jpg"]
+    trailers:
+      type: array
+      items:
+        type: string
+        format: uri
+      description: URLs to the movie trailer videos
+      example: ["http://example.com/trailers/inception_trailer.mp4"]
