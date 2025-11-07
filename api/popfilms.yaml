@@ -7,7 +7,7 @@ info:
 
     See PopFilms [github](https://github.com/go-park-mail-ru/2025_2_Suzuki_plus_one) for more information.
 servers:
-  - url: http://217.16.18.125/api/v1/
+  - url: https://popfilms.ru/api/v1/
     description: Production server
   - url: http://localhost:8080
     description: Local development server
