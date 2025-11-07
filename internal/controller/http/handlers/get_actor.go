@@ -32,7 +32,7 @@ const PathParamGetActorID = "actor_id"
 func (h *Handlers) GetActor(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
 	ctx := common.GetContext(r)
-	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(h.Logger, ctx, common.ContextKeyRequestID)
 	log.Debug("Handler called")
 
 	// Handle input parameters
@@ -66,7 +66,6 @@ func (h *Handlers) GetActor(w http.ResponseWriter, r *http.Request) {
 	log.Debug(
 		"Fetching actor details completed successfully",
 		log.ToString("actor_id", strconv.FormatUint(uint64(input.ActorID), 10)),
-		log.ToString("media_count", strconv.Itoa(len(output.Medias))),
 	)
 
 	// Respond with output

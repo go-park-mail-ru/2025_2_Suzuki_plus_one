@@ -28,7 +28,7 @@ func getMockGetObjectOutput() dto.GetObjectOutput {
 	}
 }
 
-// Call GetObject handler and check response with query parameters limit and offset
+// Call GetObjectURL handler and check response with query parameters limit and offset
 func TestGetObject(t *testing.T) {
 	logger := logger.NewZapLogger(true)
 

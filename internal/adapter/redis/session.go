@@ -26,7 +26,7 @@ func generateUserKey(userID uint) string {
 //	access:user:<userID> -> Set(token1, token2, token3 ...)
 func (r *Redis) AddSession(ctx context.Context, userID uint, accessToken string, expiration time.Duration) error {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(r.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(r.logger, ctx, common.ContextKeyRequestID)
 
 	log.Info("Redis AddSession called",
 		log.ToInt("userID", int(userID)),
@@ -92,7 +92,7 @@ func (r *Redis) AddSession(ctx context.Context, userID uint, accessToken string,
 
 // GetUserIDByToken retrieves userID associated with the given token from Redis
 func (r *Redis) GetUserIDByToken(ctx context.Context, accessToken string) (uint, error) {
-	log := logger.LoggerWithKey(r.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(r.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("Redis GetUserIDByToken called", log.ToString("accessToken", accessToken))
 
 	// Generate access key
@@ -121,7 +121,7 @@ func (r *Redis) GetUserIDByToken(ctx context.Context, accessToken string) (uint,
 
 // DeleteAllSession removes all session data associated with the given userID from Redis
 func (r *Redis) DeleteAllSession(ctx context.Context, userID uint) error {
-	log := logger.LoggerWithKey(r.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(r.logger, ctx, common.ContextKeyRequestID)
 	log.Info("Redis DeleteAllSession called", log.ToInt("userID", int(userID)))
 
 	// Get user access keys
@@ -159,7 +159,7 @@ func (r *Redis) DeleteAllSession(ctx context.Context, userID uint) error {
 
 // Remove ONE session (access token) for the given userID from Redis
 func (r *Redis) DeleteSession(ctx context.Context, userID uint, accessToken string) error {
-	log := logger.LoggerWithKey(r.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(r.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("Redis DeleteSession called",
 		log.ToInt("userID", int(userID)),
 		log.ToString("accessToken", accessToken),

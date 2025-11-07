@@ -11,7 +11,7 @@ type ContextKey string
 
 // For context that is passed from Controller to Repository layer
 const (
-	ContexKeyRequestID ContextKey = "requestID"
+	ContextKeyRequestID ContextKey = "requestID"
 )
 
 // GetContext extracts and returns a context with request ID from the HTTP request
@@ -20,7 +20,7 @@ func GetContext(r *http.Request) context.Context {
 	// so we create our own context with common.RequestIDContextKey
 	ctx := context.WithValue(
 		r.Context(),
-		ContexKeyRequestID,
+		ContextKeyRequestID,
 		middleware.GetReqID(r.Context()),
 	)
 	// We can add more fields to context here if needed

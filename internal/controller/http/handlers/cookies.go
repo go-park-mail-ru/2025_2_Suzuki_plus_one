@@ -5,11 +5,11 @@ import (
 	"time"
 )
 
-var CookieNameRefreshToken = "refresh_token"
+var CookieRefreshTokenName = "refresh_token"
 
 func NewResetCookieRefreshToken() *http.Cookie {
 	return &http.Cookie{
-		Name:     CookieNameRefreshToken,
+		Name:     CookieRefreshTokenName,
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
@@ -21,7 +21,7 @@ func NewResetCookieRefreshToken() *http.Cookie {
 
 func NewRefreshTokenCookie(value string) *http.Cookie {
 	return &http.Cookie{
-		Name:     CookieNameRefreshToken,
+		Name:     CookieRefreshTokenName,
 		Value:    value,
 		Path:     "/",
 		HttpOnly: true,

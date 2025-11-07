@@ -27,7 +27,7 @@ type (
 		GetMediaWatchKey(ctx context.Context, media_id uint) (*entity.S3Key, error)
 
 		// Get random media IDs for recommendations
-		GetMediaRandomIds(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error)
+		GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error)
 	}
 
 	ActorRepository interface {
@@ -42,6 +42,7 @@ type (
 		GetUserByID(ctx context.Context, userID uint) (*entity.User, error)
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		GetUserAvatarKey(ctx context.Context, userID uint) (*entity.S3Key, error)
+		UpdateUserAvatarKey(ctx context.Context, userID uint, assetImageID uint) error
 		CreateUser(ctx context.Context, user entity.User) (uint, error)
 		UpdateUser(ctx context.Context,
 			userID uint,
@@ -50,6 +51,16 @@ type (
 			dateOfBirth string,
 			phoneNumber string,
 		) (*entity.User, error)
+	}
+
+	AssetRepository interface {
+		// Asset
+		CreateAsset(ctx context.Context, asset entity.Asset) (uint, error)
+		GetAssetByID(ctx context.Context, assetID uint) (*entity.Asset, error)
+
+		// AssetImage
+		CreateAssetImage(ctx context.Context, assetImage entity.AssetImage) (uint, error)
+		GetAssetImageByID(ctx context.Context, assetImageID uint) (*entity.AssetImage, error)
 	}
 
 	TokenRepository interface {
@@ -62,8 +73,10 @@ type (
 	S3 interface{}
 
 	ObjectRepository interface {
-		GetObject(ctx context.Context, bucketName string, key string, expiration time.Duration) (*entity.Object, error)
-		GetPublicObject(ctx context.Context, bucketName string, key string) (*entity.Object, error)
+		GeneratePublicURL(ctx context.Context, bucketName string, objectName string) (*entity.URL, error)
+		GeneratePresignedURL(ctx context.Context, bucketName string, objectName string, expiration time.Duration) (*entity.URL, error)
+		UploadObject(ctx context.Context, bucketName string, objectName string, mimeType string, data []byte) (*entity.S3Key, error)
+		DeleteObject(ctx context.Context, bucketName, objectName string) error
 	}
 
 	// Redis

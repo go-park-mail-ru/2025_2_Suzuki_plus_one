@@ -27,7 +27,7 @@ func NewGetObjectUseCase(
 
 func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInput) (dto.GetObjectOutput, *dto.Error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContextKeyRequestID)
 
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
@@ -44,14 +44,14 @@ func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInpu
 
 	// Differentiate between public and private buckets
 	// For now only "medias" bucket is private
-	var object *entity.Object
+	var object *entity.URL
 	var err error
 	if input.BucketName == "medias" {
 		// TODO: linkAliveDuration is hardcoded here, can be changed later if needed
 		linkAliveDuration := time.Minute * 15
-		object, err = uc.objectRepo.GetObject(ctx, input.BucketName, input.Key, linkAliveDuration)
+		object, err = uc.objectRepo.GeneratePresignedURL(ctx, input.BucketName, input.Key, linkAliveDuration)
 	} else {
-		object, err = uc.objectRepo.GetPublicObject(ctx, input.BucketName, input.Key)
+		object, err = uc.objectRepo.GeneratePublicURL(ctx, input.BucketName, input.Key)
 	}
 
 	if err != nil {

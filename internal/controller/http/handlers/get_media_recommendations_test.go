@@ -16,14 +16,15 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-func getMockGetMovieRecommendationsInput() dto.GetMovieRecommendationsInput {
-	return dto.GetMovieRecommendationsInput{
+func getMockGetMediaRecommendationsInput() dto.GetMediaRecommendationsInput {
+	return dto.GetMediaRecommendationsInput{
 		Limit:  2,
 		Offset: 3,
+		Type:   "movie",
 	}
 }
 
-func getMockGetMovieRecommendationsOutput() dto.GetMovieRecommendationsOutput {
+func getMockGetMediaRecommendationsOutput() dto.GetMediaRecommendationsOutput {
 	// Create 5 mock movies
 	movies := []dto.GetMediaOutput{}
 	for i := 0; i < 5; i++ {
@@ -34,23 +35,23 @@ func getMockGetMovieRecommendationsOutput() dto.GetMovieRecommendationsOutput {
 		movies = append(movies, movie)
 	}
 
-	return dto.GetMovieRecommendationsOutput{
+	return dto.GetMediaRecommendationsOutput{
 		Movies: movies,
 	}
 }
 
-// Call GetMovieRecommendations handler and check response with query parameters limit and offset
-func TestGetMovieRecommendations(t *testing.T) {
+// Call GetMediaRecommendations handler and check response with query parameters limit and offset
+func TestGetMediaRecommendations(t *testing.T) {
 	logger := logger.NewZapLogger(true)
 
 	// Define input and expected output
-	input := getMockGetMovieRecommendationsInput()
-	movies := getMockGetMovieRecommendationsOutput()
+	input := getMockGetMediaRecommendationsInput()
+	movies := getMockGetMediaRecommendationsOutput()
 
-	// Create mock GetMovieRecommendationsUsecase
+	// Create mock GetMediaRecommendationsUsecase
 	mockCtrl := gomock.NewController(t)
-	mockGetMovieRecommendationsUsecase := NewMockGetMovieRecommendationsUseCase(mockCtrl)
-	mockGetMovieRecommendationsUsecase.EXPECT().
+	mockGetMediaRecommendationsUsecase := NewMockGetMediaRecommendationsUseCase(mockCtrl)
+	mockGetMediaRecommendationsUsecase.EXPECT().
 		Execute(gomock.Any(), gomock.Eq(input)).
 		Return(movies, nil).
 		Times(1)
@@ -58,13 +59,13 @@ func TestGetMovieRecommendations(t *testing.T) {
 	// Initialize server with the mock usecase
 	handlers := &Handlers{
 		Logger:                         logger,
-		GetMovieRecommendationsUseCase: mockGetMovieRecommendationsUsecase,
+		GetMediaRecommendationsUseCase: mockGetMediaRecommendationsUsecase,
 	}
 	router := srv.InitRouter(handlers, logger, "/")
 	server := srv.NewServer(router)
 
 	// Create a New Request
-	requestURL := fmt.Sprintf("/movie/recommendations?limit=%d&offset=%d", input.Limit, input.Offset)
+	requestURL := fmt.Sprintf("/media/recommendations?limit=%d&offset=%d&type=%s", input.Limit, input.Offset, input.Type)
 	req, err := http.NewRequest("GET", requestURL, nil)
 	require.NoError(t, err)
 

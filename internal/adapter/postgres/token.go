@@ -11,7 +11,7 @@ import (
 
 func (db *DataBase) AddNewRefreshToken(ctx context.Context, userID uint, refreshToken string, expiresAt time.Time) error {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("AddNewRefreshToken called",
 		log.ToInt("user_id", int(userID)),
 		log.ToString("refresh_token", refreshToken),
@@ -35,7 +35,7 @@ func (db *DataBase) AddNewRefreshToken(ctx context.Context, userID uint, refresh
 // Return all refresh tokens for a given user
 func (db *DataBase) GetRefreshTokensForUser(ctx context.Context, userID uint) ([]entity.RefreshToken, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("GetRefreshTokensForUser called",
 		log.ToInt("user_id", int(userID)),
 	)
@@ -73,7 +73,7 @@ func (db *DataBase) GetRefreshTokensForUser(ctx context.Context, userID uint) ([
 
 func (db *DataBase) RemoveRefreshToken(ctx context.Context, userID uint, refreshToken string) error {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("RemoveRefreshToken called",
 		log.ToInt("user_id", int(userID)),
 		log.ToString("refresh_token", refreshToken),

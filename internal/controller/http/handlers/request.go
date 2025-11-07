@@ -25,6 +25,8 @@ type RequestParams struct {
 	accessTokenStorage  *string
 	pathParams          []string
 	pathParamsStorage   []any
+	fileParams          []string
+	fileParamsStorage   []*[]byte
 	request             *http.Request
 	dto                 *dto.DTO
 }
@@ -40,6 +42,8 @@ func NewRequestParams(l logger.Logger, request *http.Request, dto dto.DTO) *Requ
 		cookieParamsStorage: make([]any, 0),
 		pathParams:          make([]string, 0),
 		pathParamsStorage:   make([]any, 0),
+		fileParams:          make([]string, 0),
+		fileParamsStorage:   make([]*[]byte, 0),
 		request:             request,
 		dto:                 &dto,
 	}
@@ -76,6 +80,11 @@ func (rp *RequestParams) AddAuthHeader(valueStorage *string) {
 func (rp *RequestParams) AddPath(key string, valueStorage any) {
 	rp.pathParams = append(rp.pathParams, key)
 	rp.pathParamsStorage = append(rp.pathParamsStorage, valueStorage)
+}
+
+func (rp *RequestParams) AddFile(key string, valueStorage *[]byte) {
+	rp.fileParams = append(rp.fileParams, key)
+	rp.fileParamsStorage = append(rp.fileParamsStorage, valueStorage)
 }
 
 // Parse all registered parameters from the request into their storages.
@@ -159,6 +168,56 @@ func (rp *RequestParams) Parse() error {
 		}
 	}
 
+	// Parse file parameters
+	for i := range rp.fileParams {
+		param := rp.fileParams[i]
+		storage := rp.fileParamsStorage[i]
+
+		// open file
+		file, _, err := rp.request.FormFile(param)
+		if err != nil {
+			rp.logger.Warn("Failed to get file parameter",
+				rp.logger.ToString("param", param),
+				rp.logger.ToError(err))
+			continue
+		}
+		defer file.Close()
+
+		const maxFileSize = 10 * 1024 * 1024 // 10 MB limit for avatar files
+		fileData := make([]byte, 0)
+		buf := make([]byte, 1024)
+		totalRead := 0
+		for {
+			n, err := file.Read(buf)
+			if n > 0 {
+				totalRead += n
+				if totalRead > maxFileSize {
+					rp.logger.Warn("File size exceeded limit",
+						rp.logger.ToString("param", param),
+						rp.logger.ToInt("maxFileSize", maxFileSize))
+					return fmt.Errorf("file size exceeded limit: %d bytes", maxFileSize)
+				}
+				fileData = append(fileData, buf[:n]...)
+			}
+			if err != nil {
+				break
+			}
+		}
+
+		// Scan value into the given storage
+		*storage = fileData
+	}
+
+	fileParamsLengths := make([]int, 0, len(rp.fileParamsStorage))
+	// TODO: make this check for every type of parameter
+	for i := range rp.fileParamsStorage {
+		fileParamsLengths = append(fileParamsLengths, len(*rp.fileParamsStorage[i]))
+		if len(*rp.fileParamsStorage[i]) == 0 {
+			rp.logger.Warn("Empty file parameter",
+				rp.logger.ToString("param", rp.fileParams[i]))
+		}
+	}
+
 	rp.logger.Debug(
 		"Parsed request parameters successfully",
 		rp.logger.ToAny("queryParams", rp.queryParams),
@@ -170,6 +229,8 @@ func (rp *RequestParams) Parse() error {
 		rp.logger.ToAny("pathParams", rp.pathParams),
 		rp.logger.ToAny("pathParamsStorage", rp.pathParamsStorage),
 		rp.logger.ToAny("accessToken", rp.accessToken),
+		rp.logger.ToAny("fileParams", rp.fileParams),
+		rp.logger.ToAny("fileParamsStorage lengths in bytes", fileParamsLengths),
 	)
 	return nil
 }

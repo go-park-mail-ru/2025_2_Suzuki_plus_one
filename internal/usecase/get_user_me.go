@@ -33,7 +33,7 @@ func NewGetUserMeUseCase(
 
 func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInput) (dto.GetUserMeOutput, *dto.Error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContextKeyRequestID)
 
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
@@ -104,7 +104,7 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 		log.Error("Failed to get presigned URL for user avatar", log.ToError(err))
 	} else {
 		// Generate public s3 URL for avatar
-		avatarObject, err := uc.objectRepo.GetPublicObject(ctx, avatarKey.BucketName, avatarKey.Key)
+		avatarObject, err := uc.objectRepo.GeneratePublicURL(ctx, avatarKey.BucketName, avatarKey.Key)
 		if err != nil {
 			log.Error("Failed to get public URL for user avatar", log.ToError(err))
 		} else {

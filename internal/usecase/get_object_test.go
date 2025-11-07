@@ -22,20 +22,20 @@ func TestGetObjectUsecase_Execute(t *testing.T) {
 		Key:        "1",
 		BucketName: "posters",
 	}
-	expectedObject := &entity.Object{
+	expectedObject := &entity.URL{
 		URL: "http://example.com/object1.jpg",
 	}
 
-	// Note: "posters" is a public bucket, so GetPublicObject will be called
+	// Note: "posters" is a public bucket, so GeneratePublicURL will be called
 	objectRepo.EXPECT().
-		GetPublicObject(gomock.Any(), input.BucketName, input.Key).
+		GeneratePublicURL(gomock.Any(), input.BucketName, input.Key).
 		Return(expectedObject, nil).
 		Times(1)
 
-	// For now only "medias" bucket is private and uses GetObject with linkAliveDuration
+	// For now only "medias" bucket is private and uses GeneratePresignedURL with linkAliveDuration
 	// Set up expectations
 	// objectRepo.EXPECT().
-	// 	GetObject(gomock.Any(), input.Key, input.BucketName, gomock.Any()).
+	// 	GeneratePresignedURL(gomock.Any(), input.Key, input.BucketName, gomock.Any()).
 	// 	Return(expectedObject, nil).
 	// 	Times(1)
 

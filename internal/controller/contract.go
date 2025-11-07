@@ -8,8 +8,8 @@ import (
 
 //go:generate mockgen -source=contract.go -destination=./mocks/contract_mock.go -package=mocks
 type (
-	GetMovieRecommendationsUseCase interface {
-		Execute(context.Context, dto.GetMovieRecommendationsInput) (dto.GetMovieRecommendationsOutput, *dto.Error)
+	GetMediaRecommendationsUseCase interface {
+		Execute(context.Context, dto.GetMediaRecommendationsInput) (dto.GetMediaRecommendationsOutput, *dto.Error)
 	}
 
 	GetObjectUseCase interface {
@@ -50,5 +50,17 @@ type (
 
 	PostUserMeUpdateUseCase interface {
 		Execute(context.Context, dto.PostUserMeUpdateInput) (dto.PostUserMeUpdateOutput, *dto.Error)
+	}
+
+	PostUserMeUpdateAvatarUseCase interface {
+		Execute(context.Context, dto.PostUserMeUpdateAvatarInput) (dto.PostUserMeUpdateAvatarOutput, *dto.Error)
+	}
+
+	GetActorMediaUseCase interface {
+		Execute(context.Context, dto.GetActorMediaInput) (dto.GetActorMediaOutput, *dto.Error)
+	}
+
+	GetMediaActorUseCase interface {
+		Execute(context.Context, dto.GetMediaActorInput) (dto.GetMediaActorOutput, *dto.Error)
 	}
 )

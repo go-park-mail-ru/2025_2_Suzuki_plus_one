@@ -3,8 +3,8 @@ package entity
 import "errors"
 
 var (
-	ErrGetMovieRecommendationsParamsInvalid = errors.New("invalid get_movie_recommendations request parameters")
-	ErrGetMovieRecommendationsCantReturnAll = errors.New("can't return too many movies, specify limit and offset")
+	ErrGetMediaRecommendationsParamsInvalid = errors.New("invalid get_movie_recommendations request parameters")
+	ErrGetMediaRecommendationsCantReturnAll = errors.New("can't return too many movies, specify limit and offset")
 
 	ErrGetObjectParamsInvalid = errors.New("invalid get_object request parameters")
 	ErrGetObjectFailed        = errors.New("failed to get object from repository")
@@ -31,4 +31,10 @@ var (
 	ErrGetMediaParamsInvalid = errors.New("invalid get_media request parameters")
 
 	ErrGetMediaPosterFailed = errors.New("failed to get media poster from object storage")
+
+	ErrPostUserMeUpdateAvatarParamsInvalid = errors.New("invalid post_user_me_update_avatar request parameters")
+
+	ErrSessionNotFound = errors.New("session not found for given access token")
+
+	ErrGetMediaActorParamsInvalid = errors.New("invalid get_media_actor request parameters")
 )

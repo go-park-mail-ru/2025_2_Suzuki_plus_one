@@ -75,7 +75,7 @@ CREATE TABLE asset (
     asset_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     s3_key TEXT NOT NULL UNIQUE CHECK (LENGTH(s3_key) <= 255),
     mime_type TEXT NOT NULL CHECK (LENGTH(mime_type) <= 100),
-    size_mb NUMERIC(12, 3) NOT NULL CHECK (size_mb >= 0),
+    file_size_mb NUMERIC(12, 3) NOT NULL CHECK (file_size_mb >= 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

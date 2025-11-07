@@ -1,10 +1,8 @@
 package minio
 
 import (
+	"bytes"
 	"context"
-	"fmt"
-	"net/url"
-	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
@@ -12,73 +10,53 @@ import (
 	"github.com/minio/minio-go/v7"
 )
 
-// GetObject retrieves an object from MinIO and generates a presigned URL for access.
-func (m *Minio) GetObject(ctx context.Context, bucketName string, objectName string, expiration time.Duration) (*entity.Object, error) {
-	// Bind logger with request ID
-	log := logger.LoggerWithKey(m.logger, ctx, common.ContexKeyRequestID)
-
-	log.Info("GetObject called",
+func (m *Minio) UploadObject(ctx context.Context, bucketName string, objectName string, mimeType string, data []byte) (*entity.S3Key, error) {
+	log := logger.LoggerWithKey(m.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("UploadObject called",
 		log.ToString("bucketName", bucketName),
 		log.ToString("objectName", objectName),
 	)
 
-	// Check if the object exists
-	info, err := m.client.StatObject(ctx, bucketName, objectName, minio.StatObjectOptions{})
+	// Upload the object
+	_, err := m.client.PutObject(
+		ctx,
+		bucketName,
+		objectName,
+		bytes.NewReader(data),
+		int64(len(data)),
+		minio.PutObjectOptions{ContentType: mimeType},
+	)
 	if err != nil {
-		log.Error("Failed to stat object: " + err.Error())
-		return nil, err
-	}
-	if info.Size == 0 {
-		log.Error("Object not found or is empty")
-		return nil, fmt.Errorf("object not found or is empty")
+		log.Error("Failed to upload object: " + err.Error())
+		return &entity.S3Key{}, err
 	}
 
-	// Generate presigned URL
-	reqParams := make(url.Values)
-	presignedURL, err := m.client.PresignedGetObject(ctx, bucketName, objectName, expiration, reqParams)
-	if err != nil {
-		log.Error("Failed to generate presigned URL: " + err.Error())
-		return nil, err
-	}
-
-	// Replace internal URL with public URL
-	parsedURL, err := url.Parse(presignedURL.String())
-	if err != nil {
-		log.Error("Failed to parse presigned URL: " + err.Error())
-		return nil, err
-	}
-
-	// Use the host from public URL
-	publicParsedURL, _ := url.Parse(m.externalHost)
-	parsedURL.Host = publicParsedURL.Host
-	parsedURL.Scheme = publicParsedURL.Scheme
-
-	return &entity.Object{
-		URL: parsedURL.String(),
+	log.Info("File uploaded to Minio successfully",
+		log.ToString("bucketName", bucketName),
+		log.ToString("objectName", objectName),
+	)
+	return &entity.S3Key{
+		Key:        objectName,
+		BucketName: bucketName,
 	}, nil
 }
 
-func (m *Minio) GetPublicObject(ctx context.Context, bucketName string, objectName string) (*entity.Object, error) {
-	log := logger.LoggerWithKey(m.logger, ctx, common.ContexKeyRequestID)
-	log.Debug("GetPublicObject called",
+func (m *Minio) DeleteObject(ctx context.Context, bucketName string, objectName string) error {
+	log := logger.LoggerWithKey(m.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("DeleteObject called",
 		log.ToString("bucketName", bucketName),
 		log.ToString("objectName", objectName),
 	)
 
-	// Check if the object exists
-	info, err := m.client.StatObject(ctx, bucketName, objectName, minio.StatObjectOptions{})
+	err := m.client.RemoveObject(ctx, bucketName, objectName, minio.RemoveObjectOptions{})
 	if err != nil {
-		log.Error("Failed to stat object: " + err.Error())
-		return nil, err
-	}
-	if info.Size == 0 {
-		log.Error("Object not found or is empty")
-		return nil, fmt.Errorf("object not found or is empty")
+		log.Error("Failed to delete object: " + err.Error())
+		return err
 	}
 
-	// Construct public URL
-	objectURL := fmt.Sprintf("%s/%s/%s", m.externalHost, bucketName, objectName)
-	return &entity.Object{
-		URL: objectURL,
-	}, nil
+	log.Info("File deleted from Minio successfully",
+		log.ToString("bucketName", bucketName),
+		log.ToString("objectName", objectName),
+	)
+	return nil
 }

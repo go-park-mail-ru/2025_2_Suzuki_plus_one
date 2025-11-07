@@ -12,7 +12,7 @@ import (
 // Get actor by their ID
 func (db *DataBase) GetActorByID(ctx context.Context, actorID uint) (*entity.Actor, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("GetActorByID called",
 		log.ToInt("actor_id", int(actorID)),
 	)
@@ -35,7 +35,7 @@ func (db *DataBase) GetActorByID(ctx context.Context, actorID uint) (*entity.Act
 // Get actor images S3 keys
 func (db *DataBase) GetActorImageS3(ctx context.Context, actorID uint) ([]entity.S3Key, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("GetActorImageS3 called",
 		log.ToInt("actor_id", int(actorID)),
 	)
@@ -74,7 +74,7 @@ func (db *DataBase) GetActorImageS3(ctx context.Context, actorID uint) ([]entity
 // Get medias where actor had a role
 func (db *DataBase) GetMediasByActorID(ctx context.Context, actorID uint) ([]entity.Media, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 
 	log.Debug("GetMediasByActorID called",
 		log.ToInt("actor_id", int(actorID)),
@@ -111,7 +111,7 @@ func (db *DataBase) GetMediasByActorID(ctx context.Context, actorID uint) ([]ent
 // Get actors for the given media
 func (db *DataBase) GetActorsByMediaID(ctx context.Context, media_id uint) ([]entity.Actor, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 
 	log.Debug("GetActorsByMediaID called",
 		log.ToInt("media_id", int(media_id)),

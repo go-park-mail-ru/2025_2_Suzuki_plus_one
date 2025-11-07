@@ -30,7 +30,7 @@ func Respond(l logger.Logger, w http.ResponseWriter, status int, data any) {
 	json.NewEncoder(w).Encode(data)
 }
 
-// Sends a JSON error ResponseError with override details
+// Sends a JSON error ResponseError with overridden details
 func RespondWithError(l logger.Logger, w http.ResponseWriter, err ResponseError, details string) {
 	dto := dto.Error{
 		Type:    "controller/http",

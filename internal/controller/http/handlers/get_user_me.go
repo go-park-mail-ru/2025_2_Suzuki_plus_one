@@ -24,7 +24,7 @@ var (
 func (h *Handlers) GetUserMe(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
 	ctx := common.GetContext(r)
-	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(h.Logger, ctx, common.ContextKeyRequestID)
 	log.Debug("Handler called")
 
 	// Handle input parameters

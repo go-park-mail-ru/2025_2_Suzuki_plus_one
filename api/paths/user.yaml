@@ -58,7 +58,7 @@ me_update_avatar:
       - access_token: []
     tags:
       - user
-    summary: Update user avatar [UNIMPLEMENTED]
+    summary: Update user avatar
     description: Update the avatar of the authenticated user
     requestBody:
       required: true
@@ -82,9 +82,10 @@ me_update_avatar:
       "401":
         description: Unauthorized (invalid or missing access token)
         content:
-          application/json:
+           text/plain:
             schema:
-              $ref: "../schemas/error.yaml#/ErrorResponse"
+              type: string
+              example: "Token not found"
 me_update_password:
   post:
     security:

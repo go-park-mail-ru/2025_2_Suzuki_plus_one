@@ -8,6 +8,5 @@ type GetActorInput struct {
 
 type GetActorOutput struct {
 	entity.Actor
-	Medias    []GetMediaOutput `json:"medias"`
-	ImageURLs []string         `json:"image_urls"`
+	ImageURLs []string `json:"image_urls"`
 }

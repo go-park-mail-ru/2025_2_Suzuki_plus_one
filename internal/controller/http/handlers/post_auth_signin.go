@@ -21,16 +21,16 @@ var (
 )
 
 // Cookie input parameter
-var CookieParamPostAuthSignIn = CookieNameRefreshToken
+var CookieParamPostAuthSignIn = CookieRefreshTokenName
 
 // Cookie that will be set in output
-var CookieOutputPostAuthSignIn = CookieNameRefreshToken
+var CookieOutputPostAuthSignIn = CookieRefreshTokenName
 
 // PostAuthSignIn handler
 func (h *Handlers) PostAuthSignIn(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
 	ctx := common.GetContext(r)
-	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(h.Logger, ctx, common.ContextKeyRequestID)
 	log.Debug("Handler called")
 
 	// Handle input parameters

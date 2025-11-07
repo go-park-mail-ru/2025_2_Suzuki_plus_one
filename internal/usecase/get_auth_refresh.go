@@ -31,7 +31,7 @@ func (u *GetAuthRefreshUseCase) Execute(
 	*dto.Error,
 ) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(u.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(u.logger, ctx, common.ContextKeyRequestID)
 
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {

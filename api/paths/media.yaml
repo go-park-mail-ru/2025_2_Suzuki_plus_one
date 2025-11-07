@@ -1,14 +1,24 @@
 recommendations:
-  summary: Get movie recommendations [PARTIALLY IMPLEMENTED]
-  description: Retrieve a list of recommended movies based on user preferences or popular trends
   get:
+    summary: Get media recommendations
+    description: |
+      Retrieve a list of recommended media based on user preferences or popular trends.
+
+      For now just order by title.
     tags:
       - content
     parameters:
       - in: query
+        name: type
+        required: true
+        description: "Type of media to retrieve (e.g., movie, series). Can add combined types later..."
+        schema:
+          type: string
+          enum: [movie, series]
+      - in: query
         name: limit
         required: false
-        description: "Number of recommended movies to retrieve"
+        description: "Number of recommended media to retrieve"
         schema:
           type: integer
           minimum: 1
@@ -21,16 +31,16 @@ recommendations:
           type: integer
           minimum: 0
           default: 0
-        description: "Offset for pagination [Doesn't work for now]"
+        description: "Offset for pagination"
     responses:
       "200":
-        description: A list of recommended movies
+        description: A list of recommended medias
         content:
           application/json:
             schema:
               type: array
               items:
-                $ref: "../schemas/movie.yaml#/MovieResponse"
+                $ref: "../schemas/media.yaml#/MediaResponse"
       "400":
         description: Bad request
         content:
@@ -57,7 +67,7 @@ certain:
         content:
           application/json:
             schema:
-              $ref: "../schemas/movie.yaml#/MovieResponse"
+              $ref: "../schemas/media.yaml#/MediaResponse"
       "400":
         description: Bad request
         content:
@@ -93,6 +103,35 @@ watch:
                   type: string
                   format: uri
                   description: URL to watch the media
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+actor:
+  get:
+    tags:
+      - content
+    summary: Get actors of a specific media
+    description: Retrieve a list of actors associated with a media given its ID
+    parameters:
+      - in: path
+        name: media_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the media
+    responses:
+      "200":
+        description: Actors of the media retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/actor.yaml#/ActorResponse"
       "400":
         description: Bad request
         content:

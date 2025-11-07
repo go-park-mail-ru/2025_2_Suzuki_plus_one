@@ -17,43 +17,43 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockGetMovieRecommendationsUseCase is a mock of GetMovieRecommendationsUseCase interface.
-type MockGetMovieRecommendationsUseCase struct {
+// MockGetMediaRecommendationsUseCase is a mock of GetMediaRecommendationsUseCase interface.
+type MockGetMediaRecommendationsUseCase struct {
 	ctrl     *gomock.Controller
-	recorder *MockGetMovieRecommendationsUseCaseMockRecorder
+	recorder *MockGetMediaRecommendationsUseCaseMockRecorder
 	isgomock struct{}
 }
 
-// MockGetMovieRecommendationsUseCaseMockRecorder is the mock recorder for MockGetMovieRecommendationsUseCase.
-type MockGetMovieRecommendationsUseCaseMockRecorder struct {
-	mock *MockGetMovieRecommendationsUseCase
+// MockGetMediaRecommendationsUseCaseMockRecorder is the mock recorder for MockGetMediaRecommendationsUseCase.
+type MockGetMediaRecommendationsUseCaseMockRecorder struct {
+	mock *MockGetMediaRecommendationsUseCase
 }
 
-// NewMockGetMovieRecommendationsUseCase creates a new mock instance.
-func NewMockGetMovieRecommendationsUseCase(ctrl *gomock.Controller) *MockGetMovieRecommendationsUseCase {
-	mock := &MockGetMovieRecommendationsUseCase{ctrl: ctrl}
-	mock.recorder = &MockGetMovieRecommendationsUseCaseMockRecorder{mock}
+// NewMockGetMediaRecommendationsUseCase creates a new mock instance.
+func NewMockGetMediaRecommendationsUseCase(ctrl *gomock.Controller) *MockGetMediaRecommendationsUseCase {
+	mock := &MockGetMediaRecommendationsUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetMediaRecommendationsUseCaseMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockGetMovieRecommendationsUseCase) EXPECT() *MockGetMovieRecommendationsUseCaseMockRecorder {
+func (m *MockGetMediaRecommendationsUseCase) EXPECT() *MockGetMediaRecommendationsUseCaseMockRecorder {
 	return m.recorder
 }
 
 // Execute mocks base method.
-func (m *MockGetMovieRecommendationsUseCase) Execute(arg0 context.Context, arg1 dto.GetMovieRecommendationsInput) (dto.GetMovieRecommendationsOutput, *dto.Error) {
+func (m *MockGetMediaRecommendationsUseCase) Execute(arg0 context.Context, arg1 dto.GetMediaRecommendationsInput) (dto.GetMediaRecommendationsOutput, *dto.Error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
-	ret0, _ := ret[0].(dto.GetMovieRecommendationsOutput)
+	ret0, _ := ret[0].(dto.GetMediaRecommendationsOutput)
 	ret1, _ := ret[1].(*dto.Error)
 	return ret0, ret1
 }
 
 // Execute indicates an expected call of Execute.
-func (mr *MockGetMovieRecommendationsUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+func (mr *MockGetMediaRecommendationsUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMovieRecommendationsUseCase)(nil).Execute), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMediaRecommendationsUseCase)(nil).Execute), arg0, arg1)
 }
 
 // MockGetObjectUseCase is a mock of GetObjectUseCase interface.
@@ -444,4 +444,121 @@ func (m *MockPostUserMeUpdateUseCase) Execute(arg0 context.Context, arg1 dto.Pos
 func (mr *MockPostUserMeUpdateUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostUserMeUpdateUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockPostUserMeUpdateAvatarUseCase is a mock of PostUserMeUpdateAvatarUseCase interface.
+type MockPostUserMeUpdateAvatarUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockPostUserMeUpdateAvatarUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockPostUserMeUpdateAvatarUseCaseMockRecorder is the mock recorder for MockPostUserMeUpdateAvatarUseCase.
+type MockPostUserMeUpdateAvatarUseCaseMockRecorder struct {
+	mock *MockPostUserMeUpdateAvatarUseCase
+}
+
+// NewMockPostUserMeUpdateAvatarUseCase creates a new mock instance.
+func NewMockPostUserMeUpdateAvatarUseCase(ctrl *gomock.Controller) *MockPostUserMeUpdateAvatarUseCase {
+	mock := &MockPostUserMeUpdateAvatarUseCase{ctrl: ctrl}
+	mock.recorder = &MockPostUserMeUpdateAvatarUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPostUserMeUpdateAvatarUseCase) EXPECT() *MockPostUserMeUpdateAvatarUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockPostUserMeUpdateAvatarUseCase) Execute(arg0 context.Context, arg1 dto.PostUserMeUpdateAvatarInput) (dto.PostUserMeUpdateAvatarOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.PostUserMeUpdateAvatarOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockPostUserMeUpdateAvatarUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostUserMeUpdateAvatarUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockGetActorMediaUseCase is a mock of GetActorMediaUseCase interface.
+type MockGetActorMediaUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetActorMediaUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetActorMediaUseCaseMockRecorder is the mock recorder for MockGetActorMediaUseCase.
+type MockGetActorMediaUseCaseMockRecorder struct {
+	mock *MockGetActorMediaUseCase
+}
+
+// NewMockGetActorMediaUseCase creates a new mock instance.
+func NewMockGetActorMediaUseCase(ctrl *gomock.Controller) *MockGetActorMediaUseCase {
+	mock := &MockGetActorMediaUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetActorMediaUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetActorMediaUseCase) EXPECT() *MockGetActorMediaUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetActorMediaUseCase) Execute(arg0 context.Context, arg1 dto.GetActorMediaInput) (dto.GetActorMediaOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetActorMediaOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetActorMediaUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetActorMediaUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockGetMediaActorUseCase is a mock of GetMediaActorUseCase interface.
+type MockGetMediaActorUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetMediaActorUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetMediaActorUseCaseMockRecorder is the mock recorder for MockGetMediaActorUseCase.
+type MockGetMediaActorUseCaseMockRecorder struct {
+	mock *MockGetMediaActorUseCase
+}
+
+// NewMockGetMediaActorUseCase creates a new mock instance.
+func NewMockGetMediaActorUseCase(ctrl *gomock.Controller) *MockGetMediaActorUseCase {
+	mock := &MockGetMediaActorUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetMediaActorUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetMediaActorUseCase) EXPECT() *MockGetMediaActorUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetMediaActorUseCase) Execute(arg0 context.Context, arg1 dto.GetMediaActorInput) (dto.GetMediaActorOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetMediaActorOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetMediaActorUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMediaActorUseCase)(nil).Execute), arg0, arg1)
 }

@@ -12,7 +12,7 @@ import (
 )
 
 func TestGetMediaCount(t *testing.T) {
-	ctx := context.WithValue(context.Background(), common.ContexKeyRequestID, "1")
+	ctx := context.WithValue(context.Background(), common.ContextKeyRequestID, "1")
 
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err, "failed to open sqlmock database")
@@ -43,7 +43,7 @@ func TestGetMediaCount(t *testing.T) {
 }
 
 func TestGetMedia(t *testing.T) {
-	ctx := context.WithValue(context.Background(), common.ContexKeyRequestID, "1")
+	ctx := context.WithValue(context.Background(), common.ContextKeyRequestID, "1")
 
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err, "failed to open sqlmock database")

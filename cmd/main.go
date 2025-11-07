@@ -23,6 +23,7 @@ var _ uc.MediaRepository = &db.DataBase{}
 var _ uc.UserRepository = &db.DataBase{}
 var _ uc.TokenRepository = &db.DataBase{}
 var _ uc.ActorRepository = &db.DataBase{}
+var _ uc.AssetRepository = &db.DataBase{}
 
 // Redis
 var _ uc.SessionRepository = &redis.Redis{}
@@ -101,6 +102,11 @@ func main() {
 	if !ok {
 		logger.Fatal("Database can't be converted to ActorRepository")
 	}
+	// Cast Postgres to AssetRepository
+	assetRepository, ok := databaseAdapter.(uc.AssetRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to AssetRepository")
+	}
 
 	// Cast Minio to ObjectRepository
 	objectRepository, ok := s3.(uc.ObjectRepository)
@@ -118,21 +124,25 @@ func main() {
 	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
 	getMediaUseCase := uc.NewGetMediaUseCase(logger, movieRepository, actorRepository, getObjectUseCase)
 	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository, objectRepository)
+	getActorUseCase := uc.NewGetActorUseCase(logger, actorRepository, getObjectUseCase)
 
 	// Inject usecases into handler
 	handler := handlers.NewHandlers(
 		logger,
-		uc.NewGetMovieRecommendationsUsecase(logger, movieRepository, getMediaUseCase),
+		uc.NewGetMediaRecommendationsUsecase(logger, movieRepository, getMediaUseCase),
 		getObjectUseCase,
 		uc.NewPostAuthSignInUsecase(logger, userRepository, tokenRepository, sessionRepository),
 		uc.NewGetAuthRefreshUseCase(logger, tokenRepository, sessionRepository),
 		uc.NewPostAuthSignUpUsecase(logger, userRepository, tokenRepository, sessionRepository),
 		uc.NewGetAuthSignOutUsecase(logger, tokenRepository, sessionRepository),
 		getUserUseCase,
-		uc.NewGetActorUseCase(logger, actorRepository, getMediaUseCase, getObjectUseCase),
+		getActorUseCase,
 		getMediaUseCase,
 		uc.NewGetMediaWatchUseCase(logger, movieRepository, getObjectUseCase),
 		uc.NewPostUserMeUpdateUseCase(logger, userRepository, getUserUseCase),
+		uc.NewPostUserMeUpdateAvatarUseCase(logger, userRepository, sessionRepository, objectRepository, assetRepository),
+		uc.NewGetActorMediaUseCase(logger, actorRepository, getMediaUseCase),
+		uc.NewGetMediaActorUseCase(logger, actorRepository, getActorUseCase),
 	)
 
 	// Initialize JWT middleware engine

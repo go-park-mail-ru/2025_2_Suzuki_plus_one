@@ -1,4 +1,5 @@
-MovieResponse:
+# TODO: add type support (movie, series, general)
+MediaResponse:
   type: object
   required:
     - id
@@ -49,7 +50,6 @@ MovieResponse:
       items:
         $ref: './genre.yaml#/GenreResponse'
       description: List of genres associated with the movie
-
     posters:
       type: array
       items:

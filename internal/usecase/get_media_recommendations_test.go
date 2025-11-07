@@ -12,22 +12,22 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-func TestGetMovieRecommendationsUsecase(t *testing.T) {
+func TestGetMediaRecommendationsUsecase(t *testing.T) {
 	// Init repository mock
 	mockCtrl := gomock.NewController(t)
-	movieRepo := NewMockMediaRepository(mockCtrl)
+	mediaRepo := NewMockMediaRepository(mockCtrl)
 	times := 5
 
 	// Media count times*2
-	movieRepo.EXPECT().GetMediaCount(gomock.Any(), "movie").Return(times*2, nil).Times(1)
+	mediaRepo.EXPECT().GetMediaCount(gomock.Any(), "movie").Return(times*2, nil).Times(1)
 	// Rest is times because of the limit input
-	movieRepo.EXPECT().GetMediaByID(gomock.Any(), gomock.Any()).Return(&entity.Media{}, nil).Times(times)
-	movieRepo.EXPECT().GetMediaGenres(gomock.Any(), gomock.Any()).Return([]entity.Genre{}, nil).Times(times)
+	mediaRepo.EXPECT().GetMediaByID(gomock.Any(), gomock.Any()).Return(&entity.Media{}, nil).Times(times)
+	mediaRepo.EXPECT().GetMediaGenres(gomock.Any(), gomock.Any()).Return([]entity.Genre{}, nil).Times(times)
 	// Adjusted to return []entity.S3Key (matches mock signature)
-	movieRepo.EXPECT().GetMediaPostersKeys(gomock.Any(), gomock.Any()).Return([]entity.S3Key{
+	mediaRepo.EXPECT().GetMediaPostersKeys(gomock.Any(), gomock.Any()).Return([]entity.S3Key{
 		{Key: "posters/hi.png", BucketName: "posters"},
 	}, nil).Times(times)
-	movieRepo.EXPECT().GetMediaRandomIds(gomock.Any(), uint(times), uint(0), "movie").Return([]uint{1, 2, 3, 4, 5}, nil).Times(1)
+	mediaRepo.EXPECT().GetMediaSortedByName(gomock.Any(), uint(times), uint(0), "movie").Return([]uint{1, 2, 3, 4, 5}, nil).Times(1)
 
 	// Actor repository mock
 	actorRepo := NewMockActorRepository(mockCtrl)
@@ -38,8 +38,8 @@ func TestGetMovieRecommendationsUsecase(t *testing.T) {
 
 	// Object repository mock
 	objectRepo := NewMockObjectRepository(mockCtrl)
-	// For each poster key, GetObject will be called
-	objectRepo.EXPECT().GetPublicObject(gomock.Any(), gomock.Any(), "posters/hi.png").Return(&entity.Object{
+	// For each poster key, GetObjectURL will be called
+	objectRepo.EXPECT().GeneratePublicURL(gomock.Any(), gomock.Any(), "posters/hi.png").Return(&entity.URL{
 		URL: "http://example.com/poster.jpg",
 	}, nil).Times(times)
 
@@ -47,19 +47,20 @@ func TestGetMovieRecommendationsUsecase(t *testing.T) {
 	logger := logger.NewZapLogger(true)
 	getMediaUseCase := NewGetMediaUseCase(
 		logger,
-		movieRepo,
+		mediaRepo,
 		actorRepo,
 		NewGetObjectUseCase(logger, objectRepo),
 	)
-	usecase := NewGetMovieRecommendationsUsecase(
+	usecase := NewGetMediaRecommendationsUsecase(
 		logger,
-		movieRepo,
+		mediaRepo,
 		getMediaUseCase,
 	)
 	ctx := context.Background()
-	output, err := usecase.Execute(ctx, dto.GetMovieRecommendationsInput{
+	output, err := usecase.Execute(ctx, dto.GetMediaRecommendationsInput{
 		Limit:  uint(times),
 		Offset: 0,
+		Type:   "movie",
 	})
 	var emptyErr *dto.Error
 	require.Equal(t, err, emptyErr)

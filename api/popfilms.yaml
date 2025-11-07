@@ -31,14 +31,15 @@ paths:
   # object.yaml
   /object:
     $ref: "./paths/object.yaml#/.self"
-  # movie.yaml
-  /movie/recommendations:
-    $ref: "./paths/movie.yaml#/recommendations"
+  # media.yaml
+  /media/recommendations:
+    $ref: "./paths/media.yaml#/recommendations"
   /media/{media_id}:
-    $ref: "./paths/movie.yaml#/certain"
-    # TODO: change movie to media
+    $ref: "./paths/media.yaml#/certain"
   /media/watch:
-    $ref: "./paths/movie.yaml#/watch"
+    $ref: "./paths/media.yaml#/watch"
+  /media/{media_id}/actor:
+    $ref: "./paths/media.yaml#/actor"
   # user.yaml
   /user/me:
     $ref: "./paths/user.yaml#/me"
@@ -51,6 +52,8 @@ paths:
   # actor.yaml
   /actor/{actor_id}:
     $ref: "./paths/actor.yaml#/certain"
+  /actor/{actor_id}/media:
+    $ref: "./paths/actor.yaml#/actor_media"
 
 components:
   securitySchemes:
@@ -82,12 +85,14 @@ components:
     # object.yaml
     ObjectResponse:
       $ref: "./schemas/object.yaml#/ObjectResponse"
-    # movie.yaml
-    MovieResponse:
-      $ref: "./schemas/movie.yaml#/MovieResponse"
+    # media.yaml
+    MediaResponse:
+      $ref: "./schemas/media.yaml#/MediaResponse"
     # actor.yaml
     ActorResponse:
       $ref: "./schemas/actor.yaml#/ActorResponse"
+    ActorMediaResponse:
+      $ref: "./schemas/actor.yaml#/ActorMediaResponse"
     # user.yaml
     UserResponse:
       $ref: "./schemas/user.yaml#/UserResponse"
@@ -95,6 +100,8 @@ components:
       $ref: "./schemas/user.yaml#/UserUpdateRequest"
     UserAvatarUpdateRequest:
       $ref: "./schemas/user.yaml#/UserAvatarUpdateRequest"
+    UserAvatarUpdateResponse:
+      $ref: "./schemas/user.yaml#/UserAvatarUpdateResponse"
     UserPasswordUpdateRequest:
       $ref: "./schemas/user.yaml#/UserPasswordUpdateRequest"
     # genre.yaml

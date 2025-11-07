@@ -124,7 +124,7 @@
 ## ASSET
 ### Базовая таблица ассетов
 ```
-{asset_id} → s3_key, mime_type, asset_filesize_MB, created_at, updated_at
+{asset_id} → s3_key, mime_type, file_size_mb, created_at, updated_at
 ```
 ### Соответствие нормальным формам
 - **1НФ**: Соблюдена атомарность данных

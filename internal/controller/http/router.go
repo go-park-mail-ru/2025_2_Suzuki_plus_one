@@ -28,16 +28,23 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	// Follow swagger order
 
 	// Content
-	r.Get("/movie/recommendations", h.GetMovieRecommendations)
+	r.Get("/media/recommendations", h.GetMediaRecommendations)
 	r.Get(fmt.Sprintf("/media/{%s}", handlers.PathParamGetMediaID), h.GetMedia)
+	r.Get(fmt.Sprintf("/media/{%s}/actor", handlers.PathParamGetMediaActorID), h.GetMediaActor)
 	r.Get(fmt.Sprintf("/actor/{%s}", handlers.PathParamGetActorID), h.GetActor)
+	r.Get(fmt.Sprintf("/actor/{%s}/media", handlers.PathParamGetActorMediaID), h.GetActorMedia)
 
 	// Object
 	r.Get("/object", h.GetObjectMedia)
 	r.Get("/media/watch", h.GetMediaWatch)
 
 	// Auth
-	r.Get("/auth/refresh", h.GetAuthRefresh)
+	r.Group(func(r chi.Router) {
+		// Must contain refresh token cookie
+		r.Use(middleware.MustCookieMiddleware(l, handlers.CookieRefreshTokenName))
+		r.Get("/auth/refresh", h.GetAuthRefresh)
+	})
+
 	r.Post("/auth/signin", h.PostAuthSignIn)
 	r.Post("/auth/signup", h.PostAuthSignUp)
 	r.Group(func(r chi.Router) {
@@ -50,6 +57,7 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 		r.Use(jwtauth.Authenticator(common.TokenAuth))
 		r.Get("/user/me", h.GetUserMe)
 		r.Post("/user/me/update", h.PostUserMeUpdate)
+		r.Post("/user/me/update/avatar", h.PostUserMeUpdateAvatar)
 	})
 
 	return r

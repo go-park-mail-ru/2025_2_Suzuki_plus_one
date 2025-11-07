@@ -10,33 +10,30 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
-// All possible http responses for GetMedia handler
+// All possible http responses for GetMediaActor handler
 var (
-	ErrGetMediaInvalidParams = ResponseError{
+	ErrGetMediaActorInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
 		Message: errors.New("Invalid parameters for media fetching"),
 	}
-	ResponseGetMedia = Response{
+	ResponseGetMediaActor = Response{
 		Code: http.StatusOK,
 	}
 )
 
-// Path parameters
-const (
-	PathParamGetMediaID = "media_id"
-)
+const PathParamGetMediaActorID = "media_id"
 
-// GetMedia handler
-func (h *Handlers) GetMedia(w http.ResponseWriter, r *http.Request) {
+// GetMediaActor handler
+func (h *Handlers) GetMediaActor(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
 	ctx := common.GetContext(r)
 	log := logger.LoggerWithKey(h.Logger, ctx, common.ContextKeyRequestID)
 	log.Debug("Handler called")
 
 	// Handle input parameters
-	input := dto.GetMediaInput{}
+	input := dto.GetMediaActorInput{}
 	rp := NewRequestParams(log, r, &input)
-	rp.AddPath(PathParamGetMediaID, &input.MediaID)
+	rp.AddPath(PathParamGetMediaActorID, &input.MediaID)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {
@@ -44,30 +41,30 @@ func (h *Handlers) GetMedia(w http.ResponseWriter, r *http.Request) {
 			"Failed to parse query parameters",
 			log.ToString("error", err.Error()),
 		)
-		RespondWithError(log, w, ErrGetMediaInvalidParams, err.Error())
+		RespondWithError(log, w, ErrGetMediaActorInvalidParams, err.Error())
 		return
 	}
 	log.Debug(
-		"GetMedia called for ID",
-		log.ToString(PathParamGetMediaID, strconv.FormatUint(uint64(input.MediaID), 10)),
+		"GetMediaActor called for ID",
+		log.ToString(PathParamGetMediaActorID, strconv.FormatUint(uint64(input.MediaID), 10)),
 	)
 
 	// Execute use case
-	output, err := h.GetMediaUseCase.Execute(ctx, input)
+	output, err := h.GetMediaActorUseCase.Execute(ctx, input)
 	if err != nil {
 		log.Error(
 			"Failed to fetch media",
 			log.ToString("error", err.Message),
 		)
-		RespondWithDTOError(log, w, ErrGetMediaInvalidParams, err)
+		RespondWithDTOError(log, w, ErrGetMediaActorInvalidParams, err)
 		return
 	}
 
 	log.Debug(
-		"GetMedia succeeded",
+		"GetMediaActor succeeded",
 		log.ToString("media_id", strconv.FormatUint(uint64(input.MediaID), 10)),
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetMedia.Code, output)
+	Respond(log, w, ResponseGetMediaActor.Code, output)
 }

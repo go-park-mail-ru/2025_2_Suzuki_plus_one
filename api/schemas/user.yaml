@@ -52,6 +52,13 @@ UserAvatarUpdateRequest:
         format: binary
         description: The new avatar image file
 
+UserAvatarUpdateResponse:
+  type: object
+  properties:
+    url:
+      type: string
+      example: "http://popfilms.ru/minio/avatars/1_avatar12345.jpg"
+
 UserPasswordUpdateRequest:
   type: object
   required:

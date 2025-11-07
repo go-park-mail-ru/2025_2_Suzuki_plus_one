@@ -29,7 +29,7 @@ func NewGetMediaWatchUseCase(
 
 func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaWatchInput) (dto.GetMediaWatchOutput, *dto.Error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContextKeyRequestID)
 
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {

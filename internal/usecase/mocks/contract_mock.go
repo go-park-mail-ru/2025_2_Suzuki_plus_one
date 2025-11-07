@@ -154,19 +154,19 @@ func (mr *MockMediaRepositoryMockRecorder) GetMediaPostersKeys(ctx, media_id any
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaPostersKeys", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaPostersKeys), ctx, media_id)
 }
 
-// GetMediaRandomIds mocks base method.
-func (m *MockMediaRepository) GetMediaRandomIds(ctx context.Context, limit, offset uint, media_type string) ([]uint, error) {
+// GetMediaSortedByName mocks base method.
+func (m *MockMediaRepository) GetMediaSortedByName(ctx context.Context, limit, offset uint, media_type string) ([]uint, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMediaRandomIds", ctx, limit, offset, media_type)
+	ret := m.ctrl.Call(m, "GetMediaSortedByName", ctx, limit, offset, media_type)
 	ret0, _ := ret[0].([]uint)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetMediaRandomIds indicates an expected call of GetMediaRandomIds.
-func (mr *MockMediaRepositoryMockRecorder) GetMediaRandomIds(ctx, limit, offset, media_type any) *gomock.Call {
+// GetMediaSortedByName indicates an expected call of GetMediaSortedByName.
+func (mr *MockMediaRepositoryMockRecorder) GetMediaSortedByName(ctx, limit, offset, media_type any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaRandomIds", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaRandomIds), ctx, limit, offset, media_type)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaSortedByName", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaSortedByName), ctx, limit, offset, media_type)
 }
 
 // GetMediaWatchKey mocks base method.
@@ -367,6 +367,104 @@ func (mr *MockUserRepositoryMockRecorder) UpdateUser(ctx, userID, username, emai
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockUserRepository)(nil).UpdateUser), ctx, userID, username, email, dateOfBirth, phoneNumber)
 }
 
+// UpdateUserAvatarKey mocks base method.
+func (m *MockUserRepository) UpdateUserAvatarKey(ctx context.Context, userID, assetImageID uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserAvatarKey", ctx, userID, assetImageID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserAvatarKey indicates an expected call of UpdateUserAvatarKey.
+func (mr *MockUserRepositoryMockRecorder) UpdateUserAvatarKey(ctx, userID, assetImageID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserAvatarKey", reflect.TypeOf((*MockUserRepository)(nil).UpdateUserAvatarKey), ctx, userID, assetImageID)
+}
+
+// MockAssetRepository is a mock of AssetRepository interface.
+type MockAssetRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockAssetRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockAssetRepositoryMockRecorder is the mock recorder for MockAssetRepository.
+type MockAssetRepositoryMockRecorder struct {
+	mock *MockAssetRepository
+}
+
+// NewMockAssetRepository creates a new mock instance.
+func NewMockAssetRepository(ctrl *gomock.Controller) *MockAssetRepository {
+	mock := &MockAssetRepository{ctrl: ctrl}
+	mock.recorder = &MockAssetRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAssetRepository) EXPECT() *MockAssetRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateAsset mocks base method.
+func (m *MockAssetRepository) CreateAsset(ctx context.Context, asset entity.Asset) (uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateAsset", ctx, asset)
+	ret0, _ := ret[0].(uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateAsset indicates an expected call of CreateAsset.
+func (mr *MockAssetRepositoryMockRecorder) CreateAsset(ctx, asset any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAsset", reflect.TypeOf((*MockAssetRepository)(nil).CreateAsset), ctx, asset)
+}
+
+// CreateAssetImage mocks base method.
+func (m *MockAssetRepository) CreateAssetImage(ctx context.Context, assetImage entity.AssetImage) (uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateAssetImage", ctx, assetImage)
+	ret0, _ := ret[0].(uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateAssetImage indicates an expected call of CreateAssetImage.
+func (mr *MockAssetRepositoryMockRecorder) CreateAssetImage(ctx, assetImage any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAssetImage", reflect.TypeOf((*MockAssetRepository)(nil).CreateAssetImage), ctx, assetImage)
+}
+
+// GetAssetByID mocks base method.
+func (m *MockAssetRepository) GetAssetByID(ctx context.Context, assetID uint) (*entity.Asset, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAssetByID", ctx, assetID)
+	ret0, _ := ret[0].(*entity.Asset)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAssetByID indicates an expected call of GetAssetByID.
+func (mr *MockAssetRepositoryMockRecorder) GetAssetByID(ctx, assetID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAssetByID", reflect.TypeOf((*MockAssetRepository)(nil).GetAssetByID), ctx, assetID)
+}
+
+// GetAssetImageByID mocks base method.
+func (m *MockAssetRepository) GetAssetImageByID(ctx context.Context, assetImageID uint) (*entity.AssetImage, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAssetImageByID", ctx, assetImageID)
+	ret0, _ := ret[0].(*entity.AssetImage)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAssetImageByID indicates an expected call of GetAssetImageByID.
+func (mr *MockAssetRepositoryMockRecorder) GetAssetImageByID(ctx, assetImageID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAssetImageByID", reflect.TypeOf((*MockAssetRepository)(nil).GetAssetImageByID), ctx, assetImageID)
+}
+
 // MockTokenRepository is a mock of TokenRepository interface.
 type MockTokenRepository struct {
 	ctrl     *gomock.Controller
@@ -482,34 +580,63 @@ func (m *MockObjectRepository) EXPECT() *MockObjectRepositoryMockRecorder {
 	return m.recorder
 }
 
-// GetObject mocks base method.
-func (m *MockObjectRepository) GetObject(ctx context.Context, bucketName, key string, expiration time.Duration) (*entity.Object, error) {
+// DeleteObject mocks base method.
+func (m *MockObjectRepository) DeleteObject(ctx context.Context, bucketName, objectName string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetObject", ctx, bucketName, key, expiration)
-	ret0, _ := ret[0].(*entity.Object)
+	ret := m.ctrl.Call(m, "DeleteObject", ctx, bucketName, objectName)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteObject indicates an expected call of DeleteObject.
+func (mr *MockObjectRepositoryMockRecorder) DeleteObject(ctx, bucketName, objectName any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteObject", reflect.TypeOf((*MockObjectRepository)(nil).DeleteObject), ctx, bucketName, objectName)
+}
+
+// GeneratePresignedURL mocks base method.
+func (m *MockObjectRepository) GeneratePresignedURL(ctx context.Context, bucketName, objectName string, expiration time.Duration) (*entity.URL, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GeneratePresignedURL", ctx, bucketName, objectName, expiration)
+	ret0, _ := ret[0].(*entity.URL)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetObject indicates an expected call of GetObject.
-func (mr *MockObjectRepositoryMockRecorder) GetObject(ctx, bucketName, key, expiration any) *gomock.Call {
+// GeneratePresignedURL indicates an expected call of GeneratePresignedURL.
+func (mr *MockObjectRepositoryMockRecorder) GeneratePresignedURL(ctx, bucketName, objectName, expiration any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetObject", reflect.TypeOf((*MockObjectRepository)(nil).GetObject), ctx, bucketName, key, expiration)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GeneratePresignedURL", reflect.TypeOf((*MockObjectRepository)(nil).GeneratePresignedURL), ctx, bucketName, objectName, expiration)
 }
 
-// GetPublicObject mocks base method.
-func (m *MockObjectRepository) GetPublicObject(ctx context.Context, bucketName, key string) (*entity.Object, error) {
+// GeneratePublicURL mocks base method.
+func (m *MockObjectRepository) GeneratePublicURL(ctx context.Context, bucketName, objectName string) (*entity.URL, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPublicObject", ctx, bucketName, key)
-	ret0, _ := ret[0].(*entity.Object)
+	ret := m.ctrl.Call(m, "GeneratePublicURL", ctx, bucketName, objectName)
+	ret0, _ := ret[0].(*entity.URL)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetPublicObject indicates an expected call of GetPublicObject.
-func (mr *MockObjectRepositoryMockRecorder) GetPublicObject(ctx, bucketName, key any) *gomock.Call {
+// GeneratePublicURL indicates an expected call of GeneratePublicURL.
+func (mr *MockObjectRepositoryMockRecorder) GeneratePublicURL(ctx, bucketName, objectName any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPublicObject", reflect.TypeOf((*MockObjectRepository)(nil).GetPublicObject), ctx, bucketName, key)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GeneratePublicURL", reflect.TypeOf((*MockObjectRepository)(nil).GeneratePublicURL), ctx, bucketName, objectName)
+}
+
+// UploadObject mocks base method.
+func (m *MockObjectRepository) UploadObject(ctx context.Context, bucketName, objectName, mimeType string, data []byte) (*entity.S3Key, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UploadObject", ctx, bucketName, objectName, mimeType, data)
+	ret0, _ := ret[0].(*entity.S3Key)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UploadObject indicates an expected call of UploadObject.
+func (mr *MockObjectRepositoryMockRecorder) UploadObject(ctx, bucketName, objectName, mimeType, data any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadObject", reflect.TypeOf((*MockObjectRepository)(nil).UploadObject), ctx, bucketName, objectName, mimeType, data)
 }
 
 // MockCache is a mock of Cache interface.

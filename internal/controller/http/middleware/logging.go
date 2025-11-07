@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -17,8 +18,11 @@ func GetLogging(l logger.Logger) func(http.Handler) http.Handler {
 			// We can pass logger into context here actually
 			// https://www.kaznacheev.me/posts/en/where-to-place-logger-in-golang/
 			ctx := common.GetContext(r)
-			log := logger.LoggerWithKey(l, ctx, common.ContexKeyRequestID)
+			log := logger.LoggerWithKey(l, ctx, common.ContextKeyRequestID)
 
+			startBanner := fmt.Sprintf("---------- [%s] START --------------------", r.URL.Path)
+			endBanner := fmt.Sprintf("---------- [%s]  END --------------------", r.URL.Path)
+			log.Info(startBanner)
 			log.Info("Request started",
 				log.ToString("method", r.Method),
 				log.ToString("path", r.URL.Path),
@@ -34,6 +38,7 @@ func GetLogging(l logger.Logger) func(http.Handler) http.Handler {
 				log.ToString("path", r.URL.Path),
 				log.ToDuration("duration", duration),
 				log.ToString("remote_addr", r.RemoteAddr))
+			log.Info(endBanner)
 		})
 	}
 }

@@ -11,7 +11,7 @@ import (
 
 func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.User, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("GetUserByEmail called",
 		log.ToString("email", email),
 	)
@@ -42,7 +42,7 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 
 func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("GetUserByID called",
 		log.ToInt("user_id", int(userID)),
 	)
@@ -73,7 +73,7 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 // Returns the S3 key of the user's avatar image
 func (db *DataBase) GetUserAvatarKey(ctx context.Context, userID uint) (*entity.S3Key, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("GetUserAvatarKey called",
 		log.ToInt("user_id", int(userID)),
 	)
@@ -106,7 +106,7 @@ func (db *DataBase) GetUserAvatarKey(ctx context.Context, userID uint) (*entity.
 
 func (db *DataBase) CreateUser(ctx context.Context, user entity.User) (uint, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("CreateUser called",
 		log.ToString("email", user.Email),
 		log.ToString("username", user.Username),
@@ -136,7 +136,7 @@ func (db *DataBase) UpdateUser(
 	phoneNumber string,
 ) (*entity.User, error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(db.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("UpdateUser called",
 		log.ToInt("user_id", int(userID)),
 		log.ToString("username", username),
@@ -171,4 +171,35 @@ func (db *DataBase) UpdateUser(
 	}
 
 	return &updatedUser, nil
+}
+
+func (db *DataBase) UpdateUserAvatarKey(ctx context.Context, userID uint, assetImageID uint) error {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("UpdateUserAvatarKey called",
+		log.ToInt("user_id", int(userID)),
+		log.ToInt("asset_image_id", int(assetImageID)),
+	)
+
+	query := `
+		UPDATE "user"
+		SET asset_image_id = $1
+		WHERE user_id = $2
+	`
+	result, err := db.conn.Exec(query, assetImageID, userID)
+	if err != nil {
+		log.Error("UpdateUserAvatarKey: failed to update user avatar key", log.ToError(err))
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Error("UpdateUserAvatarKey: failed to get rows affected", log.ToError(err))
+		return err
+	}
+	if rowsAffected == 0 {
+		log.Error("UpdateUserAvatarKey: user not found", log.ToInt("user_id", int(userID)))
+		return entity.ErrUserNotFound
+	}
+
+	return nil
 }

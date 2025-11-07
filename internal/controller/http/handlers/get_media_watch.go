@@ -22,19 +22,19 @@ var (
 )
 
 // URL parameter context name
-var URLParamMediaWatchID = "media_id"
+const QueryParamMediaWatchID = "media_id"
 
 // GetMediaWatch handler
 func (h *Handlers) GetMediaWatch(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
 	ctx := common.GetContext(r)
-	log := logger.LoggerWithKey(h.Logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(h.Logger, ctx, common.ContextKeyRequestID)
 	log.Debug("Handler called")
 
 	// Handle input parameters
 	input := dto.GetMediaWatchInput{}
 	rp := NewRequestParams(log, r, &input)
-	rp.AddQuery(URLParamMediaWatchID, &input.MediaID)
+	rp.AddQuery(QueryParamMediaWatchID, &input.MediaID)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {
@@ -47,7 +47,7 @@ func (h *Handlers) GetMediaWatch(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Debug(
 		"GetMediaWatch called",
-		log.ToString(URLParamMediaWatchID, strconv.FormatUint(uint64(input.MediaID), 10)),
+		log.ToString(QueryParamMediaWatchID, strconv.FormatUint(uint64(input.MediaID), 10)),
 	)
 
 	// Execute use case

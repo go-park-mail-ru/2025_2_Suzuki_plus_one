@@ -11,27 +11,24 @@ import (
 type GetActorUseCase struct {
 	logger           logger.Logger
 	actorRepo        ActorRepository
-	getMediaUseCase  *GetMediaUseCase
 	getObjectUseCase *GetObjectUseCase
 }
 
 func NewGetActorUseCase(
 	logger logger.Logger,
 	actorRepo ActorRepository,
-	getMediaUseCase *GetMediaUseCase,
 	getObjectUseCase *GetObjectUseCase,
 ) *GetActorUseCase {
 	return &GetActorUseCase{
 		logger:           logger,
 		actorRepo:        actorRepo,
-		getMediaUseCase:  getMediaUseCase,
 		getObjectUseCase: getObjectUseCase,
 	}
 }
 
 func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput) (dto.GetActorOutput, *dto.Error) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContextKeyRequestID)
 
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
@@ -55,18 +52,6 @@ func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput)
 		return dto.GetActorOutput{}, &derr
 	}
 
-	// Get medias associated with the actor
-	medias, err := uc.actorRepo.GetMediasByActorID(ctx, input.ActorID)
-	if err != nil {
-		derr := dto.NewError(
-			"usecase/get_actor",
-			err,
-			"Failed to get medias by actor ID",
-		)
-		log.Error("Failed to get medias by actor ID", log.ToError(err))
-		return dto.GetActorOutput{}, &derr
-	}
-
 	// Get actor image URLs
 	imageS3Keys, err := uc.actorRepo.GetActorImageS3(ctx, input.ActorID)
 	if err != nil {
@@ -82,19 +67,9 @@ func (uc *GetActorUseCase) Execute(ctx context.Context, input dto.GetActorInput)
 	// Map actor and medias to output DTO
 	output := dto.GetActorOutput{
 		Actor:     *actor,
-		Medias:    make([]dto.GetMediaOutput, 0, len(medias)),
 		ImageURLs: make([]string, 0, len(imageS3Keys)),
 	}
 
-	// Get medias for output actor
-	for _, media := range medias {
-		mediaOutput, err := uc.getMediaUseCase.Execute(ctx, dto.GetMediaInput{MediaID: media.MediaID})
-		if err != nil {
-			log.Error("Failed to get media output", err)
-			continue
-		}
-		output.Medias = append(output.Medias, mediaOutput)
-	}
 	// Get image URLs for output actor
 	for _, imageS3Key := range imageS3Keys {
 		imageURL, err := uc.getObjectUseCase.Execute(ctx,

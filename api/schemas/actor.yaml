@@ -30,17 +30,15 @@ ActorResponse:
       description: URLs to actor's images
       example: ["https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Leonardo_Dicaprio.jpg"]
 
-ActorPageResponse:
+ActorMediaResponse:
   summary: Movies related to actor
   type: object
   required:
     - actor
-    - movies
+    - medias
   properties:
-    actor:
-      $ref: "#/components/schemas/ActorResponse"
-    movies:
+    medias:
       type: array
-      description: Movies featuring this actor
+      description: Medias featuring this actor
       items:
-        $ref: "#/components/schemas/MovieResponse"
+        $ref: "./media.yaml#/MediaResponse"

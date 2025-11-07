@@ -8,7 +8,6 @@ type GetMediaInput struct {
 
 type GetMediaOutput struct {
 	entity.Media
-	Genres  []GenreOutput    `json:"genres"`
-	Posters []string         `json:"posters"`
-	Actors  []GetActorOutput `json:"actors"`
+	Genres  []GenreOutput `json:"genres"`
+	Posters []string      `json:"posters"`
 }

@@ -8,7 +8,7 @@ import (
 type Handlers struct {
 	Logger logger.Logger
 
-	GetMovieRecommendationsUseCase controller.GetMovieRecommendationsUseCase
+	GetMediaRecommendationsUseCase controller.GetMediaRecommendationsUseCase
 	GetObjectMediaUseCase          controller.GetObjectUseCase
 	PostAuthSignInUseCase          controller.PostAuthSignInUseCase
 	GetAuthRefreshUseCase          controller.GetAuthRefreshUseCase
@@ -19,11 +19,14 @@ type Handlers struct {
 	GetMediaUseCase                controller.GetMediaUseCase
 	GetMediaWatchUseCase           controller.GetMediaWatchUseCase
 	PostUserMeUpdateUseCase        controller.PostUserMeUpdateUseCase
+	PostUserMeUpdateAvatarUseCase  controller.PostUserMeUpdateAvatarUseCase
+	GetActorMediaUseCase           controller.GetActorMediaUseCase
+	GetMediaActorUseCase           controller.GetMediaActorUseCase
 }
 
 func NewHandlers(
 	logger logger.Logger,
-	getMovieRecommendationsUseCase controller.GetMovieRecommendationsUseCase,
+	GetMediaRecommendationsUseCase controller.GetMediaRecommendationsUseCase,
 	getObjectMediaUseCase controller.GetObjectUseCase,
 	postAuthSignInUseCase controller.PostAuthSignInUseCase,
 	getAuthRefreshUseCase controller.GetAuthRefreshUseCase,
@@ -34,10 +37,13 @@ func NewHandlers(
 	getMediaUseCase controller.GetMediaUseCase,
 	getMediaWatchUseCase controller.GetMediaWatchUseCase,
 	PostUserMeUpdateUseCase controller.PostUserMeUpdateUseCase,
+	PostUserMeUpdateAvatarUseCase controller.PostUserMeUpdateAvatarUseCase,
+	GetActorMediaUseCase controller.GetActorMediaUseCase,
+	GetMediaActorUseCase controller.GetMediaActorUseCase,
 ) *Handlers {
 	return &Handlers{
 		Logger:                         logger,
-		GetMovieRecommendationsUseCase: getMovieRecommendationsUseCase,
+		GetMediaRecommendationsUseCase: GetMediaRecommendationsUseCase,
 		GetObjectMediaUseCase:          getObjectMediaUseCase,
 		PostAuthSignInUseCase:          postAuthSignInUseCase,
 		GetAuthRefreshUseCase:          getAuthRefreshUseCase,
@@ -48,5 +54,8 @@ func NewHandlers(
 		GetMediaUseCase:                getMediaUseCase,
 		GetMediaWatchUseCase:           getMediaWatchUseCase,
 		PostUserMeUpdateUseCase:        PostUserMeUpdateUseCase,
+		PostUserMeUpdateAvatarUseCase:  PostUserMeUpdateAvatarUseCase,
+		GetActorMediaUseCase:           GetActorMediaUseCase,
+		GetMediaActorUseCase:           GetMediaActorUseCase,
 	}
 }

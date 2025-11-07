@@ -130,7 +130,7 @@ erDiagram
         %% ---
         text s3_key
         text mime_type
-        real asset_filesize_MB
+        real file_size_mb
         %% ---
         timestamptz created_at
         timestamptz updated_at

@@ -13,57 +13,57 @@ import (
 const GET_MOVIE_RECOMMENDATION_LIMIT_MIN = 1
 const GET_MOVIE_RECOMMENDATION_LIMIT_MAX = 20
 
-type GetMovieRecommendationsUsecase struct {
+type GetMediaRecommendationsUsecase struct {
 	logger          logger.Logger
 	movieRepo       MediaRepository
 	getMediaUseCase *GetMediaUseCase
 }
 
-func NewGetMovieRecommendationsUsecase(
+func NewGetMediaRecommendationsUsecase(
 	logger logger.Logger,
 	movieRepo MediaRepository,
 	getMediaUseCase *GetMediaUseCase,
-) *GetMovieRecommendationsUsecase {
-	return &GetMovieRecommendationsUsecase{
+) *GetMediaRecommendationsUsecase {
+	return &GetMediaRecommendationsUsecase{
 		logger:          logger,
 		movieRepo:       movieRepo,
 		getMediaUseCase: getMediaUseCase,
 	}
 }
 
-func (uc *GetMovieRecommendationsUsecase) Execute(
+func (uc *GetMediaRecommendationsUsecase) Execute(
 	ctx context.Context,
-	input dto.GetMovieRecommendationsInput,
+	input dto.GetMediaRecommendationsInput,
 ) (
-	dto.GetMovieRecommendationsOutput,
+	dto.GetMediaRecommendationsOutput,
 	*dto.Error,
 ) {
 	// Bind logger with request ID
-	log := logger.LoggerWithKey(uc.logger, ctx, common.ContexKeyRequestID)
+	log := logger.LoggerWithKey(uc.logger, ctx, common.ContextKeyRequestID)
 
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
 			"usecase/get_movie_recommendations",
-			entity.ErrGetMovieRecommendationsParamsInvalid,
+			entity.ErrGetMediaRecommendationsParamsInvalid,
 			err.Error(),
 		)
-		return dto.GetMovieRecommendationsOutput{}, &derr
+		return dto.GetMediaRecommendationsOutput{}, &derr
 	}
 
 	// Get total movie number from repository
-	movie_number, err := uc.movieRepo.GetMediaCount(ctx, "movie")
+	movie_number, err := uc.movieRepo.GetMediaCount(ctx, input.Type)
 	if err != nil {
 		derr := dto.NewError("adapter/get_movie_recommendations", err, "Can't get movie count")
 		log.Error("Can't get movie count", log.ToError(err))
-		return dto.GetMovieRecommendationsOutput{}, &derr
+		return dto.GetMediaRecommendationsOutput{}, &derr
 	}
 
 	// Validate ?limit boundaries
 	if input.Limit < GET_MOVIE_RECOMMENDATION_LIMIT_MIN || input.Limit > GET_MOVIE_RECOMMENDATION_LIMIT_MAX {
 		derr := dto.NewError(
 			"adapter/get_movie_recommendations",
-			entity.ErrGetMovieRecommendationsCantReturnAll,
+			entity.ErrGetMediaRecommendationsCantReturnAll,
 			fmt.Sprintf(
 				"limit must be between %d and %d (not %d)",
 				GET_MOVIE_RECOMMENDATION_LIMIT_MIN,
@@ -72,31 +72,31 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 			),
 		)
 		log.Error("Invalid limit for movie recommendations", log.ToError(fmt.Errorf("limit: %d", input.Limit)))
-		return dto.GetMovieRecommendationsOutput{}, &derr
+		return dto.GetMediaRecommendationsOutput{}, &derr
 	}
 
 	// Return error if limit+offset exceeds total number of movies
 	if input.Offset+input.Limit > uint(movie_number) {
 		derr := dto.NewError(
 			"usecase/get_movie_recommendations",
-			entity.ErrGetMovieRecommendationsParamsInvalid,
+			entity.ErrGetMediaRecommendationsParamsInvalid,
 			fmt.Sprintf(
-				"limit+offset out of movies range: %d+%d of %d",
+				"limit+offset > media count: %d+%d > %d",
 				input.Offset,
 				input.Limit,
 				movie_number,
 			),
 		)
 		log.Error("limit+offset out of movies range", log.ToError(fmt.Errorf("offset: %d, limit: %d, total: %d", input.Offset, input.Limit, movie_number)))
-		return dto.GetMovieRecommendationsOutput{}, &derr
+		return dto.GetMediaRecommendationsOutput{}, &derr
 	}
 
 	// Calculate recommendation movie IDs (dummy logic for now)
-	movieIDs, err := uc.movieRepo.GetMediaRandomIds(ctx, input.Limit, input.Offset, "movie")
+	movieIDs, err := uc.movieRepo.GetMediaSortedByName(ctx, input.Limit, input.Offset, input.Type)
 	if err != nil {
 		derr := dto.NewError("adapter/get_movie_recommendations", err, "Can't get movie recommendations")
 		log.Error("Can't get movie recommendations", log.ToError(err))
-		return dto.GetMovieRecommendationsOutput{}, &derr
+		return dto.GetMediaRecommendationsOutput{}, &derr
 	}
 
 	// Convert []entity.Movie to []dto.Movie
@@ -106,10 +106,10 @@ func (uc *GetMovieRecommendationsUsecase) Execute(
 		movieDTO, derr := uc.getMediaUseCase.Execute(ctx, dto.GetMediaInput{MediaID: movieID})
 		if derr != nil {
 			log.Error("Failed to get movie by ID in recommendations", derr)
-			return dto.GetMovieRecommendationsOutput{}, derr
+			return dto.GetMediaRecommendationsOutput{}, derr
 		}
 		dtoMovies = append(dtoMovies, movieDTO)
 	}
 
-	return dto.GetMovieRecommendationsOutput{Movies: dtoMovies}, nil
+	return dto.GetMediaRecommendationsOutput{Movies: dtoMovies}, nil
 }
