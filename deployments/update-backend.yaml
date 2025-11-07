@@ -29,7 +29,7 @@
 
     - name: Wait for server to start
       uri:
-        url: "http://217.16.18.125/api/v1/movie/recommendations?limit=1"
+        url: "http://217.16.18.125/api/v1/media/recommendations?limit=1&type=movie"
         status_code: 200
         timeout: 10
         validate_certs: no
