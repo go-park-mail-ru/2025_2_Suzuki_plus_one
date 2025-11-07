@@ -6,6 +6,12 @@
         path: /home/{{ ansible_user }}/backend
         state: directory
 
+    - name: Upload prod.env file
+      copy:
+        src: ./prod.env
+        dest: /home/{{ ansible_user }}/backend/.env
+        mode: "0644"
+
     - name: Pull latest code and switch to deploy branch
       git:
         repo: "https://github.com/go-park-mail-ru/2025_2_Suzuki_plus_one.git"
