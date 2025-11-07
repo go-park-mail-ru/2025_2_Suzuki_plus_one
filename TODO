@@ -1,6 +1,3 @@
-- Ensure test coverage >60%
-- Add user avatar update
-- Add password change
-- Fix user_recommendations offset and algorithm
+- Ensure test coverage >60%. Now 25%
 - Add Golangci-lint
 - Search for another "TODO" comments
