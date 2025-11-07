@@ -367,7 +367,7 @@ erDiagram
     USER ||--o{ USER_PLAYLIST : "user has playlists"
         USER_PLAYLIST ||--|| PLAYLIST : "user_playlist links user and playlist"
 
-    USER }o-|| ASSET_IMAGE : "user has profile image"
+    USER }o--|| ASSET_IMAGE : "user has profile image"
 
     USER ||--o{ USER_SESSION : "user has sessions"
 
