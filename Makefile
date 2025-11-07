@@ -165,6 +165,11 @@ redis-wipe: ## wipes the redis container and its volume
 	source .env && docker compose down -v redis
 
 ## Minio
+
+minio-pull: ## fetches data from vkedu minio to local minio
+	@echo "Fetching data from vkedu drive to local minio..."
+	rclone sync vkedu: testdata/minio/ -P
+
 minio-start: ## starts the minio using docker-compose
 	source .env && docker compose up -d minio
 minio-stop: ## stops the minio using docker-compose
