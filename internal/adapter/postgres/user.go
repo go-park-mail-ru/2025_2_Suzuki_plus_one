@@ -19,22 +19,26 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 	var user entity.User
 
 	query := `
-		SELECT user_id, email, username, password_hash, asset_image_id
+		SELECT user_id, email, username, password_hash, asset_image_id, date_of_birth, phone_number
 		FROM "user"
 		WHERE email = $1
 	`
 	row := db.conn.QueryRow(query, email)
-	var assetImageID sql.NullInt64
-
-	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &assetImageID)
+	err := row.Scan(&user.ID,
+		&user.Email,
+		&user.Username,
+		&user.PasswordHash,
+		&user.AssetImageID,
+		&user.DateOfBirth,
+		&user.PhoneNumber,
+	)
 	if err != nil {
 		if err == sql.ErrNoRows {
+			log.Error("GetUserByEmail: user not found", log.ToString("email", email))
 			return nil, entity.ErrUserNotFound
 		}
+		log.Error("GetUserByEmail: failed to scan user", log.ToError(err))
 		return nil, err
-	}
-	if assetImageID.Valid {
-		user.AssetImageID = uint(assetImageID.Int64)
 	}
 
 	return &user, nil
@@ -50,21 +54,26 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 	var user entity.User
 
 	query := `
-		SELECT user_id, email, username, password_hash, asset_image_id
+		SELECT user_id, email, username, password_hash, asset_image_id, date_of_birth, phone_number
 		FROM "user"
 		WHERE user_id = $1
 	`
 	row := db.conn.QueryRow(query, userID)
-	var assetImageID sql.NullInt64
-	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &assetImageID)
+	err := row.Scan(&user.ID,
+		&user.Email,
+		&user.Username,
+		&user.PasswordHash,
+		&user.AssetImageID,
+		&user.DateOfBirth,
+		&user.PhoneNumber,
+	)
 	if err != nil {
 		if err == sql.ErrNoRows {
+			log.Error("GetUserByID: user not found", log.ToInt("user_id", int(userID)))
 			return nil, entity.ErrUserNotFound
 		}
+		log.Error("GetUserByID: failed to scan user", log.ToError(err))
 		return nil, err
-	}
-	if assetImageID.Valid {
-		user.AssetImageID = uint(assetImageID.Int64)
 	}
 
 	return &user, nil
@@ -115,12 +124,20 @@ func (db *DataBase) CreateUser(ctx context.Context, user entity.User) (uint, err
 	var userID uint
 
 	query := `
-		INSERT INTO "user" (email, username, password_hash)
-		VALUES ($1, $2, $3)
+		INSERT INTO "user" (email, username, password_hash, date_of_birth, phone_number, asset_image_id)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING user_id
 	`
-	err := db.conn.QueryRow(query, user.Email, user.Username, user.PasswordHash).Scan(&userID)
+	err := db.conn.QueryRow(query,
+		user.Email,
+		user.Username,
+		user.PasswordHash,
+		user.DateOfBirth,
+		user.PhoneNumber,
+		user.AssetImageID,
+	).Scan(&userID)
 	if err != nil {
+		log.Error("CreateUser: failed to create user", log.ToError(err))
 		return 0, err
 	}
 
@@ -157,17 +174,22 @@ func (db *DataBase) UpdateUser(
 	row := db.conn.QueryRow(query, username, email, dateOfBirth, phoneNumber, userID)
 
 	var updatedUser entity.User
-	var assetImageID sql.NullInt64
-	err := row.Scan(&updatedUser.ID, &updatedUser.Email, &updatedUser.Username, &updatedUser.DateOfBirth, &updatedUser.PhoneNumber, &updatedUser.PasswordHash, &assetImageID)
+
+	err := row.Scan(
+		&updatedUser.ID,
+		&updatedUser.Email,
+		&updatedUser.Username,
+		&updatedUser.DateOfBirth,
+		&updatedUser.PhoneNumber,
+		&updatedUser.PasswordHash,
+		&updatedUser.AssetImageID,
+	)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Error("UpdateUser: user not found", log.ToInt("user_id", int(userID)))
 			return nil, entity.ErrUserNotFound
 		}
 		return nil, err
-	}
-	if assetImageID.Valid {
-		updatedUser.AssetImageID = uint(assetImageID.Int64)
 	}
 
 	return &updatedUser, nil
