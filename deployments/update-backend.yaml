@@ -13,11 +13,9 @@
         update: yes
         version: deploy
     - name: Pull latest images
-      community.docker.docker_image:
-        name: "{{ item }}"
-        source: pull
-      loop:
-        - ghcr.io/sorrtory/popfilms-backend:latest
+      shell: |
+        cd /home/{{ ansible_user }}/backend
+        docker compose pull backend
 
     - name: Build and start backend containers
       community.general.make:
