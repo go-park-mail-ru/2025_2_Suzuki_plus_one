@@ -42,7 +42,7 @@ type (
 
 	UserRepository interface {
 		// Create
-		CreateUser(ctx context.Context, user entity.User) (uint, error)
+		CreateUser(ctx context.Context, email string, username string, passwordHash string) (uint, error)
 
 		// Get
 		GetUserByID(ctx context.Context, userID uint) (*entity.User, error)

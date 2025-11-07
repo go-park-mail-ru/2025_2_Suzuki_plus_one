@@ -76,12 +76,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
 
-	newUser := entity.User{
-		Email:        input.Email,
-		PasswordHash: hashedPassword,
-		Username:     input.Username,
-	}
-	userID, err := uc.userRepo.CreateUser(ctx, newUser)
+	userID, err := uc.userRepo.CreateUser(ctx, input.Email, input.Username, hashedPassword)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/post_auth_signup",
@@ -91,10 +86,9 @@ func (uc *PostAuthSignUpUsecase) Execute(
 		log.Error("Failed to create new user", log.ToError(err))
 		return dto.PostAuthSignUpOutput{}, &derr
 	}
-	newUser.ID = userID
 
 	// Generate refresh token
-	refreshToken, err := common.GenerateToken(newUser.ID, common.RefreshTokenTTL)
+	refreshToken, err := common.GenerateToken(userID, common.RefreshTokenTTL)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/post_auth_signin",
@@ -107,7 +101,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 
 	// Add refresh refreshToken for user in repository
 	expiration := time.Now().Add(common.RefreshTokenTTL)
-	if err := uc.authRepo.AddNewRefreshToken(ctx, newUser.ID, refreshToken, expiration); err != nil {
+	if err := uc.authRepo.AddNewRefreshToken(ctx, userID, refreshToken, expiration); err != nil {
 		derr := dto.NewError(
 			"usecase/post_auth_signin",
 			entity.ErrPostAuthSignInNewRefreshTokenFailed,
@@ -118,7 +112,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 	}
 
 	// Generate access token
-	accessToken, err := common.GenerateToken(newUser.ID, common.AccessTokenTTL)
+	accessToken, err := common.GenerateToken(userID, common.AccessTokenTTL)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/post_auth_signin",
@@ -130,7 +124,7 @@ func (uc *PostAuthSignUpUsecase) Execute(
 	}
 
 	// Create session in cache (Redis)
-	if err := uc.sessionRepo.AddSession(ctx, newUser.ID, accessToken, common.AccessTokenTTL); err != nil {
+	if err := uc.sessionRepo.AddSession(ctx, userID, accessToken, common.AccessTokenTTL); err != nil {
 		derr := dto.NewError(
 			"usecase/post_auth_signin",
 			entity.ErrPostAuthSignInAddSessionFailed,

@@ -114,28 +114,25 @@ func (db *DataBase) GetUserAvatarKey(ctx context.Context, userID uint) (*entity.
 	return &s3Key, nil
 }
 
-func (db *DataBase) CreateUser(ctx context.Context, user entity.User) (uint, error) {
+func (db *DataBase) CreateUser(ctx context.Context, email string, username string, passwordHash string) (uint, error) {
 	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("CreateUser called",
-		log.ToString("email", user.Email),
-		log.ToString("username", user.Username),
+		log.ToString("email", email),
+		log.ToString("username", username),
 	)
 
 	var userID uint
 
 	query := `
-		INSERT INTO "user" (email, username, password_hash, date_of_birth, phone_number, asset_image_id)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO "user" (email, username, password_hash)
+		VALUES ($1, $2, $3)
 		RETURNING user_id
 	`
 	err := db.conn.QueryRow(query,
-		user.Email,
-		user.Username,
-		user.PasswordHash,
-		user.DateOfBirth,
-		user.PhoneNumber,
-		user.AssetImageID,
+		email,
+		username,
+		passwordHash,
 	).Scan(&userID)
 	if err != nil {
 		log.Error("CreateUser: failed to create user", log.ToError(err))
