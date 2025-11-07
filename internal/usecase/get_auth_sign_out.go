@@ -80,7 +80,7 @@ func (uc *GetAuthSignOutUsecase) Execute(
 	}
 
 	// Check if user authorized
-	userIDCached, err := uc.sessionRepo.GetUserIDByToken(ctx, input.AccessToken)
+	userIDCached, err := uc.sessionRepo.GetUserIDByAccessToken(ctx, input.AccessToken)
 	if err != nil || userIDCached != userIDAccess {
 		derr := dto.NewError(
 			"usecase/get_auth_signout",

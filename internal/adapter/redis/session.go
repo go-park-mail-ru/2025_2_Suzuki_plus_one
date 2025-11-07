@@ -90,10 +90,10 @@ func (r *Redis) AddSession(ctx context.Context, userID uint, accessToken string,
 	return nil
 }
 
-// GetUserIDByToken retrieves userID associated with the given token from Redis
-func (r *Redis) GetUserIDByToken(ctx context.Context, accessToken string) (uint, error) {
+// GetUserIDByAccessToken retrieves userID associated with the given token from Redis
+func (r *Redis) GetUserIDByAccessToken(ctx context.Context, accessToken string) (uint, error) {
 	log := logger.LoggerWithKey(r.logger, ctx, common.ContextKeyRequestID)
-	log.Debug("Redis GetUserIDByToken called", log.ToString("accessToken", accessToken))
+	log.Debug("Redis GetUserIDByAccessToken called", log.ToString("accessToken", accessToken))
 
 	// Generate access key
 	key := generateAccessKey(accessToken)

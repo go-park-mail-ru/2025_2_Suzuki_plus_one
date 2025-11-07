@@ -53,7 +53,7 @@ func (uc *PostUserMeUpdateAvatarUseCase) Execute(
 	}
 
 	// Get user ID from user session
-	userID, err := uc.sessionRepo.GetUserIDByToken(ctx, input.AccessToken)
+	userID, err := uc.sessionRepo.GetUserIDByAccessToken(ctx, input.AccessToken)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/post_user_me_update_avatar",

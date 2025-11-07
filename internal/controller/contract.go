@@ -63,4 +63,8 @@ type (
 	GetMediaActorUseCase interface {
 		Execute(context.Context, dto.GetMediaActorInput) (dto.GetMediaActorOutput, *dto.Error)
 	}
+
+	PostUserMeUpdatePasswordUseCase interface {
+		Execute(context.Context, dto.PostUserMeUpdatePasswordInput) (dto.PostUserMeUpdatePasswordOutput, *dto.Error)
+	}
 )

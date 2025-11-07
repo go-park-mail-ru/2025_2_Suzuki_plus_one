@@ -139,10 +139,11 @@ func main() {
 		getActorUseCase,
 		getMediaUseCase,
 		uc.NewGetMediaWatchUseCase(logger, movieRepository, getObjectUseCase),
-		uc.NewPostUserMeUpdateUseCase(logger, userRepository, getUserUseCase),
+		uc.NewPostUserMeUpdateUseCase(logger, userRepository, sessionRepository, getUserUseCase),
 		uc.NewPostUserMeUpdateAvatarUseCase(logger, userRepository, sessionRepository, objectRepository, assetRepository),
 		uc.NewGetActorMediaUseCase(logger, actorRepository, getMediaUseCase),
 		uc.NewGetMediaActorUseCase(logger, actorRepository, getActorUseCase),
+		uc.NewPostUserMeUpdatePasswordUseCase(logger, userRepository, sessionRepository),
 	)
 
 	// Initialize JWT middleware engine

@@ -39,11 +39,15 @@ type (
 	}
 
 	UserRepository interface {
+		// Create
+		CreateUser(ctx context.Context, user entity.User) (uint, error)
+
+		// Get
 		GetUserByID(ctx context.Context, userID uint) (*entity.User, error)
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		GetUserAvatarKey(ctx context.Context, userID uint) (*entity.S3Key, error)
-		UpdateUserAvatarKey(ctx context.Context, userID uint, assetImageID uint) error
-		CreateUser(ctx context.Context, user entity.User) (uint, error)
+
+		// Update
 		UpdateUser(ctx context.Context,
 			userID uint,
 			username string,
@@ -51,6 +55,8 @@ type (
 			dateOfBirth string,
 			phoneNumber string,
 		) (*entity.User, error)
+		UpdateUserAvatarKey(ctx context.Context, userID uint, assetImageID uint) error
+		UpdateUserPassword(ctx context.Context, userID uint, newHashedPassword string) error
 	}
 
 	AssetRepository interface {
@@ -85,6 +91,6 @@ type (
 	SessionRepository interface {
 		AddSession(ctx context.Context, userID uint, accessToken string, expiration time.Duration) error
 		DeleteSession(ctx context.Context, userID uint, accessToken string) error
-		GetUserIDByToken(ctx context.Context, accessToken string) (uint, error)
+		GetUserIDByAccessToken(ctx context.Context, accessToken string) (uint, error)
 	}
 )

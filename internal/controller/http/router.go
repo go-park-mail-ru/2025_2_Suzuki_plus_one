@@ -58,6 +58,7 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 		r.Get("/user/me", h.GetUserMe)
 		r.Post("/user/me/update", h.PostUserMeUpdate)
 		r.Post("/user/me/update/avatar", h.PostUserMeUpdateAvatar)
+		r.Post("/user/me/update/password", h.PostUserMeUpdatePassword)
 	})
 
 	return r

@@ -37,4 +37,6 @@ var (
 	ErrSessionNotFound = errors.New("session not found for given access token")
 
 	ErrGetMediaActorParamsInvalid = errors.New("invalid get_media_actor request parameters")
+
+	ErrPostUserMeUpdatePasswordCurrentPasswordMismatch = errors.New("current password does not match")
 )

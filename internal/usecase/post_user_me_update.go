@@ -11,17 +11,20 @@ import (
 type PostUserMeUpdateUseCase struct {
 	logger           logger.Logger
 	userRepo         UserRepository
+	sessionRepo      SessionRepository
 	getUserMeUseCase *GetUserMeUseCase
 }
 
 func NewPostUserMeUpdateUseCase(
 	logger logger.Logger,
 	userRepo UserRepository,
+	sessionRepo SessionRepository,
 	getUserMeUseCase *GetUserMeUseCase,
 ) *PostUserMeUpdateUseCase {
 	return &PostUserMeUpdateUseCase{
 		logger:           logger,
 		userRepo:         userRepo,
+		sessionRepo:      sessionRepo,
 		getUserMeUseCase: getUserMeUseCase,
 	}
 }
@@ -40,26 +43,31 @@ func (uc *PostUserMeUpdateUseCase) Execute(ctx context.Context, input dto.PostUs
 		return dto.PostUserMeUpdateOutput{}, &derr
 	}
 
-	currentUser, derr := uc.getUserMeUseCase.Execute(ctx, dto.GetUserMeInput{
-		AccessToken: input.AccessToken,
-	})
-	if derr != nil {
-		log.Error(
-			"Error extracting user with getUserMeUseCase",
-			log.ToAny("derr", derr),
+	// Get user ID from cache using access token
+	userID, err := uc.sessionRepo.GetUserIDByAccessToken(ctx, input.AccessToken)
+	if err != nil {
+		derr := dto.NewError(
+			"usecase/post_user_me_update/get_user_id_by_access_token",
+			err,
+			"Failed to get user ID by access token",
 		)
-		return dto.PostUserMeUpdateOutput{}, derr
+		log.Error(
+			"Error getting user ID by access token",
+			log.ToError(err),
+		)
+		return dto.PostUserMeUpdateOutput{}, &derr
 	}
 
 	// Update user in repository
-	updatedUser, err := uc.userRepo.UpdateUser(
+	_, err = uc.userRepo.UpdateUser(
 		ctx,
-		currentUser.ID,
+		userID,
 		input.Username,
 		input.Email,
 		input.DateOfBirth.GoString(),
 		input.PhoneNumber,
 	)
+
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/post_user_me_update/update_user",
@@ -70,15 +78,20 @@ func (uc *PostUserMeUpdateUseCase) Execute(ctx context.Context, input dto.PostUs
 		return dto.PostUserMeUpdateOutput{}, &derr
 	}
 
-	// Prepare output DTO
-	output := dto.PostUserMeUpdateOutput{}
-	output.ID = updatedUser.ID
-	output.Username = updatedUser.Username
-	output.Email = updatedUser.Email
-	output.PhoneNumber = updatedUser.PhoneNumber
-	output.DateOfBirth = input.DateOfBirth
-	// Keep the existing avatar URL
-	output.AvatarURL = currentUser.AvatarURL
+	// Query database again to get updated user info
+	// OPTIMIZATION: consider returning updated fields directly
+	getUserMeUseCaseOutput, derr := uc.getUserMeUseCase.Execute(ctx, dto.GetUserMeInput{
+		AccessToken: input.AccessToken,
+	})
+	if derr != nil {
+		log.Error(
+			"Error extracting user with getUserMeUseCase",
+			log.ToAny("derr", derr),
+		)
+		return dto.PostUserMeUpdateOutput{}, derr
+	}
 
-	return output, nil
+	return dto.PostUserMeUpdateOutput{
+		GetUserMeOutput: getUserMeUseCaseOutput,
+	}, nil
 }

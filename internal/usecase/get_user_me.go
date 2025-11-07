@@ -46,7 +46,7 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 	}
 
 	// Get session by access token
-	userID, err := uc.sessionRepo.GetUserIDByToken(ctx, input.AccessToken)
+	userID, err := uc.sessionRepo.GetUserIDByAccessToken(ctx, input.AccessToken)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/get_user_me",

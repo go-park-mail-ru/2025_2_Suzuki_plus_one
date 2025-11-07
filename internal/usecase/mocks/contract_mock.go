@@ -715,17 +715,17 @@ func (mr *MockSessionRepositoryMockRecorder) DeleteSession(ctx, userID, accessTo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSession", reflect.TypeOf((*MockSessionRepository)(nil).DeleteSession), ctx, userID, accessToken)
 }
 
-// GetUserIDByToken mocks base method.
-func (m *MockSessionRepository) GetUserIDByToken(ctx context.Context, accessToken string) (uint, error) {
+// GetUserIDByAccessToken mocks base method.
+func (m *MockSessionRepository) GetUserIDByAccessToken(ctx context.Context, accessToken string) (uint, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserIDByToken", ctx, accessToken)
+	ret := m.ctrl.Call(m, "GetUserIDByAccessToken", ctx, accessToken)
 	ret0, _ := ret[0].(uint)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetUserIDByToken indicates an expected call of GetUserIDByToken.
-func (mr *MockSessionRepositoryMockRecorder) GetUserIDByToken(ctx, accessToken any) *gomock.Call {
+// GetUserIDByAccessToken indicates an expected call of GetUserIDByAccessToken.
+func (mr *MockSessionRepositoryMockRecorder) GetUserIDByAccessToken(ctx, accessToken any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserIDByToken", reflect.TypeOf((*MockSessionRepository)(nil).GetUserIDByToken), ctx, accessToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserIDByAccessToken", reflect.TypeOf((*MockSessionRepository)(nil).GetUserIDByAccessToken), ctx, accessToken)
 }

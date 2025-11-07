@@ -8,20 +8,21 @@ import (
 type Handlers struct {
 	Logger logger.Logger
 
-	GetMediaRecommendationsUseCase controller.GetMediaRecommendationsUseCase
-	GetObjectMediaUseCase          controller.GetObjectUseCase
-	PostAuthSignInUseCase          controller.PostAuthSignInUseCase
-	GetAuthRefreshUseCase          controller.GetAuthRefreshUseCase
-	PostAuthSignUpUseCase          controller.PostAuthSignUpUseCase
-	GetAuthSignOutUseCase          controller.GetAuthSignOutUseCase
-	GetUserMeUseCase               controller.GetUserMeUseCase
-	GetActorUseCase                controller.GetActorUseCase
-	GetMediaUseCase                controller.GetMediaUseCase
-	GetMediaWatchUseCase           controller.GetMediaWatchUseCase
-	PostUserMeUpdateUseCase        controller.PostUserMeUpdateUseCase
-	PostUserMeUpdateAvatarUseCase  controller.PostUserMeUpdateAvatarUseCase
-	GetActorMediaUseCase           controller.GetActorMediaUseCase
-	GetMediaActorUseCase           controller.GetMediaActorUseCase
+	GetMediaRecommendationsUseCase  controller.GetMediaRecommendationsUseCase
+	GetObjectMediaUseCase           controller.GetObjectUseCase
+	PostAuthSignInUseCase           controller.PostAuthSignInUseCase
+	GetAuthRefreshUseCase           controller.GetAuthRefreshUseCase
+	PostAuthSignUpUseCase           controller.PostAuthSignUpUseCase
+	GetAuthSignOutUseCase           controller.GetAuthSignOutUseCase
+	GetUserMeUseCase                controller.GetUserMeUseCase
+	GetActorUseCase                 controller.GetActorUseCase
+	GetMediaUseCase                 controller.GetMediaUseCase
+	GetMediaWatchUseCase            controller.GetMediaWatchUseCase
+	PostUserMeUpdateUseCase         controller.PostUserMeUpdateUseCase
+	PostUserMeUpdateAvatarUseCase   controller.PostUserMeUpdateAvatarUseCase
+	GetActorMediaUseCase            controller.GetActorMediaUseCase
+	GetMediaActorUseCase            controller.GetMediaActorUseCase
+	PostUserMeUpdatePasswordUseCase controller.PostUserMeUpdatePasswordUseCase
 }
 
 func NewHandlers(
@@ -40,22 +41,24 @@ func NewHandlers(
 	PostUserMeUpdateAvatarUseCase controller.PostUserMeUpdateAvatarUseCase,
 	GetActorMediaUseCase controller.GetActorMediaUseCase,
 	GetMediaActorUseCase controller.GetMediaActorUseCase,
+	PostUserMeUpdatePasswordUseCase controller.PostUserMeUpdatePasswordUseCase,
 ) *Handlers {
 	return &Handlers{
-		Logger:                         logger,
-		GetMediaRecommendationsUseCase: GetMediaRecommendationsUseCase,
-		GetObjectMediaUseCase:          getObjectMediaUseCase,
-		PostAuthSignInUseCase:          postAuthSignInUseCase,
-		GetAuthRefreshUseCase:          getAuthRefreshUseCase,
-		PostAuthSignUpUseCase:          postAuthSignupUseCase,
-		GetAuthSignOutUseCase:          getAuthSignOutUseCase,
-		GetUserMeUseCase:               getUserMeUseCase,
-		GetActorUseCase:                GetActorUseCase,
-		GetMediaUseCase:                getMediaUseCase,
-		GetMediaWatchUseCase:           getMediaWatchUseCase,
-		PostUserMeUpdateUseCase:        PostUserMeUpdateUseCase,
-		PostUserMeUpdateAvatarUseCase:  PostUserMeUpdateAvatarUseCase,
-		GetActorMediaUseCase:           GetActorMediaUseCase,
-		GetMediaActorUseCase:           GetMediaActorUseCase,
+		Logger:                          logger,
+		GetMediaRecommendationsUseCase:  GetMediaRecommendationsUseCase,
+		GetObjectMediaUseCase:           getObjectMediaUseCase,
+		PostAuthSignInUseCase:           postAuthSignInUseCase,
+		GetAuthRefreshUseCase:           getAuthRefreshUseCase,
+		PostAuthSignUpUseCase:           postAuthSignupUseCase,
+		GetAuthSignOutUseCase:           getAuthSignOutUseCase,
+		GetUserMeUseCase:                getUserMeUseCase,
+		GetActorUseCase:                 GetActorUseCase,
+		GetMediaUseCase:                 getMediaUseCase,
+		GetMediaWatchUseCase:            getMediaWatchUseCase,
+		PostUserMeUpdateUseCase:         PostUserMeUpdateUseCase,
+		PostUserMeUpdateAvatarUseCase:   PostUserMeUpdateAvatarUseCase,
+		GetActorMediaUseCase:            GetActorMediaUseCase,
+		GetMediaActorUseCase:            GetMediaActorUseCase,
+		PostUserMeUpdatePasswordUseCase: PostUserMeUpdatePasswordUseCase,
 	}
 }

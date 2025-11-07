@@ -82,7 +82,7 @@ me_update_avatar:
       "401":
         description: Unauthorized (invalid or missing access token)
         content:
-           text/plain:
+          text/plain:
             schema:
               type: string
               example: "Token not found"
@@ -92,7 +92,7 @@ me_update_password:
       - access_token: []
     tags:
       - user
-    summary: Update user password [UNIMPLEMENTED]
+    summary: Update user password
     description: Update the password of the authenticated user
     requestBody:
       required: true
@@ -103,14 +103,6 @@ me_update_password:
     responses:
       "200":
         description: User password updated successfully
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-                  example: "Password updated successfully"
       "400":
         description: Wrong input (invalid/weak/do not match)
         content:

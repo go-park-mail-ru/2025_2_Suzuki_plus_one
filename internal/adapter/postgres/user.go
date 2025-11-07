@@ -203,3 +203,33 @@ func (db *DataBase) UpdateUserAvatarKey(ctx context.Context, userID uint, assetI
 
 	return nil
 }
+
+func (db *DataBase) UpdateUserPassword(ctx context.Context, userID uint, newHashedPassword string) error {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("UpdateUserPassword called",
+		log.ToInt("user_id", int(userID)),
+	)
+
+	query := `
+		UPDATE "user"
+		SET password_hash = $1
+		WHERE user_id = $2
+	`
+	result, err := db.conn.Exec(query, newHashedPassword, userID)
+	if err != nil {
+		log.Error("UpdateUserPassword: failed to update user password", log.ToError(err))
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Error("UpdateUserPassword: failed to get rows affected", log.ToError(err))
+		return err
+	}
+	if rowsAffected == 0 {
+		log.Error("UpdateUserPassword: user not found", log.ToInt("user_id", int(userID)))
+		return entity.ErrUserNotFound
+	}
+
+	return nil
+}
