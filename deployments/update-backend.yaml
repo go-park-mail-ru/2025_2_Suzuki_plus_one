@@ -12,6 +12,12 @@
         dest: /home/{{ ansible_user }}/backend
         update: yes
         version: deploy
+    - name: Pull latest images
+      community.docker.docker_image:
+        name: "{{ item }}"
+        source: pull
+      loop:
+        - ghcr.io/sorrtory/popfilms-backend:latest
 
     - name: Build and start backend containers
       community.general.make:
