@@ -50,7 +50,7 @@ INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
                                                         ('/trailers/7_SabrinaTrailer.mp4', 'video/mp4', 1650.0),
                                                         ('/trailers/8_TomAndHuckTrailer.mp4', 'video/mp4', 1450.0),
                                                         ('/trailers/9_SuddenDeathTrailer.mp4', 'video/mp4', 1800.0),
-                                                        ('/trailers/10_GoldenEyeTrailer.mp4', 'video/mp4', 2000.0),
+                                                        ('/trailers/10_GoldenEyeTrailer.mp4', 'video/mp4', 2000.0);
 
 
 -- Get the asset IDs for the videos we just inserted
@@ -67,15 +67,15 @@ trailer8_id BIGINT;
 trailer9_id BIGINT;
 trailer10_id BIGINT;
 BEGIN
-SELECT asset_id INTO trailer1_id FROM asset WHERE s3_key = '/trailers/1_ToyStoryTrailer.webm';
-SELECT asset_id INTO trailer2_id FROM asset WHERE s3_key = '/trailers/2_JumanjiTrailer.webm';
-SELECT asset_id INTO trailer3_id FROM asset WHERE s3_key = '/trailers/3_GrumpierOldMenTrailer.mp4';
-SELECT asset_id INTO trailer4_id FROM asset WHERE s3_key = '/trailers/4_WaitingToExhaleTrailer.mp4';
-SELECT asset_id INTO trailer5_id FROM asset WHERE s3_key = '/trailers/5_FatherOfTheBrideIITrailer.mp4';
-SELECT asset_id INTO trailer6_id FROM asset WHERE s3_key = '/trailers/6_HeatTrailer.mp4';
-SELECT asset_id INTO trailer7_id FROM asset WHERE s3_key = '/trailers/7_SabrinaTrailer.mp4';
-SELECT asset_id INTO trailer8_id FROM asset WHERE s3_key = '/trailers/8_TomAndHuckTrailer.mp4';
-SELECT asset_id INTO trailer9_id FROM asset WHERE s3_key = '/trailers/9_SuddenDeathTrailer.mp4';
+SELECT asset_id INTO trailer1_id FROM asset WHERE s3_key = '/trailers/1_ToyStoryTrailer.webm',
+SELECT asset_id INTO trailer2_id FROM asset WHERE s3_key = '/trailers/2_JumanjiTrailer.webm',
+SELECT asset_id INTO trailer3_id FROM asset WHERE s3_key = '/trailers/3_GrumpierOldMenTrailer.mp4',
+SELECT asset_id INTO trailer4_id FROM asset WHERE s3_key = '/trailers/4_WaitingToExhaleTrailer.mp4',
+SELECT asset_id INTO trailer5_id FROM asset WHERE s3_key = '/trailers/5_FatherOfTheBrideIITrailer.mp4',
+SELECT asset_id INTO trailer6_id FROM asset WHERE s3_key = '/trailers/6_HeatTrailer.mp4',
+SELECT asset_id INTO trailer7_id FROM asset WHERE s3_key = '/trailers/7_SabrinaTrailer.mp4',
+SELECT asset_id INTO trailer8_id FROM asset WHERE s3_key = '/trailers/8_TomAndHuckTrailer.mp4',
+SELECT asset_id INTO trailer9_id FROM asset WHERE s3_key = '/trailers/9_SuddenDeathTrailer.mp4',
 SELECT asset_id INTO trailer10_id FROM asset WHERE s3_key = '/trailers/10_GoldenEyeTrailer.mp4';
 
 RAISE NOTICE 'Video assets inserted with IDs: %, %, %, %, %, %, %, %, %, %, %, %', trailer1_id, trailer2_id, trailer3_id, trailer4_id, trailer5_id, trailer6_id, trailer7_id, trailer8_id, trailer9_id, trailer10_id;
