@@ -24,12 +24,15 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 		FROM "user"
 		WHERE email = $1
 	`
+	// Note: There is a problem with nullable uint. So we need a crutch here.
+	var assetImageID sql.NullInt64
+
 	row := db.conn.QueryRow(query, email)
 	err := row.Scan(&user.ID,
 		&user.Email,
 		&user.Username,
 		&user.PasswordHash,
-		&user.AssetImageID,
+		&assetImageID,
 		&user.DateOfBirth,
 		&user.PhoneNumber,
 	)
@@ -40,6 +43,10 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 		}
 		log.Error("GetUserByEmail: failed to scan user", log.ToError(err))
 		return nil, err
+	}
+
+	if assetImageID.Valid {
+		user.AssetImageID = uint(assetImageID.Int64)
 	}
 
 	return &user, nil
@@ -53,6 +60,8 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 	)
 
 	var user entity.User
+	var assetImageID sql.NullInt64
+	// Note: There is a problem with nullable uint. So we need a crutch here.
 
 	query := `
 		SELECT user_id, email, username, password_hash, asset_image_id, date_of_birth, phone_number
@@ -60,11 +69,12 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 		WHERE user_id = $1
 	`
 	row := db.conn.QueryRow(query, userID)
+
 	err := row.Scan(&user.ID,
 		&user.Email,
 		&user.Username,
 		&user.PasswordHash,
-		&user.AssetImageID,
+		&assetImageID,
 		&user.DateOfBirth,
 		&user.PhoneNumber,
 	)
@@ -75,6 +85,10 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 		}
 		log.Error("GetUserByID: failed to scan user", log.ToError(err))
 		return nil, err
+	}
+
+	if assetImageID.Valid {
+		user.AssetImageID = uint(assetImageID.Int64)
 	}
 
 	return &user, nil
