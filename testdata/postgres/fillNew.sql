@@ -125,8 +125,8 @@ WHERE s3_key LIKE '/actors/%' OR s3_key LIKE '/posters/%';
 
 -- Link media to videos using the asset_video records
 INSERT INTO media_video (media_id, asset_video_id, video_type) VALUES
-                                                                   (1, 1, 'trailer'),     -- Toy Story trailer
-                                                                   (2, 2, 'trailer'),     -- Jumanji trailer
+                                                                   (1, 1, 'trailer'),  -- Toy Story trailer
+                                                                   (2, 2, 'trailer'),  -- Jumanji trailer
                                                                    (3, 3, 'trailer'),  -- Grumpier Old Men
                                                                    (4, 4, 'trailer'),  -- Waiting to Exhale
                                                                    (5, 5, 'trailer'),  -- Father of the Bride Part II
@@ -247,7 +247,7 @@ INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
 -- Insert additional users
 INSERT INTO "user" (username, asset_image_id, password_hash, date_of_birth, phone_number, email) VALUES
                                                                                                      ('Chris', 3, '$2b$10$examplehashedpassword123456789012', '1990-05-15', '+1234567890', 'chris@example.com'),
-                                                                                                     ('Alex', NULL, '$2b$10$examplehashedpassword123456789013', '1985-08-20', '+0987654321', 'alex@example.com');
+                                                                                                     ('Alex', 4, '$2b$10$examplehashedpassword123456789013', '1985-08-20', '+0987654321', 'alex@example.com');
 
 -- Insert user sessions
 INSERT INTO user_session (user_id, session_token, expires_at) VALUES
