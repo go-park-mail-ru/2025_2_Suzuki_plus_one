@@ -30,14 +30,14 @@ INSERT INTO media (media_type, title, description, release_date, rating, duratio
 INSERT INTO media_genre (media_id, genre_id) VALUES
                                                  (1, 5), (1, 6), (1, 4),
                                                  (2, 5), (2, 6), (2, 1),
-                                                 (2, 5), (2, 6), (2, 1),
-                                                 (2, 5), (2, 6), (2, 1),
-                                                 (2, 5), (2, 6), (2, 1),
-                                                 (2, 5), (2, 6), (2, 1),
-                                                 (2, 5), (2, 6), (2, 1),
-                                                 (2, 5), (2, 6), (2, 1),
-                                                 (2, 5), (2, 6), (2, 1),
-                                                 (2, 5), (2, 6), (2, 1);
+                                                 (3, 5), (3, 6), (3, 1),
+                                                 (4, 5), (4, 6), (4, 1),
+                                                 (5, 5), (5, 6), (5, 1),
+                                                 (6, 5), (6, 6), (6, 1),
+                                                 (7, 5), (7, 6), (7, 1),
+                                                 (8, 5), (8, 6), (8, 1),
+                                                 (9, 5), (9, 6), (9, 1),
+                                                 (10, 5), (10, 6), (10, 1);
 
 -- Insert ONLY the video assets first so we can track their IDs
 INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
