@@ -4,20 +4,22 @@ BEGIN;
 -- First, let's check what assets already exist
 SELECT asset_id, s3_key FROM asset ORDER BY asset_id;
 
--- Insert genres
+-- Insert genres (используем те же жанры, что в первом скрипте)
 INSERT INTO genre (name, description) VALUES
-                                          ('Animation', 'Animated films and series'),
+                                          ('Action', 'High-energy films with physical stunts and chases'),
+                                          ('Sci-Fi', 'Futuristic technology, space exploration, and scientific themes'),
+                                          ('Thriller', 'Suspenseful stories that keep viewers on edge'),
+                                          ('Drama', 'Serious, character-driven stories focusing on emotional themes'),
                                           ('Adventure', 'Exciting journeys and exploration'),
-                                          ('Family', 'Family-friendly content'),
-                                          ('Comedy', 'Funny and entertaining films');
+                                          ('Fantasy', 'Magical elements, mythical creatures, and imaginary worlds');
 
 -- Insert media (only Toy Story)
 INSERT INTO media (media_type, title, description, release_date, rating, duration_minutes, age_rating, country, plot_summary) VALUES
-    ('movie', 'Toy Story', 'Led by Woody, Andy''s toys live happily in his room until Andy''s birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy''s heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.', '1995-11-22', 8.0, 81, 0, 'United States of America', 'The adventure takes off when toys come to life!');
+    ('movie', 'Toy Story', 'Led by Woody, Andy''s toys live happily in his room until Andy''s birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy''s heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.', '1995-11-22', 8.0, 81, 13, 'United States of America', 'The adventure takes off when toys come to life!');
 
--- Link media to genres
+-- Link media to genres (те же жанры, что в первом скрипте)
 INSERT INTO media_genre (media_id, genre_id) VALUES
-                                                 (1, 1), (1, 2), (1, 3), (1, 4);
+                                                 (1, 5), (1, 6), (1, 4);  -- Adventure, Fantasy, Drama
 
 -- Insert ONLY the video assets first so we can track their IDs
 INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
