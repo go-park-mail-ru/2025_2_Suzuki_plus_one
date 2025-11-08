@@ -4,13 +4,6 @@ BEGIN;
 -- First, let's check what assets already exist
 SELECT asset_id, s3_key FROM asset ORDER BY asset_id;
 
-ALTER SEQUENCE media_media_id_seq RESTART WITH 1;
-ALTER SEQUENCE genre_genre_id_seq RESTART WITH 1;
-ALTER SEQUENCE asset_asset_id_seq RESTART WITH 1;
-ALTER SEQUENCE asset_video_asset_video_id_seq RESTART WITH 1;
-ALTER SEQUENCE asset_image_asset_image_id_seq RESTART WITH 1;
-ALTER SEQUENCE actor_actor_id_seq RESTART WITH 1;
-
 -- Insert genres
 INSERT INTO genre (name, description) VALUES
                                           ('Action', 'High-energy films with physical stunts and chases'),
