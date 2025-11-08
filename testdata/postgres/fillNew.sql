@@ -26,18 +26,37 @@ INSERT INTO media (media_type, title, description, release_date, rating, duratio
                                                                                                                                   ('movie', 'Sudden Death', 'A former firefighter must save his daughter and the Vice President from terrorists during a Stanley Cup finals game.', '1995-10-27', 5.6, 111, 18, 'United States of America', 'Terror has no time limit.'),
                                                                                                                                   ('movie', 'GoldenEye', 'James Bond sets out to stop a Russian crime syndicate from using a satellite weapon against London.', '1995-11-17', 7.2, 130, 13, 'United Kingdom', 'Bond is back with a vengeance.');
 
--- Link media to genres
+-- Correct genre associations for each movie
 INSERT INTO media_genre (media_id, genre_id) VALUES
-                                                 (1, 5), (1, 6), (1, 4),
-                                                 (2, 5), (2, 6), (2, 1),
-                                                 (3, 5), (3, 6), (3, 1),
-                                                 (4, 5), (4, 6), (4, 1),
-                                                 (5, 5), (5, 6), (5, 1),
-                                                 (6, 5), (6, 6), (6, 1),
-                                                 (7, 5), (7, 6), (7, 1),
-                                                 (8, 5), (8, 6), (8, 1),
-                                                 (9, 5), (9, 6), (9, 1),
-                                                 (10, 5), (10, 6), (10, 1);
+-- Toy Story (Adventure, Fantasy, Comedy* - но Comedy нет в списке)
+(1, 5), (1, 6),  -- Adventure, Fantasy
+
+-- Jumanji (Adventure, Fantasy, Action)
+(2, 5), (2, 6), (2, 1), -- Adventure, Fantasy, Action
+
+-- Grumpier Old Men (Comedy* - но Comedy нет, ближайший Drama)
+(3, 4), -- Drama
+
+-- Waiting to Exhale (Drama)
+(4, 4), -- Drama
+
+-- Father of the Bride Part II (Comedy* - но Comedy нет, ближайший Drama)
+(5, 4), -- Drama
+
+-- Heat (Action, Thriller, Drama)
+(6, 1), (6, 3), (6, 4), -- Action, Thriller, Drama
+
+-- Sabrina (Romance* - но Romance нет, ближайший Drama)
+(7, 4), -- Drama
+
+-- Tom and Huck (Adventure)
+(8, 5), -- Adventure
+
+-- Sudden Death (Action, Thriller)
+(9, 1), (9, 3), -- Action, Thriller
+
+-- GoldenEye (Action, Adventure, Thriller)
+(10, 1), (10, 5), (10, 3); -- Action, Adventure, Thriller
 
 -- Insert ONLY the video assets first so we can track their IDs
 INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
