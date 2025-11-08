@@ -115,8 +115,8 @@ func (db *DataBase) CreateUser(ctx context.Context, user entity.User) (uint, err
 	var userID uint
 
 	query := `
-		INSERT INTO "user" (email, username, password_hash, asset_image_id)
-		VALUES ($1, $2, $3, 1)
+		INSERT INTO "user" (email, username, password_hash)
+		VALUES ($1, $2, $3)
 		RETURNING user_id
 	`
 	err := db.conn.QueryRow(query, user.Email, user.Username, user.PasswordHash).Scan(&userID)
