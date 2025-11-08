@@ -15,7 +15,7 @@ INSERT INTO genre (name, description) VALUES
 
 -- Insert media (movies and series)
 INSERT INTO media (media_type, title, description, release_date, rating, duration_minutes, age_rating, country, plot_summary) VALUES
-('movie', 'Toy Story', 'Led by Woody, Andy''s toys live happily in his room until Andy''s birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy''s heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.', '1995-11-22', 8.0, 81, 13, 'United States of America', 'The adventure takes off when toys come to life!'),
+('movie', 'Toy Story', 'Led by Woody, Andy''s toys live happily in his room until Andy''s birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy''s heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.', '1995-11-22', 8.0, 81, 13, 'United States of America', 'The adventure takes off when toys come to life!');
 
 -- Link media to genres
 INSERT INTO media_genre (media_id, genre_id) VALUES
@@ -25,7 +25,7 @@ INSERT INTO media_genre (media_id, genre_id) VALUES
 -- Insert ONLY the video assets first so we can track their IDs
 INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
 ('/medias/1_ToyStoryMovie.mp4', 'video/mp4', 1500.0),
-('/trailers/1_ToyStoryTrailer.mp4', 'video/mp4', 120.5),
+('/trailers/1_ToyStoryTrailer.mp4', 'video/mp4', 120.5);
 
 -- Get the asset IDs for the videos we just inserted
 DO $$
@@ -41,7 +41,7 @@ RAISE NOTICE 'Video assets inserted with IDs: %, %', video1_id, trailer1_id;
     -- Now insert asset_video records with the correct asset IDs
 INSERT INTO asset_video (asset_id, quality, resolution_width, resolution_height) VALUES
 (video1_id, '720p', 1280, 720),
-(trailer1_id, '720p', 1280, 720),
+(trailer1_id, '720p', 1280, 720);
 END $$;
 
 -- Now insert the rest of the assets (actor images and posters)
@@ -53,7 +53,7 @@ INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
 ('/actors/Jim_Varney.png', 'image/png', 0.07),
 ('/actors/Wallace_Shawn.png', 'image/png', 0.07),
 -- Posters
-('/posters/1_Toy_Story.png', 'image/png', 0.1),
+('/posters/1_Toy_Story.png', 'image/png', 0.1);
 
 -- Insert asset_images for actors and posters
 INSERT INTO asset_image (asset_id, resolution_width, resolution_height)
@@ -64,7 +64,7 @@ WHERE s3_key LIKE '/actors/%' OR s3_key LIKE '/posters/%';
 -- Link media to videos using the asset_video records
 INSERT INTO media_video (media_id, asset_video_id, video_type) VALUES
 (1, 1, 'main_video'),  -- Toy Story main video
-(1, 3, 'trailer'),     -- Toy Story trailer
+(1, 3, 'trailer');     -- Toy Story trailer
 
 -- Link media to posters
 INSERT INTO media_image (media_id, asset_image_id, image_type)
