@@ -26,6 +26,8 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 	`
 	// Note: There is a problem with nullable uint. So we need a crutch here.
 	var assetImageID sql.NullInt64
+	var dateOfBirth sql.NullTime
+	var phoneNumber sql.NullString
 
 	row := db.conn.QueryRow(query, email)
 	err := row.Scan(&user.ID,
@@ -33,8 +35,8 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 		&user.Username,
 		&user.PasswordHash,
 		&assetImageID,
-		&user.DateOfBirth,
-		&user.PhoneNumber,
+		&dateOfBirth,
+		&phoneNumber,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -47,6 +49,12 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 
 	if assetImageID.Valid {
 		user.AssetImageID = uint(assetImageID.Int64)
+	}
+	if dateOfBirth.Valid {
+		user.DateOfBirth = dateOfBirth.Time
+	}
+	if phoneNumber.Valid {
+		user.PhoneNumber = phoneNumber.String
 	}
 
 	return &user, nil
@@ -61,6 +69,9 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 
 	var user entity.User
 	var assetImageID sql.NullInt64
+	var dateOfBirth sql.NullTime
+	var phoneNumber sql.NullString
+
 	// Note: There is a problem with nullable uint. So we need a crutch here.
 
 	query := `
@@ -75,8 +86,8 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 		&user.Username,
 		&user.PasswordHash,
 		&assetImageID,
-		&user.DateOfBirth,
-		&user.PhoneNumber,
+		&dateOfBirth,
+		&phoneNumber,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -89,6 +100,12 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 
 	if assetImageID.Valid {
 		user.AssetImageID = uint(assetImageID.Int64)
+	}
+	if dateOfBirth.Valid {
+		user.DateOfBirth = dateOfBirth.Time
+	}
+	if phoneNumber.Valid {
+		user.PhoneNumber = phoneNumber.String
 	}
 
 	return &user, nil
@@ -186,15 +203,20 @@ func (db *DataBase) UpdateUser(
 	row := db.conn.QueryRow(query, username, email, dateOfBirth, phoneNumber, userID)
 
 	var updatedUser entity.User
+	var assetImageID sql.NullInt64
+	var dateOfBirthSql sql.NullTime
+	var phoneNumberSql sql.NullString
+
+	// Note: There is a problem with nullable uint. So we need a crutch here.
 
 	err := row.Scan(
 		&updatedUser.ID,
 		&updatedUser.Email,
 		&updatedUser.Username,
-		&updatedUser.DateOfBirth,
-		&updatedUser.PhoneNumber,
+		&dateOfBirth,
+		&phoneNumber,
 		&updatedUser.PasswordHash,
-		&updatedUser.AssetImageID,
+		&assetImageID,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -202,6 +224,16 @@ func (db *DataBase) UpdateUser(
 			return nil, entity.ErrUserNotFound
 		}
 		return nil, err
+	}
+
+	if dateOfBirthSql.Valid {
+		updatedUser.DateOfBirth = dateOfBirthSql.Time
+	}
+	if phoneNumberSql.Valid {
+		updatedUser.PhoneNumber = phoneNumberSql.String
+	}
+	if assetImageID.Valid {
+		updatedUser.AssetImageID = uint(assetImageID.Int64)
 	}
 
 	return &updatedUser, nil
