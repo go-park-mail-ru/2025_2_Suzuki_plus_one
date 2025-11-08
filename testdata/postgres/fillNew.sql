@@ -21,8 +21,8 @@ INSERT INTO media_genre (media_id, genre_id) VALUES
 
 -- Insert ONLY the video assets first so we can track their IDs
 INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
-                                                        ('/medias/1_ToyStoryMovie.mp4', 'video/mp4', 1500.0),
-                                                        ('/trailers/1_ToyStoryTrailer.mp4', 'video/mp4', 120.5);
+                                                        ('/medias/InceptionMovie.webm', 'video/webm', 1500.0),
+                                                        ('/trailers/InceptionTrailer.webm', 'video/webm', 120.5);
 
 -- Get the asset IDs for the videos we just inserted
 DO $$
@@ -30,14 +30,14 @@ DECLARE
 video1_id BIGINT;
     trailer1_id BIGINT;
 BEGIN
-SELECT asset_id INTO video1_id FROM asset WHERE s3_key = '/medias/1_ToyStoryMovie.mp4';
-SELECT asset_id INTO trailer1_id FROM asset WHERE s3_key = '/trailers/1_ToyStoryTrailer.mp4';
+SELECT asset_id INTO video1_id FROM asset WHERE s3_key = '/medias/InceptionMovie.webm';
+SELECT asset_id INTO trailer1_id FROM asset WHERE s3_key = '/trailers/InceptionTrailer.webm';
 
 RAISE NOTICE 'Video assets inserted with IDs: %, %', video1_id, trailer1_id;
 
     -- Now insert asset_video records with the correct asset IDs
 INSERT INTO asset_video (asset_id, quality, resolution_width, resolution_height) VALUES
-                                                                                     (video1_id, '720p', 1280, 720),
+                                                                                     (video1_id, '1080p', 1920, 1080),
                                                                                      (trailer1_id, '720p', 1280, 720);
 END $$;
 
@@ -90,61 +90,41 @@ INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
                                                            (1, 1, 'Woody (voice)'),
                                                            (2, 1, 'Buzz Lightyear (voice)');
 
--- Insert additional users
+-- Insert one test user
 INSERT INTO "user" (username, password_hash, date_of_birth, phone_number, email) VALUES
-                                                                                     ('Chris', '$2b$10$examplehashedpassword123456789012', '1990-05-15', '+1234567890', 'chris@example.com'),
-                                                                                     ('Alex', '$2b$10$examplehashedpassword123456789013', '1985-08-20', '+0987654321', 'alex@example.com');
+    ('testuser', '$2b$10$examplehashedpassword123456789012', '1990-01-01', '+1234567890', 'testuser@example.com');
 
--- Insert user sessions
+-- Insert user session
 INSERT INTO user_session (user_id, session_token, expires_at) VALUES
-                                                                  (1, 'chris_session_token_123', CURRENT_TIMESTAMP + INTERVAL '30 days'),
-                                                                  (2, 'alex_session_token_456', CURRENT_TIMESTAMP + INTERVAL '30 days');
+    (1, 'testuser_session_token_123', CURRENT_TIMESTAMP + INTERVAL '30 days');
 
--- Insert playlists
+-- Insert playlist
 INSERT INTO playlist (user_id, name, description, visibility) VALUES
-                                                                  (1, 'My Favorite Movies', 'A collection of my all-time favorite films', 'public'),
-                                                                  (2, 'Animation Collection', 'The best animated movies', 'unlisted');
+    (1, 'My Favorite Movies', 'A collection of my all-time favorite films', 'public');
 
--- Link playlist media (only Toy Story)
+-- Link playlist media
 INSERT INTO playlist_media (playlist_id, media_id) VALUES
-                                                       (1, 1),  -- Toy Story in favorite movies
-                                                       (2, 1);  -- Toy Story in animation collection
+    (1, 1);  -- Toy Story in favorite movies
 
--- Insert user playlist roles
+-- Insert user playlist role
 INSERT INTO user_playlist (user_id, playlist_id, role) VALUES
-                                                           (1, 1, 'owner'),
-                                                           (2, 2, 'owner');
+    (1, 1, 'owner');
 
--- Insert watch history (only Toy Story)
+-- Insert watch history
 INSERT INTO user_watch_history (user_id, media_id, progress_seconds) VALUES
-                                                                         (1, 1, 2400),  -- Chris watched 40 min of Toy Story
-                                                                         (2, 1, 3600);  -- Alex watched 60 min of Toy Story
+    (1, 1, 2400);  -- testuser watched 40 min of Toy Story
 
--- Insert likes (only Toy Story)
+-- Insert likes
 INSERT INTO user_like_media (user_id, media_id) VALUES
-                                                    (1, 1),  -- Chris likes Toy Story
-                                                    (2, 1);  -- Alex likes Toy Story
+    (1, 1);  -- testuser likes Toy Story
 
 INSERT INTO user_like_actor (user_id, actor_id) VALUES
-                                                    (1, 1),  -- Chris likes Tom Hanks
-                                                    (2, 2);  -- Alex likes Tim Allen
+                                                    (1, 1),  -- testuser likes Tom Hanks
+                                                    (1, 2);  -- testuser likes Tim Allen
 
-INSERT INTO user_like_playlist (user_id, playlist_id) VALUES
-    (2, 1);  -- Alex likes Chris's favorite playlist
-
--- Insert comments (only Toy Story)
-INSERT INTO user_comment_media (user_id, media_id, content) VALUES
-                                                                (1, 1, 'Mind-blowing concept and incredible visuals! One of the best animated films.'),
-                                                                (2, 1, 'The chemistry between Woody and Buzz is amazing!');
-
-INSERT INTO user_comment_actor (user_id, actor_id, content) VALUES
-                                                                (1, 1, 'Tom Hanks always delivers outstanding performances!'),
-                                                                (2, 2, 'Tim Allen has great comedic timing.');
-
--- Insert ratings (only Toy Story)
+-- Insert rating
 INSERT INTO user_rating_media (user_id, media_id, rating) VALUES
-                                                              (1, 1, 5),  -- Chris rates Toy Story 5 stars
-                                                              (2, 1, 5);  -- Alex rates Toy Story 5 stars
+    (1, 1, 5);  -- testuser rates Toy Story 5 stars
 
 -- Commit transaction
 COMMIT;
@@ -170,5 +150,5 @@ RAISE NOTICE 'Database populated successfully:';
     RAISE NOTICE '- % actors', actor_count;
     RAISE NOTICE '- % assets', asset_count;
     RAISE NOTICE '- % asset videos', asset_video_count;
-    RAISE NOTICE '- Genres, playlists, comments, and ratings added';
+    RAISE NOTICE '- Genres, playlist, likes, and rating added';
 END $$;
