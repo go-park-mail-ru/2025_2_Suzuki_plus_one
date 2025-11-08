@@ -13,7 +13,7 @@ INSERT INTO genre (name, description) VALUES
                                           ('Adventure', 'Exciting journeys and exploration'),
                                           ('Fantasy', 'Magical elements, mythical creatures, and imaginary worlds');
 
--- Insert media (movies and series) - ПРОСТО ДОБАВИЛ ФИЛЬМЫ ИЗ СПИСКА
+-- Insert media (movies and series)
 INSERT INTO media (media_type, title, description, release_date, rating, duration_minutes, age_rating, country, plot_summary) VALUES
                                                                                                                                   ('movie', 'Toy Story', 'Led by Woody, Andy''s toys live happily in his room until Andy''s birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy''s heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.', '1995-11-22', 8.0, 81, 13, 'United States of America', 'The adventure takes off when toys come to life!'),
                                                                                                                                   ('movie', 'Jumanji', 'When siblings Judy and Peter discover an enchanted board game that opens the door to a magical world, they unwittingly invite Alan -- an adult who''s been trapped inside the game for 26 years -- into their living room. Alan''s only hope for freedom is to finish the game, which proves risky as all three find themselves running from giant rhinoceroses, evil monkeys and other terrifying creatures.', '1995-12-15', 7.241, 104, 13, 'United States of America', 'It''s a jungle in here.'),
@@ -41,7 +41,16 @@ INSERT INTO media_genre (media_id, genre_id) VALUES
 
 -- Insert ONLY the video assets first so we can track their IDs
 INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1500.0);
+                                                        ('/trailers/1_ToyStoryTrailer.webm', 'video/webm', 1500.0),
+                                                        ('/trailers/2_JumanjiTrailer.webm', 'video/webm', 1400.0),
+                                                        ('/trailers/3_GrumpierOldMenTrailer.mp4', 'video/mp4', 1600.0),
+                                                        ('/trailers/4_WaitingToExhaleTrailer.mp4', 'video/mp4', 1700.0),
+                                                        ('/trailers/5_FatherOfTheBrideIITrailer.mp4', 'video/mp4', 1550.0),
+                                                        ('/trailers/6_HeatTrailer.mp4', 'video/mp4', 2200.0),
+                                                        ('/trailers/7_SabrinaTrailer.mp4', 'video/mp4', 1650.0),
+                                                        ('/trailers/8_TomAndHuckTrailer.mp4', 'video/mp4', 1450.0),
+                                                        ('/trailers/9_SuddenDeathTrailer.mp4', 'video/mp4', 1800.0),
+                                                        ('/trailers/10_GoldenEyeTrailer.mp4', 'video/mp4', 2000.0),
 
 
 -- Get the asset IDs for the videos we just inserted
@@ -58,16 +67,16 @@ trailer8_id BIGINT;
 trailer9_id BIGINT;
 trailer10_id BIGINT;
 BEGIN
-SELECT asset_id INTO trailer1_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
-SELECT asset_id INTO trailer2_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
-SELECT asset_id INTO trailer3_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
-SELECT asset_id INTO trailer4_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
-SELECT asset_id INTO trailer5_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
-SELECT asset_id INTO trailer6_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
-SELECT asset_id INTO trailer7_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
-SELECT asset_id INTO trailer8_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
-SELECT asset_id INTO trailer9_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
-SELECT asset_id INTO trailer10_id FROM asset WHERE s3_key = '/trailers/InceptionMovie.webm';
+SELECT asset_id INTO trailer1_id FROM asset WHERE s3_key = '/trailers/1_ToyStoryTrailer.webm';
+SELECT asset_id INTO trailer2_id FROM asset WHERE s3_key = '/trailers/2_JumanjiTrailer.webm';
+SELECT asset_id INTO trailer3_id FROM asset WHERE s3_key = '/trailers/3_GrumpierOldMenTrailer.mp4';
+SELECT asset_id INTO trailer4_id FROM asset WHERE s3_key = '/trailers/4_WaitingToExhaleTrailer.mp4';
+SELECT asset_id INTO trailer5_id FROM asset WHERE s3_key = '/trailers/5_FatherOfTheBrideIITrailer.mp4';
+SELECT asset_id INTO trailer6_id FROM asset WHERE s3_key = '/trailers/6_HeatTrailer.mp4';
+SELECT asset_id INTO trailer7_id FROM asset WHERE s3_key = '/trailers/7_SabrinaTrailer.mp4';
+SELECT asset_id INTO trailer8_id FROM asset WHERE s3_key = '/trailers/8_TomAndHuckTrailer.mp4';
+SELECT asset_id INTO trailer9_id FROM asset WHERE s3_key = '/trailers/9_SuddenDeathTrailer.mp4';
+SELECT asset_id INTO trailer10_id FROM asset WHERE s3_key = '/trailers/10_GoldenEyeTrailer.mp4';
 
 RAISE NOTICE 'Video assets inserted with IDs: %, %, %, %, %, %, %, %, %, %, %, %', trailer1_id, trailer2_id, trailer3_id, trailer4_id, trailer5_id, trailer6_id, trailer7_id, trailer8_id, trailer9_id, trailer10_id;
 
@@ -188,7 +197,7 @@ FROM asset_image ai
          JOIN asset a ON ai.asset_id = a.asset_id
 WHERE a.s3_key = '/posters/10_GoldenEye.png';
 
--- Insert actors - ПРОСТО ДОБАВИЛ АКТЕРОВ
+-- Insert actors
 INSERT INTO actor (name, birth_date, bio) VALUES
                                               ('Tom Hanks', '1956-07-09', 'Thomas Jeffrey Hanks (born July 9, 1956) is an American actor and filmmaker.'),
                                               ('Tim Allen', '1953-06-13', 'Tim Allen (born Timothy Allen Dick; June 13, 1953) is an American comedian, actor, voice-over artist, and entertainer.'),
