@@ -30,6 +30,7 @@ INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
 ('/trailers/InceptionTrailer.webm', 'video/webm', 120.5),
 ('/trailers/MatrixTrailer.webm', 'video/webm', 110.3);
 
+
 -- Get the asset IDs for the videos we just inserted
 DO $$
 DECLARE
