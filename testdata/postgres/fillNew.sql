@@ -1,154 +1,165 @@
 -- Begin transaction
 BEGIN;
 
--- First, let's check what assets already exist
-SELECT asset_id, s3_key FROM asset ORDER BY asset_id;
-
 -- Insert genres
 INSERT INTO genre (name, description) VALUES
-                                          ('Animation', 'Animated films and series'),
+                                          ('Action', 'High-energy films with physical stunts and chases'),
+                                          ('Sci-Fi', 'Futuristic technology, space exploration, and scientific themes'),
+                                          ('Thriller', 'Suspenseful stories that keep viewers on edge'),
+                                          ('Drama', 'Serious, character-driven stories focusing on emotional themes'),
                                           ('Adventure', 'Exciting journeys and exploration'),
-                                          ('Family', 'Family-friendly content'),
-                                          ('Comedy', 'Funny and entertaining films');
+                                          ('Fantasy', 'Magical elements, mythical creatures, and imaginary worlds');
 
--- Insert media (only Toy Story)
+-- Insert media (movies and series)
 INSERT INTO media (media_type, title, description, release_date, rating, duration_minutes, age_rating, country, plot_summary) VALUES
-    ('movie', 'Toy Story', 'Led by Woody, Andy''s toys live happily in his room until Andy''s birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy''s heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.', '1995-11-22', 8.0, 81, 0, 'United States of America', 'The adventure takes off when toys come to life!');
+-- Movies
+('movie', 'Inception', 'A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.', '2010-07-16', 8.8, 148, 12, 'USA', 'Dom Cobb is a skilled thief, the absolute best in the dangerous art of extraction, stealing valuable secrets from deep within the subconscious during the dream state.'),
+('movie', 'The Matrix', 'A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.', '1999-03-31', 8.7, 136, 15, 'USA', 'Thomas Anderson, a computer programmer, is led to fight an underground war against powerful computers who have constructed his entire reality with a system called the Matrix.'),
+-- Series
+('series', 'Breaking Bad', 'A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family''s future.', '2008-01-20', 9.5, 50, 18, 'USA', 'Walter White, a chemistry teacher, discovers he has cancer and decides to get into the meth-making business to repay his medical debts.'),
+-- Episodes for Breaking Bad
+('episode', 'Pilot', 'Diagnosed with terminal lung cancer, chemistry teacher Walter White teams up with former student Jesse Pinkman to cook and sell crystal meth.', '2008-01-20', 8.9, 58, 18, 'USA', 'Walter White learns he has lung cancer and begins his journey into the criminal underworld.'),
+('episode', 'Cat''s in the Bag...', 'After their first drug deal goes terribly wrong, Walt and Jesse struggle to cover their tracks.', '2008-01-27', 8.7, 48, 18, 'USA', 'Walt and Jesse deal with the aftermath of their first encounter with the criminal world.');
+
+-- Insert episode relationships
+INSERT INTO media_episode (episode_id, series_id, season_number, episode_number) VALUES
+                                                                                     (4, 3, 1, 1),  -- Pilot episode
+                                                                                     (5, 3, 1, 2);  -- Cat's in the Bag episode
 
 -- Link media to genres
 INSERT INTO media_genre (media_id, genre_id) VALUES
-                                                 (1, 1), (1, 2), (1, 3), (1, 4);
+-- Inception genres
+(1, 1), (1, 2), (1, 3),  -- Action, Sci-Fi, Thriller
+-- Matrix genres
+(2, 1), (2, 2), (2, 3),  -- Action, Sci-Fi, Thriller
+-- Breaking Bad genres
+(3, 4), (3, 3);  -- Drama, Thriller
 
--- Insert ONLY the video assets first so we can track their IDs
-INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
-                                                        ('/medias/InceptionMovie.webm', 'video/webm', 1500.0),
-                                                        ('/trailers/InceptionTrailer.webm', 'video/webm', 120.5);
-
--- Get the asset IDs for the videos we just inserted
-DO $$
-DECLARE
-video1_id BIGINT;
-    trailer1_id BIGINT;
-BEGIN
-SELECT asset_id INTO video1_id FROM asset WHERE s3_key = '/medias/InceptionMovie.webm';
-SELECT asset_id INTO trailer1_id FROM asset WHERE s3_key = '/trailers/InceptionTrailer.webm';
-
-RAISE NOTICE 'Video assets inserted with IDs: %, %', video1_id, trailer1_id;
-
-    -- Now insert asset_video records with the correct asset IDs
-INSERT INTO asset_video (asset_id, quality, resolution_width, resolution_height) VALUES
-                                                                                     (video1_id, '1080p', 1920, 1080),
-                                                                                     (trailer1_id, '720p', 1280, 720);
-END $$;
-
--- Now insert the rest of the assets (actor images and posters)
-INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+-- Insert assets (files stored in S3)
+INSERT INTO asset (s3_key, mime_type, size_mb) VALUES
 -- Actor images
-('/actors/Tom_Hanks.png', 'image/png', 0.07),
-('/actors/Tim_Allen.png', 'image/png', 0.07),
+('/actors/leo.png', 'image/png', 2.5),
+('/actors/morgan.png', 'image/png', 2.3),
+-- Avatars
+('/avatars/Chris.png', 'image/png', 1.8),
 -- Posters
-('/posters/1_Toy_Story.png', 'image/png', 0.1);
+('/posters/InceptionPoster.png', 'image/png', 3.2),
+('/posters/MatrixPoster.png', 'image/png', 3.1),
+-- Media files
+('/medias/InceptionMovie.webm', 'video/webm', 1500.0),
+('/medias/MatrixMovie.webm', 'video/webm', 1400.0),
+-- Trailers
+('/trailers/InceptionTrailer.webm', 'video/webm', 120.5),
+('/trailers/MatrixTrailer.webm', 'video/webm', 110.3);
 
--- Insert asset_images for actors and posters
-INSERT INTO asset_image (asset_id, resolution_width, resolution_height)
-SELECT asset_id, 500, 750
-FROM asset
-WHERE s3_key LIKE '/actors/%' OR s3_key LIKE '/posters/%';
+-- Insert asset images
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+                                                                            (2, 300, 450),  -- leo.png (asset_id 2)
+                                                                            (3, 300, 450),  -- morgan.png (asset_id 3)
+                                                                            (4, 200, 200),  -- Chris.png (avatar) (asset_id 4)
+                                                                            (5, 400, 600),  -- InceptionPoster.png (asset_id 5)
+                                                                            (6, 400, 600);  -- MatrixPoster.png (asset_id 6)
 
--- Link media to videos using the asset_video records
+-- Insert asset videos - these will get their own IDs (asset_video_id)
+INSERT INTO asset_video (asset_id, quality, resolution_width, resolution_height) VALUES
+                                                                                     (7, '1080p', 1920, 1080),  -- InceptionMovie.webm (asset_id 7) -> asset_video_id 1
+                                                                                     (8, '1080p', 1920, 1080),  -- MatrixMovie.webm (asset_id 8) -> asset_video_id 2
+                                                                                     (9, '720p', 1280, 720),    -- InceptionTrailer.webm (asset_id 9) -> asset_video_id 3
+                                                                                     (10, '720p', 1280, 720);   -- MatrixTrailer.webm (asset_id 10) -> asset_video_id 4
+
+-- Link media to images (posters)
+INSERT INTO media_image (media_id, asset_image_id, image_type) VALUES
+                                                                   (1, 4, 'poster'),  -- Inception poster (asset_image_id 4)
+                                                                   (2, 5, 'poster'),  -- Matrix poster (asset_image_id 5)
+                                                                   (3, 4, 'poster');  -- Breaking Bad uses Inception poster for example
+
+-- Link media to videos - use the actual asset_video_id values (1-4)
 INSERT INTO media_video (media_id, asset_video_id, video_type) VALUES
-                                                                   (1, 1, 'main_video'),  -- Toy Story main video
-                                                                   (1, 2, 'trailer');     -- Toy Story trailer
-
--- Link media to posters
-INSERT INTO media_image (media_id, asset_image_id, image_type)
-SELECT 1, asset_image_id, 'poster'
-FROM asset_image ai
-         JOIN asset a ON ai.asset_id = a.asset_id
-WHERE a.s3_key = '/posters/1_Toy_Story.png';
+                                                                   (1, 1, 'main_video'),  -- Inception main video (asset_video_id 1)
+                                                                   (1, 3, 'trailer'),     -- Inception trailer (asset_video_id 3)
+                                                                   (2, 2, 'main_video'),  -- Matrix main video (asset_video_id 2)
+                                                                   (2, 4, 'trailer');     -- Matrix trailer (asset_video_id 4)
 
 -- Insert actors
 INSERT INTO actor (name, birth_date, bio) VALUES
-                                              ('Tom Hanks', '1956-07-09', 'Thomas Jeffrey Hanks (born July 9, 1956) is an American actor and filmmaker.'),
-                                              ('Tim Allen', '1953-06-13', 'Tim Allen (born Timothy Allen Dick; June 13, 1953) is an American comedian, actor, voice-over artist, and entertainer.');
+                                              ('Leonardo DiCaprio', '1974-11-11', 'Academy Award-winning actor known for his roles in Titanic, Inception, and The Revenant.'),
+                                              ('Morgan Freeman', '1937-06-01', 'Renowned actor known for his distinctive voice and roles in The Shawshank Redemption and Driving Miss Daisy.'),
+                                              ('Keanu Reeves', '1964-09-02', 'Canadian actor known for The Matrix series and John Wick franchise.');
 
 -- Link actor images
-INSERT INTO actor_image (actor_id, asset_image_id, image_type)
-SELECT 1, asset_image_id, 'profile'
-FROM asset_image ai
-         JOIN asset a ON ai.asset_id = a.asset_id
-WHERE a.s3_key = '/actors/Tom_Hanks.png';
-
-INSERT INTO actor_image (actor_id, asset_image_id, image_type)
-SELECT 2, asset_image_id, 'profile'
-FROM asset_image ai
-         JOIN asset a ON ai.asset_id = a.asset_id
-WHERE a.s3_key = '/actors/Tim_Allen.png';
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+                                                                   (1, 1, 'profile'),  -- Leo profile image (asset_image_id 1)
+                                                                   (2, 2, 'profile');  -- Morgan profile image (asset_image_id 2)
 
 -- Insert actor roles
 INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
-                                                           (1, 1, 'Woody (voice)'),
-                                                           (2, 1, 'Buzz Lightyear (voice)');
+                                                           (1, 1, 'Dom Cobb'),      -- Leo in Inception
+                                                           (3, 2, 'Neo');           -- Keanu in Matrix
 
--- Insert additional users
+-- Insert users
 INSERT INTO "user" (username, asset_image_id, password_hash, date_of_birth, phone_number, email) VALUES
                                                                                                      ('Chris', 3, '$2b$10$examplehashedpassword123456789012', '1990-05-15', '+1234567890', 'chris@example.com'),
                                                                                                      ('Alex', NULL, '$2b$10$examplehashedpassword123456789013', '1985-08-20', '+0987654321', 'alex@example.com');
 
 -- Insert user sessions
 INSERT INTO user_session (user_id, session_token, expires_at) VALUES
-                                                                  (2, 'chris_session_token_123', CURRENT_TIMESTAMP + INTERVAL '30 days'),
-                                                                  (3, 'alex_session_token_456', CURRENT_TIMESTAMP + INTERVAL '30 days');
+                                                                  (1, 'chris_session_token_123', CURRENT_TIMESTAMP + INTERVAL '30 days'),
+                                                                  (2, 'alex_session_token_456', CURRENT_TIMESTAMP + INTERVAL '30 days');
 
 -- Insert playlists
 INSERT INTO playlist (user_id, name, description, visibility) VALUES
-                                                                  (2, 'My Favorite Movies', 'A collection of my all-time favorite films', 'public'),
-                                                                  (2, 'Animation Collection', 'The best animated movies', 'unlisted'),
-                                                                  (3, 'Private Watchlist', 'Movies I plan to watch', 'private');
+                                                                  (1, 'My Favorite Movies', 'A collection of my all-time favorite films', 'public'),
+                                                                  (1, 'Sci-Fi Collection', 'The best science fiction movies and shows', 'unlisted'),
+                                                                  (2, 'Private Watchlist', 'Movies I plan to watch', 'private');
 
--- Link playlist media (only Toy Story)
+-- Link playlist media
 INSERT INTO playlist_media (playlist_id, media_id) VALUES
-                                                       (1, 1),  -- Toy Story in favorite movies
-                                                       (2, 1),  -- Toy Story in animation collection
-                                                       (3, 1);  -- Toy Story in private watchlist
+                                                       (1, 1), (1, 2),  -- Chris favorites: Inception and Matrix
+                                                       (2, 1), (2, 2), (2, 3),  -- Sci-Fi collection
+                                                       (3, 1);  -- Alex private: Inception
 
 -- Insert user playlist roles
 INSERT INTO user_playlist (user_id, playlist_id, role) VALUES
-                                                           (2, 1, 'owner'),
-                                                           (2, 2, 'owner'),
-                                                           (3, 3, 'owner'),
-                                                           (3, 1, 'viewer');
+                                                           (1, 1, 'owner'),
+                                                           (1, 2, 'owner'),
+                                                           (2, 3, 'owner'),
+                                                           (2, 1, 'viewer');  -- Alex can view Chris's favorite movies
 
--- Insert watch history (only Toy Story)
+-- Insert watch history
 INSERT INTO user_watch_history (user_id, media_id, progress_seconds) VALUES
-                                                                         (2, 1, 8880),  -- Chris watched Toy Story
-                                                                         (3, 1, 3600);  -- Alex watched Toy Story
+                                                                         (1, 1, 8880),  -- Chris watched 2h28m of Inception (148min movie)
+                                                                         (1, 2, 8160),  -- Chris watched 2h16m of Matrix
+                                                                         (2, 1, 3600);  -- Alex watched 1h of Inception
 
--- Insert likes (only Toy Story)
+-- Insert likes
 INSERT INTO user_like_media (user_id, media_id) VALUES
-                                                    (2, 1),  -- Chris likes Toy Story
-                                                    (3, 1);  -- Alex likes Toy Story
+                                                    (1, 1), (1, 2), (1, 3),  -- Chris likes all media
+                                                    (2, 1);  -- Alex likes Inception
 
 INSERT INTO user_like_actor (user_id, actor_id) VALUES
-                                                    (2, 1),  -- Chris likes Tom Hanks
-                                                    (2, 2);  -- Chris likes Tim Allen
+                                                    (1, 1), (1, 3),  -- Chris likes Leo and Keanu
+                                                    (2, 2);  -- Alex likes Morgan
 
 INSERT INTO user_like_playlist (user_id, playlist_id) VALUES
-    (3, 1);  -- Alex likes Chris's favorite playlist
+    (2, 1);  -- Alex likes Chris's favorite movies playlist
 
--- Insert comments (only Toy Story)
+-- Insert comments
 INSERT INTO user_comment_media (user_id, media_id, content) VALUES
-                                                                (2, 1, 'Mind-blowing concept and incredible visuals! One of the best animated films.'),
-                                                                (3, 1, 'The chemistry between Woody and Buzz is amazing!');
+                                                                (1, 1, 'Mind-blowing concept and incredible visuals! One of Nolan''s best works.'),
+                                                                (1, 2, 'Revolutionary film that changed action movies forever.'),
+                                                                (2, 1, 'The dream within a dream concept still confuses me but I love it!');
 
 INSERT INTO user_comment_actor (user_id, actor_id, content) VALUES
-                                                                (2, 1, 'Tom Hanks always delivers outstanding performances!'),
-                                                                (3, 2, 'Tim Allen has great comedic timing.');
+                                                                (1, 1, 'Leo always delivers outstanding performances!'),
+                                                                (2, 2, 'Morgan Freeman has the most iconic voice in Hollywood.');
 
--- Insert ratings (only Toy Story)
+-- Insert ratings
 INSERT INTO user_rating_media (user_id, media_id, rating) VALUES
-                                                              (2, 1, 5),  -- Chris rates Toy Story 5 stars
-                                                              (3, 1, 5);  -- Alex rates Toy Story 5 stars
+                                                              (1, 1, 5),  -- Chris rates Inception 5 stars
+                                                              (1, 2, 5),  -- Chris rates Matrix 5 stars
+                                                              (1, 3, 4),  -- Chris rates Breaking Bad 4 stars
+                                                              (2, 1, 5),  -- Alex rates Inception 5 stars
+                                                              (2, 2, 4);  -- Alex rates Matrix 4 stars
 
 -- Commit transaction
 COMMIT;
@@ -159,20 +170,14 @@ DECLARE
 media_count INTEGER;
     user_count INTEGER;
     actor_count INTEGER;
-    asset_count INTEGER;
-    asset_video_count INTEGER;
 BEGIN
 SELECT COUNT(*) INTO media_count FROM media;
 SELECT COUNT(*) INTO user_count FROM "user";
 SELECT COUNT(*) INTO actor_count FROM actor;
-SELECT COUNT(*) INTO asset_count FROM asset;
-SELECT COUNT(*) INTO asset_video_count FROM asset_video;
 
 RAISE NOTICE 'Database populated successfully:';
     RAISE NOTICE '- % media entries', media_count;
     RAISE NOTICE '- % users', user_count;
     RAISE NOTICE '- % actors', actor_count;
-    RAISE NOTICE '- % assets', asset_count;
-    RAISE NOTICE '- % asset videos', asset_video_count;
     RAISE NOTICE '- Genres, playlists, comments, and ratings added';
 END $$;
