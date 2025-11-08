@@ -41,18 +41,7 @@ INSERT INTO media_genre (media_id, genre_id) VALUES
 
 -- Insert ONLY the video assets first so we can track their IDs
 INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1500.0),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1400.0),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1600.0),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1700.0),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1550.0),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 2200.0),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1650.0),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1450.0),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1800.0),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 2000.0),
-                                                        ('/trailers/InceptionMovie.mp4', 'video/webm', 120.5),
-                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 110.3);
+                                                        ('/trailers/InceptionMovie.webm', 'video/webm', 1500.0);
 
 
 -- Get the asset IDs for the videos we just inserted
