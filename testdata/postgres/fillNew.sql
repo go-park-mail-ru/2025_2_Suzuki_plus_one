@@ -78,7 +78,7 @@ SELECT asset_id INTO trailer8_id FROM asset WHERE s3_key = '/trailers/8_TomAndHu
 SELECT asset_id INTO trailer9_id FROM asset WHERE s3_key = '/trailers/9_SuddenDeathTrailer.mp4';
 SELECT asset_id INTO trailer10_id FROM asset WHERE s3_key = '/trailers/10_GoldenEyeTrailer.mp4';
 
-RAISE NOTICE 'Video assets inserted with IDs: %, %, %, %, %, %, %, %, %, %, %, %', trailer1_id, trailer2_id, trailer3_id, trailer4_id, trailer5_id, trailer6_id, trailer7_id, trailer8_id, trailer9_id, trailer10_id;
+RAISE NOTICE 'Video assets inserted with IDs: %, %, %, %, %, %, %, %, %, %', trailer1_id, trailer2_id, trailer3_id, trailer4_id, trailer5_id, trailer6_id, trailer7_id, trailer8_id, trailer9_id, trailer10_id;
 
     -- Now insert asset_video records with the correct asset IDs
 INSERT INTO asset_video (asset_id, quality, resolution_width, resolution_height) VALUES
