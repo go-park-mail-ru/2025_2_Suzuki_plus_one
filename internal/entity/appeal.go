@@ -2,6 +2,7 @@ package entity
 
 type Appeal struct {
 	ID        uint
+	UserID    uint
 	Tag       string
 	Name      string
 	Status    string
@@ -10,8 +11,9 @@ type Appeal struct {
 }
 
 type AppealMessage struct {
-	ID        uint
-	Sender    string // "user" or "support"
-	Message   string
-	CreatedAt string
+	ID uint
+	// Sender    string // "user" or "support"
+	IsResponse bool
+	Message    string
+	CreatedAt  string
 }

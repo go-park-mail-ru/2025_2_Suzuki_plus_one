@@ -68,12 +68,11 @@ type (
 		GetAppealByID(ctx context.Context, appealID uint) (*entity.Appeal, error)
 
 		// Get messages for appeal
-		GetAppealMessagesIDsByAppealID(ctx context.Context, appealID uint) ([]uint, error)
 		GetAppealMessagesByID(ctx context.Context, appealID uint) ([]entity.AppealMessage, error)
 
 		// Create
 		CreateAppeal(ctx context.Context, userID uint, tag string, name string) (uint, error)
-		CreateAppealMessage(ctx context.Context, appealID uint, sender string, message string) (uint, error)
+		CreateAppealMessage(ctx context.Context, appealID uint, isResponse bool, message string) (uint, error)
 
 		// Update
 		UpdateAppealStatus(ctx context.Context, appealID uint, status string) error
