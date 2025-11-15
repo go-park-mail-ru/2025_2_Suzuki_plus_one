@@ -71,4 +71,24 @@ type (
 	GetAppealMyUseCase interface {
 		Execute(context.Context, dto.GetAppealMyInput) (dto.GetAppealMyOutput, *dto.Error)
 	}
+
+	PostAppealNewUseCase interface {
+		Execute(context.Context, dto.PostAppealNewInput) (dto.PostAppealNewOutput, *dto.Error)
+	}
+
+	GetAppealUseCase interface {
+		Execute(context.Context, dto.GetAppealInput) (dto.GetAppealOutput, *dto.Error)
+	}
+
+	PutAppealResolveUseCase interface {
+		Execute(context.Context, dto.PutAppealResolveInput) (dto.PutAppealResolveOutput, *dto.Error)
+	}
+
+	PostAppealMessageUseCase interface {
+		Execute(context.Context, dto.PostAppealMessageInput) (dto.PostAppealMessageOutput, *dto.Error)
+	}
+
+	GetAppealMessageUseCase interface {
+		Execute(context.Context, dto.GetAppealMessageInput) (dto.GetAppealMessageOutput, *dto.Error)
+	}
 )

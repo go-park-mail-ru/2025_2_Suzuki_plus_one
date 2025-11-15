@@ -24,6 +24,11 @@ type Handlers struct {
 	GetMediaActorUseCase            controller.GetMediaActorUseCase
 	PostUserMeUpdatePasswordUseCase controller.PostUserMeUpdatePasswordUseCase
 	GetAppealMyUseCase              controller.GetAppealMyUseCase
+	PostAppealNewUseCase            controller.PostAppealNewUseCase
+	GetAppealUseCase                controller.GetAppealUseCase
+	PutAppealResolveUseCase         controller.PutAppealResolveUseCase
+	PostAppealMessageUseCase        controller.PostAppealMessageUseCase
+	GetAppealMessageUseCase         controller.GetAppealMessageUseCase
 }
 
 func NewHandlers(
@@ -44,6 +49,11 @@ func NewHandlers(
 	GetMediaActorUseCase controller.GetMediaActorUseCase,
 	PostUserMeUpdatePasswordUseCase controller.PostUserMeUpdatePasswordUseCase,
 	GetAppealMyUseCase controller.GetAppealMyUseCase,
+	PostAppealNewUseCase controller.PostAppealNewUseCase,
+	GetAppealUseCase controller.GetAppealUseCase,
+	PutAppealResolveUseCase controller.PutAppealResolveUseCase,
+	PostAppealMessageUseCase controller.PostAppealMessageUseCase,
+	GetAppealMessageUseCase controller.GetAppealMessageUseCase,
 ) *Handlers {
 	return &Handlers{
 		Logger:                          logger,
@@ -63,5 +73,10 @@ func NewHandlers(
 		GetMediaActorUseCase:            GetMediaActorUseCase,
 		PostUserMeUpdatePasswordUseCase: PostUserMeUpdatePasswordUseCase,
 		GetAppealMyUseCase:              GetAppealMyUseCase,
+		PostAppealNewUseCase:            PostAppealNewUseCase,
+		GetAppealUseCase:                GetAppealUseCase,
+		PutAppealResolveUseCase:         PutAppealResolveUseCase,
+		PostAppealMessageUseCase:        PostAppealMessageUseCase,
+		GetAppealMessageUseCase:         GetAppealMessageUseCase,
 	}
 }
