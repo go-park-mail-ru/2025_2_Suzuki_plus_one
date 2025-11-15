@@ -154,17 +154,17 @@ func main() {
 
 		// Appeal usecases
 		uc.NewGetAppealMyUseCase(logger, appealRepository),
-		// uc.NewPostAppealNewUseCase(logger, appealRepository),
-		nil,
-		// uc.NewGetAppealUseCase(logger, appealRepository),
-		nil,
-		// uc.NewPutAppealResolveUseCase(logger, appealRepository),
+
+		uc.NewPostAppealNewUseCase(logger, appealRepository),    //done
+		uc.NewGetAppealUseCase(logger, appealRepository),        //done
+		uc.NewPutAppealResolveUseCase(logger, appealRepository), //done
+
 		nil,
 		// uc.NewPostAppealMessageUseCase(logger, appealRepository),
 		nil,
 		// uc.NewGetAppealMessageUseCase(logger, appealRepository),
 		nil,
-		uc.NewGetAppealAllUseCase(logger, appealRepository),
+		//uc.NewGetAppealAllUseCase(logger, appealRepository),
 	)
 
 	// Initialize JWT middleware engine
