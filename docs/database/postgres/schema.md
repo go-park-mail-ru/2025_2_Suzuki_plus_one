@@ -233,7 +233,7 @@ erDiagram
         bigint user_id FK
         %% ---
         text tag      "bug / feature / complaint / other"
-        %% message first line
+        %% name is first line of a message
         text name
         text status   "open / in_progress / resolved"
         %% ---
@@ -245,22 +245,12 @@ erDiagram
         bigint user_appeal_message_id PK
         bigint user_appeal_id FK
         %% ---
+        boolean is_response
         text message_content
         %% ---
         timestamptz created_at
         timestamptz updated_at
     }
-
-    USER_APPEAL_RESPONSE {
-        bigint user_appeal_response_id PK
-        bigint user_appeal_id FK
-        %% ---
-        text response_message
-        %% ---
-        timestamptz created_at
-        timestamptz updated_at
-    }
-
 
     USER_SESSION {
         bigint user_session_id PK
