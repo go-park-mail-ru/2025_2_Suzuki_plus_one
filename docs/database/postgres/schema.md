@@ -232,7 +232,7 @@ erDiagram
         bigint user_appeal_id PK
         bigint user_id FK
         %% ---
-        text tag      "bug / feature / complaint / other"
+        text tag      "bug / feature / other"
         %% message first line
         text name
         text status   "open / in_progress / resolved"
