@@ -18,6 +18,10 @@ tags:
     description: Endpoints for accessing S3 media links
   - name: auth
     description: Authentication endpoints
+  - name: appeal
+    description: User appeals and feedback endpoints
+  - name: user
+    description: User profile management endpoints
 paths:
   # auth.yaml
   /auth/refresh:
@@ -54,6 +58,17 @@ paths:
     $ref: "./paths/actor.yaml#/certain"
   /actor/{actor_id}/media:
     $ref: "./paths/actor.yaml#/actor_media"
+  # appeal.yaml
+  /appeal/my:
+    $ref: "./paths/appeal.yaml#/my"
+  /appeal/new:
+    $ref: "./paths/appeal.yaml#/new"
+  /appeal/{appeal_id}:
+    $ref: "./paths/appeal.yaml#/certain"
+  /appeal/{appeal_id}/resolve:
+    $ref: "./paths/appeal.yaml#/id_resolve"
+  /appeal/{appeal_id}/message:
+    $ref: "./paths/appeal.yaml#/id_message"
 
 components:
   securitySchemes:
@@ -107,3 +122,12 @@ components:
     # genre.yaml
     GenreResponse:
       $ref: "./schemas/genre.yaml#/GenreResponse"
+    # appeal.yaml
+    AppealResponse:
+      $ref: "./schemas/appeal.yaml#/AppealResponse"
+    AppealRequest:
+      $ref: "./schemas/appeal.yaml#/AppealRequest"
+    AppealMessageResponse:
+      $ref: "./schemas/appeal.yaml#/AppealMessageResponse"
+    AppealMessageRequest:
+      $ref: "./schemas/appeal.yaml#/AppealMessageRequest"
