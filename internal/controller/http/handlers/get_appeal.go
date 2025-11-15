@@ -21,6 +21,9 @@ var (
 	}
 )
 
+// Input path parameter
+const PathParamGetAppealID = "appeal_id"
+
 // Get all movies from database
 func (h *Handlers) GetAppeal(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
@@ -32,6 +35,7 @@ func (h *Handlers) GetAppeal(w http.ResponseWriter, r *http.Request) {
 	input := dto.GetAppealInput{}
 	rp := NewRequestParams(log, r, &input)
 	rp.AddAuthHeader(&input.AccessToken)
+	rp.AddPath(PathParamGetAppealID, &input.AppealId)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {

@@ -61,5 +61,17 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 		r.Post("/user/me/update/password", h.PostUserMeUpdatePassword)
 	})
 
+	// Appeal
+	r.Get("/appeal/all", h.GetAppealAll)
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Authenticator(common.TokenAuth))
+		r.Get("/appeal/my", h.GetAppealMy)
+		r.Post("/appeal/new", h.PostAppealNew)
+		r.Get(fmt.Sprintf("/appeal/{%s}", handlers.PathParamGetAppealID), h.GetAppeal)
+		r.Put(fmt.Sprintf("/appeal/{%s}/resolve", handlers.PathParamGetAppealID), h.PutAppealResolve)
+		r.Post(fmt.Sprintf("/appeal/{%s}/message", handlers.PathParamGetAppealID), h.PostAppealMessage)
+		r.Get(fmt.Sprintf("/appeal/{%s}/message", handlers.PathParamGetAppealID), h.GetAppealMessage)
+	})
+
 	return r
 }

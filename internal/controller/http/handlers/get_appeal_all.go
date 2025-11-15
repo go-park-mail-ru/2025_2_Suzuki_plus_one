@@ -14,7 +14,7 @@ import (
 var (
 	ErrGetAppealAllInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for actor"),
+		Message: errors.New("Invalid parameters for getting all appeals"),
 	}
 	ResponseGetAppealAll = Response{
 		Code: http.StatusOK,
@@ -29,14 +29,13 @@ func (h *Handlers) GetAppealAll(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Handler called")
 
 	// Handle input parameters
-	input := dto.GetAppealInput{}
+	input := dto.GetAppealAllInput{}
 	rp := NewRequestParams(log, r, &input)
-	rp.AddAuthHeader(&input.AccessToken)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {
 		log.Error(
-			"Failed to parse access tokenm",
+			"Failed to parse request parameters",
 			log.ToString("error", err.Error()),
 		)
 		// Respond with error, if input parameters are invalid
