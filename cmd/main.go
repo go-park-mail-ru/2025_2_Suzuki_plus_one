@@ -24,6 +24,7 @@ var _ uc.UserRepository = &db.DataBase{}
 var _ uc.TokenRepository = &db.DataBase{}
 var _ uc.ActorRepository = &db.DataBase{}
 var _ uc.AssetRepository = &db.DataBase{}
+var _ uc.AppealRepository = &db.DataBase{}
 
 // Redis
 var _ uc.SessionRepository = &redis.Redis{}
@@ -108,6 +109,12 @@ func main() {
 		logger.Fatal("Database can't be converted to AssetRepository")
 	}
 
+	// Cast Postgres to AppealRepository
+	appealRepository, ok := databaseAdapter.(uc.AppealRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to AppealRepository")
+	}
+
 	// Cast Minio to ObjectRepository
 	objectRepository, ok := s3.(uc.ObjectRepository)
 	if !ok {
@@ -144,6 +151,7 @@ func main() {
 		uc.NewGetActorMediaUseCase(logger, actorRepository, getMediaUseCase),
 		uc.NewGetMediaActorUseCase(logger, actorRepository, getActorUseCase),
 		uc.NewPostUserMeUpdatePasswordUseCase(logger, userRepository, sessionRepository),
+		uc.NewGetAppealMyUseCase(logger, appealRepository),
 	)
 
 	// Initialize JWT middleware engine

@@ -601,3 +601,276 @@ func (mr *MockPostUserMeUpdatePasswordUseCaseMockRecorder) Execute(arg0, arg1 an
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostUserMeUpdatePasswordUseCase)(nil).Execute), arg0, arg1)
 }
+
+// MockGetAppealMyUseCase is a mock of GetAppealMyUseCase interface.
+type MockGetAppealMyUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetAppealMyUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetAppealMyUseCaseMockRecorder is the mock recorder for MockGetAppealMyUseCase.
+type MockGetAppealMyUseCaseMockRecorder struct {
+	mock *MockGetAppealMyUseCase
+}
+
+// NewMockGetAppealMyUseCase creates a new mock instance.
+func NewMockGetAppealMyUseCase(ctrl *gomock.Controller) *MockGetAppealMyUseCase {
+	mock := &MockGetAppealMyUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetAppealMyUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetAppealMyUseCase) EXPECT() *MockGetAppealMyUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetAppealMyUseCase) Execute(arg0 context.Context, arg1 dto.GetAppealMyInput) (dto.GetAppealMyOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetAppealMyOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetAppealMyUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetAppealMyUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockPostAppealNewUseCase is a mock of PostAppealNewUseCase interface.
+type MockPostAppealNewUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockPostAppealNewUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockPostAppealNewUseCaseMockRecorder is the mock recorder for MockPostAppealNewUseCase.
+type MockPostAppealNewUseCaseMockRecorder struct {
+	mock *MockPostAppealNewUseCase
+}
+
+// NewMockPostAppealNewUseCase creates a new mock instance.
+func NewMockPostAppealNewUseCase(ctrl *gomock.Controller) *MockPostAppealNewUseCase {
+	mock := &MockPostAppealNewUseCase{ctrl: ctrl}
+	mock.recorder = &MockPostAppealNewUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPostAppealNewUseCase) EXPECT() *MockPostAppealNewUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockPostAppealNewUseCase) Execute(arg0 context.Context, arg1 dto.PostAppealNewInput) (dto.PostAppealNewOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.PostAppealNewOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockPostAppealNewUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostAppealNewUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockGetAppealUseCase is a mock of GetAppealUseCase interface.
+type MockGetAppealUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetAppealUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetAppealUseCaseMockRecorder is the mock recorder for MockGetAppealUseCase.
+type MockGetAppealUseCaseMockRecorder struct {
+	mock *MockGetAppealUseCase
+}
+
+// NewMockGetAppealUseCase creates a new mock instance.
+func NewMockGetAppealUseCase(ctrl *gomock.Controller) *MockGetAppealUseCase {
+	mock := &MockGetAppealUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetAppealUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetAppealUseCase) EXPECT() *MockGetAppealUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetAppealUseCase) Execute(arg0 context.Context, arg1 dto.GetAppealInput) (dto.GetAppealOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetAppealOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetAppealUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetAppealUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockPutAppealResolveUseCase is a mock of PutAppealResolveUseCase interface.
+type MockPutAppealResolveUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockPutAppealResolveUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockPutAppealResolveUseCaseMockRecorder is the mock recorder for MockPutAppealResolveUseCase.
+type MockPutAppealResolveUseCaseMockRecorder struct {
+	mock *MockPutAppealResolveUseCase
+}
+
+// NewMockPutAppealResolveUseCase creates a new mock instance.
+func NewMockPutAppealResolveUseCase(ctrl *gomock.Controller) *MockPutAppealResolveUseCase {
+	mock := &MockPutAppealResolveUseCase{ctrl: ctrl}
+	mock.recorder = &MockPutAppealResolveUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPutAppealResolveUseCase) EXPECT() *MockPutAppealResolveUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockPutAppealResolveUseCase) Execute(arg0 context.Context, arg1 dto.PutAppealResolveInput) (dto.PutAppealResolveOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.PutAppealResolveOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockPutAppealResolveUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPutAppealResolveUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockPostAppealMessageUseCase is a mock of PostAppealMessageUseCase interface.
+type MockPostAppealMessageUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockPostAppealMessageUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockPostAppealMessageUseCaseMockRecorder is the mock recorder for MockPostAppealMessageUseCase.
+type MockPostAppealMessageUseCaseMockRecorder struct {
+	mock *MockPostAppealMessageUseCase
+}
+
+// NewMockPostAppealMessageUseCase creates a new mock instance.
+func NewMockPostAppealMessageUseCase(ctrl *gomock.Controller) *MockPostAppealMessageUseCase {
+	mock := &MockPostAppealMessageUseCase{ctrl: ctrl}
+	mock.recorder = &MockPostAppealMessageUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPostAppealMessageUseCase) EXPECT() *MockPostAppealMessageUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockPostAppealMessageUseCase) Execute(arg0 context.Context, arg1 dto.PostAppealMessageInput) (dto.PostAppealMessageOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.PostAppealMessageOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockPostAppealMessageUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPostAppealMessageUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockGetAppealMessageUseCase is a mock of GetAppealMessageUseCase interface.
+type MockGetAppealMessageUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetAppealMessageUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetAppealMessageUseCaseMockRecorder is the mock recorder for MockGetAppealMessageUseCase.
+type MockGetAppealMessageUseCaseMockRecorder struct {
+	mock *MockGetAppealMessageUseCase
+}
+
+// NewMockGetAppealMessageUseCase creates a new mock instance.
+func NewMockGetAppealMessageUseCase(ctrl *gomock.Controller) *MockGetAppealMessageUseCase {
+	mock := &MockGetAppealMessageUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetAppealMessageUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetAppealMessageUseCase) EXPECT() *MockGetAppealMessageUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetAppealMessageUseCase) Execute(arg0 context.Context, arg1 dto.GetAppealMessageInput) (dto.GetAppealMessageOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetAppealMessageOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetAppealMessageUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetAppealMessageUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockGetAppealAllUseCase is a mock of GetAppealAllUseCase interface.
+type MockGetAppealAllUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetAppealAllUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetAppealAllUseCaseMockRecorder is the mock recorder for MockGetAppealAllUseCase.
+type MockGetAppealAllUseCaseMockRecorder struct {
+	mock *MockGetAppealAllUseCase
+}
+
+// NewMockGetAppealAllUseCase creates a new mock instance.
+func NewMockGetAppealAllUseCase(ctrl *gomock.Controller) *MockGetAppealAllUseCase {
+	mock := &MockGetAppealAllUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetAppealAllUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetAppealAllUseCase) EXPECT() *MockGetAppealAllUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetAppealAllUseCase) Execute(arg0 context.Context, arg1 dto.GetAppealAllInput) (dto.GetAppealAllOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetAppealAllOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetAppealAllUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetAppealAllUseCase)(nil).Execute), arg0, arg1)
+}
