@@ -39,4 +39,9 @@ var (
 	ErrGetMediaActorParamsInvalid = errors.New("invalid get_media_actor request parameters")
 
 	ErrPostUserMeUpdatePasswordCurrentPasswordMismatch = errors.New("current password does not match")
+
+
+	ErrWrongAccessToken = errors.New("wrong access token provided")
+
+	ErrGetAppealMyFailed = errors.New("failed to get appeals for user")
 )

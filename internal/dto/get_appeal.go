@@ -1,23 +1,17 @@
 package dto
 
+import "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
+
 type GetAppealInput struct {
 	AppealId    uint   `json:"appeal_id"`    // ID of the appeal to retrieve
 	AccessToken string `json:"access_token"` // Access token from Authorization header
 }
 
 type GetAppealOutput struct {
-	ID        uint            `json:"id"`
-	Tag       string          `json:"tag"`
-	Name      string          `json:"name"`
-	Status    string          `json:"status"`
-	CreatedAt string          `json:"created_at"`
-	UpdatedAt string          `json:"updated_at"`
-	Messages  []AppealMessage `json:"messages"`
+	entity.Appeal
+	OwnerUsername string `json:"owner_username"`
 }
 
 type AppealMessage struct {
-	ID        uint   `json:"id"`
-	Sender    string `json:"sender"` // "user" or "support"
-	Message   string `json:"message"`
-	CreatedAt string `json:"created_at"`
+	entity.AppealMessage
 }

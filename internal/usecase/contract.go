@@ -63,7 +63,12 @@ type (
 
 	AppealRepository interface {
 		// Get
-		GetAppealsByUserID(ctx context.Context, userID uint) ([]entity.Appeal, error)
+		GetAppealIDsByUserID(ctx context.Context, userID uint) ([]uint, error)
+		GetAppealByID(ctx context.Context, appealID uint) (*entity.Appeal, error)
+
+		// Get messages for appeal
+		GetAppealMessagesIDsByAppealID(ctx context.Context, appealID uint) ([]uint, error)
+		GetAppealMessagesByID(ctx context.Context, appealID uint) ([]entity.AppealMessage, error)
 
 		// Create
 		CreateAppeal(ctx context.Context, userID uint, tag string, name string) (uint, error)
