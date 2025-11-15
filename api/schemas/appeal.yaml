@@ -26,11 +26,6 @@ AppealResponse:
       format: date-time
       example: "11:11 01.01.2024"
       description: The date and time when the appeal was created
-    messages:
-      type: array
-      items:
-        $ref: "./appeal.yaml#/AppealMessageResponse"
-      description: List of messages associated with the appeal
 
 AppealRequest:
   type: object
