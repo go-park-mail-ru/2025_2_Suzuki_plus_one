@@ -12,9 +12,12 @@ my:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: "../schemas/appeal.yaml#/AppealResponse"
+              type: object
+              properties:
+                appeals:
+                  type: array
+                  items:
+                    $ref: "../schemas/appeal.yaml#/AppealResponse"
       "400":
         description: Bad request
         content:
@@ -64,9 +67,12 @@ all:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: "../schemas/appeal.yaml#/AppealResponse"
+              type: object
+              properties:
+                appeals:
+                  type: array
+                  items:
+                    $ref: "../schemas/appeal.yaml#/AppealResponse"
       "400":
         description: Bad request
         content:
@@ -185,9 +191,12 @@ id_message:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: "../schemas/appeal.yaml#/AppealMessageResponse"
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: "../schemas/appeal.yaml#/AppealMessageResponse"
       "400":
         description: Bad request
         content:
