@@ -29,7 +29,7 @@ func zipStringToTen(toZip string) string {
 		return toZip
 	}
 
-	return toZip[0:10]
+	return toZip[0:10] + "..."
 }
 
 func (uc *PostAppealNewUseCase) Execute(ctx context.Context, input dto.PostAppealNewInput) (dto.PostAppealNewOutput, *dto.Error) {

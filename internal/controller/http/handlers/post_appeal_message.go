@@ -21,6 +21,11 @@ var (
 	}
 )
 
+// Body parameter names for PostAppealMessage handler
+var (
+	BodyParamPostAppealMessageMessage = "message"
+)
+
 // Get all movies from database
 func (h *Handlers) PostAppealMessage(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
@@ -34,6 +39,9 @@ func (h *Handlers) PostAppealMessage(w http.ResponseWriter, r *http.Request) {
 	rp.AddAuthHeader(&input.AccessToken)
 	// Add path parameter
 	rp.AddPath(PathParamGetAppealID, &input.AppealID)
+	// Add body parameter
+	rp.AddBody(BodyParamPostAppealMessageMessage, &input.Message)
+
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {

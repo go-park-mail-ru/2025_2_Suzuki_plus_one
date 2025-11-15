@@ -21,6 +21,12 @@ var (
 	}
 )
 
+// Body parameter names for PostAppealNew handler
+var (
+	BodyParamPostAppealNewTag     = "tag"
+	BodyParamPostAppealNewMessage = "message"
+)
+
 // Get all movies from database
 func (h *Handlers) PostAppealNew(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
@@ -32,11 +38,13 @@ func (h *Handlers) PostAppealNew(w http.ResponseWriter, r *http.Request) {
 	input := dto.PostAppealNewInput{}
 	rp := NewRequestParams(log, r, &input)
 	rp.AddAuthHeader(&input.AccessToken)
+	rp.AddBody(BodyParamPostAppealNewTag, &input.Tag)
+	rp.AddBody(BodyParamPostAppealNewMessage, &input.Message)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {
 		log.Error(
-			"Failed to parse access tokenm",
+			"Failed to parse access token",
 			log.ToString("error", err.Error()),
 		)
 		// Respond with error, if input parameters are invalid

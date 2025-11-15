@@ -63,7 +63,11 @@ func (uc *GetAppealUseCase) Execute(ctx context.Context, input dto.GetAppealInpu
 	}
 
 	output := dto.GetAppealOutput{
-		Appeal: *appealByID,
+		Appeal: dto.Appeal{
+			Appeal:    *appealByID,
+			CreatedAt: dto.NewJSONDateTime(appealByID.CreatedAt),
+			UpdatedAt: dto.NewJSONDateTime(appealByID.UpdatedAt),
+		},
 	}
 
 	log.Debug("Successfully got details for a specific appeal", "AppealID", log.ToAny("AppealID", input.AppealId))
