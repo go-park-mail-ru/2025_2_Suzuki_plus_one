@@ -5,7 +5,7 @@ my:
     tags:
       - appeal
     summary: Get all appeals of the authenticated user
-    description: Retrieve information about all appeals
+    description: Retrieve information about all appeals without messages.
     responses:
       "200":
         description: Appeal details retrieved successfully
@@ -52,8 +52,28 @@ new:
           application/json:
             schema:
               $ref: "../schemas/error.yaml#/ErrorResponse"
-
-certain:
+all:
+  get:
+    tags:
+      - appeal
+    summary: Get all appeals
+    description: Retrieve information about all appeals without messages.
+    responses:
+      "200":
+        description: Appeal details retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/appeal.yaml#/AppealResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+id:
   get:
     security:
       - access_token: []
@@ -139,6 +159,35 @@ id_message:
     responses:
       "201":
         description: Message added to appeal successfully
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+  get:
+    security:
+      - access_token: []
+    tags:
+      - appeal
+    summary: Get messages of a specific appeal
+    description: Retrieve all messages related to an appeal given its ID
+    parameters:
+      - in: path
+        name: appeal_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the appeal
+    responses:
+      "200":
+        description: Appeal messages retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/appeal.yaml#/AppealMessageResponse"
       "400":
         description: Bad request
         content:

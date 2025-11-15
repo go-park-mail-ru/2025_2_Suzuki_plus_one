@@ -59,12 +59,14 @@ paths:
   /actor/{actor_id}/media:
     $ref: "./paths/actor.yaml#/actor_media"
   # appeal.yaml
+  /appeal/all:
+    $ref: "./paths/appeal.yaml#/all"
   /appeal/my:
     $ref: "./paths/appeal.yaml#/my"
   /appeal/new:
     $ref: "./paths/appeal.yaml#/new"
   /appeal/{appeal_id}:
-    $ref: "./paths/appeal.yaml#/certain"
+    $ref: "./paths/appeal.yaml#/id"
   /appeal/{appeal_id}/resolve:
     $ref: "./paths/appeal.yaml#/id_resolve"
   /appeal/{appeal_id}/message:

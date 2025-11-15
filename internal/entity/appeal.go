@@ -7,7 +7,6 @@ type Appeal struct {
 	Status    string
 	CreatedAt string
 	UpdatedAt string
-	Messages  []AppealMessage
 }
 
 type AppealMessage struct {
