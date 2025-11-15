@@ -48,8 +48,8 @@ func (db *DataBase) GetAppealIDsAll(ctx context.Context, tag *string, status *st
 	var appealIDs []uint
 	query := `
 		SELECT user_appeal_id FROM user_appeal
-		WHERE ($1 IS NULL OR tag = $1)
-		AND ($2 IS NULL OR status = $2)
+		WHERE ($1::text IS NULL OR tag = $1::text)
+		AND   ($2::text IS NULL OR status = $2::text)
 		ORDER BY created_at DESC
 		LIMIT $3 OFFSET $4
 	`
@@ -98,7 +98,6 @@ func (db *DataBase) GetAppealByID(ctx context.Context, appealID uint) (*entity.A
 	}
 	return &appeal, nil
 }
-
 
 func (db *DataBase) GetAppealMessagesIDsByAppealID(ctx context.Context, appealID uint) ([]uint, error) {
 	// Bind logger with request ID
@@ -169,7 +168,6 @@ func (db *DataBase) GetAppealMessagesByID(ctx context.Context, appealID uint) ([
 	return messages, nil
 }
 
-
 // Create
 
 func (db *DataBase) CreateAppeal(ctx context.Context, userID uint, tag string, name string) (uint, error) {
@@ -215,7 +213,6 @@ func (db *DataBase) CreateAppealMessage(ctx context.Context, appealID uint, isRe
 	}
 	return messageID, nil
 }
-
 
 // Update
 
