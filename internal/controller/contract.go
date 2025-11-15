@@ -91,4 +91,8 @@ type (
 	GetAppealMessageUseCase interface {
 		Execute(context.Context, dto.GetAppealMessageInput) (dto.GetAppealMessageOutput, *dto.Error)
 	}
+
+	GetAppealAllUseCase interface {
+		Execute(context.Context, dto.GetAppealAllInput) (dto.GetAppealAllOutput, *dto.Error)
+	}
 )

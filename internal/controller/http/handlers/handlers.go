@@ -29,6 +29,7 @@ type Handlers struct {
 	PutAppealResolveUseCase         controller.PutAppealResolveUseCase
 	PostAppealMessageUseCase        controller.PostAppealMessageUseCase
 	GetAppealMessageUseCase         controller.GetAppealMessageUseCase
+	GetAppealAllUseCase             controller.GetAppealAllUseCase
 }
 
 func NewHandlers(
@@ -54,6 +55,7 @@ func NewHandlers(
 	PutAppealResolveUseCase controller.PutAppealResolveUseCase,
 	PostAppealMessageUseCase controller.PostAppealMessageUseCase,
 	GetAppealMessageUseCase controller.GetAppealMessageUseCase,
+	GetAppealAllUseCase controller.GetAppealAllUseCase,
 ) *Handlers {
 	return &Handlers{
 		Logger:                          logger,
@@ -78,5 +80,6 @@ func NewHandlers(
 		PutAppealResolveUseCase:         PutAppealResolveUseCase,
 		PostAppealMessageUseCase:        PostAppealMessageUseCase,
 		GetAppealMessageUseCase:         GetAppealMessageUseCase,
+		GetAppealAllUseCase:             GetAppealAllUseCase,
 	}
 }
