@@ -1,22 +1,22 @@
 TRUNCATE TABLE USER_APPEAL_MESSAGE CASCADE;
 
 -- Заполнение таблицы USER
-INSERT INTO "user" (username) VALUES
-('user_one'),
-('user_two'),
-('user_three'),
-('user_one'),
-('user_two'),
-('user_three'),
-('user_four'),
-('user_five'),
-( 'user_six'),
-( 'user_seven'),
-( 'user_eight'),
-( 'user_nine'),
-( 'user_ten'),
-( 'user_eleven'),
-( 'user_twelve');
+INSERT INTO "user" (username, password_hash, email, date_of_birth, phone_number) VALUES
+('user_one', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_one@example.com', '2001-01-01', '+1234567801'),
+('user_two', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_two@example.com', '2002-01-01', '+1234567802'),
+('user_three', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_three@example.com', '2003-01-01', '+1234567803'),
+('user_four', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_four@example.com', '2004-01-01', '+1234567804'),
+('user_five', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_five@example.com', '2005-01-01', '+1234567805'),
+('user_six', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_six@example.com', '2006-01-01', '+1234567806'),
+('user_seven', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_seven@example.com', '2007-01-01', '+1234567807'),
+('user_eight', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_eight@example.com', '2008-01-01', '+1234567808'),
+('user_nine', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_nine@example.com', '2009-01-01', '+1234567809'),
+('user_ten', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_ten@example.com', '2010-01-01', '+1234567810'),
+('user_eleven', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_eleven@example.com', '2011-01-01', '+1234567811'),
+('user_twelve', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_twelve@example.com', '2012-01-01', '+1234567812'),
+('user_thirteen', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_thirteen@example.com', '2013-01-01', '+1234567813'),
+('user_fourteen', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_fourteen@example.com', '2014-01-01', '+1234567814'),
+('user_fifteen', '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', 'user_fifteen@example.com', '2015-01-01', '+1234567815'),
 
 -- Заполнение таблицы USER_APPEAL
 INSERT INTO USER_APPEAL (user_appeal_id, user_id, tag, name, status, created_at, updated_at) VALUES
