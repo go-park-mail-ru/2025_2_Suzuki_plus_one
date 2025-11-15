@@ -17,8 +17,9 @@ VALUES (
     256
   );
 -- 2) Test user referencing the avatar
-INSERT INTO "user" (username, asset_image_id, password_hash, email, date_of_birth, phone_number)
+INSERT INTO "user" (user_id, username, asset_image_id, password_hash, email, date_of_birth, phone_number)
 VALUES (
+        11,
     'testuser',
     (
       SELECT asset_image_id

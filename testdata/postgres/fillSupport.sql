@@ -1,4 +1,4 @@
-TRUNCATE TABLE USER_APPEAL_RESPONSE, USER_APPEAL_MESSAGE, USER_APPEAL CASCADE;
+TRUNCATE TABLE USER_APPEAL_MESSAGE CASCADE;
 
 -- Заполнение таблицы USER
 INSERT INTO USER (user_id, username) VALUES
@@ -17,9 +17,9 @@ INSERT INTO USER (user_id, username) VALUES
 (13, 'user_ten'),
 (14, 'user_eleven'),
 (15, 'user_twelve');
+
 -- Заполнение таблицы USER_APPEAL
 INSERT INTO USER_APPEAL (user_appeal_id, user_id, tag, name, status, created_at, updated_at) VALUES
---Opened
 (1, 1, 'bug', 'Не воспроизводится видео на Samsung TV', 'open', '2024-01-15 19:30:00+03', '2024-01-15 19:30:00+03'),
 (2, 2, 'feature', 'Добавить функцию скачивания серий для iOS', 'open', '2024-01-14 21:15:00+03', '2024-01-14 21:15:00+03'),
 (3, 3, 'other', 'Проблема с оплатой подписки', 'open', '2024-01-13 20:45:00+03', '2024-01-13 20:45:00+03'),
@@ -76,4 +76,3 @@ INSERT INTO USER_APPEAL_MESSAGE (user_appeal_message_id, user_appeal_id, is_resp
 -- Обновление последовательностей (если используете SERIAL или автоматические инкременты)
 -- SELECT setval('user_appeal_user_appeal_id_seq', (SELECT MAX(user_appeal_id) FROM USER_APPEAL));
 -- SELECT setval('user_appeal_message_user_appeal_message_id_seq', (SELECT MAX(user_appeal_message_id) FROM USER_APPEAL_MESSAGE));
--- SELECT setval('user_appeal_response_user_appeal_response_id_seq', (SELECT MAX(user_appeal_response_id) FROM USER_APPEAL_RESPONSE));
