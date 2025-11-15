@@ -223,7 +223,7 @@ all-wipe: ## wipes all services containers and their volumes
 	source .env && docker compose down -v
 
 all-fill: ## fills all services with test data
-	make minio-fill
+# 	make minio-fill
 	make db-fill
 
 all-migrate: ## migrates database and minio services
@@ -231,7 +231,8 @@ all-migrate: ## migrates database and minio services
 	make minio-create
 
 all-prepare: ## prepare all database: starts, migrates, fills with test data
-	docker compose down -v
+	docker compose down -v db redis backend
+# TODO don't wait for minio
 	docker compose up --build -d db redis minio
 
 	@echo "Waiting for services to be ready..."
