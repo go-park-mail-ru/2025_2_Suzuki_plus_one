@@ -61,6 +61,34 @@ all:
       - appeal
     summary: Get all appeals
     description: Retrieve information about all appeals without messages.
+    parameters:
+      - in: query
+        name: tag
+        required: false
+        schema:
+          type: string
+        description: Filter appeals by tag
+      - in: query
+        name: status
+        required: false
+        schema:
+          type: string
+          enum: [open, in_progress, resolved]
+        description: Filter appeals by status
+      - in: query
+        name: limit
+        required: true
+        schema:
+          type: integer
+          default: 15
+        description: Maximum number of appeals to return
+      - in: query
+        name: offset
+        required: true
+        schema:
+          type: integer
+          default: 0
+        description: Number of appeals to skip before starting to collect the result set
     responses:
       "200":
         description: Appeal details retrieved successfully

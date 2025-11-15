@@ -61,13 +61,10 @@ AppealMessageRequest:
 AppealMessageResponse:
   type: object
   properties:
-    sender:
-      type: string
-      example: "user"
-      description: The sender of the message
-      enum:
-        - user
-        - support
+    is_response:
+      type: boolean
+      example: false
+      description: Indicates if the message is from support staff
     message:
       type: string
       example: "Thank you for your feedback!"
