@@ -72,9 +72,14 @@ func (uc *GetAppealAllUseCase) Execute(ctx context.Context, input dto.GetAppealA
 			return dto.GetAppealAllOutput{}, &derr
 		}
 		appeals = append(appeals, dto.GetAppealOutput{
-			Appeal: *appeal,
+			Appeal: dto.Appeal{
+				Appeal:    *appeal,
+				CreatedAt: dto.NewJSONDateTime(appeal.CreatedAt),
+				UpdatedAt: dto.NewJSONDateTime(appeal.UpdatedAt),
+			},
 		})
 	}
+
 	log.Debug("GetAppealAllUseCase completed successfully")
 	return dto.GetAppealAllOutput{
 		Appeals: appeals,

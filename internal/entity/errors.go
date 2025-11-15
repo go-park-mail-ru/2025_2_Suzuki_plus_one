@@ -46,4 +46,8 @@ var (
 	ErrGetAppealMyFailed = errors.New("failed to get appeals for user")
 
 	ErrGetAppealAllFailed = errors.New("failed to get all appeals")
+
+	ErrPostAppealMessageInvalidParams = errors.New("invalid post_appeal_message request parameters")
+
+	ErrGetAppealMessageInvalidParams = errors.New("invalid get_appeal_message request parameters")
 )

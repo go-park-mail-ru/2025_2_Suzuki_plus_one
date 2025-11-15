@@ -8,5 +8,11 @@ type GetAppealInput struct {
 }
 
 type GetAppealOutput struct {
+	Appeal
+}
+
+type Appeal struct {
 	entity.Appeal
+	CreatedAt JSONDateTime `json:"created_at"`
+	UpdatedAt JSONDateTime `json:"updated_at"`
 }

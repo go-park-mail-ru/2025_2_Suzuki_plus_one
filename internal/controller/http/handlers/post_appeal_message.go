@@ -33,7 +33,7 @@ func (h *Handlers) PostAppealMessage(w http.ResponseWriter, r *http.Request) {
 	rp := NewRequestParams(log, r, &input)
 	rp.AddAuthHeader(&input.AccessToken)
 	// Add path parameter
-	rp.AddPath(PathParamGetAppealID, &input.AppealId)
+	rp.AddPath(PathParamGetAppealID, &input.AppealID)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {
