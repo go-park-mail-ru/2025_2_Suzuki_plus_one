@@ -72,6 +72,7 @@ INSERT INTO USER_APPEAL_MESSAGE (user_appeal_message_id, user_appeal_id, is_resp
 (29, 3, TRUE, 'Возникли временные проблемы с обработкой платежей через Visa. Рекомендуем использовать Mastercard или PayPal. Платежная система Visa уже восстановлена.', '2024-01-13 21:15:00+03', '2024-01-13 21:15:00+03'),
 (30, 10, TRUE, 'Добавили турецкие субтитры для 50 самых популярных сериалов. В течение недели добавим для всего каталога.', '2024-01-07 11:20:00+03', '2024-01-07 11:20:00+03');
 
+
 -- Обновление последовательностей (если используете SERIAL или автоматические инкременты)
 -- SELECT setval('user_appeal_user_appeal_id_seq', (SELECT MAX(user_appeal_id) FROM USER_APPEAL));
 -- SELECT setval('user_appeal_message_user_appeal_message_id_seq', (SELECT MAX(user_appeal_message_id) FROM USER_APPEAL_MESSAGE));

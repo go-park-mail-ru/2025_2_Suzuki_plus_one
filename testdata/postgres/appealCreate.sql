@@ -35,7 +35,7 @@ CREATE INDEX idx_user_appeal_message_user_appeal_id ON USER_APPEAL_MESSAGE(user_
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
-BEGIN
+BEGINgit
     NEW.updated_at = CURRENT_TIMESTAMP;
 RETURN NEW;
 END;
