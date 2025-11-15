@@ -1,13 +1,5 @@
-DROP TABLE IF EXISTS user_appeal;
-DROP TABLE IF EXISTS user_appeal_message;
-
-CREATE TABLE IF NOT EXISTS "user" (
-    user_id BIGINT PRIMARY KEY,
-    username TEXT NOT NULL
-);
-
 CREATE TABLE user_appeal (
-     user_appeal_id BIGINT PRIMARY KEY,
+     user_appeal_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
      user_id BIGINT NOT NULL,
      tag TEXT NOT NULL CHECK (tag IN ('bug', 'feature', 'other')),
      name TEXT NOT NULL,
@@ -18,7 +10,7 @@ CREATE TABLE user_appeal (
 );
 
 CREATE TABLE user_appeal_message (
-     user_appeal_message_id BIGINT PRIMARY KEY,
+     user_appeal_message_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
      user_appeal_id BIGINT NOT NULL,
      is_response BOOLEAN NOT NULL DEFAULT FALSE,
      message_content TEXT NOT NULL,
