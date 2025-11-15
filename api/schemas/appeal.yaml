@@ -26,11 +26,6 @@ AppealResponse:
       format: date-time
       example: "11:11 01.01.2024"
       description: The date and time when the appeal was created
-    messages:
-      type: array
-      items:
-        $ref: "./appeal.yaml#/AppealMessageResponse"
-      description: List of messages associated with the appeal
 
 AppealRequest:
   type: object
@@ -66,13 +61,10 @@ AppealMessageRequest:
 AppealMessageResponse:
   type: object
   properties:
-    sender:
-      type: string
-      example: "user"
-      description: The sender of the message
-      enum:
-        - user
-        - support
+    is_response:
+      type: boolean
+      example: false
+      description: Indicates if the message is from support staff
     message:
       type: string
       example: "Thank you for your feedback!"

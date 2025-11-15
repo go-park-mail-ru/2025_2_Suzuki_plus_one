@@ -1,9 +1,9 @@
 package dto
 
-type GetAppealMyInput struct {
+type GetAppealAllInput struct {
 	AccessToken string `json:"access_token"` // Access token from Authorization header
 }
 
-type GetAppealMyOutput struct {
+type GetAppealAllOutput struct {
 	Appeals []GetAppealOutput `json:"appeals"`
 }

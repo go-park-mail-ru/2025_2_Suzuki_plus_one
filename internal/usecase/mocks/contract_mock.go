@@ -308,18 +308,18 @@ func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
 }
 
 // CreateUser mocks base method.
-func (m *MockUserRepository) CreateUser(ctx context.Context, user entity.User) (uint, error) {
+func (m *MockUserRepository) CreateUser(ctx context.Context, email, username, passwordHash string) (uint, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateUser", ctx, user)
+	ret := m.ctrl.Call(m, "CreateUser", ctx, email, username, passwordHash)
 	ret0, _ := ret[0].(uint)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateUser indicates an expected call of CreateUser.
-func (mr *MockUserRepositoryMockRecorder) CreateUser(ctx, user any) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) CreateUser(ctx, email, username, passwordHash any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRepository)(nil).CreateUser), ctx, user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRepository)(nil).CreateUser), ctx, email, username, passwordHash)
 }
 
 // GetUserAvatarKey mocks base method.
@@ -368,7 +368,7 @@ func (mr *MockUserRepositoryMockRecorder) GetUserByID(ctx, userID any) *gomock.C
 }
 
 // UpdateUser mocks base method.
-func (m *MockUserRepository) UpdateUser(ctx context.Context, userID uint, username, email, dateOfBirth, phoneNumber string) (*entity.User, error) {
+func (m *MockUserRepository) UpdateUser(ctx context.Context, userID uint, username, email string, dateOfBirth time.Time, phoneNumber string) (*entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateUser", ctx, userID, username, email, dateOfBirth, phoneNumber)
 	ret0, _ := ret[0].(*entity.User)
@@ -408,6 +408,134 @@ func (m *MockUserRepository) UpdateUserPassword(ctx context.Context, userID uint
 func (mr *MockUserRepositoryMockRecorder) UpdateUserPassword(ctx, userID, newHashedPassword any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserPassword", reflect.TypeOf((*MockUserRepository)(nil).UpdateUserPassword), ctx, userID, newHashedPassword)
+}
+
+// MockAppealRepository is a mock of AppealRepository interface.
+type MockAppealRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockAppealRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockAppealRepositoryMockRecorder is the mock recorder for MockAppealRepository.
+type MockAppealRepositoryMockRecorder struct {
+	mock *MockAppealRepository
+}
+
+// NewMockAppealRepository creates a new mock instance.
+func NewMockAppealRepository(ctrl *gomock.Controller) *MockAppealRepository {
+	mock := &MockAppealRepository{ctrl: ctrl}
+	mock.recorder = &MockAppealRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAppealRepository) EXPECT() *MockAppealRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateAppeal mocks base method.
+func (m *MockAppealRepository) CreateAppeal(ctx context.Context, userID uint, tag, name string) (uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateAppeal", ctx, userID, tag, name)
+	ret0, _ := ret[0].(uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateAppeal indicates an expected call of CreateAppeal.
+func (mr *MockAppealRepositoryMockRecorder) CreateAppeal(ctx, userID, tag, name any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAppeal", reflect.TypeOf((*MockAppealRepository)(nil).CreateAppeal), ctx, userID, tag, name)
+}
+
+// CreateAppealMessage mocks base method.
+func (m *MockAppealRepository) CreateAppealMessage(ctx context.Context, appealID uint, isResponse bool, message string) (uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateAppealMessage", ctx, appealID, isResponse, message)
+	ret0, _ := ret[0].(uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateAppealMessage indicates an expected call of CreateAppealMessage.
+func (mr *MockAppealRepositoryMockRecorder) CreateAppealMessage(ctx, appealID, isResponse, message any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAppealMessage", reflect.TypeOf((*MockAppealRepository)(nil).CreateAppealMessage), ctx, appealID, isResponse, message)
+}
+
+// GetAppealByID mocks base method.
+func (m *MockAppealRepository) GetAppealByID(ctx context.Context, appealID uint) (*entity.Appeal, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAppealByID", ctx, appealID)
+	ret0, _ := ret[0].(*entity.Appeal)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAppealByID indicates an expected call of GetAppealByID.
+func (mr *MockAppealRepositoryMockRecorder) GetAppealByID(ctx, appealID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAppealByID", reflect.TypeOf((*MockAppealRepository)(nil).GetAppealByID), ctx, appealID)
+}
+
+// GetAppealIDsAll mocks base method.
+func (m *MockAppealRepository) GetAppealIDsAll(ctx context.Context, tag, status *string, limit, offset uint) ([]uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAppealIDsAll", ctx, tag, status, limit, offset)
+	ret0, _ := ret[0].([]uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAppealIDsAll indicates an expected call of GetAppealIDsAll.
+func (mr *MockAppealRepositoryMockRecorder) GetAppealIDsAll(ctx, tag, status, limit, offset any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAppealIDsAll", reflect.TypeOf((*MockAppealRepository)(nil).GetAppealIDsAll), ctx, tag, status, limit, offset)
+}
+
+// GetAppealIDsByUserID mocks base method.
+func (m *MockAppealRepository) GetAppealIDsByUserID(ctx context.Context, userID uint) ([]uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAppealIDsByUserID", ctx, userID)
+	ret0, _ := ret[0].([]uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAppealIDsByUserID indicates an expected call of GetAppealIDsByUserID.
+func (mr *MockAppealRepositoryMockRecorder) GetAppealIDsByUserID(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAppealIDsByUserID", reflect.TypeOf((*MockAppealRepository)(nil).GetAppealIDsByUserID), ctx, userID)
+}
+
+// GetAppealMessagesByID mocks base method.
+func (m *MockAppealRepository) GetAppealMessagesByID(ctx context.Context, appealID uint) ([]entity.AppealMessage, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAppealMessagesByID", ctx, appealID)
+	ret0, _ := ret[0].([]entity.AppealMessage)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAppealMessagesByID indicates an expected call of GetAppealMessagesByID.
+func (mr *MockAppealRepositoryMockRecorder) GetAppealMessagesByID(ctx, appealID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAppealMessagesByID", reflect.TypeOf((*MockAppealRepository)(nil).GetAppealMessagesByID), ctx, appealID)
+}
+
+// UpdateAppealStatus mocks base method.
+func (m *MockAppealRepository) UpdateAppealStatus(ctx context.Context, appealID uint, status string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateAppealStatus", ctx, appealID, status)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateAppealStatus indicates an expected call of UpdateAppealStatus.
+func (mr *MockAppealRepositoryMockRecorder) UpdateAppealStatus(ctx, appealID, status any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAppealStatus", reflect.TypeOf((*MockAppealRepository)(nil).UpdateAppealStatus), ctx, appealID, status)
 }
 
 // MockAssetRepository is a mock of AssetRepository interface.

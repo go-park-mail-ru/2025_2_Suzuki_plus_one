@@ -23,6 +23,13 @@ type Handlers struct {
 	GetActorMediaUseCase            controller.GetActorMediaUseCase
 	GetMediaActorUseCase            controller.GetMediaActorUseCase
 	PostUserMeUpdatePasswordUseCase controller.PostUserMeUpdatePasswordUseCase
+	GetAppealMyUseCase              controller.GetAppealMyUseCase
+	PostAppealNewUseCase            controller.PostAppealNewUseCase
+	GetAppealUseCase                controller.GetAppealUseCase
+	PutAppealResolveUseCase         controller.PutAppealResolveUseCase
+	PostAppealMessageUseCase        controller.PostAppealMessageUseCase
+	GetAppealMessageUseCase         controller.GetAppealMessageUseCase
+	GetAppealAllUseCase             controller.GetAppealAllUseCase
 }
 
 func NewHandlers(
@@ -42,6 +49,13 @@ func NewHandlers(
 	GetActorMediaUseCase controller.GetActorMediaUseCase,
 	GetMediaActorUseCase controller.GetMediaActorUseCase,
 	PostUserMeUpdatePasswordUseCase controller.PostUserMeUpdatePasswordUseCase,
+	GetAppealMyUseCase controller.GetAppealMyUseCase,
+	PostAppealNewUseCase controller.PostAppealNewUseCase,
+	GetAppealUseCase controller.GetAppealUseCase,
+	PutAppealResolveUseCase controller.PutAppealResolveUseCase,
+	PostAppealMessageUseCase controller.PostAppealMessageUseCase,
+	GetAppealMessageUseCase controller.GetAppealMessageUseCase,
+	GetAppealAllUseCase controller.GetAppealAllUseCase,
 ) *Handlers {
 	return &Handlers{
 		Logger:                          logger,
@@ -60,5 +74,12 @@ func NewHandlers(
 		GetActorMediaUseCase:            GetActorMediaUseCase,
 		GetMediaActorUseCase:            GetMediaActorUseCase,
 		PostUserMeUpdatePasswordUseCase: PostUserMeUpdatePasswordUseCase,
+		GetAppealMyUseCase:              GetAppealMyUseCase,
+		PostAppealNewUseCase:            PostAppealNewUseCase,
+		GetAppealUseCase:                GetAppealUseCase,
+		PutAppealResolveUseCase:         PutAppealResolveUseCase,
+		PostAppealMessageUseCase:        PostAppealMessageUseCase,
+		GetAppealMessageUseCase:         GetAppealMessageUseCase,
+		GetAppealAllUseCase:             GetAppealAllUseCase,
 	}
 }
