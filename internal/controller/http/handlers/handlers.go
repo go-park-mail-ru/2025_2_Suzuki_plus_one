@@ -23,6 +23,7 @@ type Handlers struct {
 	GetActorMediaUseCase            controller.GetActorMediaUseCase
 	GetMediaActorUseCase            controller.GetMediaActorUseCase
 	PostUserMeUpdatePasswordUseCase controller.PostUserMeUpdatePasswordUseCase
+	GetAppealMyUseCase              controller.GetAppealMyUseCase
 }
 
 func NewHandlers(
@@ -42,6 +43,7 @@ func NewHandlers(
 	GetActorMediaUseCase controller.GetActorMediaUseCase,
 	GetMediaActorUseCase controller.GetMediaActorUseCase,
 	PostUserMeUpdatePasswordUseCase controller.PostUserMeUpdatePasswordUseCase,
+	GetAppealMyUseCase controller.GetAppealMyUseCase,
 ) *Handlers {
 	return &Handlers{
 		Logger:                          logger,
@@ -60,5 +62,6 @@ func NewHandlers(
 		GetActorMediaUseCase:            GetActorMediaUseCase,
 		GetMediaActorUseCase:            GetMediaActorUseCase,
 		PostUserMeUpdatePasswordUseCase: PostUserMeUpdatePasswordUseCase,
+		GetAppealMyUseCase:              GetAppealMyUseCase,
 	}
 }

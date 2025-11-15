@@ -6,12 +6,13 @@ type GetAppealInput struct {
 }
 
 type GetAppealOutput struct {
-	ID        uint   `json:"id"`
-	Tag       string `json:"tag"`
-	Name      string `json:"name"`
-	Status    string `json:"status"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	ID        uint            `json:"id"`
+	Tag       string          `json:"tag"`
+	Name      string          `json:"name"`
+	Status    string          `json:"status"`
+	CreatedAt string          `json:"created_at"`
+	UpdatedAt string          `json:"updated_at"`
+	Messages  []AppealMessage `json:"messages"`
 }
 
 type AppealMessage struct {

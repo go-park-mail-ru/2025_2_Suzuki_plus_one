@@ -67,4 +67,8 @@ type (
 	PostUserMeUpdatePasswordUseCase interface {
 		Execute(context.Context, dto.PostUserMeUpdatePasswordInput) (dto.PostUserMeUpdatePasswordOutput, *dto.Error)
 	}
+
+	GetAppealMyUseCase interface {
+		Execute(context.Context, dto.GetAppealMyInput) (dto.GetAppealMyOutput, *dto.Error)
+	}
 )

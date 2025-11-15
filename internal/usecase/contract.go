@@ -61,6 +61,18 @@ type (
 		UpdateUserPassword(ctx context.Context, userID uint, newHashedPassword string) error
 	}
 
+	AppealRepository interface {
+		// Get
+		GetAppealsByUserID(ctx context.Context, userID uint) ([]entity.Appeal, error)
+
+		// Create
+		CreateAppeal(ctx context.Context, userID uint, tag string, name string) (uint, error)
+		CreateAppealMessage(ctx context.Context, appealID uint, sender string, message string) (uint, error)
+
+		// Update
+		UpdateAppealStatus(ctx context.Context, appealID uint, status string) error
+	}
+
 	AssetRepository interface {
 		// Asset
 		CreateAsset(ctx context.Context, asset entity.Asset) (uint, error)
