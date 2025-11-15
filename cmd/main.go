@@ -154,12 +154,9 @@ func main() {
 
 		// Appeal usecases
 		uc.NewGetAppealMyUseCase(logger, appealRepository),
-		// uc.NewPostAppealNewUseCase(logger, appealRepository),
-		nil,
-		// uc.NewGetAppealUseCase(logger, appealRepository),
-		nil,
-		// uc.NewPutAppealResolveUseCase(logger, appealRepository),
-		nil,
+		uc.NewPostAppealNewUseCase(logger, appealRepository),    //done
+		uc.NewGetAppealUseCase(logger, appealRepository),        //done
+		uc.NewPutAppealResolveUseCase(logger, appealRepository), //done
 		// ----
 		uc.NewPostAppealMessageUseCase(logger, appealRepository),
 		uc.NewGetAppealMessageUseCase(logger, appealRepository),

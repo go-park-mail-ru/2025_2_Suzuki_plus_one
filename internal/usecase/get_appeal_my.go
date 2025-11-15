@@ -31,8 +31,8 @@ func (uc *GetAppealMyUseCase) Execute(ctx context.Context, input dto.GetAppealMy
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
-			"usecase/get_auth_signout",
-			entity.ErrGetAuthSignOutInvalidParams,
+			"usecase/get_appeal_my",
+			entity.ErrGetAppealMyFailed,
 			err.Error(),
 		)
 		return dto.GetAppealMyOutput{}, &derr

@@ -40,7 +40,6 @@ var (
 
 	ErrPostUserMeUpdatePasswordCurrentPasswordMismatch = errors.New("current password does not match")
 
-
 	ErrWrongAccessToken = errors.New("wrong access token provided")
 
 	ErrGetAppealMyFailed = errors.New("failed to get appeals for user")
@@ -50,4 +49,9 @@ var (
 	ErrPostAppealMessageInvalidParams = errors.New("invalid post_appeal_message request parameters")
 
 	ErrGetAppealMessageInvalidParams = errors.New("invalid get_appeal_message request parameters")
+	ErrGetAppealFailed               = errors.New("failed to get details of specific appeal")
+
+	ErrPostAppealNew = errors.New("failed to create a new appeal")
+
+	ErrPutAppealResolve = errors.New("failed to resolve an appeal")
 )
