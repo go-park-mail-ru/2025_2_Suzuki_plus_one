@@ -5,5 +5,5 @@ type GetAppealAllInput struct {
 }
 
 type GetAppealAllOutput struct {
-	Appeals GetAppealOutput `json:"appeals"`
+	Appeals []GetAppealOutput `json:"appeals"`
 }

@@ -58,7 +58,7 @@ func (h *Handlers) GetAppealAll(w http.ResponseWriter, r *http.Request) {
 	// Log successful completion
 	log.Debug(
 		"Fetching appeals details completed successfully",
-		log.ToInt("messages count", len(output.Messages)),
+		log.ToInt("appeals count", len(output.Appeals)),
 	)
 
 	// Respond with output

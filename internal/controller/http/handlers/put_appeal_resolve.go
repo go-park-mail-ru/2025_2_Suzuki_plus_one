@@ -58,7 +58,7 @@ func (h *Handlers) PutAppealResolve(w http.ResponseWriter, r *http.Request) {
 	// Log successful completion
 	log.Debug(
 		"Marking an appeal as resolved completed successfully",
-		log.ToInt("ID:", int(output.ID)),
+		log.ToString("Message: ", output.Message),
 	)
 
 	// Respond with output
