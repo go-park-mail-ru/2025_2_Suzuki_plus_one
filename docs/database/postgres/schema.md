@@ -228,6 +228,40 @@ erDiagram
         timestamptz updated_at
     }
 
+    USER_APPEAL {
+        bigint user_appeal_id PK
+        bigint user_id FK
+        %% ---
+        text tag      "bug / feature / other"
+        %% message first line
+        text name
+        text status   "open / in_progress / resolved"
+        %% ---
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    USER_APPEAL_MESSAGE {
+        bigint user_appeal_message_id PK
+        bigint user_appeal_id FK
+        %% ---
+        text message_content
+        %% ---
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    USER_APPEAL_RESPONSE {
+        bigint user_appeal_response_id PK
+        bigint user_appeal_id FK
+        %% ---
+        text response_message
+        %% ---
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+
     USER_SESSION {
         bigint user_session_id PK
         bigint user_id FK
@@ -367,7 +401,7 @@ erDiagram
     USER ||--o{ USER_PLAYLIST : "user has playlists"
         USER_PLAYLIST ||--|| PLAYLIST : "user_playlist links user and playlist"
 
-    USER }o-|| ASSET_IMAGE : "user has profile image"
+    USER }o--|| ASSET_IMAGE : "user has profile image"
 
     USER ||--o{ USER_SESSION : "user has sessions"
 
