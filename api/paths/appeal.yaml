@@ -67,6 +67,7 @@ all:
         required: false
         schema:
           type: string
+          enum: [bug, feature, other]
         description: Filter appeals by tag
       - in: query
         name: status
