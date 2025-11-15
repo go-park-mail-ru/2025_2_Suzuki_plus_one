@@ -52,8 +52,28 @@ new:
           application/json:
             schema:
               $ref: "../schemas/error.yaml#/ErrorResponse"
-
-certain:
+all:
+  get:
+    tags:
+      - appeal
+    summary: Get all appeals
+    description: Retrieve information about all appeals without messages.
+    responses:
+      "200":
+        description: Appeal details retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/appeal.yaml#/AppealResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+id:
   get:
     security:
       - access_token: []
