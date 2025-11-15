@@ -64,6 +64,7 @@ type (
 	AppealRepository interface {
 		// Get
 		GetAppealIDsByUserID(ctx context.Context, userID uint) ([]uint, error)
+		GetAppealIDsAll(ctx context.Context, tag *string, status *string, limit uint, offset uint) ([]uint, error)
 		GetAppealByID(ctx context.Context, appealID uint) (*entity.Appeal, error)
 
 		// Get messages for appeal
