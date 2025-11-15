@@ -1,22 +1,22 @@
 TRUNCATE TABLE USER_APPEAL_MESSAGE CASCADE;
 
 -- Заполнение таблицы USER
-INSERT INTO "USER" (user_id, username) VALUES
-(2, 'user_one'),
-(3, 'user_two'),
-(4, 'user_three'),
-(5, 'user_one'),
-(6, 'user_two'),
-(7, 'user_three'),
-(8, 'user_four'),
-(9, 'user_five'),
-(10, 'user_six'),
-(11, 'user_seven'),
-(12, 'user_eight'),
-(13, 'user_nine'),
-(14, 'user_ten'),
-(15, 'user_eleven'),
-(16, 'user_twelve');
+INSERT INTO "user" (username) VALUES
+('user_one'),
+('user_two'),
+('user_three'),
+('user_one'),
+('user_two'),
+('user_three'),
+('user_four'),
+('user_five'),
+( 'user_six'),
+( 'user_seven'),
+( 'user_eight'),
+( 'user_nine'),
+( 'user_ten'),
+( 'user_eleven'),
+( 'user_twelve');
 
 -- Заполнение таблицы USER_APPEAL
 INSERT INTO USER_APPEAL (user_appeal_id, user_id, tag, name, status, created_at, updated_at) VALUES
