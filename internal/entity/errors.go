@@ -44,4 +44,6 @@ var (
 	ErrWrongAccessToken = errors.New("wrong access token provided")
 
 	ErrGetAppealMyFailed = errors.New("failed to get appeals for user")
+
+	ErrGetAppealAllFailed = errors.New("failed to get all appeals")
 )

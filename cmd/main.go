@@ -151,7 +151,20 @@ func main() {
 		uc.NewGetActorMediaUseCase(logger, actorRepository, getMediaUseCase),
 		uc.NewGetMediaActorUseCase(logger, actorRepository, getActorUseCase),
 		uc.NewPostUserMeUpdatePasswordUseCase(logger, userRepository, sessionRepository),
+
+		// Appeal usecases
 		uc.NewGetAppealMyUseCase(logger, appealRepository),
+		// uc.NewPostAppealNewUseCase(logger, appealRepository),
+		nil,
+		// uc.NewGetAppealUseCase(logger, appealRepository),
+		nil,
+		// uc.NewPutAppealResolveUseCase(logger, appealRepository),
+		nil,
+		// uc.NewPostAppealMessageUseCase(logger, appealRepository),
+		nil,
+		// uc.NewGetAppealMessageUseCase(logger, appealRepository),
+		nil,
+		uc.NewGetAppealAllUseCase(logger, appealRepository),
 	)
 
 	// Initialize JWT middleware engine

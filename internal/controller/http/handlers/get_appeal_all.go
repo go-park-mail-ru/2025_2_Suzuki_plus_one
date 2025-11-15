@@ -21,6 +21,14 @@ var (
 	}
 )
 
+var (
+	// URL query parameters
+	QueryParamAppealAllOffset = "offset"
+	QueryParamAppealAllLimit  = "limit"
+	QueryParamAppealAllTag    = "tag"
+	QueryParamAppealAllStatus = "status"
+)
+
 // Get all movies from database
 func (h *Handlers) GetAppealAll(w http.ResponseWriter, r *http.Request) {
 	// Extract context, bind logger with request ID
@@ -31,6 +39,10 @@ func (h *Handlers) GetAppealAll(w http.ResponseWriter, r *http.Request) {
 	// Handle input parameters
 	input := dto.GetAppealAllInput{}
 	rp := NewRequestParams(log, r, &input)
+	rp.AddQuery(QueryParamAppealAllTag, &input.Tag)
+	rp.AddQuery(QueryParamAppealAllStatus, &input.Status)
+	rp.AddQuery(QueryParamAppealAllLimit, &input.Limit)
+	rp.AddQuery(QueryParamAppealAllOffset, &input.Offset)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {
