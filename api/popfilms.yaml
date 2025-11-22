@@ -44,6 +44,8 @@ paths:
     $ref: "./paths/media.yaml#/watch"
   /media/{media_id}/actor:
     $ref: "./paths/media.yaml#/actor"
+  /media/{media_id}/like:
+    $ref: "./paths/media.yaml#/like"
   # user.yaml
   /user/me:
     $ref: "./paths/user.yaml#/me"
@@ -71,6 +73,14 @@ paths:
     $ref: "./paths/appeal.yaml#/id_resolve"
   /appeal/{appeal_id}/message:
     $ref: "./paths/appeal.yaml#/id_message"
+  # genre.yaml
+  /genre/{genre_id}:
+    $ref: "./paths/genre.yaml#/certain"
+  /genre/{genre_id}/media:
+    $ref: "./paths/genre.yaml#/genre_media"
+  # search.yaml
+  /search:
+    $ref: "./paths/search.yaml#/.self"
 
 components:
   securitySchemes:

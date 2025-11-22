@@ -138,3 +138,53 @@ actor:
           application/json:
             schema:
               $ref: "../schemas/error.yaml#/ErrorResponse"
+
+like:
+  put:
+    security:
+      - access_token: []
+    tags:
+      - content
+    summary: Like a specific media
+    description: |
+      Mark a media as liked by the authenticated user.
+    parameters:
+      - in: query
+        name: media_id
+        required: true
+        schema:
+          type: integer
+        description: The unique identifier of the media to like
+    responses:
+      "200":
+        description: Media liked successfully
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+  delete:
+    security:
+      - access_token: []
+    tags:
+      - content
+    summary: Unlike a specific media
+    description: |
+      Remove the like from a media by the authenticated user.
+    parameters:
+      - in: query
+        name: media_id
+        required: true
+        schema:
+          type: integer
+        description: The unique identifier of the media to unlike
+    responses:
+      "200":
+        description: Media unliked successfully
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

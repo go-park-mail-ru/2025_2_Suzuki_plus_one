@@ -1,0 +1,14 @@
+SearchResult:
+  type: object
+  required:
+    - medias
+    - actors
+  properties:
+    medias:
+      type: array
+      items:
+        $ref: "./media.yaml#/MediaResponse"
+    actors:
+      type: array
+      items:
+        $ref: "./actor.yaml#/ActorResponse"
