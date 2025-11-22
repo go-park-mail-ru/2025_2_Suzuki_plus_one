@@ -25,6 +25,7 @@ var (
 var (
 	BodyParamPostAppealNewTag     = "tag"
 	BodyParamPostAppealNewMessage = "message"
+	BodyParamPostAppealNewName    = "name"
 )
 
 // Get all movies from database
@@ -40,6 +41,7 @@ func (h *Handlers) PostAppealNew(w http.ResponseWriter, r *http.Request) {
 	rp.AddAuthHeader(&input.AccessToken)
 	rp.AddBody(BodyParamPostAppealNewTag, &input.Tag)
 	rp.AddBody(BodyParamPostAppealNewMessage, &input.Message)
+	rp.AddBody(BodyParamPostAppealNewName, &input.Name)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {

@@ -24,14 +24,6 @@ func NewPostAppealNewUseCase(
 	}
 }
 
-func zipStringToTen(toZip string) string {
-	if len(toZip) <= 10 {
-		return toZip
-	}
-
-	return toZip[0:10] + "..."
-}
-
 func (uc *PostAppealNewUseCase) Execute(ctx context.Context, input dto.PostAppealNewInput) (dto.PostAppealNewOutput, *dto.Error) {
 	log := logger.LoggerWithKey(uc.logger, ctx, "request_id")
 	log.Debug("PostAppealNewUseCase called")
@@ -58,7 +50,7 @@ func (uc *PostAppealNewUseCase) Execute(ctx context.Context, input dto.PostAppea
 		return dto.PostAppealNewOutput{}, &derr
 	}
 
-	appealID, err := uc.appealRepo.CreateAppeal(ctx, userID, input.Tag, zipStringToTen(input.Message))
+	appealID, err := uc.appealRepo.CreateAppeal(ctx, userID, input.Tag, input.Name)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/post_appeal_new",

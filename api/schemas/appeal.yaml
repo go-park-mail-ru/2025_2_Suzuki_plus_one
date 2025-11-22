@@ -46,6 +46,10 @@ AppealRequest:
       type: string
       example: "Detailed description of the issue..."
       description: The detailed message of the appeal
+    name:
+      type: string
+      example: "Issue title"
+      description: Prefix of first message
 
 # Appeal message schemas
 AppealMessageRequest:
