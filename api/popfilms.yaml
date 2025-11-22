@@ -36,6 +36,8 @@ paths:
   /object:
     $ref: "./paths/object.yaml#/.self"
   # media.yaml
+  /media/my:
+    $ref: "./paths/media.yaml#/my"
   /media/recommendations:
     $ref: "./paths/media.yaml#/recommendations"
   /media/{media_id}:

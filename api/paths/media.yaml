@@ -140,6 +140,38 @@ actor:
               $ref: "../schemas/error.yaml#/ErrorResponse"
 
 like:
+  get:
+    security:
+      - access_token: []
+    tags:
+      - content
+    summary: Check if a media is liked by the authenticated user
+    description: |
+      Determine whether a specific media is liked by the authenticated user.
+    parameters:
+      - in: query
+        name: media_id
+        required: true
+        schema:
+          type: integer
+        description: The unique identifier of the media to check
+    responses:
+      "200":
+        description: Like status retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                liked:
+                  type: boolean
+                  description: Indicates if the media is liked by the user
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
   put:
     security:
       - access_token: []
@@ -182,6 +214,48 @@ like:
     responses:
       "200":
         description: Media unliked successfully
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+my:
+  get:
+    security:
+      - access_token: []
+    tags:
+      - content
+    summary: Get liked media of the authenticated user
+    description: Retrieve a list of media liked by the authenticated user
+    parameters:
+      - in: query
+        name: limit
+        required: false
+        description: "Number of liked media to retrieve"
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 10
+      - in: query
+        name: offset
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        description: "Offset for pagination"
+    responses:
+      "200":
+        description: A list of liked medias
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/media.yaml#/MediaResponse"
       "400":
         description: Bad request
         content:
