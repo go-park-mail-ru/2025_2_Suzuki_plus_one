@@ -90,6 +90,10 @@ image-create: ## creates a docker image for the application
 image-push: ## pushes the docker image to the registry
 	docker push ghcr.io/sorrtory/popfilms-backend:latest
 
+image-update: ## builds and pushes the docker image to the registry
+	make image-create
+	make image-push
+
 ## Ansible
 ansible-api: ## runs the ansible playbook to deploy the OpenAPI spec server
 	cd deployments && ansible-playbook update-api.yaml --vault-password-file=vault_password.sh

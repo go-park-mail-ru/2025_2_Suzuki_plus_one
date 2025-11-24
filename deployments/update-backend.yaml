@@ -18,18 +18,26 @@
         dest: /home/{{ ansible_user }}/backend
         update: yes
         version: deploy
-    - name: Pull latest images
+
+    - name: Pull latest image for backend
       shell: |
         cd /home/{{ ansible_user }}/backend
-        docker compose pull backend
+        docker compose pull backend-http
 
-    - name: Build and start backend containers
+    # - name: Boostrap all, recreate all containers
+    #   community.general.make:
+    #     target: all-bootstrap
+    #   args:
+    #     chdir: /home/{{ ansible_user }}/backend
+    #   environment:
+    #     PATH: "{{ ansible_env.PATH }}:/home/{{ ansible_user }}/go/bin"
+  
+    - name: Restart backend-http container
       community.general.make:
-        target: all-bootstrap
+        target: all-service-deploy
       args:
         chdir: /home/{{ ansible_user }}/backend
       environment:
-        PATH: "{{ ansible_env.PATH }}:/home/{{ ansible_user }}/go/bin"
 
     - name: Wait for server to start
       uri:
