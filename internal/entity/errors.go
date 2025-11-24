@@ -54,4 +54,17 @@ var (
 	ErrPostAppealNew = errors.New("failed to create a new appeal")
 
 	ErrPutAppealResolve = errors.New("failed to resolve an appeal")
+
+	ErrGetSearchParamsInvalid = errors.New("invalid get_search request parameters")
+
+	// Authentication service errors
+	ErrPostAuthSignInAuthServiceFailed = errors.New("authentication service login call failed")
+	ErrGetAuthRefreshAuthServiceFailed = errors.New("authentication service refresh call failed")
+	ErrGetAuthSignOutAuthServiceFailed = errors.New("authentication service logout call failed")
+	ErrPostAuthSignUpAuthServiceFailed = errors.New("authentication service signup call failed")
+
+	// Search service errors
+	ErrGetSearchSearchServiceFailed = errors.New("search service call failed")
+	ErrorSearchMediaFailed          = errors.New("search media failed")
+	ErrorSearchActorFailed          = errors.New("search actor failed")
 )

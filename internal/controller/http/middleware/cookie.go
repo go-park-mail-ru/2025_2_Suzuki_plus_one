@@ -27,7 +27,7 @@ func MustCookieMiddleware(l logger.Logger, cookieName string) func(next http.Han
 				log := logger.LoggerWithKey(l, ctx, common.ContextKeyRequestID)
 
 				log.Warn("Missing required cookie",
-					log.ToString("cookie_name", cookieName),
+					log.ToString("cookie_n``ame", cookieName),
 				)
 
 				details := "cookie '" + cookieName + "' not found"

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package search;
+
+option go_package = "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/proto/search;searchpb";
+
+service SearchService {
+  rpc SearchMedia(SearchMediaRequest) returns (SearchMediaResponse) {}
+  rpc SearchActor(SearchActorRequest) returns (SearchActorResponse) {}
+}
+
+message SearchMediaRequest {
+    string query = 1;
+    int32 limit = 2;
+    int32 offset = 3;
+}
+
+message SearchMediaResponse {
+    repeated Media medias = 1;
+}
+
+message Media {
+    int64 id = 1;
+}
+
+message SearchActorRequest {
+    string query = 1;
+    int32 limit = 2;
+    int32 offset = 3;
+}
+
+message SearchActorResponse {
+    repeated Actor actors = 1;
+}
+
+message Actor {
+    int64 id = 1;
+}

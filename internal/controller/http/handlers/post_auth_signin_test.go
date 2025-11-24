@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"testing"
 
+	rtr "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/router"
 	srv "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http"
 	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/handlers"
-	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/mocks"
+	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/mocks"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/stretchr/testify/require"
 
@@ -52,7 +53,7 @@ func TestPostAuthSignIn(t *testing.T) {
 		Logger:                logger,
 		PostAuthSignInUseCase: mockPostAuthSignInUsecase,
 	}
-	router := srv.InitRouter(handlers, logger, "/")
+	router := rtr.InitRouter(handlers, logger, "/")
 	server := srv.NewServer(router)
 
 	// Marshal input to JSON

@@ -6,13 +6,14 @@ import (
 	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
+	rtr "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/router"
 	srv "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http"
 	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/handlers"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/stretchr/testify/require"
 	gomock "go.uber.org/mock/gomock"
 
-	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/mocks"
+	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/mocks"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 )
@@ -54,7 +55,7 @@ func TestGetAuthSignOut(t *testing.T) {
 		Logger:                logger,
 		GetAuthSignOutUseCase: mockGetAuthSignOutUsecase,
 	}
-	router := srv.InitRouter(handlers, logger, "/")
+	router := rtr.InitRouter(handlers, logger, "/")
 	server := srv.NewServer(router)
 
 	// Create a New Request

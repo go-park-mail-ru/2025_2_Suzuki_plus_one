@@ -6,10 +6,11 @@ import (
 	"testing"
 	"time"
 
+	rtr "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/router"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	srv "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http"
 	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/handlers"
-	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/mocks"
+	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/mocks"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/stretchr/testify/require"
 
@@ -53,7 +54,7 @@ func TestGetUserMe(t *testing.T) {
 		Logger:           logger,
 		GetUserMeUseCase: mockGetUserMeUsecase,
 	}
-	router := srv.InitRouter(handlers, logger, "/")
+	router := rtr.InitRouter(handlers, logger, "/")
 	server := srv.NewServer(router)
 
 	// Create a New Request

@@ -35,10 +35,11 @@ services:
       - redis_data:/data
     networks:
       - app-network
-  backend:
-    container_name: popfilms_backend
+  backend-http:
+    container_name: popfilms_backend-http
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
     env_file:
+      # - "./configs/http.env"
       - .env
     ports:
       - "8080:8080"
@@ -51,6 +52,41 @@ services:
         condition: service_started
     networks:
       - app-network
+    entrypoint: ["./http"]
+  backend-auth:
+    container_name: popfilms_backend-auth
+    image: "ghcr.io/sorrtory/popfilms-backend:latest"
+    env_file:
+      - .env
+    ports:
+      - "8082:8082"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+    entrypoint: ["./auth"]
+  backend-search:
+    container_name: popfilms_backend-search
+    image: "ghcr.io/sorrtory/popfilms-backend:latest"
+    env_file:
+      - .env
+    ports:
+      - "8083:8083"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+    entrypoint: ["./search"]
 volumes:
   db_data:
   minio_data:

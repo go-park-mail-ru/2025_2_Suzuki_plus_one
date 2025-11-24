@@ -7,6 +7,7 @@ type PostAuthSignUpInput struct {
 }
 
 type PostAuthSignUpOutput struct {
+	UserID       int64  `json:"user_id"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 }

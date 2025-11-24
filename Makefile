@@ -6,9 +6,14 @@ SHELL := /bin/bash # Use bash syntax
 
 # Go settings
 ALL_PACKAGES=$(shell go list ./... | grep -v /vendor)
-APP=server
-APP_EXECUTABLE="./build/$(APP)"
-ENTRYPOINT=./cmd/main.go
+
+SERVICES = http auth search
+
+# Default service to build/run/test
+SERVICE ?= http
+
+ENTRYPOINT = ./cmd/${SERVICE}/main.go
+APP_EXECUTABLE = build/${SERVICE}
 
 # Optional colors to beautify output
 GREEN  := $(shell tput -Txterm setaf 2)
@@ -61,7 +66,8 @@ start: ## starts the application (requires built binary)
 	set -a && source .env && set +a && $(APP_EXECUTABLE)
 
 live: ## launch the application using air for live reloading
-	set -a && source .env && set +a && air
+	@echo "Starting live reload for $(SERVICE)..."
+	set -a && source .env && set +a && SERVICE=$(SERVICE) air
 
 run: ## builds and starts the application
 	make build
@@ -223,7 +229,7 @@ all-wipe: ## wipes all services containers and their volumes
 	source .env && docker compose down -v
 
 all-fill: ## fills all services with test data
-# 	make minio-fill
+	make minio-fill
 	make db-fill
 
 all-migrate: ## migrates database and minio services
@@ -231,8 +237,7 @@ all-migrate: ## migrates database and minio services
 	make minio-create
 
 all-prepare: ## prepare all database: starts, migrates, fills with test data
-	docker compose down -v db redis backend
-# TODO don't wait for minio
+	docker compose down -v
 	docker compose up --build -d db redis minio
 
 	@echo "Waiting for services to be ready..."
@@ -257,6 +262,9 @@ all-prepare: ## prepare all database: starts, migrates, fills with test data
 	make all-migrate
 	make all-fill
 	@echo "All services prepared"
+
+all-service-deploy: ## runs all microservices in docker-compose
+	docker compose -f compose.yaml up --build -d backend-http backend-auth backend-search
 
 all-deploy: ## deploy all services using docker-compose
 	docker compose -f compose.yaml up --build -d

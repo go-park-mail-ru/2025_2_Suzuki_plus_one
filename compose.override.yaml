@@ -8,5 +8,9 @@ services:
   redis:
     ports:
       - "6379:6379"
-  backend:
+  backend-http:
+    build: .
+  backend-auth:
+    build: .
+  backend-search:
     build: .

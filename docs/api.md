@@ -20,6 +20,8 @@ Don't forget to switch to local server!
 
 ## Updating API
 
+> [DEPRECATED] after microservices refactor
+
 Optimal new endpoint flow
 
 1. openapi
@@ -35,3 +37,11 @@ Optimal new endpoint flow
 11. entity/NEW
 12. adapter/NEW
 13. adapter/NEW-test
+
+## Building API Docs
+
+```bash
+cd api
+npm install -g @redocly/cli
+openapi bundle popfilms.yaml -o popfilms_bundle.yaml
+```

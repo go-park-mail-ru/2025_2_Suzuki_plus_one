@@ -38,6 +38,10 @@ type Config struct {
 	MINIO_EXTERNAL_HOST string
 	MINIO_ROOT_USER     string
 	MINIO_ROOT_PASSWORD string
+
+	// Services
+	AUTH_SERVICE_SERVE_STRING   string
+	SEARCH_SERVICE_SERVE_STRING string
 }
 
 // Load loads config from env vars with defaults and validation.
@@ -66,6 +70,10 @@ func Load() Config {
 		MINIO_EXTERNAL_HOST: mustEnv("MINIO_EXTERNAL_HOST"),
 		MINIO_ROOT_USER:     mustEnv("MINIO_ROOT_USER"),
 		MINIO_ROOT_PASSWORD: mustEnv("MINIO_ROOT_PASSWORD"),
+
+		// Services
+		AUTH_SERVICE_SERVE_STRING:   mustEnv("POPFILMS_SERVICE_AUTH_SERVESTRING"),
+		SEARCH_SERVICE_SERVE_STRING: mustEnv("POPFILMS_SERVICE_SEARCH_SERVESTRING"),
 	}
 
 	return cfg
@@ -84,7 +92,6 @@ func getEnv(key, fallback string) string {
 func mustEnv(key string) string {
 	value := os.Getenv(key)
 	if value == "" {
-		//value = "123123"
 		log.Fatalf("Required environment variable %s is not set", key)
 	}
 	return value

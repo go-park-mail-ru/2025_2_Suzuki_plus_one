@@ -24,6 +24,9 @@ func InitJWT(secret string, accessTokenTTL, refreshTokenTTL time.Duration) {
 }
 
 func GenerateToken(userID uint, duration time.Duration) (string, error) {
+	if TokenAuth == nil {
+		return "", errors.New("JWT not initialized")
+	}
 	// Access token: short-lived
 	_, jwtTokenStr, err := TokenAuth.Encode(map[string]any{
 		UserIDKey: userID,
@@ -38,6 +41,10 @@ func GenerateToken(userID uint, duration time.Duration) (string, error) {
 
 // Returns user ID if token is valid, error otherwise
 func ValidateToken(tokenStr string) (uint, error) {
+	if TokenAuth == nil {
+		return 0, errors.New("JWT not initialized")
+	}
+	
 	token, err := TokenAuth.Decode(tokenStr)
 	if err != nil {
 		return 0, err

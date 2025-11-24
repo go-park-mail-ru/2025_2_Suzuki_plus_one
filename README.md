@@ -2,6 +2,10 @@
 
 Этот репозиторий содержит бэкенд проекта Popfilms.
 
+Этот проект является частью учебной программы курса "Web разработка" от VK Education.
+
+[Ссылка](https://github.com/go-park-mail-ru/lectures) на лекции
+
 ## Popfilms
 
 Popfilms -- это стриминговый сервис, вдохновленный Netflix.
@@ -10,13 +14,13 @@ Popfilms -- это стриминговый сервис, вдохновленн
 
 ## Релиз
 
-[Ссылка](http://217.16.18.125/) на деплой приложения
+[Ссылка](https://popfilms.ru) на деплой приложения
 
 > ДЗ по курсу баз данных можно найти в папке [docs/database/postgres](./docs/database/postgres/postgres.md)
 
 ## Фичи
 
-[См. Swagger](http://217.16.18.125/docs/)
+[См. Swagger](https://popfilms.ru/docs/)
 
 - Регистрация и аутентификация пользователей
 - Отдача медиа контента (фильмы, сериалы и т.д.) через Minio
@@ -49,6 +53,10 @@ Popfilms -- это стриминговый сервис, вдохновленн
 echo "export PATH=$PATH:$HOME/go/bin" >> ~/.bashrc
 source ~/.bashrc
 go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+# Установка protobuf
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 # Установка PostgreSQL клиента
 sudo apt-get install -y postgresql-client
@@ -95,9 +103,6 @@ make all-wipe
 make test
 ## собираем и проверяем покрытие тестами
 make coverage
-
-# Запуск докер компосе без наполнения данными
-make all-deploy
 ```
 
 ## Другие ссылки
