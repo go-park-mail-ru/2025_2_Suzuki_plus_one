@@ -80,6 +80,8 @@ paths:
     $ref: "./paths/genre.yaml#/certain"
   /genre/{genre_id}/media:
     $ref: "./paths/genre.yaml#/genre_media"
+  /genre/all:
+    $ref: "./paths/genre.yaml#/all"
   # search.yaml
   /search:
     $ref: "./paths/search.yaml#/.self"

@@ -16,7 +16,7 @@
         required: false
         schema:
           type: string
-          enum: [any]
+          enum: [any, media, actor]
         description: DISABLED. Type of objects to search for (movie, series, actor)
         default: any
       - in: query

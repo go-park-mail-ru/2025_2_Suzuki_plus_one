@@ -52,3 +52,24 @@ genre_media:
           application/json:
             schema:
               $ref: "../schemas/error.yaml#/ErrorResponse"
+all:
+  get:
+    tags:
+      - content
+    summary: Get all genres
+    description: Retrieve a list of all available genres
+    responses:
+      "200":
+        description: All genres retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/genre.yaml#/GenreResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
