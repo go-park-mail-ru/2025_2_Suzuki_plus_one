@@ -88,8 +88,10 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 			log.Debug("Found s3 url for user", "url", output.AvatarURL, "userID", user.ID)
 		}
 	}
-	if output.AvatarURL == "" {
-		output.AvatarURL = "can't find avatar :("
-	}
+
+	// Assume that avatar is blank if it is not found
+	// if output.AvatarURL == "" {
+	// 	output.AvatarURL = "can't find avatar :("
+	// }
 	return output, nil
 }
