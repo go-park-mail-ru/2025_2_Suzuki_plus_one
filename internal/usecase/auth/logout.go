@@ -48,17 +48,6 @@ func (uc *LogoutUseCase) Execute(ctx context.Context, input dto.GetAuthSignOutIn
 		return dto.GetAuthSignOutOutput{}, &derr
 	}
 
-	// Invalidate refresh token
-	if err := uc.tokenRepo.RemoveRefreshToken(ctx, userIDRefresh, input.RefreshToken); err != nil {
-		derr := dto.NewError(
-			"auth/usecase/get_auth_signout",
-			entity.ErrGetAuthSignOutInvalidParams,
-			"failed to invalidate refresh token: "+err.Error(),
-		)
-		log.Error("LogoutUseCase failed on refresh token invalidation", log.ToError(err))
-		return dto.GetAuthSignOutOutput{}, &derr
-	}
-
 	// Get access token user ID
 	userIDAccess, err := common.ValidateToken(input.AccessToken)
 	if err != nil {

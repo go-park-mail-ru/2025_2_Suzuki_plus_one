@@ -931,17 +931,17 @@ func (mr *MockServiceAuthRepositoryMockRecorder) CallLogin(ctx, email, password 
 }
 
 // CallLogout mocks base method.
-func (m *MockServiceAuthRepository) CallLogout(ctx context.Context, refreshToken string) error {
+func (m *MockServiceAuthRepository) CallLogout(ctx context.Context, refreshToken, accessToken string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CallLogout", ctx, refreshToken)
+	ret := m.ctrl.Call(m, "CallLogout", ctx, refreshToken, accessToken)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CallLogout indicates an expected call of CallLogout.
-func (mr *MockServiceAuthRepositoryMockRecorder) CallLogout(ctx, refreshToken any) *gomock.Call {
+func (mr *MockServiceAuthRepositoryMockRecorder) CallLogout(ctx, refreshToken, accessToken any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CallLogout", reflect.TypeOf((*MockServiceAuthRepository)(nil).CallLogout), ctx, refreshToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CallLogout", reflect.TypeOf((*MockServiceAuthRepository)(nil).CallLogout), ctx, refreshToken, accessToken)
 }
 
 // CallRefresh mocks base method.

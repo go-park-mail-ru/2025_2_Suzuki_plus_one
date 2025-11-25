@@ -48,7 +48,7 @@ func (uc *GetAuthSignOutUsecase) Execute(
 	}
 
 	// Call Auth service to sign out
-	if err := uc.authService.CallLogout(ctx, input.RefreshToken); err != nil {
+	if err := uc.authService.CallLogout(ctx, input.RefreshToken, input.AccessToken); err != nil {
 		derr := dto.NewError(
 			"usecase/get_auth_signout",
 			entity.ErrGetAuthSignOutAuthServiceFailed,

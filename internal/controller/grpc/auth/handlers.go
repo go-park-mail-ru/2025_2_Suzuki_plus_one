@@ -78,6 +78,7 @@ func (s *AuthServer) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.Log
 
 	input := dto.GetAuthSignOutInput{
 		RefreshToken: req.GetRefreshToken(),
+		AccessToken:  req.GetAccessToken(),
 	}
 
 	_, err := s.logoutUsecase.Execute(ctx, input)

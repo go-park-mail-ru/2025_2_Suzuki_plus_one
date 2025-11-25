@@ -128,7 +128,7 @@ type (
 	ServiceAuthRepository interface {
 		CallLogin(ctx context.Context, email string, password string) (accessToken string, refreshToken string, err error)
 		CallRefresh(ctx context.Context, refreshToken string) (accessToken string, err error)
-		CallLogout(ctx context.Context, refreshToken string) error
+		CallLogout(ctx context.Context, refreshToken string, accessToken string) error
 		CallCreateUser(ctx context.Context, email string, username string, password string) (userID uint, accessToken string, refreshToken string, err error)
 	}
 

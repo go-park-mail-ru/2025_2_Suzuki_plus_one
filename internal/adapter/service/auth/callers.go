@@ -68,7 +68,7 @@ func (s *AuthService) CallCreateUser(ctx context.Context, email string, username
 	return userID, r.GetAccessToken(), r.GetRefreshToken(), nil
 }
 
-func (s *AuthService) CallLogout(ctx context.Context, refreshToken string) error {
+func (s *AuthService) CallLogout(ctx context.Context, refreshToken string, accessToken string) error {
 	log := logger.LoggerWithKey(s.Logger, ctx, common.ContextKeyRequestID)
 	log.Info("AuthService CallLogout method invoked")
 
@@ -80,7 +80,7 @@ func (s *AuthService) CallLogout(ctx context.Context, refreshToken string) error
 	ctx, cancel := context.WithTimeout(ctx, service.ResponseTimeout)
 	defer cancel()
 
-	r, err := s.client.Logout(ctx, &pb.LogoutRequest{RefreshToken: refreshToken})
+	r, err := s.client.Logout(ctx, &pb.LogoutRequest{RefreshToken: refreshToken, AccessToken: accessToken})
 	if err != nil {
 		log.Error("could not call Logout", log.ToError(err))
 		return err
