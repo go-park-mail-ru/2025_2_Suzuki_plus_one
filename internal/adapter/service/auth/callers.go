@@ -48,7 +48,7 @@ func (s *AuthService) CallCreateUser(ctx context.Context, email string, username
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), service.ResponseTimeout)
+	ctx, cancel := context.WithTimeout(ctx, service.ResponseTimeout)
 	defer cancel()
 
 	r, err := s.client.CreateUser(ctx, &pb.CreateUserRequest{Email: email, Username: username, Password: password})
@@ -77,7 +77,7 @@ func (s *AuthService) CallLogout(ctx context.Context, refreshToken string) error
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), service.ResponseTimeout)
+	ctx, cancel := context.WithTimeout(ctx, service.ResponseTimeout)
 	defer cancel()
 
 	r, err := s.client.Logout(ctx, &pb.LogoutRequest{RefreshToken: refreshToken})
@@ -104,7 +104,7 @@ func (s *AuthService) CallRefresh(ctx context.Context, refreshToken string) (new
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), service.ResponseTimeout)
+	ctx, cancel := context.WithTimeout(ctx, service.ResponseTimeout)
 	defer cancel()
 
 	r, err := s.client.RefreshToken(ctx, &pb.RefreshTokenRequest{RefreshToken: refreshToken})

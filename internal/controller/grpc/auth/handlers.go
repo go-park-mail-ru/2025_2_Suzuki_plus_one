@@ -46,7 +46,7 @@ func (s *AuthServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Login
 func (s *AuthServer) RefreshToken(ctx context.Context, req *pb.RefreshTokenRequest) (*pb.RefreshTokenResponse, error) {
 	// Register log with request ID
 	log := logger.LoggerWithKey(s.Log, ctx, common.ContextKeyRequestID)
-	log.Debug("GRPC HANDLER Login called")
+	log.Debug("GRPC HANDLER RefreshToken called")
 
 	input := dto.GetAuthRefreshInput{
 		RefreshToken: req.GetRefreshToken(),
@@ -68,7 +68,7 @@ func (s *AuthServer) RefreshToken(ctx context.Context, req *pb.RefreshTokenReque
 	}
 
 	log.Debug("REFRESH TOKEN RESPONSE: %v", pbOutput)
-	return &pb.RefreshTokenResponse{}, nil
+	return pbOutput, nil
 }
 
 func (s *AuthServer) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
