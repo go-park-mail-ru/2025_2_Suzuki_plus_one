@@ -12,6 +12,7 @@
         dest: /var/www/frontend
         update: yes
         version: dev
+      become: yes
 
     - name: build frontend
       shell: |
