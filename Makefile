@@ -99,6 +99,8 @@ ansible-api: ## runs the ansible playbook to deploy the OpenAPI spec server
 	cd deployments && ansible-playbook update-api.yaml --vault-password-file=vault_password.sh
 ansible-nginx: ## runs the ansible playbook to deploy the nginx server
 	cd deployments && ansible-playbook update-nginx.yaml --vault-password-file=vault_password.sh
+ansible-frontend: ## runs the ansible playbook to deploy the frontend server
+	cd deployments && ansible-playbook update-frontend.yaml --vault-password-file=vault_password.sh
 ansible-backend: ## runs the ansible playbook to deploy the backend server
 	cd deployments && ansible-playbook update-backend.yaml --vault-password-file=vault_password.sh
 ansible-bootstrap: ## runs the ansible playbook to bootstrap the backend server

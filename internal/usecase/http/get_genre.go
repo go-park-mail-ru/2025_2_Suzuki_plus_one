@@ -96,7 +96,7 @@ func (uc *GetGenreUseCase) Execute(
 	}
 
 	// Get media entities by IDs
-	medias := make([]entity.Media, 0, len(mediaIDs))
+	medias := make([]dto.GetMediaOutput, 0, len(mediaIDs))
 	for _, mediaID := range mediaIDs {
 		getMediaOutput, derr := uc.getMediaUsecase.Execute(ctx, dto.GetMediaInput{
 			MediaID: mediaID,
@@ -105,7 +105,7 @@ func (uc *GetGenreUseCase) Execute(
 			log.Error("GetGenreUseCase failed to get media by ID", log.ToError(err), log.ToInt("media_id", int(mediaID)))
 			continue
 		}
-		medias = append(medias, getMediaOutput.Media)
+		medias = append(medias, getMediaOutput)
 	}
 
 	output := dto.GetGenreOutput{

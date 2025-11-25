@@ -10,5 +10,5 @@ type GetGenreInput struct {
 
 type GetGenreOutput struct {
 	entity.Genre
-	Medias []entity.Media `json:"medias"`
+	Medias []GetMediaOutput `json:"medias"`
 }
