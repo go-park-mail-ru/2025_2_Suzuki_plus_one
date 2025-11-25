@@ -29,14 +29,16 @@ Popfilms -- это стриминговый сервис, вдохновленн
 
 ### Детали реализации
 
-- Бэкенд задеплоен при помощи systemd сервисов, которые управляются с помощью ansible плейбуков
 - Чистейшая архитектура
 - Авторизация реализована при помощи JWT Access и Refresh токенов
 - База данных PostgreSQL взаимодействует с бэкендом через pgx библиотеку
+- Миграции базы данных с помощью golang-migrate
 - Объектное хранилище Minio
-- Кеширование сессий пользователей в Redis
+- Бэкенд задеплоен при помощи docker контейнеров, которые управляются ansible плейбуками
 - Логирование с помощью Zap
 - Тесты с использованием Testify и GoMock, SqlMock
+- 3 микросервиса: HTTP, Auth, Search
+- Взаимодействие между микросервисами через gRPC
 
 ### Как запустить проект
 
@@ -62,7 +64,7 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 sudo apt-get install -y postgresql-client
 ```
 
-#### Запуск проекта на деплой
+#### Запуск проекта в режиме прод
 
 ```bash
 # Настройка окружения
@@ -76,13 +78,35 @@ make minio-pull
 make all-bootstrap
 ```
 
+#### Деплой через ansible
+
+[Настроить пароль доступа](./docs/deploy.md)
+
+```bash
+# После получения пароля и расшифровки ssh ключа
+
+# Пересобрать образы микросервисов
+make image-update
+
+# Собрать проект с нуля (долго, так как базы пересоздаются)
+make ansible-bootstrap
+
+# Либо обновить только сервисы
+make ansible-backend 
+make update-deploy-backend # Для удобства: image-update + ansible-backend
+
+# При обновлении миграций БД, docker compose, Makefile и т.д. требуется обновить ветку deploy и пересобрать проект
+make update-deploy-branch # зальет dev в deploy и запушит изменения
+make ansible-bootstrap
+```
+
 #### Запуск проекта на дев
 
 ```bash
 # Настройка окружения
 cp .env.example .env
 
-# Запуск баз данных и их наполнение тестовыми данными
+# Запуск баз данных и наполнение их тестовыми данными
 make all-prepare
 # ИЛИ запуск баз без наполнения тестовыми данными
     docker compose up -d db redis minio
@@ -90,7 +114,9 @@ make all-prepare
     make all-migrate
 
 # Запуск приложения
-make run
+make run SERVICE=http
+make run SERVICE=auth
+make run SERVICE=search
 ```
 
 #### Некоторые полезные команды

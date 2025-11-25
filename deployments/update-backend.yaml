@@ -1,5 +1,8 @@
 ---
 - hosts: back
+  vars:
+    deploy_mode: "services"   # services or bootstrap
+
   tasks:
     - name: Ensure backend folder exists
       file:
@@ -24,20 +27,19 @@
         cd /home/{{ ansible_user }}/backend
         docker compose pull backend-http
 
-    # - name: Boostrap all, recreate all containers
-    #   community.general.make:
-    #     target: all-bootstrap
-    #   args:
-    #     chdir: /home/{{ ansible_user }}/backend
-    #   environment:
-    #     PATH: "{{ ansible_env.PATH }}:/home/{{ ansible_user }}/go/bin"
-  
-    - name: Restart backend-http container
+    - name: Bootstrap all (rebuild DB, recreate all containers)
+      community.general.make:
+        target: all-bootstrap
+      args:
+        chdir: /home/{{ ansible_user }}/backend
+      when: deploy_mode == "bootstrap"
+
+    - name: Deploy only backend service
       community.general.make:
         target: all-service-deploy
       args:
         chdir: /home/{{ ansible_user }}/backend
-      environment:
+      when: deploy_mode == "services"
 
     - name: Wait for server to start
       uri:

@@ -40,16 +40,32 @@ ansible-vault view prod.env.vault --vault-password-file=vault_password.sh > prod
 # Note: systemd expects the strict key=value format
 ```
 
+#### Get database data
+
+Note that you need to download media assets for MinIO from remote storage to `testdata/minio` folder
+
+```bash
+# This will pull media assets with rclone of configured remote storage vkedu (.config/rclone/rclone.conf)
+make minio-pull
+```
+
+[Databases](./database/README.md) will be filled with test data on the next step.
+
 #### Run playbook to deploy backend
 
 ```bash
 # Make sure you have access to the server via SSH key specified in deployments/ssh-key.pem
 # Now you can run the playbook
-# backend.yaml will git pull deploy branch, build and restart the systemd service
-# Which is placed in /lib/systemd/system/APIserver.service
-ansible-playbook backend.yaml --vault-password-file=vault_password.sh
+
+# update-backend.yaml will git pull deploy branch, build and restart the services
+ansible-playbook update-backend.yaml --vault-password-file=vault_password.sh -e deploy_mode=bootstrap
+
+# The default behavior is to only update services without recreating DBs etc
+ansible-playbook update-backend.yaml --vault-password-file=vault_password.sh
+
+# Deprecated
 # Read logs from: /var/log/apiserver/error.log
-ansible-playbook backend-logs.yaml --vault-password-file=vault_password.sh
+# ansible-playbook backend-logs.yaml --vault-password-file=vault_password.sh
 ```
 
 ### Deploy API documentation

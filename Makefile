@@ -101,6 +101,17 @@ ansible-nginx: ## runs the ansible playbook to deploy the nginx server
 	cd deployments && ansible-playbook update-nginx.yaml --vault-password-file=vault_password.sh
 ansible-backend: ## runs the ansible playbook to deploy the backend server
 	cd deployments && ansible-playbook update-backend.yaml --vault-password-file=vault_password.sh
+ansible-bootstrap: ## runs the ansible playbook to bootstrap the backend server
+	cd deployments && ansible-playbook update-backend.yaml --vault-password-file=vault_password.sh -e deploy_mode=bootstrap
+update-deploy-branch: ## updates deploy branch by merging dev into deploy
+	git switch deploy
+	git pull origin deploy
+	git merge dev
+	git push origin deploy
+	git switch dev
+update-deploy-backend: ## updates backend deployment by building and pushing image and running ansible playbook
+	make image-update
+	make ansible-backend
 
 ## Database
 
