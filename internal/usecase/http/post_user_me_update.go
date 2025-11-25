@@ -11,20 +11,17 @@ import (
 type PostUserMeUpdateUseCase struct {
 	logger           logger.Logger
 	userRepo         UserRepository
-	sessionRepo      SessionRepository
 	getUserMeUseCase *GetUserMeUseCase
 }
 
 func NewPostUserMeUpdateUseCase(
 	logger logger.Logger,
 	userRepo UserRepository,
-	sessionRepo SessionRepository,
 	getUserMeUseCase *GetUserMeUseCase,
 ) *PostUserMeUpdateUseCase {
 	return &PostUserMeUpdateUseCase{
 		logger:           logger,
 		userRepo:         userRepo,
-		sessionRepo:      sessionRepo,
 		getUserMeUseCase: getUserMeUseCase,
 	}
 }
@@ -43,18 +40,15 @@ func (uc *PostUserMeUpdateUseCase) Execute(ctx context.Context, input dto.PostUs
 		return dto.PostUserMeUpdateOutput{}, &derr
 	}
 
-	// Get user ID from cache using access token
-	userID, err := uc.sessionRepo.GetUserIDByAccessToken(ctx, input.AccessToken)
+	// Get user ID from access token
+	userID, err := common.ValidateToken(input.AccessToken)
 	if err != nil {
 		derr := dto.NewError(
-			"usecase/post_user_me_update/get_user_id_by_access_token",
+			"usecase/post_user_me_update",
 			err,
-			"Failed to get user ID by access token",
+			"Access token is invalid",
 		)
-		log.Error(
-			"Error getting user ID by access token",
-			log.ToError(err),
-		)
+		log.Error("Failed to validate access token", log.ToError(err))
 		return dto.PostUserMeUpdateOutput{}, &derr
 	}
 

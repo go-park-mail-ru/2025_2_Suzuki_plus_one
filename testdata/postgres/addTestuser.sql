@@ -2,7 +2,7 @@
 -- 1) Avatar asset and image
 INSERT INTO asset (s3_key, file_size_mb, mime_type)
 VALUES (
-    '/avatars/dima.jpeg',
+    '/avatars/miku.png',
     204800::numeric / 1024 / 1024,
     'image/jpeg'
   );
@@ -11,7 +11,7 @@ VALUES (
     (
       SELECT asset_id
       FROM asset
-      WHERE s3_key = '/avatars/dima.jpeg'
+      WHERE s3_key = '/avatars/miku.png'
     ),
     256,
     256
@@ -26,7 +26,7 @@ VALUES (
       WHERE asset_id = (
           SELECT asset_id
           FROM asset
-          WHERE s3_key = '/avatars/dima.jpeg'
+          WHERE s3_key = '/avatars/miku.png'
         )
     ),
     '$2y$10$U5D2NWz2Q9TDsl5YKfHQ5O5qlgCH4SAAva7406ZyDQ/sj53Aoif.G', -- plaintext: 'Password123!'

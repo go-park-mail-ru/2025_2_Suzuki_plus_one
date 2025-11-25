@@ -10,23 +10,20 @@ import (
 )
 
 type GetUserMeUseCase struct {
-	logger      logger.Logger
-	userRepo    UserRepository
-	sessionRepo SessionRepository
-	objectRepo  ObjectRepository
+	logger     logger.Logger
+	userRepo   UserRepository
+	objectRepo ObjectRepository
 }
 
 func NewGetUserMeUseCase(
 	logger logger.Logger,
 	userRepo UserRepository,
-	sessionRepo SessionRepository,
 	objectRepo ObjectRepository,
 ) *GetUserMeUseCase {
 	return &GetUserMeUseCase{
-		logger:      logger,
-		userRepo:    userRepo,
-		sessionRepo: sessionRepo,
-		objectRepo:  objectRepo,
+		logger:     logger,
+		userRepo:   userRepo,
+		objectRepo: objectRepo,
 	}
 }
 
@@ -44,21 +41,9 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 		return dto.GetUserMeOutput{}, &derr
 	}
 
-	// Get session by access token
-	userID, err := uc.sessionRepo.GetUserIDByAccessToken(ctx, input.AccessToken)
-	if err != nil {
-		derr := dto.NewError(
-			"usecase/get_user_me",
-			entity.ErrGetUserMeSessionNotFound,
-			err.Error(),
-		)
-		log.Error("Failed to get user ID by token", log.ToError(err))
-		return dto.GetUserMeOutput{}, &derr
-	}
-
 	// Compare user ID from session with requested user ID
-	userIDToken, err := common.ValidateToken(input.AccessToken)
-	if err != nil || userID != userIDToken {
+	userID, err := common.ValidateToken(input.AccessToken)
+	if err != nil {
 		derr := dto.NewError(
 			"usecase/get_user_me",
 			entity.ErrGetUserMeSessionNotFound,
@@ -102,6 +87,9 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 			output.AvatarURL = avatarObject.URL
 			log.Debug("Found s3 url for user", "url", output.AvatarURL, "userID", user.ID)
 		}
+	}
+	if output.AvatarURL == "" {
+		output.AvatarURL = "can't find avatar :("
 	}
 	return output, nil
 }

@@ -14,7 +14,6 @@ import (
 type PostUserMeUpdateAvatarUseCase struct {
 	logger      logger.Logger
 	userRepo    UserRepository
-	sessionRepo SessionRepository
 	objectRepo  ObjectRepository
 	assetRepo   AssetRepository
 }
@@ -22,14 +21,12 @@ type PostUserMeUpdateAvatarUseCase struct {
 func NewPostUserMeUpdateAvatarUseCase(
 	logger logger.Logger,
 	userRepo UserRepository,
-	sessionRepo SessionRepository,
 	objectRepo ObjectRepository,
 	assetRepo AssetRepository,
 ) *PostUserMeUpdateAvatarUseCase {
 	return &PostUserMeUpdateAvatarUseCase{
 		logger:      logger,
 		userRepo:    userRepo,
-		sessionRepo: sessionRepo,
 		objectRepo:  objectRepo,
 		assetRepo:   assetRepo,
 	}
@@ -52,17 +49,15 @@ func (uc *PostUserMeUpdateAvatarUseCase) Execute(
 		return dto.PostUserMeUpdateAvatarOutput{}, &derr
 	}
 
-	// Get user ID from user session
-	userID, err := uc.sessionRepo.GetUserIDByAccessToken(ctx, input.AccessToken)
+	// Get user ID from access token
+	userID, err := common.ValidateToken(input.AccessToken)
 	if err != nil {
 		derr := dto.NewError(
 			"usecase/post_user_me_update_avatar",
-			entity.ErrSessionNotFound,
-			"failed to get user ID from access token",
+			entity.ErrPostUserMeUpdateAvatarParamsInvalid,
+			"access token is invalid",
 		)
-		log.Error("Failed to get user ID from access token",
-			log.ToAny("error", err),
-		)
+		log.Error("Failed to validate access token", log.ToError(err))
 		return dto.PostUserMeUpdateAvatarOutput{}, &derr
 	}
 

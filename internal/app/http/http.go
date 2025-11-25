@@ -171,6 +171,7 @@ func Run() {
 	if !ok {
 		logger.Fatal("Cache can't be converted to SessionRepository")
 	}
+	_ = sessionRepository // TODO: redis is unused!
 
 	// Cast gRPC Auth service to AuthService
 	authServiceRepository, ok := authService.(uc.ServiceAuthRepository)
@@ -189,7 +190,7 @@ func Run() {
 	// Reusable usecases
 	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
 	getMediaUseCase := uc.NewGetMediaUseCase(logger, mediaRepository, getObjectUseCase)
-	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository, objectRepository)
+	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, objectRepository)
 	getActorUseCase := uc.NewGetActorUseCase(logger, actorRepository, getObjectUseCase)
 	getGenreUseCase := uc.NewGetGenreUseCase(logger, genreRepository, mediaRepository, getMediaUseCase)
 
@@ -208,11 +209,11 @@ func Run() {
 		getActorUseCase,
 		getMediaUseCase,
 		uc.NewGetMediaWatchUseCase(logger, mediaRepository, getObjectUseCase),
-		uc.NewPostUserMeUpdateUseCase(logger, userRepository, sessionRepository, getUserUseCase),
-		uc.NewPostUserMeUpdateAvatarUseCase(logger, userRepository, sessionRepository, objectRepository, assetRepository),
+		uc.NewPostUserMeUpdateUseCase(logger, userRepository, getUserUseCase),
+		uc.NewPostUserMeUpdateAvatarUseCase(logger, userRepository, objectRepository, assetRepository),
 		uc.NewGetActorMediaUseCase(logger, actorRepository, getMediaUseCase),
 		uc.NewGetMediaActorUseCase(logger, actorRepository, getActorUseCase),
-		uc.NewPostUserMeUpdatePasswordUseCase(logger, userRepository, sessionRepository),
+		uc.NewPostUserMeUpdatePasswordUseCase(logger, userRepository),
 
 		// Appeal usecases
 		uc.NewGetAppealMyUseCase(logger, appealRepository),

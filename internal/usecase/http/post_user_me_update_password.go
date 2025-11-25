@@ -12,18 +12,15 @@ import (
 type PostUserMeUpdatePasswordUseCase struct {
 	logger      logger.Logger
 	userRepo    UserRepository
-	sessionRepo SessionRepository
 }
 
 func NewPostUserMeUpdatePasswordUseCase(
 	logger logger.Logger,
 	userRepo UserRepository,
-	sessionRepo SessionRepository,
 ) *PostUserMeUpdatePasswordUseCase {
 	return &PostUserMeUpdatePasswordUseCase{
 		logger:      logger,
 		userRepo:    userRepo,
-		sessionRepo: sessionRepo,
 	}
 }
 
@@ -41,18 +38,15 @@ func (uc *PostUserMeUpdatePasswordUseCase) Execute(ctx context.Context, input dt
 		return dto.PostUserMeUpdatePasswordOutput{}, &derr
 	}
 
-	// Get user ID from cache using access token
-	userID, err := uc.sessionRepo.GetUserIDByAccessToken(ctx, input.AccessToken)
+	// Get user ID from jwt access token
+	userID, err := common.ValidateToken(input.AccessToken)
 	if err != nil {
 		derr := dto.NewError(
-			"usecase/post_user_me_update_password/get_user_id_by_access_token",
+			"usecase/post_user_me_update_password",
 			err,
-			"Failed to get user ID by access token",
+			"Access token is invalid",
 		)
-		log.Error(
-			"Error getting user ID by access token",
-			log.ToError(err),
-		)
+		log.Error("Failed to validate access token", log.ToError(err))
 		return dto.PostUserMeUpdatePasswordOutput{}, &derr
 	}
 
