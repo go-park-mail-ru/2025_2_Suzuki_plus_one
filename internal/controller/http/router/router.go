@@ -37,8 +37,8 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Delete(fmt.Sprintf("/media/{%s}/like", handlers.PathParamDeleteMediaLikeID), h.DeleteMediaLike)
 
 	// Genre
-	// r.Get("/genre/all", h.GetGenreAll)
-	
+	r.Get("/genre/all", h.GetGenreAll)
+	r.Get(fmt.Sprintf("/genre/{%s}", handlers.PathParamGetGenreID), h.GetGenre)
 	
 	r.Get(fmt.Sprintf("/actor/{%s}", handlers.PathParamGetActorID), h.GetActor)
 	r.Get(fmt.Sprintf("/actor/{%s}/media", handlers.PathParamGetActorMediaID), h.GetActorMedia)

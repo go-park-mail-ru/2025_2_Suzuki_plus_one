@@ -58,6 +58,14 @@ var (
 	ErrGetSearchParamsInvalid = errors.New("invalid get_search request parameters")
 	ErrGetMediaMyParamsInvalid = errors.New("invalid get_media_my request parameters")
 
+	ErrGetGenreInvalidParams = errors.New("invalid get_genre request parameters")
+	ErrGetGenreRepo = errors.New("failed to get genre from repository")
+	ErrGetGenreNotFound = errors.New("genre not found")
+
+	ErrGetGenreAllInvalidParams = errors.New("invalid get_genre_all request parameters")
+	ErrGetGenreMediaFailed = errors.New("failed to get media related to genre")
+	ErrGetAllGenresFailed = errors.New("failed to get all genres")	
+
 	// Like usecase errors
 	ErrGetMediaLikeInvalidParams = errors.New("invalid get_media_like request parameters")
 	ErrGetMediaLikeRepositoryFailed = errors.New("like repository failed to get like status")

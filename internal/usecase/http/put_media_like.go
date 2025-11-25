@@ -18,8 +18,8 @@ func NewPutMediaLikeUseCase(
 	log logger.Logger,
 	likeRepo LikeRepository,
 ) *PutMediaLikeUseCase {
-	if likeRepo == nil {
-		panic("likeRepo is nil")
+	if log == nil {
+		panic("log is nil")
 	}
 	if likeRepo == nil {
 		panic("likeRepo is nil")

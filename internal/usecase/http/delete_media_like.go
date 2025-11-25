@@ -18,8 +18,8 @@ func NewDeleteMediaLikeUseCase(
 	log logger.Logger,
 	likeRepo LikeRepository,
 ) *DeleteMediaLikeUseCase {
-	if likeRepo == nil {
-		panic("likeRepo is nil")
+	if log == nil {
+		panic("log is nil")
 	}
 	if likeRepo == nil {
 		panic("likeRepo is nil")

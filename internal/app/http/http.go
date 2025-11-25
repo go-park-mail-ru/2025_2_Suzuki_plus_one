@@ -29,6 +29,7 @@ var _ uc.ActorRepository = &db.DataBase{}
 var _ uc.AssetRepository = &db.DataBase{}
 var _ uc.AppealRepository = &db.DataBase{}
 var _ uc.LikeRepository = &db.DataBase{}
+var _ uc.GenreRepository = &db.DataBase{}
 
 // Redis
 var _ uc.SessionRepository = &redis.Redis{}
@@ -120,7 +121,7 @@ func Run() {
 	// --- Create repository level ---
 
 	// Cast Postgres to MovieRepository
-	movieRepository, ok := databaseAdapter.(uc.MediaRepository)
+	mediaRepository, ok := databaseAdapter.(uc.MediaRepository)
 	if !ok {
 		logger.Fatal("Database can't be converted to MediaRepository")
 	}
@@ -153,6 +154,12 @@ func Run() {
 		logger.Fatal("Database can't be converted to LikeRepository")
 	}
 
+	// Cast Postgres to GenreRepository
+	genreRepository, ok := databaseAdapter.(uc.GenreRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to GenreRepository")
+	}
+
 	// Cast Minio to ObjectRepository
 	objectRepository, ok := s3.(uc.ObjectRepository)
 	if !ok {
@@ -181,14 +188,15 @@ func Run() {
 
 	// Reusable usecases
 	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
-	getMediaUseCase := uc.NewGetMediaUseCase(logger, movieRepository, getObjectUseCase)
+	getMediaUseCase := uc.NewGetMediaUseCase(logger, mediaRepository, getObjectUseCase)
 	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, sessionRepository, objectRepository)
 	getActorUseCase := uc.NewGetActorUseCase(logger, actorRepository, getObjectUseCase)
+	getGenreUseCase := uc.NewGetGenreUseCase(logger, genreRepository, mediaRepository, getMediaUseCase)
 
 	// Inject usecases into handler
 	handler := handlers.NewHandlers(
 		logger,
-		uc.NewGetMediaRecommendationsUsecase(logger, movieRepository, getMediaUseCase),
+		uc.NewGetMediaRecommendationsUsecase(logger, mediaRepository, getMediaUseCase),
 		getObjectUseCase,
 		// Auth usecases
 		uc.NewPostAuthSignInUsecase(logger, authServiceRepository),
@@ -199,7 +207,7 @@ func Run() {
 		getUserUseCase,
 		getActorUseCase,
 		getMediaUseCase,
-		uc.NewGetMediaWatchUseCase(logger, movieRepository, getObjectUseCase),
+		uc.NewGetMediaWatchUseCase(logger, mediaRepository, getObjectUseCase),
 		uc.NewPostUserMeUpdateUseCase(logger, userRepository, sessionRepository, getUserUseCase),
 		uc.NewPostUserMeUpdateAvatarUseCase(logger, userRepository, sessionRepository, objectRepository, assetRepository),
 		uc.NewGetActorMediaUseCase(logger, actorRepository, getMediaUseCase),
@@ -221,7 +229,10 @@ func Run() {
 		uc.NewPutMediaLikeUseCase(logger, likeRepository),
 		uc.NewDeleteMediaLikeUseCase(logger, likeRepository),
 		// My media usecase
-		uc.NewGetMediaMyUseCase(logger, movieRepository, getMediaUseCase),
+		uc.NewGetMediaMyUseCase(logger, mediaRepository, getMediaUseCase),
+		// Genre usecases
+		getGenreUseCase,
+		uc.NewGetGenreAllUseCase(logger, genreRepository, getGenreUseCase),
 	)
 
 	// Initialize JWT middleware engine

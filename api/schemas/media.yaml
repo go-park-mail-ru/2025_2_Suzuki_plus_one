@@ -48,7 +48,20 @@ MediaResponse:
     genres:
       type: array
       items:
-        $ref: './genre.yaml#/GenreResponse'
+        type: object
+        properties:
+          id:
+            type: integer
+            description: Genre ID
+            example: 1
+          name:
+            type: string
+            description: Genre name
+            example: "Action"
+          description:
+            type: string
+            description: Genre description
+            example: "Action films usually include high energy, big-budget physical stunts and chases."
       description: List of genres associated with the movie
     posters:
       type: array

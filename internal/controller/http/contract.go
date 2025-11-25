@@ -115,4 +115,12 @@ type (
 	GetMediaMyUseCase interface {
 		Execute(context.Context, dto.GetMediaMyInput) (dto.GetMediaMyOutput, *dto.Error)
 	}
+
+	GetGenreUseCase interface {
+		Execute(context.Context, dto.GetGenreInput) (dto.GetGenreOutput, *dto.Error)
+	}
+
+	GetGenreAllUseCase interface {
+		Execute(context.Context, dto.GetGenreAllInput) (dto.GetGenreAllOutput, *dto.Error)
+	}
 )

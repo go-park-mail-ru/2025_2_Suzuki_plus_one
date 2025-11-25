@@ -29,6 +29,17 @@ type (
 
 		// Get media IDs by like status
 		GetMediaIDsByLikeStatus(ctx context.Context, userID uint, isDislike bool, limit uint, offset uint) ([]uint, error)
+
+		// Get media IDs related to specific genre ID
+		GetMediasByGenreID(ctx context.Context, limit uint, offset uint, genreID uint) ([]uint, error)
+	}
+
+	GenreRepository interface {
+		// Get genre by ID
+		GetGenreByID(ctx context.Context, genreID uint) (*entity.Genre, error)
+
+		// Get all genres Ids
+		GetAllGenreIDs(ctx context.Context) ([]uint, error)
 	}
 
 	LikeRepository interface {

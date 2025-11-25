@@ -10,3 +10,7 @@ GenreResponse:
     description:
       type: string
       example: "Action films usually include high energy, big-budget physical stunts and chases."
+    medias:
+      type: array
+      items:
+        $ref: "./media.yaml#/MediaResponse"

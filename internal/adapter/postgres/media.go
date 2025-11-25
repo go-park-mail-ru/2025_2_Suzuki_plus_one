@@ -313,7 +313,6 @@ func splitS3Key(fullPath string) (entity.S3Key, error) {
 	}, nil
 }
 
-
 func (db *DataBase) GetMediaIDsByLikeStatus(ctx context.Context, userID uint, isDislike bool, limit uint, offset uint) ([]uint, error) {
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("GetMediaIDsByLikeStatus called",
@@ -340,6 +339,36 @@ func (db *DataBase) GetMediaIDsByLikeStatus(ctx context.Context, userID uint, is
 		var mediaID uint
 		if err := rows.Scan(&mediaID); err != nil {
 			log.Error("GetMediaIDsByLikeStatus: failed to scan media ID", log.ToError(err))
+			return nil, err
+		}
+		mediaIDs = append(mediaIDs, mediaID)
+	}
+	return mediaIDs, nil
+}
+
+func (db *DataBase) GetMediasByGenreID(ctx context.Context, limit uint, offset uint, genreID uint) ([]uint, error) {
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("GetMediasByGenreID called",
+		log.ToInt("genre_id", int(genreID)),
+	)
+
+	var mediaIDs []uint
+	query := `
+	SELECT media_id
+	FROM media_genre
+	WHERE genre_id = $1
+	LIMIT $2 OFFSET $3
+	`
+	rows, err := db.conn.Query(query, genreID, limit, offset)
+	if err != nil {
+		log.Error("GetMediasByGenreID: failed to execute query", log.ToError(err))
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var mediaID uint
+		if err := rows.Scan(&mediaID); err != nil {
+			log.Error("GetMediasByGenreID: failed to scan media ID", log.ToError(err))
 			return nil, err
 		}
 		mediaIDs = append(mediaIDs, mediaID)

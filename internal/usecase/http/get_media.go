@@ -67,9 +67,9 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 	}
 
 	// Convert genres to DTO
-	genresDTO := make([]dto.GenreOutput, 0, len(genres))
+	genresDTO := make([]dto.GetGenreOutput, 0, len(genres))
 	for _, genre := range genres {
-		genresDTO = append(genresDTO, dto.GenreOutput{Genre: genre})
+		genresDTO = append(genresDTO, dto.GetGenreOutput{Genre: genre})
 	}
 
 	// Get posters

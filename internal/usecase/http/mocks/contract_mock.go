@@ -162,6 +162,75 @@ func (mr *MockMediaRepositoryMockRecorder) GetMediaWatchKey(ctx, media_id any) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaWatchKey", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaWatchKey), ctx, media_id)
 }
 
+// GetMediasByGenreID mocks base method.
+func (m *MockMediaRepository) GetMediasByGenreID(ctx context.Context, limit, offset, genreID uint) ([]uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMediasByGenreID", ctx, limit, offset, genreID)
+	ret0, _ := ret[0].([]uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMediasByGenreID indicates an expected call of GetMediasByGenreID.
+func (mr *MockMediaRepositoryMockRecorder) GetMediasByGenreID(ctx, limit, offset, genreID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediasByGenreID", reflect.TypeOf((*MockMediaRepository)(nil).GetMediasByGenreID), ctx, limit, offset, genreID)
+}
+
+// MockGenreRepository is a mock of GenreRepository interface.
+type MockGenreRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockGenreRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockGenreRepositoryMockRecorder is the mock recorder for MockGenreRepository.
+type MockGenreRepositoryMockRecorder struct {
+	mock *MockGenreRepository
+}
+
+// NewMockGenreRepository creates a new mock instance.
+func NewMockGenreRepository(ctrl *gomock.Controller) *MockGenreRepository {
+	mock := &MockGenreRepository{ctrl: ctrl}
+	mock.recorder = &MockGenreRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGenreRepository) EXPECT() *MockGenreRepositoryMockRecorder {
+	return m.recorder
+}
+
+// GetAllGenreIDs mocks base method.
+func (m *MockGenreRepository) GetAllGenreIDs(ctx context.Context) ([]uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllGenreIDs", ctx)
+	ret0, _ := ret[0].([]uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllGenreIDs indicates an expected call of GetAllGenreIDs.
+func (mr *MockGenreRepositoryMockRecorder) GetAllGenreIDs(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllGenreIDs", reflect.TypeOf((*MockGenreRepository)(nil).GetAllGenreIDs), ctx)
+}
+
+// GetGenreByID mocks base method.
+func (m *MockGenreRepository) GetGenreByID(ctx context.Context, genreID uint) (*entity.Genre, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGenreByID", ctx, genreID)
+	ret0, _ := ret[0].(*entity.Genre)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGenreByID indicates an expected call of GetGenreByID.
+func (mr *MockGenreRepositoryMockRecorder) GetGenreByID(ctx, genreID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGenreByID", reflect.TypeOf((*MockGenreRepository)(nil).GetGenreByID), ctx, genreID)
+}
+
 // MockLikeRepository is a mock of LikeRepository interface.
 type MockLikeRepository struct {
 	ctrl     *gomock.Controller
