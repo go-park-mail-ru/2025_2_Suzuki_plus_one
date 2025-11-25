@@ -28,9 +28,18 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	// Follow swagger order
 
 	// Content
+	r.Get("/media/my", h.GetMediaMy)
 	r.Get("/media/recommendations", h.GetMediaRecommendations)
 	r.Get(fmt.Sprintf("/media/{%s}", handlers.PathParamGetMediaID), h.GetMedia)
 	r.Get(fmt.Sprintf("/media/{%s}/actor", handlers.PathParamGetMediaActorID), h.GetMediaActor)
+	r.Get(fmt.Sprintf("/media/{%s}/like", handlers.PathParamGetMediaLikeID), h.GetMediaLike)
+	r.Put(fmt.Sprintf("/media/{%s}/like", handlers.PathParamPutMediaLikeID), h.PutMediaLike)
+	r.Delete(fmt.Sprintf("/media/{%s}/like", handlers.PathParamDeleteMediaLikeID), h.DeleteMediaLike)
+
+	// Genre
+	// r.Get("/genre/all", h.GetGenreAll)
+	
+	
 	r.Get(fmt.Sprintf("/actor/{%s}", handlers.PathParamGetActorID), h.GetActor)
 	r.Get(fmt.Sprintf("/actor/{%s}/media", handlers.PathParamGetActorMediaID), h.GetActorMedia)
 	r.Get("/search", h.GetSearch)

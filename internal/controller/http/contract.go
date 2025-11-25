@@ -99,4 +99,20 @@ type (
 	GetSearchUseCase interface {
 		Execute(context.Context, dto.GetSearchInput) (dto.GetSearchOutput, *dto.Error)
 	}
+
+	GetMediaLikeUseCase interface {
+		Execute(context.Context, dto.GetMediaLikeInput) (dto.GetMediaLikeOutput, *dto.Error)
+	}
+
+	PutMediaLikeUseCase interface {
+		Execute(context.Context, dto.PutMediaLikeInput) (dto.PutMediaLikeOutput, *dto.Error)
+	}
+
+	DeleteMediaLikeUseCase interface {
+		Execute(context.Context, dto.DeleteMediaLikeInput) (dto.DeleteMediaLikeOutput, *dto.Error)
+	}
+
+	GetMediaMyUseCase interface {
+		Execute(context.Context, dto.GetMediaMyInput) (dto.GetMediaMyOutput, *dto.Error)
+	}
 )

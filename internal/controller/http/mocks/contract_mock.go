@@ -913,3 +913,159 @@ func (mr *MockGetSearchUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetSearchUseCase)(nil).Execute), arg0, arg1)
 }
+
+// MockGetMediaLikeUseCase is a mock of GetMediaLikeUseCase interface.
+type MockGetMediaLikeUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetMediaLikeUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetMediaLikeUseCaseMockRecorder is the mock recorder for MockGetMediaLikeUseCase.
+type MockGetMediaLikeUseCaseMockRecorder struct {
+	mock *MockGetMediaLikeUseCase
+}
+
+// NewMockGetMediaLikeUseCase creates a new mock instance.
+func NewMockGetMediaLikeUseCase(ctrl *gomock.Controller) *MockGetMediaLikeUseCase {
+	mock := &MockGetMediaLikeUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetMediaLikeUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetMediaLikeUseCase) EXPECT() *MockGetMediaLikeUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetMediaLikeUseCase) Execute(arg0 context.Context, arg1 dto.GetMediaLikeInput) (dto.GetMediaLikeOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetMediaLikeOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetMediaLikeUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMediaLikeUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockPutMediaLikeUseCase is a mock of PutMediaLikeUseCase interface.
+type MockPutMediaLikeUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockPutMediaLikeUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockPutMediaLikeUseCaseMockRecorder is the mock recorder for MockPutMediaLikeUseCase.
+type MockPutMediaLikeUseCaseMockRecorder struct {
+	mock *MockPutMediaLikeUseCase
+}
+
+// NewMockPutMediaLikeUseCase creates a new mock instance.
+func NewMockPutMediaLikeUseCase(ctrl *gomock.Controller) *MockPutMediaLikeUseCase {
+	mock := &MockPutMediaLikeUseCase{ctrl: ctrl}
+	mock.recorder = &MockPutMediaLikeUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPutMediaLikeUseCase) EXPECT() *MockPutMediaLikeUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockPutMediaLikeUseCase) Execute(arg0 context.Context, arg1 dto.PutMediaLikeInput) (dto.PutMediaLikeOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.PutMediaLikeOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockPutMediaLikeUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockPutMediaLikeUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockDeleteMediaLikeUseCase is a mock of DeleteMediaLikeUseCase interface.
+type MockDeleteMediaLikeUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockDeleteMediaLikeUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockDeleteMediaLikeUseCaseMockRecorder is the mock recorder for MockDeleteMediaLikeUseCase.
+type MockDeleteMediaLikeUseCaseMockRecorder struct {
+	mock *MockDeleteMediaLikeUseCase
+}
+
+// NewMockDeleteMediaLikeUseCase creates a new mock instance.
+func NewMockDeleteMediaLikeUseCase(ctrl *gomock.Controller) *MockDeleteMediaLikeUseCase {
+	mock := &MockDeleteMediaLikeUseCase{ctrl: ctrl}
+	mock.recorder = &MockDeleteMediaLikeUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockDeleteMediaLikeUseCase) EXPECT() *MockDeleteMediaLikeUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockDeleteMediaLikeUseCase) Execute(arg0 context.Context, arg1 dto.DeleteMediaLikeInput) (dto.DeleteMediaLikeOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.DeleteMediaLikeOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockDeleteMediaLikeUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockDeleteMediaLikeUseCase)(nil).Execute), arg0, arg1)
+}
+
+// MockGetMediaMyUseCase is a mock of GetMediaMyUseCase interface.
+type MockGetMediaMyUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetMediaMyUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetMediaMyUseCaseMockRecorder is the mock recorder for MockGetMediaMyUseCase.
+type MockGetMediaMyUseCaseMockRecorder struct {
+	mock *MockGetMediaMyUseCase
+}
+
+// NewMockGetMediaMyUseCase creates a new mock instance.
+func NewMockGetMediaMyUseCase(ctrl *gomock.Controller) *MockGetMediaMyUseCase {
+	mock := &MockGetMediaMyUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetMediaMyUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetMediaMyUseCase) EXPECT() *MockGetMediaMyUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetMediaMyUseCase) Execute(arg0 context.Context, arg1 dto.GetMediaMyInput) (dto.GetMediaMyOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetMediaMyOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetMediaMyUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetMediaMyUseCase)(nil).Execute), arg0, arg1)
+}

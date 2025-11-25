@@ -1,4 +1,4 @@
-package usecase
+package http
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 //go:generate mockgen -source=contract.go -destination=./mocks/contract_mock.go -package=mocks
 type (
 	// Postgres
-
 	MediaRepository interface {
 		// Return total count of media items of specific type
 		GetMediaCount(ctx context.Context, media_type string) (int, error)
@@ -27,6 +26,18 @@ type (
 
 		// Get random media IDs for recommendations
 		GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error)
+
+		// Get media IDs by like status
+		GetMediaIDsByLikeStatus(ctx context.Context, userID uint, isDislike bool, limit uint, offset uint) ([]uint, error)
+	}
+
+	LikeRepository interface {
+		// Get
+		GetLike(ctx context.Context, userID uint, mediaID uint) (exists bool, ent entity.Like, err error)
+		// Create
+		ToggleLike(ctx context.Context, userID uint, mediaID uint) (isDislike bool, err error)
+		// Delete
+		DeleteLike(ctx context.Context, userID uint, mediaID uint) error
 	}
 
 	ActorRepository interface {

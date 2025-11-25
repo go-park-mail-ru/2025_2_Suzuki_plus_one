@@ -64,3 +64,17 @@ MediaResponse:
         format: uri
       description: URLs to the movie trailer videos
       example: ["http://example.com/trailers/inception_trailer.mp4"]
+
+LikeResponse:
+  type: object
+  required:
+    - liked
+  properties:
+    liked:
+      type: boolean
+      description: Indicates whether the media is liked by the user
+      example: true
+    is_dislike:
+      type: boolean
+      description: Indicates whether the media is disliked by the user
+      example: false

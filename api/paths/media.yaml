@@ -149,7 +149,7 @@ like:
     description: |
       Determine whether a specific media is liked by the authenticated user.
     parameters:
-      - in: query
+      - in: path
         name: media_id
         required: true
         schema:
@@ -161,11 +161,8 @@ like:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                liked:
-                  type: boolean
-                  description: Indicates if the media is liked by the user
+              $ref: "../schemas/media.yaml#/LikeResponse"
+              
       "400":
         description: Bad request
         content:
@@ -177,11 +174,11 @@ like:
       - access_token: []
     tags:
       - content
-    summary: Like a specific media
+    summary: Toggle like for a specific media
     description: |
-      Mark a media as liked by the authenticated user.
+      Transforms the like status of a media by the authenticated user.
     parameters:
-      - in: query
+      - in: path
         name: media_id
         required: true
         schema:
@@ -189,7 +186,11 @@ like:
         description: The unique identifier of the media to like
     responses:
       "200":
-        description: Media liked successfully
+        description: Media toggle like successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/media.yaml#/LikeResponse"
       "400":
         description: Bad request
         content:
@@ -205,7 +206,7 @@ like:
     description: |
       Remove the like from a media by the authenticated user.
     parameters:
-      - in: query
+      - in: path
         name: media_id
         required: true
         schema:
@@ -247,15 +248,25 @@ my:
           minimum: 0
           default: 0
         description: "Offset for pagination"
+      - in: query
+        name: is_dislike
+        required: true
+        description: Filter by like or dislike status. If true, fetch disliked media; if false
+        schema:
+          type: boolean
+          default: false
     responses:
       "200":
         description: A list of liked medias
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: "../schemas/media.yaml#/MediaResponse"
+              type: object
+              properties:
+                medias:
+                  type: array
+                  items:
+                    $ref: "../schemas/media.yaml#/MediaResponse"
       "400":
         description: Bad request
         content:

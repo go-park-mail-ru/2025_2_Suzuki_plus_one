@@ -11,9 +11,9 @@ import (
 	grpc_auth "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/service/auth"
 	grpc_search "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/service/search"
 	cfg "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/config"
-	rtr "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/router"
 	srv "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/handlers"
+	rtr "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/http/router"
 	uc "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/usecase/http"
 )
 
@@ -28,6 +28,7 @@ var _ uc.UserRepository = &db.DataBase{}
 var _ uc.ActorRepository = &db.DataBase{}
 var _ uc.AssetRepository = &db.DataBase{}
 var _ uc.AppealRepository = &db.DataBase{}
+var _ uc.LikeRepository = &db.DataBase{}
 
 // Redis
 var _ uc.SessionRepository = &redis.Redis{}
@@ -146,6 +147,12 @@ func Run() {
 		logger.Fatal("Database can't be converted to AppealRepository")
 	}
 
+	// Cast Postgres to LikeRepository
+	likeRepository, ok := databaseAdapter.(uc.LikeRepository)
+	if !ok {
+		logger.Fatal("Database can't be converted to LikeRepository")
+	}
+
 	// Cast Minio to ObjectRepository
 	objectRepository, ok := s3.(uc.ObjectRepository)
 	if !ok {
@@ -188,7 +195,7 @@ func Run() {
 		uc.NewGetAuthRefreshUseCase(logger, authServiceRepository),
 		uc.NewPostAuthSignUpUsecase(logger, authServiceRepository),
 		uc.NewGetAuthSignOutUsecase(logger, authServiceRepository),
-		
+
 		getUserUseCase,
 		getActorUseCase,
 		getMediaUseCase,
@@ -209,6 +216,12 @@ func Run() {
 		uc.NewGetAppealMessageUseCase(logger, appealRepository),
 		uc.NewGetAppealAllUseCase(logger, appealRepository),
 		uc.NewGetSearchUseCase(logger, searchServiceRepository, getMediaUseCase, getActorUseCase),
+		// Like usecases
+		uc.NewGetMediaLikeUseCase(logger, likeRepository),
+		uc.NewPutMediaLikeUseCase(logger, likeRepository),
+		uc.NewDeleteMediaLikeUseCase(logger, likeRepository),
+		// My media usecase
+		uc.NewGetMediaMyUseCase(logger, movieRepository, getMediaUseCase),
 	)
 
 	// Initialize JWT middleware engine

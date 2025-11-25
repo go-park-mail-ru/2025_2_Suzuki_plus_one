@@ -87,6 +87,21 @@ func (mr *MockMediaRepositoryMockRecorder) GetMediaGenres(ctx, media_id any) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaGenres", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaGenres), ctx, media_id)
 }
 
+// GetMediaIDsByLikeStatus mocks base method.
+func (m *MockMediaRepository) GetMediaIDsByLikeStatus(ctx context.Context, userID uint, isDislike bool, limit, offset uint) ([]uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMediaIDsByLikeStatus", ctx, userID, isDislike, limit, offset)
+	ret0, _ := ret[0].([]uint)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMediaIDsByLikeStatus indicates an expected call of GetMediaIDsByLikeStatus.
+func (mr *MockMediaRepositoryMockRecorder) GetMediaIDsByLikeStatus(ctx, userID, isDislike, limit, offset any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaIDsByLikeStatus", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaIDsByLikeStatus), ctx, userID, isDislike, limit, offset)
+}
+
 // GetMediaPostersKeys mocks base method.
 func (m *MockMediaRepository) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]entity.S3Key, error) {
 	m.ctrl.T.Helper()
@@ -145,6 +160,75 @@ func (m *MockMediaRepository) GetMediaWatchKey(ctx context.Context, media_id uin
 func (mr *MockMediaRepositoryMockRecorder) GetMediaWatchKey(ctx, media_id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaWatchKey", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaWatchKey), ctx, media_id)
+}
+
+// MockLikeRepository is a mock of LikeRepository interface.
+type MockLikeRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockLikeRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockLikeRepositoryMockRecorder is the mock recorder for MockLikeRepository.
+type MockLikeRepositoryMockRecorder struct {
+	mock *MockLikeRepository
+}
+
+// NewMockLikeRepository creates a new mock instance.
+func NewMockLikeRepository(ctrl *gomock.Controller) *MockLikeRepository {
+	mock := &MockLikeRepository{ctrl: ctrl}
+	mock.recorder = &MockLikeRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockLikeRepository) EXPECT() *MockLikeRepositoryMockRecorder {
+	return m.recorder
+}
+
+// DeleteLike mocks base method.
+func (m *MockLikeRepository) DeleteLike(ctx context.Context, userID, mediaID uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteLike", ctx, userID, mediaID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteLike indicates an expected call of DeleteLike.
+func (mr *MockLikeRepositoryMockRecorder) DeleteLike(ctx, userID, mediaID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteLike", reflect.TypeOf((*MockLikeRepository)(nil).DeleteLike), ctx, userID, mediaID)
+}
+
+// GetLike mocks base method.
+func (m *MockLikeRepository) GetLike(ctx context.Context, userID, mediaID uint) (bool, entity.Like, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLike", ctx, userID, mediaID)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(entity.Like)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetLike indicates an expected call of GetLike.
+func (mr *MockLikeRepositoryMockRecorder) GetLike(ctx, userID, mediaID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLike", reflect.TypeOf((*MockLikeRepository)(nil).GetLike), ctx, userID, mediaID)
+}
+
+// ToggleLike mocks base method.
+func (m *MockLikeRepository) ToggleLike(ctx context.Context, userID, mediaID uint) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ToggleLike", ctx, userID, mediaID)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ToggleLike indicates an expected call of ToggleLike.
+func (mr *MockLikeRepositoryMockRecorder) ToggleLike(ctx, userID, mediaID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleLike", reflect.TypeOf((*MockLikeRepository)(nil).ToggleLike), ctx, userID, mediaID)
 }
 
 // MockActorRepository is a mock of ActorRepository interface.

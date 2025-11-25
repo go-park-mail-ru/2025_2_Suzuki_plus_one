@@ -290,6 +290,8 @@ erDiagram
         bigint user_id FK
         bigint media_id FK
         %% ---
+        boolean is_dislike
+        %% ---
         timestamptz created_at
         timestamptz updated_at
     }
@@ -299,6 +301,8 @@ erDiagram
         bigint user_id FK
         bigint actor_id FK
         %% ---
+        boolean is_dislike
+        %% ---
         timestamptz created_at
         timestamptz updated_at
     }
@@ -307,6 +311,8 @@ erDiagram
         bigint user_like_playlist_id PK
         bigint user_id FK
         bigint playlist_id FK
+        %% ---
+        boolean is_dislike
         %% ---
         timestamptz created_at
         timestamptz updated_at

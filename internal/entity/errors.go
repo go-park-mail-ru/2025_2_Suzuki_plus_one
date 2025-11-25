@@ -56,6 +56,15 @@ var (
 	ErrPutAppealResolve = errors.New("failed to resolve an appeal")
 
 	ErrGetSearchParamsInvalid = errors.New("invalid get_search request parameters")
+	ErrGetMediaMyParamsInvalid = errors.New("invalid get_media_my request parameters")
+
+	// Like usecase errors
+	ErrGetMediaLikeInvalidParams = errors.New("invalid get_media_like request parameters")
+	ErrGetMediaLikeRepositoryFailed = errors.New("like repository failed to get like status")
+	ErrPutMediaLikeInvalidParams = errors.New("invalid put_media_like request parameters")
+	ErrPutMediaLikeRepositoryFailed = errors.New("like repository failed to toggle like status")
+	ErrDeleteMediaLikeInvalidParams = errors.New("invalid delete_media_like request parameters")
+	ErrDeleteMediaLikeRepositoryFailed = errors.New("like repository failed to toggle like status")
 
 	// Authentication service errors
 	ErrPostAuthSignInAuthServiceFailed = errors.New("authentication service login call failed")

@@ -1,4 +1,4 @@
-package usecase
+package http
 
 import (
 	"context"
@@ -48,7 +48,7 @@ func TestGetAuthRefreshUsecase(t *testing.T) {
 	})
 	var emptyErr *dto.Error
 	require.Equal(t, dtoErr, emptyErr)
-	
+
 	// Check output
 	require.NotEmpty(t, output.AccessToken)
 	userId, qerr := common.ValidateToken(output.AccessToken)

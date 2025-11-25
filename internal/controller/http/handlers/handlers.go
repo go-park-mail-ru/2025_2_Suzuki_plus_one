@@ -31,6 +31,10 @@ type Handlers struct {
 	GetAppealMessageUseCase         GetAppealMessageUseCase
 	GetAppealAllUseCase             GetAppealAllUseCase
 	GetSearchUseCase                GetSearchUseCase
+	GetMediaLikeUseCase             GetMediaLikeUseCase
+	PutMediaLikeUseCase             PutMediaLikeUseCase
+	DeleteMediaLikeUseCase          DeleteMediaLikeUseCase
+	GetMediaMyUseCase               GetMediaMyUseCase
 }
 
 func NewHandlers(
@@ -58,6 +62,10 @@ func NewHandlers(
 	GetAppealMessageUseCase GetAppealMessageUseCase,
 	GetAppealAllUseCase GetAppealAllUseCase,
 	GetSearchUseCase GetSearchUseCase,
+	GetMediaLikeUseCase GetMediaLikeUseCase,
+	PutMediaLikeUseCase PutMediaLikeUseCase,
+	DeleteMediaLikeUseCase DeleteMediaLikeUseCase,
+	GetMediaMyUseCase GetMediaMyUseCase,
 ) *Handlers {
 	return &Handlers{
 		Logger:                          logger,
@@ -84,5 +92,9 @@ func NewHandlers(
 		GetAppealMessageUseCase:         GetAppealMessageUseCase,
 		GetAppealAllUseCase:             GetAppealAllUseCase,
 		GetSearchUseCase:                GetSearchUseCase,
+		GetMediaLikeUseCase:             GetMediaLikeUseCase,
+		PutMediaLikeUseCase:             PutMediaLikeUseCase,
+		DeleteMediaLikeUseCase:          DeleteMediaLikeUseCase,
+		GetMediaMyUseCase:               GetMediaMyUseCase,
 	}
 }

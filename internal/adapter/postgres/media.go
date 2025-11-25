@@ -312,3 +312,37 @@ func splitS3Key(fullPath string) (entity.S3Key, error) {
 		Key:        key,
 	}, nil
 }
+
+
+func (db *DataBase) GetMediaIDsByLikeStatus(ctx context.Context, userID uint, isDislike bool, limit uint, offset uint) ([]uint, error) {
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("GetMediaIDsByLikeStatus called",
+		log.ToInt("user_id", int(userID)),
+		log.ToAny("is_dislike", isDislike),
+		log.ToInt("limit", int(limit)),
+		log.ToInt("offset", int(offset)),
+	)
+
+	var mediaIDs []uint
+	query := `
+	SELECT media_id
+	FROM user_like_media
+	WHERE user_id = $1 AND is_dislike = $2
+	LIMIT $3 OFFSET $4
+	`
+	rows, err := db.conn.Query(query, userID, isDislike, limit, offset)
+	if err != nil {
+		log.Error("GetMediaIDsByLikeStatus: failed to execute query", log.ToError(err))
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var mediaID uint
+		if err := rows.Scan(&mediaID); err != nil {
+			log.Error("GetMediaIDsByLikeStatus: failed to scan media ID", log.ToError(err))
+			return nil, err
+		}
+		mediaIDs = append(mediaIDs, mediaID)
+	}
+	return mediaIDs, nil
+}

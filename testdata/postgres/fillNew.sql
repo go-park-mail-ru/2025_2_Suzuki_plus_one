@@ -298,16 +298,15 @@ INSERT INTO user_watch_history (user_id, media_id, progress_seconds) VALUES
                                                                          (2, 2, 8160),
                                                                          (3, 1, 3600);
 
--- Insert likes
-INSERT INTO user_like_media (user_id, media_id) VALUES
-                                                    (2, 1), (2, 2),
-                                                    (3, 1);
+INSERT INTO user_like_media (user_id, media_id, is_dislike) VALUES
+                                                    (2, 1, false), (2, 2, false),
+                                                    (3, 1, false);
 
-INSERT INTO user_like_actor (user_id, actor_id) VALUES
-                                                    (2, 1), (2, 2);
+INSERT INTO user_like_actor (user_id, actor_id, is_dislike) VALUES
+                                                    (2, 1, false), (2, 2, false);
 
-INSERT INTO user_like_playlist (user_id, playlist_id) VALUES
-    (3, 1);
+INSERT INTO user_like_playlist (user_id, playlist_id, is_dislike) VALUES
+    (3, 1, false);
 
 -- Insert comments
 INSERT INTO user_comment_media (user_id, media_id, content) VALUES
