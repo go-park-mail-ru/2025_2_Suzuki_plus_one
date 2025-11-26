@@ -15,14 +15,15 @@ import (
 // Please keep fields as in .env file for easier reference.
 // See .env.example for documentation.
 type Config struct {
-	SERVER_SERVE_STRING           string
-	SERVER_SERVE_PREFIX           string
-	SERVER_JWT_SECRET             string
-	SERVER_JWT_ACCESS_EXPIRATION  time.Duration
-	SERVER_JWT_REFRESH_EXPIRATION time.Duration
-	SERVER_NAME                   string
-	SERVER_FRONTEND_URL           string
-	POPFILMS_ENVIRONMENT          string
+	SERVICE_HTTP_SERVESTRING            string
+	SERVICE_HTTP_METRICS_SERVESTRING    string
+	SERVICE_HTTP_SERVE_PREFIX           string
+	SERVICE_HTTP_JWT_SECRET             string
+	SERVICE_HTTP_JWT_ACCESS_EXPIRATION  time.Duration
+	SERVICE_HTTP_JWT_REFRESH_EXPIRATION time.Duration
+	SERVICE_HTTP_NAME                   string
+	SERVICE_HTTP_FRONTEND_URL           string
+	ENVIRONMENT                         string
 
 	// Database
 	POSTGRES_HOST     string
@@ -40,21 +41,28 @@ type Config struct {
 	MINIO_ROOT_PASSWORD string
 
 	// Services
-	AUTH_SERVICE_SERVE_STRING   string
-	SEARCH_SERVICE_SERVE_STRING string
+
+	// Auth
+	SERVICE_AUTH_SERVE_STRING         string
+	SERVICE_AUTH_METRICS_SERVE_STRING string
+
+	// Search
+	SERVICE_SEARCH_SERVE_STRING         string
+	SERVICE_SEARCH_METRICS_SERVE_STRING string
 }
 
 // Load loads config from env vars with defaults and validation.
 func Load() Config {
 	cfg := Config{
-		SERVER_SERVE_STRING:           getEnv("SERVER_SERVE_STRING", ":8080"),
-		SERVER_SERVE_PREFIX:           trimTrailingSlash(getEnv("SERVER_SERVE_PREFIX", "")),
-		SERVER_JWT_SECRET:             mustEnv("SERVER_JWT_SECRET"),
-		SERVER_JWT_ACCESS_EXPIRATION:  parseDuration(getEnv("SERVER_JWT_ACCESS_EXPIRATION", "15m")),
-		SERVER_JWT_REFRESH_EXPIRATION: parseDuration(getEnv("SERVER_JWT_REFRESH_EXPIRATION", "1440m")),
-		SERVER_NAME:                   getEnv("SERVER_NAME", "Localhost"),
-		SERVER_FRONTEND_URL:           trimTrailingSlash(mustEnv("SERVER_FRONTEND_URL")),
-		POPFILMS_ENVIRONMENT:          getEnv("POPFILMS_ENVIRONMENT", "development"),
+		SERVICE_HTTP_SERVESTRING:            getEnv("POPFILMS_SERVICE_HTTP_SERVESTRING", ":8080"),
+		SERVICE_HTTP_METRICS_SERVESTRING:    getEnv("POPFILMS_SERVICE_HTTP_METRICS_SERVESTRING", ":8880"),
+		SERVICE_HTTP_SERVE_PREFIX:           trimTrailingSlash(getEnv("POPFILMS_SERVICE_HTTP_SERVE_PREFIX", "")),
+		SERVICE_HTTP_JWT_SECRET:             mustEnv("POPFILMS_SERVICE_HTTP_JWT_SECRET"),
+		SERVICE_HTTP_JWT_ACCESS_EXPIRATION:  parseDuration(getEnv("POPFILMS_SERVICE_HTTP_JWT_ACCESS_EXPIRATION", "15m")),
+		SERVICE_HTTP_JWT_REFRESH_EXPIRATION: parseDuration(getEnv("POPFILMS_SERVICE_HTTP_JWT_REFRESH_EXPIRATION", "1440m")),
+		SERVICE_HTTP_NAME:                   getEnv("POPFILMS_SERVICE_HTTP_NAME", "Localhost"),
+		SERVICE_HTTP_FRONTEND_URL:           trimTrailingSlash(mustEnv("POPFILMS_SERVICE_HTTP_FRONTEND_URL")),
+		ENVIRONMENT:                         getEnv("POPFILMS_ENVIRONMENT", "development"),
 
 		// Database
 		POSTGRES_HOST:     mustEnv("POSTGRES_HOST"),
@@ -72,8 +80,14 @@ func Load() Config {
 		MINIO_ROOT_PASSWORD: mustEnv("MINIO_ROOT_PASSWORD"),
 
 		// Services
-		AUTH_SERVICE_SERVE_STRING:   mustEnv("POPFILMS_SERVICE_AUTH_SERVESTRING"),
-		SEARCH_SERVICE_SERVE_STRING: mustEnv("POPFILMS_SERVICE_SEARCH_SERVESTRING"),
+
+		// Auth
+		SERVICE_AUTH_SERVE_STRING:         mustEnv("POPFILMS_SERVICE_AUTH_SERVESTRING"),
+		SERVICE_AUTH_METRICS_SERVE_STRING: mustEnv("POPFILMS_SERVICE_AUTH_METRICS_SERVESTRING"),
+
+		// Search
+		SERVICE_SEARCH_SERVE_STRING:         mustEnv("POPFILMS_SERVICE_SEARCH_SERVESTRING"),
+		SERVICE_SEARCH_METRICS_SERVE_STRING: mustEnv("POPFILMS_SERVICE_SEARCH_METRICS_SERVESTRING"),
 	}
 
 	return cfg

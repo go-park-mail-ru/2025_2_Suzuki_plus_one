@@ -13,18 +13,9 @@ import (
 var _ uc.TokenRepository = &db.DataBase{}
 var _ uc.UserRepository = &db.DataBase{}
 
-func Run() {
-
-	// Load configuration
-	config := cfg.Load()
+func Run(logger logger.Logger, config cfg.Config) {
 
 	// --- Initialization ---
-
-	// Initialize logger
-	logger := logger.NewZapLogger(config.POPFILMS_ENVIRONMENT == "development")
-	defer logger.Sync()
-
-	logger.Info("Config loaded")
 
 	// Create Postgres connection
 	dbURL := "postgres://" + config.POSTGRES_USER + ":" + config.POSTGRES_PASSWORD +
@@ -37,7 +28,7 @@ func Run() {
 	defer databaseAdapter.Close()
 
 	// Initialize JWT settings
-	common.InitJWT(config.SERVER_JWT_SECRET, config.SERVER_JWT_ACCESS_EXPIRATION, config.SERVER_JWT_REFRESH_EXPIRATION)
+	common.InitJWT(config.SERVICE_HTTP_JWT_SECRET, config.SERVICE_HTTP_JWT_ACCESS_EXPIRATION, config.SERVICE_HTTP_JWT_REFRESH_EXPIRATION)
 
 	// --- Create repository level ---
 
@@ -63,5 +54,5 @@ func Run() {
 	authHandler := srv.NewAuthServer(logger, loginUsecase, refreshUsecase, logoutUsecase, createUserUsecase)
 
 	// Start gRPC server
-	authHandler.StartGRPCServer(config.AUTH_SERVICE_SERVE_STRING)
+	authHandler.StartGRPCServer(config.SERVICE_AUTH_SERVE_STRING)
 }

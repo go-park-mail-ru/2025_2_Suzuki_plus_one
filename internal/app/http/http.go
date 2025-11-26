@@ -42,19 +42,9 @@ var _ uc.ServiceAuthRepository = &grpc_auth.AuthService{}
 // Search service
 var _ uc.ServiceSearchRepository = &grpc_search.SearchService{}
 
-func Run() {
-
-	// Load configuration
-	config := cfg.Load()
-
-	// Initialize logger
-	logger := logger.NewZapLogger(config.POPFILMS_ENVIRONMENT == "development")
-	defer logger.Sync()
-
-	logger.Info("Config loaded")
+func Run(logger logger.Logger, config cfg.Config) {
 
 	// --- Connect to external services ---
-
 	// Create Postgres connection
 	dbURL := "postgres://" + config.POSTGRES_USER + ":" + config.POSTGRES_PASSWORD +
 		"@" + config.POSTGRES_HOST + ":" + "5432" + "/" + config.POSTGRES_DB + "?sslmode=disable"
@@ -79,8 +69,8 @@ func Run() {
 	// Create s3 connection
 	var s3 app.S3
 
-	// URL for media files will be like http(s)://SERVER_FRONTEND_URL/bucketName/objectName
-	minioServePrefix := config.SERVER_FRONTEND_URL
+	// URL for media files will be like http(s)://POPFILMS_SERVICE_HTTP_FRONTEND_URL/bucketName/objectName
+	minioServePrefix := config.SERVICE_HTTP_FRONTEND_URL
 	// must not end with /
 	if minioServePrefix[len(minioServePrefix)-1] == '/' {
 		minioServePrefix = minioServePrefix[:len(minioServePrefix)-1]
@@ -101,7 +91,7 @@ func Run() {
 	// Connect Auth gRPC service
 	var authService app.Service
 
-	authService = grpc_auth.NewAuthService(logger, config.AUTH_SERVICE_SERVE_STRING)
+	authService = grpc_auth.NewAuthService(logger, config.SERVICE_AUTH_SERVE_STRING)
 	err = authService.Connect()
 	if err != nil {
 		logger.Fatal("Failed to connect to Auth gRPC service: " + err.Error())
@@ -111,7 +101,7 @@ func Run() {
 	// Connect Search gRPC service
 	var searchService app.Service
 
-	searchService = grpc_search.NewSearchService(logger, config.SEARCH_SERVICE_SERVE_STRING)
+	searchService = grpc_search.NewSearchService(logger, config.SERVICE_SEARCH_SERVE_STRING)
 	err = searchService.Connect()
 	if err != nil {
 		logger.Fatal("Failed to connect to Search gRPC service: " + err.Error())
@@ -237,12 +227,12 @@ func Run() {
 	)
 
 	// Initialize JWT middleware engine
-	common.InitJWT(config.SERVER_JWT_SECRET, config.SERVER_JWT_ACCESS_EXPIRATION, config.SERVER_JWT_REFRESH_EXPIRATION)
+	common.InitJWT(config.SERVICE_HTTP_JWT_SECRET, config.SERVICE_HTTP_JWT_ACCESS_EXPIRATION, config.SERVICE_HTTP_JWT_REFRESH_EXPIRATION)
 	logger.Info("JWT middleware initialized",
 		logger.ToString("access_token_ttl", common.AccessTokenTTL.String()),
 		logger.ToString("refresh_token_ttl", common.RefreshTokenTTL.String()),
 	)
 	// Inject handler into router
-	router := rtr.InitRouter(handler, logger, config.SERVER_FRONTEND_URL)
-	srv.StartServer(router, config.SERVER_SERVE_STRING, logger)
+	router := rtr.InitRouter(handler, logger, config.SERVICE_HTTP_FRONTEND_URL)
+	srv.StartServer(router, config.SERVICE_HTTP_SERVESTRING, logger)
 }

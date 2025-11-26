@@ -13,18 +13,9 @@ import (
 var _ uc.MediaRepository = &db.DataBase{}
 var _ uc.ActorRepository = &db.DataBase{}
 
-func Run() {
-	// Implementation of the search service startup logic goes here
-	// Load configuration
-	config := cfg.Load()
+func Run(logger logger.Logger, config cfg.Config) {
 
 	// --- Initialization ---
-
-	// Initialize logger
-	logger := logger.NewZapLogger(config.POPFILMS_ENVIRONMENT == "development")
-	defer logger.Sync()
-
-	logger.Info("Config loaded")
 
 	// Create Postgres connection
 	dbURL := "postgres://" + config.POSTGRES_USER + ":" + config.POSTGRES_PASSWORD +
@@ -37,7 +28,11 @@ func Run() {
 	defer databaseAdapter.Close()
 
 	// Initialize JWT settings
-	common.InitJWT(config.SERVER_JWT_SECRET, config.SERVER_JWT_ACCESS_EXPIRATION, config.SERVER_JWT_REFRESH_EXPIRATION)
+	common.InitJWT(
+		config.SERVICE_HTTP_JWT_SECRET,
+		config.SERVICE_HTTP_JWT_ACCESS_EXPIRATION,
+		config.SERVICE_HTTP_JWT_REFRESH_EXPIRATION,
+	)
 
 	// --- Create repository level ---
 
@@ -61,5 +56,5 @@ func Run() {
 	searchHandler := srv.NewSearchServer(logger, searchMediaUsecase, searchActorUsecase)
 
 	// Start gRPC server
-	searchHandler.StartGRPCServer(config.SEARCH_SERVICE_SERVE_STRING)
+	searchHandler.StartGRPCServer(config.SERVICE_SEARCH_SERVE_STRING)
 }
