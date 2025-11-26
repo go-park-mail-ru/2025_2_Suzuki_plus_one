@@ -33,6 +33,9 @@
       args:
         chdir: /home/{{ ansible_user }}/backend
       when: deploy_mode == "bootstrap"
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/home/{{ ansible_user }}/go/bin"
+  
 
     - name: Deploy only backend service
       community.general.make:
