@@ -57,14 +57,15 @@ func TestLoadEnvExample(t *testing.T) {
 	config := Load()
 
 	// Compare the loaded configuration with the environment variables
-	require.Equal(t, envVars["SERVER_SERVE_STRING"], config.SERVER_SERVE_STRING)
-	require.Equal(t, envVars["SERVER_SERVE_PREFIX"], config.SERVER_SERVE_PREFIX)
-	require.Equal(t, envVars["SERVER_JWT_SECRET"], config.SERVER_JWT_SECRET)
-	require.Equal(t, parseDuration(envVars["SERVER_JWT_ACCESS_EXPIRATION"]), config.SERVER_JWT_ACCESS_EXPIRATION)
-	require.Equal(t, parseDuration(envVars["SERVER_JWT_REFRESH_EXPIRATION"]), config.SERVER_JWT_REFRESH_EXPIRATION)
-	require.Equal(t, envVars["SERVER_NAME"], config.SERVER_NAME)
-	require.Equal(t, envVars["SERVER_FRONTEND_URL"], config.SERVER_FRONTEND_URL)
-	require.Equal(t, envVars["POPFILMS_ENVIRONMENT"], config.POPFILMS_ENVIRONMENT)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_SERVESTRING"], config.SERVICE_HTTP_SERVESTRING)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_METRICS_SERVESTRING"], config.SERVICE_HTTP_METRICS_SERVESTRING)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_SERVE_PREFIX"], config.SERVICE_HTTP_SERVE_PREFIX)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_JWT_SECRET"], config.SERVICE_HTTP_JWT_SECRET)
+	require.Equal(t, parseDuration(envVars["POPFILMS_SERVICE_HTTP_JWT_ACCESS_EXPIRATION"]), config.SERVICE_HTTP_JWT_ACCESS_EXPIRATION)
+	require.Equal(t, parseDuration(envVars["POPFILMS_SERVICE_HTTP_JWT_REFRESH_EXPIRATION"]), config.SERVICE_HTTP_JWT_REFRESH_EXPIRATION)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_NAME"], config.SERVICE_HTTP_NAME)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_FRONTEND_URL"], config.SERVICE_HTTP_FRONTEND_URL)
+	require.Equal(t, envVars["POPFILMS_ENVIRONMENT"], config.ENVIRONMENT)
 
 	// Database
 	require.Equal(t, envVars["POSTGRES_HOST"], config.POSTGRES_HOST)
@@ -80,4 +81,14 @@ func TestLoadEnvExample(t *testing.T) {
 	require.Equal(t, envVars["MINIO_EXTERNAL_HOST"], config.MINIO_EXTERNAL_HOST)
 	require.Equal(t, envVars["MINIO_ROOT_USER"], config.MINIO_ROOT_USER)
 	require.Equal(t, envVars["MINIO_ROOT_PASSWORD"], config.MINIO_ROOT_PASSWORD)
+
+	// Services
+
+	// Auth
+	require.Equal(t, envVars["POPFILMS_SERVICE_AUTH_SERVESTRING"], config.SERVICE_AUTH_SERVE_STRING)
+	require.Equal(t, envVars["POPFILMS_SERVICE_AUTH_METRICS_SERVESTRING"], config.SERVICE_AUTH_METRICS_SERVE_STRING)
+
+	// Search
+	require.Equal(t, envVars["POPFILMS_SERVICE_SEARCH_SERVESTRING"], config.SERVICE_SEARCH_SERVE_STRING)
+	require.Equal(t, envVars["POPFILMS_SERVICE_SEARCH_METRICS_SERVESTRING"], config.SERVICE_SEARCH_METRICS_SERVE_STRING)
 }

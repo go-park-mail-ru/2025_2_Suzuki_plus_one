@@ -1,11 +1,5 @@
+- Add domain metrics
 - Ensure test coverage >60%. Now 25%
 - Add Golangci-lint
 - Search for another "TODO" comments
-
-
-
-remove redis
-move usecases to http/
-
-
-move proto gens to internal/protos
+- move proto gens to internal/protos

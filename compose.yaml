@@ -1,4 +1,40 @@
 services:
+  ### Metrics ###
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: popfilms_prometheus
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: popfilms_grafana
+    ports:
+      - "5000:3000"
+    depends_on:
+      prometheus:
+        condition: service_started
+    networks:
+      - app-network
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboard-files:/var/lib/grafana/dashboards
+    env_file:
+      - .env
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - app-network
+
+  ### Databases ###
   db:
     image: postgres:17
     container_name: popfilms_db
@@ -35,6 +71,8 @@ services:
       - redis_data:/data
     networks:
       - app-network
+
+  ### Microservices ###
   backend-http:
     container_name: popfilms_backend-http
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
@@ -43,6 +81,7 @@ services:
       - .env
     ports:
       - "8080:8080"
+      - "8880:8880"
     depends_on:
       db:
         condition: service_healthy
@@ -60,6 +99,7 @@ services:
       - .env
     ports:
       - "8082:8082"
+      - "8882:8882"
     depends_on:
       db:
         condition: service_healthy
@@ -77,6 +117,7 @@ services:
       - .env
     ports:
       - "8083:8083"
+      - "8883:8883"
     depends_on:
       db:
         condition: service_healthy
@@ -91,6 +132,7 @@ volumes:
   db_data:
   minio_data:
   redis_data:
+  grafana_data:
 
 
 networks:
