@@ -2,6 +2,7 @@ package config
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -9,13 +10,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const ENVFILE = "../../.env.example"
+const ENVFILE = "../../.env"
 
 // Reads [ENVFILE], sets env vars, loads config and checks correctness.
 func TestLoadEnvExample(t *testing.T) {
-	// Open the .env.example file
+	// Open the .env file
 	file, err := os.Open(ENVFILE)
-	require.NoError(t, err, "Failed to open .env.example")
+	require.NoError(t, err, "Failed to open %s", ENVFILE)
 	defer file.Close()
 
 	// Create a map to store environment variables
@@ -46,6 +47,7 @@ func TestLoadEnvExample(t *testing.T) {
 
 		// Set the environment variable
 		envVars[key] = value
+		fmt.Println(line)
 		require.NoError(t, os.Setenv(key, value), "Failed to set environment variable: %s", key)
 	}
 
@@ -55,11 +57,38 @@ func TestLoadEnvExample(t *testing.T) {
 	config := Load()
 
 	// Compare the loaded configuration with the environment variables
-	require.Equal(t, envVars["SERVER_SERVE_STRING"], config.SERVER_SERVE_STRING)
-	require.Equal(t, envVars["SERVER_SERVE_PREFIX"], config.SERVER_SERVE_PREFIX)
-	require.Equal(t, envVars["SERVER_JWT_SECRET"], config.SERVER_JWT_SECRET)
-	require.Equal(t, parseDuration(envVars["SERVER_JWT_ACCESS_EXPIRATION"]), config.SERVER_JWT_ACCESS_EXPIRATION)
-	require.Equal(t, parseDuration(envVars["SERVER_JWT_REFRESH_EXPIRATION"]), config.SERVER_JWT_REFRESH_EXPIRATION)
-	require.Equal(t, envVars["SERVER_NAME"], config.SERVER_NAME)
-	require.Equal(t, envVars["SERVER_FRONTEND_URL"], config.SERVER_FRONTEND_URL)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_SERVESTRING"], config.SERVICE_HTTP_SERVESTRING)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_METRICS_SERVESTRING"], config.SERVICE_HTTP_METRICS_SERVESTRING)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_SERVE_PREFIX"], config.SERVICE_HTTP_SERVE_PREFIX)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_JWT_SECRET"], config.SERVICE_HTTP_JWT_SECRET)
+	require.Equal(t, parseDuration(envVars["POPFILMS_SERVICE_HTTP_JWT_ACCESS_EXPIRATION"]), config.SERVICE_HTTP_JWT_ACCESS_EXPIRATION)
+	require.Equal(t, parseDuration(envVars["POPFILMS_SERVICE_HTTP_JWT_REFRESH_EXPIRATION"]), config.SERVICE_HTTP_JWT_REFRESH_EXPIRATION)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_NAME"], config.SERVICE_HTTP_NAME)
+	require.Equal(t, envVars["POPFILMS_SERVICE_HTTP_FRONTEND_URL"], config.SERVICE_HTTP_FRONTEND_URL)
+	require.Equal(t, envVars["POPFILMS_ENVIRONMENT"], config.ENVIRONMENT)
+
+	// Database
+	require.Equal(t, envVars["POSTGRES_HOST"], config.POSTGRES_HOST)
+	require.Equal(t, envVars["POSTGRES_USER"], config.POSTGRES_USER)
+	require.Equal(t, envVars["POSTGRES_PASSWORD"], config.POSTGRES_PASSWORD)
+	require.Equal(t, envVars["POSTGRES_DB"], config.POSTGRES_DB)
+
+	// Redis
+	require.Equal(t, envVars["REDIS_HOST"], config.REDIS_HOST)
+
+	// Minio
+	require.Equal(t, envVars["MINIO_INTERNAL_HOST"], config.MINIO_INTERNAL_HOST)
+	require.Equal(t, envVars["MINIO_EXTERNAL_HOST"], config.MINIO_EXTERNAL_HOST)
+	require.Equal(t, envVars["MINIO_ROOT_USER"], config.MINIO_ROOT_USER)
+	require.Equal(t, envVars["MINIO_ROOT_PASSWORD"], config.MINIO_ROOT_PASSWORD)
+
+	// Services
+
+	// Auth
+	require.Equal(t, envVars["POPFILMS_SERVICE_AUTH_SERVESTRING"], config.SERVICE_AUTH_SERVE_STRING)
+	require.Equal(t, envVars["POPFILMS_SERVICE_AUTH_METRICS_SERVESTRING"], config.SERVICE_AUTH_METRICS_SERVE_STRING)
+
+	// Search
+	require.Equal(t, envVars["POPFILMS_SERVICE_SEARCH_SERVESTRING"], config.SERVICE_SEARCH_SERVE_STRING)
+	require.Equal(t, envVars["POPFILMS_SERVICE_SEARCH_METRICS_SERVESTRING"], config.SERVICE_SEARCH_METRICS_SERVE_STRING)
 }

@@ -1,0 +1,16 @@
+services:
+  db:
+    ports:
+      - "5432:5432"
+  minio:
+    ports:
+      - "9001:9001" # Web Console
+  redis:
+    ports:
+      - "6379:6379"
+  backend-http:
+    build: .
+  backend-auth:
+    build: .
+  backend-search:
+    build: .

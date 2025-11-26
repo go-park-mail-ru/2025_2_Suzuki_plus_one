@@ -1,0 +1,80 @@
+AppealResponse:
+  type: object
+  properties:
+    tag:
+      type: string
+      example: "bug"
+      description: The tag or category of the appeal
+      enum:
+        - bug
+        - feature
+        - other
+    name:
+      type: string
+      example: "I have a problem..."
+      description: Prefix of first message
+    status:
+      type: string
+      example: "open"
+      enum:
+        - open
+        - in_progress
+        - resolved
+      description: The current status of the appeal
+    created_at:
+      type: string
+      format: date-time
+      example: "11:11 01.01.2024"
+      description: The date and time when the appeal was created
+
+AppealRequest:
+  type: object
+  required:
+    - tag
+    - name
+    - message
+  properties:
+    tag:
+      type: string
+      example: "bug"
+      description: The tag or category of the appeal
+      enum:
+        - bug
+        - feature
+        - other
+    message:
+      type: string
+      example: "Detailed description of the issue..."
+      description: The detailed message of the appeal
+    name:
+      type: string
+      example: "Issue title"
+      description: Prefix of first message
+
+# Appeal message schemas
+AppealMessageRequest:
+  type: object
+  required:
+    - message
+  properties:
+    message:
+      type: string
+      example: "Thank you for your feedback!"
+      description: The content of the message
+
+AppealMessageResponse:
+  type: object
+  properties:
+    is_response:
+      type: boolean
+      example: false
+      description: Indicates if the message is from support staff
+    message:
+      type: string
+      example: "Thank you for your feedback!"
+      description: The content of the message
+    timestamp:
+      type: string
+      format: date-time
+      example: "11:15 01.01.2024"
+      description: The date and time when the message was sent

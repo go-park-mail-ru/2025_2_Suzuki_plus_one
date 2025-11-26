@@ -1,0 +1,117 @@
+me:
+  get:
+    tags:
+      - user
+    summary: Get user profile
+    security:
+      - access_token: []
+    description: Retrieve the profile information of the authenticated user
+    responses:
+      "200":
+        description: Self User profile retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user.yaml#/UserResponse"
+      "401":
+        description: Unauthorized (invalid or missing access token)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+me_update:
+  post:
+    security:
+      - access_token: []
+    tags:
+      - user
+    summary: Update user profile
+    description: Update the profile information of the authenticated user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/user.yaml#/UserUpdateRequest"
+    responses:
+      "200":
+        description: User profile updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user.yaml#/UserResponse"
+      "400":
+        description: Bad request (invalid input)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+      "401":
+        description: Unauthorized (invalid or missing access token)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+me_update_avatar:
+  post:
+    security:
+      - access_token: []
+    tags:
+      - user
+    summary: Update user avatar
+    description: Update the avatar of the authenticated user
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../schemas/user.yaml#/UserAvatarUpdateRequest"
+    responses:
+      "200":
+        description: User avatar updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user.yaml#/UserResponse"
+      "400":
+        description: Bad request (invalid input)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+      "401":
+        description: Unauthorized (invalid or missing access token)
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: "Token not found"
+me_update_password:
+  post:
+    security:
+      - access_token: []
+    tags:
+      - user
+    summary: Update user password
+    description: Update the password of the authenticated user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/user.yaml#/UserPasswordUpdateRequest"
+    responses:
+      "200":
+        description: User password updated successfully
+      "400":
+        description: Wrong input (invalid/weak/do not match)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+      "401":
+        description: Unauthorized (invalid or missing access token)
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

@@ -1,0 +1,33 @@
+.self:
+  get:
+    summary: Get s3 link
+    description: Given ID, return pre-signed S3 URL for accessing the file
+    tags:
+      - object
+    parameters:
+      - in: query
+        name: key
+        required: true
+        schema:
+          type: string
+        description: Key of the object in the s3 bucket
+      - in: query
+        name: bucket_name
+        required: false
+        schema:
+          type: string
+          enum: [avatars, posters, trailers, media, actors]
+        description: Name of the s3 bucket
+    responses:
+      "200":
+        description: The s3 link
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/object.yaml#/ObjectResponse"
+      "400":
+        description: Invalid input
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

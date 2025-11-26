@@ -1,0 +1,154 @@
+services:
+  ### Metrics ###
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: popfilms_prometheus
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./prometheus-alerts.yaml:/etc/prometheus/prometheus-alerts.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=10d"
+      - "--storage.tsdb.retention.size=2GB"
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: popfilms_alertmanager
+    networks:
+      - app-network
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: popfilms_grafana
+    ports:
+      - "5000:3000"
+    depends_on:
+      prometheus:
+        condition: service_started
+    networks:
+      - app-network
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboard-files:/var/lib/grafana/dashboards
+    env_file:
+      - .env
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - app-network
+
+  ### Databases ###
+  db:
+    image: postgres:17
+    container_name: popfilms_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - app-network
+  minio:
+    image: minio/minio:latest
+    container_name: popfilms_minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000" # S3 API
+    networks:
+      - app-network
+  redis:
+    image: redis:alpine
+    container_name: popfilms_redis
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  ### Microservices ###
+  backend-http:
+    container_name: popfilms_backend-http
+    image: "ghcr.io/sorrtory/popfilms-backend:latest"
+    env_file:
+      # - "./configs/http.env"
+      - .env
+    ports:
+      - "8080:8080"
+      - "8880:8880"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+    entrypoint: ["./http"]
+  backend-auth:
+    container_name: popfilms_backend-auth
+    image: "ghcr.io/sorrtory/popfilms-backend:latest"
+    env_file:
+      - .env
+    ports:
+      - "8082:8082"
+      - "8882:8882"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+    entrypoint: ["./auth"]
+  backend-search:
+    container_name: popfilms_backend-search
+    image: "ghcr.io/sorrtory/popfilms-backend:latest"
+    env_file:
+      - .env
+    ports:
+      - "8083:8083"
+      - "8883:8883"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+    entrypoint: ["./search"]
+volumes:
+  db_data:
+  minio_data:
+  redis_data:
+  grafana_data:
+
+networks:
+  app-network:
+    driver: bridge

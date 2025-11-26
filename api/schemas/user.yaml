@@ -1,0 +1,77 @@
+UserResponse:
+  summary: User profile response
+  type: object
+  properties:
+    id:
+      type: string
+      format: int
+      example: "1"
+    username:
+      type: string
+      example: "johndoe"
+    email:
+      type: string
+      format: email
+      example: "johndoe@example.com"
+    date_of_birth:
+      type: string
+      format: date
+      example: "1990-01-01"
+    phone_number:
+      type: string
+      example: "+1234567890"
+    avatar_url:
+      type: string
+      format: uri
+      example: "http://example.com/avatars/johndoe.jpg"
+
+UserUpdateRequest:
+  summary: User profile settings
+  type: object
+  properties:
+    username:
+      type: string
+      example: "johndoe"
+    email:
+      type: string
+      format: email
+      example: "johndoe@example.com"
+    date_of_birth:
+      type: string
+      format: date
+      example: "1990-01-01"
+    phone_number:
+      type: string
+      example: "+1234567890"
+
+UserAvatarUpdateRequest:
+    type: object
+    properties:
+      avatar:
+        type: string
+        format: binary
+        description: The new avatar image file
+
+UserAvatarUpdateResponse:
+  type: object
+  properties:
+    url:
+      type: string
+      example: "http://popfilms.ru/minio/avatars/1_avatar12345.jpg"
+
+UserPasswordUpdateRequest:
+  type: object
+  required:
+    - current_password
+    - new_password
+  properties:
+    current_password:
+      type: string
+      format: password
+      example: "oldpassword123"
+      description: The user's current password
+    new_password:
+      type: string
+      format: password
+      example: "newsecurepassword456"
+      description: The new password to set for the user

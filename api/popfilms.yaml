@@ -1,0 +1,149 @@
+openapi: "3.0.3"
+info:
+  title: PopFilms API
+  version: "1.0"
+  description: |
+    This is the main API specification for PopFilms endpoints.
+
+    See PopFilms [github](https://github.com/go-park-mail-ru/2025_2_Suzuki_plus_one) for more information.
+servers:
+  - url: https://popfilms.ru/api/v1/
+    description: Production server
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: content
+    description: Endpoints related to UI data content
+  - name: object
+    description: Endpoints for accessing S3 media links
+  - name: auth
+    description: Authentication endpoints
+  - name: appeal
+    description: User appeals and feedback endpoints
+  - name: user
+    description: User profile management endpoints
+paths:
+  # auth.yaml
+  /auth/refresh:
+    $ref: "./paths/auth.yaml#/refresh"
+  /auth/signin:
+    $ref: "./paths/auth.yaml#/signin"
+  /auth/signup:
+    $ref: "./paths/auth.yaml#/signup"
+  /auth/signout:
+    $ref: "./paths/auth.yaml#/signout"
+  # object.yaml
+  /object:
+    $ref: "./paths/object.yaml#/.self"
+  # media.yaml
+  /media/my:
+    $ref: "./paths/media.yaml#/my"
+  /media/recommendations:
+    $ref: "./paths/media.yaml#/recommendations"
+  /media/{media_id}:
+    $ref: "./paths/media.yaml#/certain"
+  /media/watch:
+    $ref: "./paths/media.yaml#/watch"
+  /media/{media_id}/actor:
+    $ref: "./paths/media.yaml#/actor"
+  /media/{media_id}/like:
+    $ref: "./paths/media.yaml#/like"
+  # user.yaml
+  /user/me:
+    $ref: "./paths/user.yaml#/me"
+  /user/me/update:
+    $ref: "./paths/user.yaml#/me_update"
+  /user/me/update/avatar:
+    $ref: "./paths/user.yaml#/me_update_avatar"
+  /user/me/update/password:
+    $ref: "./paths/user.yaml#/me_update_password"
+  # actor.yaml
+  /actor/{actor_id}:
+    $ref: "./paths/actor.yaml#/certain"
+  /actor/{actor_id}/media:
+    $ref: "./paths/actor.yaml#/actor_media"
+  # appeal.yaml
+  /appeal/all:
+    $ref: "./paths/appeal.yaml#/all"
+  /appeal/my:
+    $ref: "./paths/appeal.yaml#/my"
+  /appeal/new:
+    $ref: "./paths/appeal.yaml#/new"
+  /appeal/{appeal_id}:
+    $ref: "./paths/appeal.yaml#/id"
+  /appeal/{appeal_id}/resolve:
+    $ref: "./paths/appeal.yaml#/id_resolve"
+  /appeal/{appeal_id}/message:
+    $ref: "./paths/appeal.yaml#/id_message"
+  # genre.yaml
+  /genre/{genre_id}:
+    $ref: "./paths/genre.yaml#/certain"
+  /genre/all:
+    $ref: "./paths/genre.yaml#/all"
+  # search.yaml
+  /search:
+    $ref: "./paths/search.yaml#/.self"
+
+components:
+  securitySchemes:
+    refresh_token:
+      description: JWT refresh token stored in Strict HttpOnly cookie
+      type: apiKey
+      in: cookie
+      name: refresh_token
+    access_token:
+      description: JWT access token stored in JS memory
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    # error.yaml
+    ErrorResponse:
+      $ref: "./schemas/error.yaml#/ErrorResponse"
+    # auth.yaml
+    RefreshResponse:
+      $ref: "./schemas/auth.yaml#/RefreshResponse"
+    SignInRequest:
+      $ref: "./schemas/auth.yaml#/SignInRequest"
+    SignInResponse:
+      $ref: "./schemas/auth.yaml#/SignInResponse"
+    SignUpRequest:
+      $ref: "./schemas/auth.yaml#/SignUpRequest"
+    SignUpResponse:
+      $ref: "./schemas/auth.yaml#/SignUpResponse"
+    # object.yaml
+    ObjectResponse:
+      $ref: "./schemas/object.yaml#/ObjectResponse"
+    # media.yaml
+    MediaResponse:
+      $ref: "./schemas/media.yaml#/MediaResponse"
+    LikeResponse:
+      $ref: "./schemas/media.yaml#/LikeResponse"
+    # actor.yaml
+    ActorResponse:
+      $ref: "./schemas/actor.yaml#/ActorResponse"
+    ActorMediaResponse:
+      $ref: "./schemas/actor.yaml#/ActorMediaResponse"
+    # user.yaml
+    UserResponse:
+      $ref: "./schemas/user.yaml#/UserResponse"
+    UserUpdateRequest:
+      $ref: "./schemas/user.yaml#/UserUpdateRequest"
+    UserAvatarUpdateRequest:
+      $ref: "./schemas/user.yaml#/UserAvatarUpdateRequest"
+    UserAvatarUpdateResponse:
+      $ref: "./schemas/user.yaml#/UserAvatarUpdateResponse"
+    UserPasswordUpdateRequest:
+      $ref: "./schemas/user.yaml#/UserPasswordUpdateRequest"
+    # genre.yaml
+    GenreResponse:
+      $ref: "./schemas/genre.yaml#/GenreResponse"
+    # appeal.yaml
+    AppealResponse:
+      $ref: "./schemas/appeal.yaml#/AppealResponse"
+    AppealRequest:
+      $ref: "./schemas/appeal.yaml#/AppealRequest"
+    AppealMessageResponse:
+      $ref: "./schemas/appeal.yaml#/AppealMessageResponse"
+    AppealMessageRequest:
+      $ref: "./schemas/appeal.yaml#/AppealMessageRequest"

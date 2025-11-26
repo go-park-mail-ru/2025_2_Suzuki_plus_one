@@ -1,0 +1,61 @@
+---
+- hosts: back
+  vars:
+    deploy_mode: "services" # services or bootstrap
+
+  tasks:
+    - name: Ensure backend folder exists
+      file:
+        path: /home/{{ ansible_user }}/backend
+        state: directory
+
+    - name: Upload prod.env file
+      copy:
+        src: ./prod.env
+        dest: /home/{{ ansible_user }}/backend/.env
+        mode: "0644"
+
+    - name: Pull latest code and switch to deploy branch
+      git:
+        repo: "https://github.com/go-park-mail-ru/2025_2_Suzuki_plus_one.git"
+        dest: /home/{{ ansible_user }}/backend
+        update: yes
+        version: deploy
+
+    - name: Upload alertmanager configuration file with secrets
+      copy:
+        src: ./alertmanager/alertmanager.yaml
+        dest: /home/{{ ansible_user }}/backend/alertmanager/alertmanager.yaml
+        mode: "0644"
+
+    - name: Pull latest image for backend
+      shell: |
+        cd /home/{{ ansible_user }}/backend
+        docker compose pull backend-http
+
+    - name: Bootstrap all (rebuild DB, recreate all containers)
+      community.general.make:
+        target: all-bootstrap
+      args:
+        chdir: /home/{{ ansible_user }}/backend
+      when: deploy_mode == "bootstrap"
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/home/{{ ansible_user }}/go/bin"
+
+    - name: Deploy only backend service
+      community.general.make:
+        target: all-service-deploy
+      args:
+        chdir: /home/{{ ansible_user }}/backend
+      when: deploy_mode == "services"
+
+    - name: Wait for server to start
+      uri:
+        url: "http://217.16.18.125/api/v1/media/recommendations?limit=1&type=movie"
+        status_code: 200
+        timeout: 10
+        validate_certs: no
+      register: server_health
+      retries: 3
+      delay: 3
+      until: server_health.status == 200

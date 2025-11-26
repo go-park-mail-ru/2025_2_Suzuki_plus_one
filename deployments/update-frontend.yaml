@@ -1,0 +1,33 @@
+---
+- hosts: front
+  tasks:
+    - name: Ensure front folder exists
+      file:
+        path: /var/www/frontend
+        state: directory
+
+    - name: Pull latest code and switch to dev branch
+      git:
+        repo: "https://github.com/frontend-park-mail-ru/2025_2_Suzuki_plus_one.git"
+        dest: /var/www/frontend
+        update: yes
+        version: dev
+      become: yes
+
+    - name: build frontend
+      shell: |
+        cd /var/www/frontend
+        npm install
+        npm run build
+      become: yes
+
+    - name: Wait for server to start
+      uri:
+        url: "http://217.16.18.125/api/v1/media/recommendations?limit=1&type=movie"
+        status_code: 200
+        timeout: 10
+        validate_certs: no
+      register: server_health
+      retries: 3
+      delay: 3
+      until: server_health.status == 200

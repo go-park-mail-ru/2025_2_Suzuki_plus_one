@@ -1,0 +1,427 @@
+{
+  "id": null,
+  "uid": null,
+  "title": "All Services Overview",
+  "tags": [],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "style": "dark",
+  "editable": true,
+  "refresh": "30s",
+
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(http_requests_total, service)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "label": "Service",
+        "hide": 0
+      },
+      {
+        "name": "http_method",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(http_requests_total, method)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "label": "HTTP Method",
+        "hide": 0
+      },
+      {
+        "name": "path",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(http_requests_total, path)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "label": "URL Path",
+        "hide": 0
+      },
+      {
+        "name": "status_code",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(http_requests_total, status_code)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "label": "HTTP Status",
+        "hide": 0
+      },
+      {
+        "name": "grpc_service",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(grpc_server_requests_total, service)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "label": "gRPC Service",
+        "hide": 0
+      },
+      {
+        "name": "grpc_method",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(grpc_server_requests_total, method)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "label": "gRPC Method",
+        "hide": 0
+      },
+      {
+        "name": "grpc_code",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(grpc_server_requests_total, code)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "label": "gRPC Code",
+        "hide": 0
+      },
+      {
+        "name": "error_type",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(http_errors_total, error_type)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "label": "HTTP Error Type",
+        "hide": 0
+      }
+    ]
+  },
+
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+
+  "panels": [
+    {
+      "id": 1,
+      "type": "graph",
+      "title": "HTTP Requests per Endpoint",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (service, method, path) (rate(http_requests_total{service=~\"$service\", method=~\"$http_method\", path=~\"$path\", status_code=~\"$status_code\"}[$__rate_interval]))",
+          "legendFormat": "{{service}} {{method}} {{path}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" }
+      }
+    },
+
+    {
+      "id": 2,
+      "type": "graph",
+      "title": "HTTP Error Rate per Endpoint",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (service, method, path, status_code, error_type) (rate(http_errors_total{service=~\"$service\", method=~\"$http_method\", path=~\"$path\", status_code=~\"$status_code\", error_type=~\"$error_type\"}[$__rate_interval]))",
+          "legendFormat": "{{service}} {{method}} {{path}} {{status_code}} {{error_type}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" }
+      }
+    },
+
+    {
+      "id": 3,
+      "type": "graph",
+      "title": "HTTP Latency P95 per Endpoint (s)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, service, method, path) (rate(http_request_duration_seconds_bucket{service=~\"$service\", method=~\"$http_method\", path=~\"$path\", status_code=~\"$status_code\"}[$__rate_interval])))",
+          "legendFormat": "{{service}} {{method}} {{path}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+
+    {
+      "id": 4,
+      "type": "graph",
+      "title": "HTTP Requests per Service",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (service) (rate(http_requests_total{service=~\"$service\"}[$__rate_interval]))",
+          "legendFormat": "{{service}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" }
+      }
+    },
+
+    {
+      "id": 5,
+      "type": "graph",
+      "title": "HTTP Request Size P95 per Endpoint (bytes)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, service, method, path) (rate(http_request_size_bytes_bucket{service=~\"$service\", method=~\"$http_method\", path=~\"$path\"}[$__rate_interval])))",
+          "legendFormat": "{{service}} {{method}} {{path}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "bytes" }
+      }
+    },
+
+    {
+      "id": 6,
+      "type": "graph",
+      "title": "HTTP Response Size P95 per Endpoint (bytes)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, service, method, path, status_code) (rate(http_response_size_bytes_bucket{service=~\"$service\", method=~\"$http_method\", path=~\"$path\", status_code=~\"$status_code\"}[$__rate_interval])))",
+          "legendFormat": "{{service}} {{method}} {{path}} {{status_code}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "bytes" }
+      }
+    },
+
+    {
+      "id": 7,
+      "type": "graph",
+      "title": "gRPC Server Requests per Method",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (service, method) (rate(grpc_server_requests_total{service=~\"$grpc_service\", method=~\"$grpc_method\", code=~\"$grpc_code\"}[$__rate_interval]))",
+          "legendFormat": "{{service}} {{method}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 24, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" }
+      }
+    },
+
+    {
+      "id": 8,
+      "type": "graph",
+      "title": "gRPC Server Error Rate per Method",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (service, method, code) (rate(grpc_server_requests_total{service=~\"$grpc_service\", method=~\"$grpc_method\", code!~\"^OK$\"}[$__rate_interval]))",
+          "legendFormat": "{{service}} {{method}} {{code}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 24, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" }
+      }
+    },
+
+    {
+      "id": 9,
+      "type": "graph",
+      "title": "gRPC Server Latency P95 (s)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, service, method) (rate(grpc_server_request_duration_seconds_bucket{service=~\"$grpc_service\", method=~\"$grpc_method\", code=~\"$grpc_code\"}[$__rate_interval])))",
+          "legendFormat": "{{service}} {{method}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 32, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+
+    {
+      "id": 10,
+      "type": "graph",
+      "title": "gRPC Client Requests (HTTP → Auth/Search)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (caller_service, target_service, method) (rate(grpc_client_requests_total{caller_service=~\"$service\", target_service=~\"$grpc_service\", method=~\"$grpc_method\", code=~\"$grpc_code\"}[$__rate_interval]))",
+          "legendFormat": "{{caller_service}} → {{target_service}} {{method}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 32, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" }
+      }
+    },
+
+    {
+      "id": 11,
+      "type": "graph",
+      "title": "gRPC Client Latency P95 (s)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, caller_service, target_service, method) (rate(grpc_client_request_duration_seconds_bucket{caller_service=~\"$service\", target_service=~\"$grpc_service\", method=~\"$grpc_method\", code=~\"$grpc_code\"}[$__rate_interval])))",
+          "legendFormat": "{{caller_service}} → {{target_service}} {{method}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 40, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+
+    {
+      "id": 12,
+      "type": "graph",
+      "title": "gRPC In-flight Requests",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (service, method) (grpc_server_requests_in_flight{service=~\"$grpc_service\", method=~\"$grpc_method\"})",
+          "legendFormat": "{{service}} {{method}} (server)",
+          "refId": "A"
+        },
+        {
+          "expr": "sum by (caller_service, target_service, method) (grpc_client_requests_in_flight{caller_service=~\"$service\", target_service=~\"$grpc_service\", method=~\"$grpc_method\"})",
+          "legendFormat": "{{caller_service}} → {{target_service}} {{method}} (client)",
+          "refId": "B"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 40, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "short" }
+      }
+    },
+
+    {
+      "id": 13,
+      "type": "graph",
+      "title": "Business Errors per Operation",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (service, operation, error_type) (rate(business_errors_total{service=~\"$service\"}[$__rate_interval]))",
+          "legendFormat": "{{service}} {{operation}} {{error_type}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 48, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" }
+      }
+    },
+
+    {
+      "id": 14,
+      "type": "graph",
+      "title": "DB Query Latency P95 (s)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, service, operation, table) (rate(db_query_duration_seconds_bucket{service=~\"$service\"}[$__rate_interval])))",
+          "legendFormat": "{{service}} {{operation}} {{table}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 48, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+
+    {
+      "id": 15,
+      "type": "graph",
+      "title": "Cache Hit Ratio",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum(rate(cache_hits_total{service=~\"$service\"}[$__rate_interval])) / (sum(rate(cache_hits_total{service=~\"$service\"}[$__rate_interval])) + sum(rate(cache_misses_total{service=~\"$service\"}[$__rate_interval])))",
+          "legendFormat": "{{service}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 56, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "percentunit" }
+      }
+    },
+
+    {
+      "id": 16,
+      "type": "graph",
+      "title": "CPU Usage (%)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval])) * 100)",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 56, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "percent" }
+      }
+    }
+  ]
+}

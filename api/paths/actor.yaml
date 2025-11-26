@@ -1,0 +1,52 @@
+certain:
+  get:
+    tags:
+      - content
+    summary: Get details of a specific actor
+    description: Retrieve detailed information about an actor given their ID
+    parameters:
+      - in: path
+        name: actor_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the actor
+    responses:
+      "200":
+        description: Actor details retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/actor.yaml#/ActorResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+actor_media:
+  get:
+    tags:
+      - content
+    summary: Get movies related to a specific actor
+    description: Retrieve a list of movies featuring the specified actor
+    parameters:
+      - in: path
+        name: actor_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the actor
+    responses:
+      "200":
+        description: Movies related to actor retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/actor.yaml#/ActorMediaResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

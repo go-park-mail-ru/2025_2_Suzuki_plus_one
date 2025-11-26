@@ -1,15 +1,13 @@
 # Coverage Report
 
-> 64.5%
+> ~35%
 
 ## Commands
 
 ```bash
-# Generate coverage report
-go test -coverprofile=coverage.out ./...
-# Display coverage summary
-go tool cover -func=coverage.out
+# Run tests and generate coverage report
+make test
 
-# Generate HTML coverage report
-go tool cover -html=coverage.out -o coverage.html
+# Generate coverage html report
+make coverage
 ```

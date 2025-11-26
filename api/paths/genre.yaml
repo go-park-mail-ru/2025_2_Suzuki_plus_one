@@ -1,0 +1,64 @@
+certain:
+  get:
+    tags:
+      - content
+    summary: Get details of a specific genre
+    description: Retrieve detailed information about a genre given its ID
+    parameters:
+      - in: path
+        name: genre_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the genre
+      - in: query
+        name: media_limit
+        required: false
+        schema:
+          type: integer
+          default: 10
+        description: The maximum number of media items to return
+      - in: query
+        name: media_offset
+        required: false
+        schema:
+          type: integer
+          default: 0
+        description: The offset for media items to return
+    responses:
+      "200":
+        description: Genre details retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/genre.yaml#/GenreResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+all:
+  get:
+    tags:
+      - content
+    summary: Get all genres
+    description: Retrieve a list of all available genres
+    responses:
+      "200":
+        description: All genres retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                genres:
+                  type: array
+                  items:
+                    $ref: "../schemas/genre.yaml#/GenreResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

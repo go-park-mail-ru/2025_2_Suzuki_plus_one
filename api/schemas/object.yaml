@@ -1,0 +1,10 @@
+ObjectResponse:
+  type: object
+  required:
+    - url
+  properties:
+    url:
+      type: string
+      format: uri
+      example: "http://s3.popfilms.ru/avatars/avatarfile.png"
+      description: Pre-signed S3 URL for avatar access

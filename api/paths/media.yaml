@@ -1,0 +1,275 @@
+recommendations:
+  get:
+    summary: Get media recommendations
+    description: |
+      Retrieve a list of recommended media based on user preferences or popular trends.
+
+      For now just order by title.
+    tags:
+      - content
+    parameters:
+      - in: query
+        name: type
+        required: true
+        description: "Type of media to retrieve (e.g., movie, series). Can add combined types later..."
+        schema:
+          type: string
+          enum: [movie, series]
+      - in: query
+        name: limit
+        required: false
+        description: "Number of recommended media to retrieve"
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 3
+      - in: query
+        name: offset
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        description: "Offset for pagination"
+    responses:
+      "200":
+        description: A list of recommended medias
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/media.yaml#/MediaResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+certain:
+  get:
+    tags:
+      - content
+    summary: Get details of a specific media
+    description: Retrieve detailed information about a media given its ID
+    parameters:
+      - in: path
+        name: media_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the media
+    responses:
+      "200":
+        description: Media details retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/media.yaml#/MediaResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+watch:
+  get:
+    security:
+      - access_token: []
+    tags:
+      - object
+    summary: Get watch link for a specific media.
+    description: |
+      Retrieve a watch link for a media given its ID.
+      NOTE: The link is TEMPORARY and will expire after a short period.
+    parameters:
+      - in: query
+        name: media_id
+        required: true
+        schema:
+          type: integer
+        description: The unique identifier of the media
+    responses:
+      "200":
+        description: Watch link retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                watch_link:
+                  type: string
+                  format: uri
+                  description: URL to watch the media
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+actor:
+  get:
+    tags:
+      - content
+    summary: Get actors of a specific media
+    description: Retrieve a list of actors associated with a media given its ID
+    parameters:
+      - in: path
+        name: media_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the media
+    responses:
+      "200":
+        description: Actors of the media retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/actor.yaml#/ActorResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+like:
+  get:
+    security:
+      - access_token: []
+    tags:
+      - content
+    summary: Check if a media is liked by the authenticated user
+    description: |
+      Determine whether a specific media is liked by the authenticated user.
+    parameters:
+      - in: path
+        name: media_id
+        required: true
+        schema:
+          type: integer
+        description: The unique identifier of the media to check
+    responses:
+      "200":
+        description: Like status retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/media.yaml#/LikeResponse"
+              
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+  put:
+    security:
+      - access_token: []
+    tags:
+      - content
+    summary: Toggle like for a specific media
+    description: |
+      Transforms the like status of a media by the authenticated user.
+    parameters:
+      - in: path
+        name: media_id
+        required: true
+        schema:
+          type: integer
+        description: The unique identifier of the media to like
+    responses:
+      "200":
+        description: Media toggle like successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/media.yaml#/LikeResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+  delete:
+    security:
+      - access_token: []
+    tags:
+      - content
+    summary: Unlike a specific media
+    description: |
+      Remove the like from a media by the authenticated user.
+    parameters:
+      - in: path
+        name: media_id
+        required: true
+        schema:
+          type: integer
+        description: The unique identifier of the media to unlike
+    responses:
+      "200":
+        description: Media unliked successfully
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+my:
+  get:
+    security:
+      - access_token: []
+    tags:
+      - content
+    summary: Get liked media of the authenticated user
+    description: Retrieve a list of media liked by the authenticated user
+    parameters:
+      - in: query
+        name: limit
+        required: false
+        description: "Number of liked media to retrieve"
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 10
+      - in: query
+        name: offset
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        description: "Offset for pagination"
+      - in: query
+        name: is_dislike
+        required: true
+        description: Filter by like or dislike status. If true, fetch disliked media; if false
+        schema:
+          type: boolean
+          default: false
+    responses:
+      "200":
+        description: A list of liked medias
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                medias:
+                  type: array
+                  items:
+                    $ref: "../schemas/media.yaml#/MediaResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

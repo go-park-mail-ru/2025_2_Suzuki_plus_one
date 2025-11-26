@@ -1,0 +1,50 @@
+.self:
+  get:
+    tags:
+      - content
+    summary: Query search service
+    description: Given a query string, return a list of matching media/actor objects
+    parameters:
+      - in: query
+        name: query
+        required: true
+        schema:
+          type: string
+        description: The search query string
+      - in: query
+        name: type
+        required: false
+        schema:
+          type: string
+          enum: [any, media, actor]
+        description: DISABLED. Type of objects to search for (movie, series, actor)
+        default: any
+      - in: query
+        name: limit
+        required: false
+        schema:
+          type: integer
+          default: 10
+        description: Maximum number of results to return
+      - in: query
+        name: offset
+        required: false
+        schema:
+          type: integer
+          default: 0
+        description: Number of results to skip for pagination
+    responses:
+      "200":
+        description: Search results retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../schemas/search.yaml#/SearchResult"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

@@ -1,0 +1,234 @@
+my:
+  get:
+    security:
+      - access_token: []
+    tags:
+      - appeal
+    summary: Get all appeals of the authenticated user
+    description: Retrieve information about all appeals without messages.
+    responses:
+      "200":
+        description: Appeal details retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appeals:
+                  type: array
+                  items:
+                    $ref: "../schemas/appeal.yaml#/AppealResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+new:
+  post:
+    security:
+      - access_token: []
+    tags:
+      - appeal
+    summary: Create a new appeal
+    description: Submit a new appeal with a tag and detailed message
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/appeal.yaml#/AppealRequest"
+    responses:
+      "201":
+        description: Appeal created successfully
+        content:
+          application/json:
+            schema:
+              properties:
+                appeal_id:
+                  type: string
+                  example: "appeal_12345"
+                  description: The unique identifier of the created appeal
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+all:
+  get:
+    tags:
+      - appeal
+    summary: Get all appeals
+    description: Retrieve information about all appeals without messages.
+    parameters:
+      - in: query
+        name: tag
+        required: false
+        schema:
+          type: string
+          enum: [bug, feature, other]
+        description: Filter appeals by tag
+      - in: query
+        name: status
+        required: false
+        schema:
+          type: string
+          enum: [open, in_progress, resolved]
+        description: Filter appeals by status
+      - in: query
+        name: limit
+        required: true
+        schema:
+          type: integer
+          default: 15
+        description: Maximum number of appeals to return
+      - in: query
+        name: offset
+        required: true
+        schema:
+          type: integer
+          default: 0
+        description: Number of appeals to skip before starting to collect the result set
+    responses:
+      "200":
+        description: Appeal details retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appeals:
+                  type: array
+                  items:
+                    $ref: "../schemas/appeal.yaml#/AppealResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+id:
+  get:
+    security:
+      - access_token: []
+    tags:
+      - appeal
+    summary: Get details of a specific appeal
+    description: Retrieve detailed information about an appeal given its ID
+    parameters:
+      - in: path
+        name: appeal_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the appeal
+    responses:
+      "200":
+        description: Appeal details retrieved successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/appeal.yaml#/AppealResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+id_resolve:
+  put:
+    security:
+      - access_token: []
+    tags:
+      - appeal
+    summary: Mark an appeal as resolved
+    description: Update the status of an appeal to 'resolved' given its ID
+    parameters:
+      - in: path
+        name: appeal_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the appeal
+    responses:
+      "200":
+        description: Appeal marked as resolved successfully
+        content:
+          application/json:
+            schema:
+              properties:
+                message:
+                  type: string
+                  example: "Appeal resolved successfully."
+                  description: Confirmation message
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+id_message:
+  post:
+    security:
+      - access_token: []
+    tags:
+      - appeal
+    summary: Add a message to a specific appeal
+    description: Submit a new message related to an appeal given its ID
+    parameters:
+      - in: path
+        name: appeal_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the appeal
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/appeal.yaml#/AppealMessageRequest"
+    responses:
+      "201":
+        description: Message added to appeal successfully
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+  get:
+    security:
+      - access_token: []
+    tags:
+      - appeal
+    summary: Get messages of a specific appeal
+    description: Retrieve all messages related to an appeal given its ID
+    parameters:
+      - in: path
+        name: appeal_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the appeal
+    responses:
+      "200":
+        description: Appeal messages retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: "../schemas/appeal.yaml#/AppealMessageResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
