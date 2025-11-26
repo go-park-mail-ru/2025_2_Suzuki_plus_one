@@ -8,9 +8,10 @@ import (
 )
 
 type GRPCServer struct {
-	Log logger.Logger
-	Server *grpc.Server
-	Lis net.Listener
+	Log        logger.Logger
+	Server     *grpc.Server
+	Lis        net.Listener
+	Middleware []grpc.UnaryServerInterceptor
 }
 
 func NewGRPCServer(log logger.Logger) *GRPCServer {
@@ -19,6 +20,7 @@ func NewGRPCServer(log logger.Logger) *GRPCServer {
 	}
 	return &GRPCServer{
 		Log: log,
+		Middleware: make([]grpc.UnaryServerInterceptor, 0),
 	}
 }
 
@@ -35,5 +37,6 @@ func (s *GRPCServer) InitGRPCServer(serveString string) {
 		grpc.UnaryInterceptor(
 			UnaryRequestIDInterceptor(s.Log),
 		),
+		grpc.ChainUnaryInterceptor(s.Middleware...),
 	)
 }

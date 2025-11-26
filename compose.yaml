@@ -5,10 +5,25 @@ services:
     container_name: popfilms_prometheus
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./prometheus-alerts.yaml:/etc/prometheus/prometheus-alerts.yml
     ports:
       - "9090:9090"
     networks:
       - app-network
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=10d"
+      - "--storage.tsdb.retention.size=2GB"
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: popfilms_alertmanager
+    networks:
+      - app-network
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
+
   grafana:
     image: grafana/grafana-oss:latest
     container_name: popfilms_grafana
@@ -61,7 +76,7 @@ services:
     volumes:
       - minio_data:/data
     ports:
-      - "9000:9000"   # S3 API
+      - "9000:9000" # S3 API
     networks:
       - app-network
   redis:
@@ -133,7 +148,6 @@ volumes:
   minio_data:
   redis_data:
   grafana_data:
-
 
 networks:
   app-network:

@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/service"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/metrics"
 	pb "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/proto/auth"
 )
 
@@ -19,6 +20,10 @@ func NewAuthService(l logger.Logger, serverString string) *AuthService {
 }
 
 func (s *AuthService) Connect() error {
+	// Add metrics middleware
+	s.Service.Middleware = append(s.Service.Middleware,
+		metrics.GRPCClientMetricsInterceptor(metrics.ServiceHTTP, metrics.ServiceSearch),
+	)
 	err := s.Service.Init()
 	if err != nil {
 		return err

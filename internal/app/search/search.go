@@ -8,6 +8,7 @@ import (
 	srv "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/grpc/search"
 	uc "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/usecase/search"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/metrics"
 )
 
 var _ uc.MediaRepository = &db.DataBase{}
@@ -54,6 +55,11 @@ func Run(logger logger.Logger, config cfg.Config) {
 
 	// --- Create delivery level ---
 	searchHandler := srv.NewSearchServer(logger, searchMediaUsecase, searchActorUsecase)
+
+	// Add metrics middleware
+	searchHandler.Middleware = append(searchHandler.Middleware,
+		metrics.GRPCServerMetricsInterceptor(metrics.ServiceSearch),
+	)
 
 	// Start gRPC server
 	searchHandler.StartGRPCServer(config.SERVICE_SEARCH_SERVE_STRING)

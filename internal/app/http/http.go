@@ -5,6 +5,7 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/app"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/metrics"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/minio"
 	db "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/postgres"
@@ -234,5 +235,10 @@ func Run(logger logger.Logger, config cfg.Config) {
 	)
 	// Inject handler into router
 	router := rtr.InitRouter(handler, logger, config.SERVICE_HTTP_FRONTEND_URL)
-	srv.StartServer(router, config.SERVICE_HTTP_SERVESTRING, logger)
+
+	// Wrap with metrics middleware
+	instrumentedRouter := metrics.HTTPMiddleware(metrics.ServiceHTTP, router)
+
+	// Start HTTP server
+	srv.StartServer(instrumentedRouter, config.SERVICE_HTTP_SERVESTRING, logger)
 }

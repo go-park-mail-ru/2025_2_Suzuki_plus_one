@@ -8,6 +8,7 @@ import (
 	srv "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/controller/grpc/auth"
 	uc "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/usecase/auth"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/metrics"
 )
 
 var _ uc.TokenRepository = &db.DataBase{}
@@ -53,6 +54,10 @@ func Run(logger logger.Logger, config cfg.Config) {
 	// --- Create delivery level ---
 	authHandler := srv.NewAuthServer(logger, loginUsecase, refreshUsecase, logoutUsecase, createUserUsecase)
 
+	// Add metrics middleware
+	authHandler.Middleware = append(authHandler.Middleware,
+		metrics.GRPCServerMetricsInterceptor(metrics.ServiceAuth),
+	)
 	// Start gRPC server
 	authHandler.StartGRPCServer(config.SERVICE_AUTH_SERVE_STRING)
 }
