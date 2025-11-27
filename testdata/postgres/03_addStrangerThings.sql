@@ -51,23 +51,23 @@ series_image AS (
 episode_src AS (
     SELECT *
     FROM (VALUES
-        ('medias/Stranger.Things.S01E01.Chapter.One.The.Vanishing.Of.Will.Byers.720p.mkv', 1, 1, 'Stranger Things S01E01 - Chapter One: The Vanishing of Will Byers'),
-        ('medias/Stranger.Things.S01E02.Chapter.Two.The.Weirdo.On.Maple.Street.720p.mkv',   1, 2, 'Stranger Things S01E02 - Chapter Two: The Weirdo on Maple Street'),
-        ('medias/Stranger.Things.S01E03.Chapter.Three.Holly.Jolly.720p.mkv',               1, 3, 'Stranger Things S01E03 - Chapter Three: Holly Jolly'),
-        ('medias/Stranger.Things.S01E04.Chapter.Four.The.Body.720p.mkv',                   1, 4, 'Stranger Things S01E04 - Chapter Four: The Body'),
-        ('medias/Stranger.Things.S01E05.Chapter.Five.The.Flea.And.The.Acrobat.720p.mkv',   1, 5, 'Stranger Things S01E05 - Chapter Five: The Flea and the Acrobat'),
-        ('medias/Stranger.Things.S01E06.Chapter.Six.The.Monster.720p.mkv',                 1, 6, 'Stranger Things S01E06 - Chapter Six: The Monster'),
-        ('medias/Stranger.Things.S01E07.Chapter.Seven.The.Bathtub.720p.mkv',               1, 7, 'Stranger Things S01E07 - Chapter Seven: The Bathtub'),
-        ('medias/Stranger.Things.S01E08.Chapter.Eight.The.Upside.Down.720p.mkv',           1, 8, 'Stranger Things S01E08 - Chapter Eight: The Upside Down'),
-        ('medias/Stranger.Things.S02E01.720p.mkv',                                         2, 1, 'Stranger Things S02E01 - Chapter One: MADMAX'),
-        ('medias/Stranger.Things.S02E02.720p.mkv',                                         2, 2, 'Stranger Things S02E02 - Chapter Two: Trick or Treat, Freak'),
-        ('medias/Stranger.Things.S02E03.720p.mkv',                                         2, 3, 'Stranger Things S02E03 - Chapter Three: The Pollywog'),
-        ('medias/Stranger.Things.S02E04.720p.mkv',                                         2, 4, 'Stranger Things S02E04 - Chapter Four: Will the Wise'),
-        ('medias/Stranger.Things.S02E05.720p.mkv',                                         2, 5, 'Stranger Things S02E05 - Chapter Five: Dig Dug'),
-        ('medias/Stranger.Things.S02E06.720p.mkv',                                         2, 6, 'Stranger Things S02E06 - Chapter Six: The Spy'),
-        ('medias/Stranger.Things.S02E07.720p.mkv',                                         2, 7, 'Stranger Things S02E07 - Chapter Seven: The Lost Sister'),
-        ('medias/Stranger.Things.S02E08.720p.mkv',                                         2, 8, 'Stranger Things S02E08 - Chapter Eight: The Mind Flayer'),
-        ('medias/Stranger.Things.S02E09.720p.mkv',                                         2, 9, 'Stranger Things S02E09 - Chapter Nine: The Gate')
+        ('medias/Stranger.Things.S01E01.Chapter.One.The.Vanishing.Of.Will.Byers.720p.mp4', 1, 1, 'Stranger Things S01E01 - Chapter One: The Vanishing of Will Byers'),
+        ('medias/Stranger.Things.S01E02.Chapter.Two.The.Weirdo.On.Maple.Street.720p.mp4',   1, 2, 'Stranger Things S01E02 - Chapter Two: The Weirdo on Maple Street'),
+        ('medias/Stranger.Things.S01E03.Chapter.Three.Holly.Jolly.720p.mp4',               1, 3, 'Stranger Things S01E03 - Chapter Three: Holly Jolly'),
+        ('medias/Stranger.Things.S01E04.Chapter.Four.The.Body.720p.mp4',                   1, 4, 'Stranger Things S01E04 - Chapter Four: The Body'),
+        ('medias/Stranger.Things.S01E05.Chapter.Five.The.Flea.And.The.Acrobat.720p.mp4',   1, 5, 'Stranger Things S01E05 - Chapter Five: The Flea and the Acrobat'),
+        ('medias/Stranger.Things.S01E06.Chapter.Six.The.Monster.720p.mp4',                 1, 6, 'Stranger Things S01E06 - Chapter Six: The Monster'),
+        ('medias/Stranger.Things.S01E07.Chapter.Seven.The.Bathtub.720p.mp4',               1, 7, 'Stranger Things S01E07 - Chapter Seven: The Bathtub'),
+        ('medias/Stranger.Things.S01E08.Chapter.Eight.The.Upside.Down.720p.mp4',           1, 8, 'Stranger Things S01E08 - Chapter Eight: The Upside Down'),
+        ('medias/Stranger.Things.S02E01.720p.mp4',                                         2, 1, 'Stranger Things S02E01 - Chapter One: MADMAX'),
+        ('medias/Stranger.Things.S02E02.720p.mp4',                                         2, 2, 'Stranger Things S02E02 - Chapter Two: Trick or Treat, Freak'),
+        ('medias/Stranger.Things.S02E03.720p.mp4',                                         2, 3, 'Stranger Things S02E03 - Chapter Three: The Pollywog'),
+        ('medias/Stranger.Things.S02E04.720p.mp4',                                         2, 4, 'Stranger Things S02E04 - Chapter Four: Will the Wise'),
+        ('medias/Stranger.Things.S02E05.720p.mp4',                                         2, 5, 'Stranger Things S02E05 - Chapter Five: Dig Dug'),
+        ('medias/Stranger.Things.S02E06.720p.mp4',                                         2, 6, 'Stranger Things S02E06 - Chapter Six: The Spy'),
+        ('medias/Stranger.Things.S02E07.720p.mp4',                                         2, 7, 'Stranger Things S02E07 - Chapter Seven: The Lost Sister'),
+        ('medias/Stranger.Things.S02E08.720p.mp4',                                         2, 8, 'Stranger Things S02E08 - Chapter Eight: The Mind Flayer'),
+        ('medias/Stranger.Things.S02E09.720p.mp4',                                         2, 9, 'Stranger Things S02E09 - Chapter Nine: The Gate')
     ) AS v(s3_key, season_number, episode_number, title)
 ),
 

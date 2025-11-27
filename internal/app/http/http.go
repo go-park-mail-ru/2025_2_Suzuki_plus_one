@@ -82,7 +82,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 		config.MINIO_EXTERNAL_HOST,
 		config.MINIO_ROOT_USER,
 		config.MINIO_ROOT_PASSWORD,
-		false,
+		false, // because minio is behind nginx proxy with SSL
 	)
 	if err != nil {
 		logger.Fatal("Failed to connect to Minio: " + err.Error())

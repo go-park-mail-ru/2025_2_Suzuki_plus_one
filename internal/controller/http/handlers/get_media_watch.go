@@ -17,7 +17,7 @@ var (
 		Message: errors.New("Invalid parameters for media fetching"),
 	}
 	ResponseGetMediaWatch = Response{
-		Code: http.StatusOK,
+		Code: http.StatusPartialContent,
 	}
 )
 

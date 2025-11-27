@@ -2,6 +2,7 @@ package minio
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/minio/minio-go/v7"
@@ -22,6 +23,7 @@ func NewMinio(logger logger.Logger, internalHost string, externalHost string, lo
 		Creds:  credentials.NewStaticV4(login, password, ""),
 		Secure: useSSL,
 	})
+	
 	if err != nil {
 		logger.Error("Failed to create Minio client: " + err.Error())
 		return nil, err
@@ -34,6 +36,17 @@ func NewMinio(logger logger.Logger, internalHost string, externalHost string, lo
 	logger.Info("Connected to MinIO successfully. Available buckets:")
 	for _, bucket := range buckets {
 		logger.Info(" - " + bucket.Name)
+	}
+
+	if internalHost[len(internalHost)-1] == '/' {
+		internalHost = internalHost[:len(internalHost)-1]
+	}
+	if externalHost[len(externalHost)-1] == '/' {
+		externalHost = externalHost[:len(externalHost)-1]
+	}
+
+	if externalHost[:4] != "http" {
+		return nil, fmt.Errorf("externalHost must start with http or https")
 	}
 
 	return &Minio{

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
@@ -66,24 +67,19 @@ func (m *Minio) GeneratePresignedURL(ctx context.Context, bucketName string, obj
 	// Generate presigned URL
 	reqParams := make(url.Values)
 	presignedURL, err := m.client.PresignedGetObject(ctx, bucketName, objectName, expiration, reqParams)
+	
 	if err != nil {
 		log.Error("Failed to generate presigned URL: " + err.Error())
 		return nil, err
 	}
 
-	// Replace internal URL with public URL
-	parsedURL, err := url.Parse(presignedURL.String())
-	if err != nil {
-		log.Error("Failed to parse presigned URL: " + err.Error())
-		return nil, err
-	}
-
-	// Use the host from public URL
-	publicParsedURL, _ := url.Parse(m.externalHost)
-	parsedURL.Host = publicParsedURL.Host
-	parsedURL.Scheme = publicParsedURL.Scheme
-
+	// Modify the URL to use the external host
+	url := presignedURL.String()
+	url = strings.Replace(url, "https://", "", 1)
+	url = strings.Replace(url, "http://", "", 1)
+	url = strings.Replace(url, m.internalHost, m.externalHost, 1)
+	
 	return &entity.URL{
-		URL: parsedURL.String(),
+		URL: url,
 	}, nil
 }
