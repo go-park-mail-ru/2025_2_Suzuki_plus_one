@@ -22,16 +22,13 @@ receivers:
         parse_mode: 'Markdown'
         send_resolved: true
         message: |-
-          🚨 *{{ .Status | toUpper }}* high traffic spike
+          🚨 *{{ .Status | toUpper }}* 🚨
 
           *Alert:* {{ .CommonLabels.alertname }}
-          *Service:* {{ .CommonLabels.service }}
           *Severity:* {{ .CommonLabels.severity }}
 
           {{ range .Alerts }}
-          *Summary:* {{ .Annotations.summary }}
-          *Description:* {{ .Annotations.description }}
-          *Starts at:* {{ .StartsAt }}
+            *Summary:* {{ .Annotations.summary }}
+            *Description:* {{ .Annotations.description }}
+            *Starts at:* {{ .StartsAt }}
           {{ end }}
-
-          _popfilms monitoring_

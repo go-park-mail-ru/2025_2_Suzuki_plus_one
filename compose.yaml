@@ -88,8 +88,9 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
+      - ./testdata/minio:/testdata
     ports:
-      - "9000:9000" # S3 API
+      - "9000:9000"
     networks:
       - app-network
   redis:

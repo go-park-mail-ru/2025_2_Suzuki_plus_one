@@ -223,16 +223,17 @@ minio-list: ## lists buckets in minio
 	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
 	mc ls local \
 	"
-minio-fill: ## fills minio with test data from testdata/minio using docker cp
-	@echo "Filling Minio with test data using docker cp..."
-	source .env && \
-	docker cp testdata/minio/. $$(docker compose ps -q minio):/testdata/
-	@echo "Test data uploaded"
-	@echo "Filling Minio with test data using mc cp..."
+minio-fill:
+	@echo "Mirroring test data directly..."
 	source .env && \
 	docker compose exec minio /bin/sh -c " \
 	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
-	mc cp --recursive /testdata/ local "
+	mc mb -p local/actors local/avatars local/medias local/posters local/trailers && \
+	mc mirror --overwrite /testdata/actors/ local/actors/ && \
+	mc mirror --overwrite /testdata/avatars/ local/avatars/ && \
+	mc mirror --overwrite /testdata/medias/ local/medias/ && \
+	mc mirror --overwrite /testdata/posters/ local/posters/ && \
+	mc mirror --overwrite /testdata/trailers/ local/trailers/"
 	@echo "Test data uploaded"
 
 ## All Services

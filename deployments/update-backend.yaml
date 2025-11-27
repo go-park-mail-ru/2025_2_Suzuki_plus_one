@@ -22,11 +22,12 @@
         update: yes
         version: deploy
         force: yes
+      become: yes
 
     - name: Upload alertmanager configuration file with secrets
       copy:
         src: ./alertmanager.yaml
-        dest: /home/{{ ansible_user }}/backend/alertmanager/alertmanager.yaml
+        dest: /home/{{ ansible_user }}/backend/monitoring/alertmanager/alertmanager.yaml
         mode: "0644"
         force: yes
 
