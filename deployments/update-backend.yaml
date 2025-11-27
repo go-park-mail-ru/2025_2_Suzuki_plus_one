@@ -21,12 +21,15 @@
         dest: /home/{{ ansible_user }}/backend
         update: yes
         version: deploy
+        force: yes
 
     - name: Upload alertmanager configuration file with secrets
       copy:
-        src: ./alertmanager/alertmanager.yaml
+        src: ./alertmanager.yaml
         dest: /home/{{ ansible_user }}/backend/alertmanager/alertmanager.yaml
         mode: "0644"
+        force: yes
+
 
     - name: Pull latest image for backend
       shell: |

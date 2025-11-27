@@ -183,7 +183,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 	getMediaUseCase := uc.NewGetMediaUseCase(logger, mediaRepository, getObjectUseCase)
 	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, objectRepository)
 	getActorUseCase := uc.NewGetActorUseCase(logger, actorRepository, getObjectUseCase)
-	getGenreUseCase := uc.NewGetGenreUseCase(logger, genreRepository, mediaRepository, getMediaUseCase)
+	getGenreUseCase := uc.NewGetGenreUseCase(logger, genreRepository, mediaRepository)
 
 	// Inject usecases into handler
 	handler := handlers.NewHandlers(
@@ -225,6 +225,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 		// Genre usecases
 		getGenreUseCase,
 		uc.NewGetGenreAllUseCase(logger, genreRepository, getGenreUseCase),
+		uc.NewGetGenreMediaUseCase(logger, mediaRepository, getMediaUseCase),
 	)
 
 	// Initialize JWT middleware engine

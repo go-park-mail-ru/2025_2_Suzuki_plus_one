@@ -16,6 +16,15 @@ recommendations:
           type: string
           enum: [movie, series]
       - in: query
+        name: genre_ids
+        required: false
+        description: "Genre filter for recommendations"
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+      - in: query
         name: limit
         required: false
         description: "Number of recommended media to retrieve"

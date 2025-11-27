@@ -1147,3 +1147,42 @@ func (mr *MockGetGenreAllUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Ca
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetGenreAllUseCase)(nil).Execute), arg0, arg1)
 }
+
+// MockGetGenreMediaUseCase is a mock of GetGenreMediaUseCase interface.
+type MockGetGenreMediaUseCase struct {
+	ctrl     *gomock.Controller
+	recorder *MockGetGenreMediaUseCaseMockRecorder
+	isgomock struct{}
+}
+
+// MockGetGenreMediaUseCaseMockRecorder is the mock recorder for MockGetGenreMediaUseCase.
+type MockGetGenreMediaUseCaseMockRecorder struct {
+	mock *MockGetGenreMediaUseCase
+}
+
+// NewMockGetGenreMediaUseCase creates a new mock instance.
+func NewMockGetGenreMediaUseCase(ctrl *gomock.Controller) *MockGetGenreMediaUseCase {
+	mock := &MockGetGenreMediaUseCase{ctrl: ctrl}
+	mock.recorder = &MockGetGenreMediaUseCaseMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockGetGenreMediaUseCase) EXPECT() *MockGetGenreMediaUseCaseMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockGetGenreMediaUseCase) Execute(arg0 context.Context, arg1 dto.GetGenreMediaInput) (dto.GetGenreMediaOutput, *dto.Error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(dto.GetGenreMediaOutput)
+	ret1, _ := ret[1].(*dto.Error)
+	return ret0, ret1
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockGetGenreMediaUseCaseMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockGetGenreMediaUseCase)(nil).Execute), arg0, arg1)
+}

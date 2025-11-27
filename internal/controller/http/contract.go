@@ -123,4 +123,8 @@ type (
 	GetGenreAllUseCase interface {
 		Execute(context.Context, dto.GetGenreAllInput) (dto.GetGenreAllOutput, *dto.Error)
 	}
+
+	GetGenreMediaUseCase interface {
+		Execute(context.Context, dto.GetGenreMediaInput) (dto.GetGenreMediaOutput, *dto.Error)
+	}
 )

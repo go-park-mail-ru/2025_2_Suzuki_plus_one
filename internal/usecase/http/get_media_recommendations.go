@@ -92,7 +92,7 @@ func (uc *GetMediaRecommendationsUsecase) Execute(
 	}
 
 	// Calculate recommendation movie IDs (dummy logic for now)
-	movieIDs, err := uc.movieRepo.GetMediaSortedByName(ctx, input.Limit, input.Offset, input.Type)
+	movieIDs, err := uc.movieRepo.GetMediaSortedByName(ctx, input.Limit, input.Offset, input.Type, input.GenreIDs)
 	if err != nil {
 		derr := dto.NewError("adapter/get_movie_recommendations", err, "Can't get movie recommendations")
 		log.Error("Can't get movie recommendations", log.ToError(err))

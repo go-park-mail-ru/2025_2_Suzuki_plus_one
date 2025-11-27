@@ -25,7 +25,7 @@ type (
 		GetMediaWatchKey(ctx context.Context, media_id uint) (*entity.S3Key, error)
 
 		// Get random media IDs for recommendations
-		GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error)
+		GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string, media_prefered_genres []uint) ([]uint, error)
 
 		// Get media IDs by like status
 		GetMediaIDsByLikeStatus(ctx context.Context, userID uint, isDislike bool, limit uint, offset uint) ([]uint, error)

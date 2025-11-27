@@ -220,23 +220,34 @@ func (db *DataBase) GetMediaTrailersKeys(ctx context.Context, media_id uint) ([]
 }
 
 // Get random media IDs for recommendations using RANDOM()
-func (db *DataBase) GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error) {
+func (db *DataBase) GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string, media_prefered_genres []uint) ([]uint, error) {
 	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("GetMediaSortedByName called",
 		log.ToInt("limit", int(limit)),
 		log.ToInt("offset", int(offset)),
 		log.ToString("media_type", media_type),
+		log.ToAny("media_prefered_genres", media_prefered_genres),
 	)
 	var mediaIDs []uint
 	query := `
 		SELECT media_id
 		FROM media
 		WHERE media_type = $1
+		AND (
+				$4::int[] IS NULL
+				OR media_id IN (
+					SELECT mg.media_id
+					FROM media_genre mg
+					WHERE mg.genre_id = ANY($4::int[])
+					GROUP BY mg.media_id
+					HAVING COUNT(DISTINCT mg.genre_id) = cardinality($4::int[])
+				)
+			)
 		ORDER BY title
-		LIMIT $2 OFFSET $3
+		LIMIT $2 OFFSET $3;
 	`
-	rows, err := db.conn.Query(query, media_type, limit, offset)
+	rows, err := db.conn.Query(query, media_type, limit, offset, media_prefered_genres)
 	if err != nil {
 		log.Error("GetMediaSortedByName: failed to execute query", log.ToError(err))
 		return nil, err

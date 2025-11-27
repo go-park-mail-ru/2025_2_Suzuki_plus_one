@@ -30,7 +30,8 @@ func TestGetMediaRecommendationsUsecase(t *testing.T) {
 	mediaRepo.EXPECT().GetMediaTrailersKeys(gomock.Any(), gomock.Any()).Return([]entity.S3Key{
 		{Key: "trailers/hi.mp4", BucketName: "trailers"},
 	}, nil).Times(times)
-	mediaRepo.EXPECT().GetMediaSortedByName(gomock.Any(), uint(times), uint(0), "movie").Return([]uint{1, 2, 3, 4, 5}, nil).Times(1)
+
+	mediaRepo.EXPECT().GetMediaSortedByName(gomock.Any(), uint(times), uint(0), "movie", []uint{1, 2}).Return([]uint{1, 2, 3, 4, 5}, nil).Times(1)
 
 	// Object repository mock
 	objectRepo := NewMockObjectRepository(mockCtrl)
@@ -59,6 +60,7 @@ func TestGetMediaRecommendationsUsecase(t *testing.T) {
 		Limit:  uint(times),
 		Offset: 0,
 		Type:   "movie",
+		GenreIDs: []uint{1, 2},
 	})
 	var emptyErr *dto.Error
 	require.Equal(t, err, emptyErr)

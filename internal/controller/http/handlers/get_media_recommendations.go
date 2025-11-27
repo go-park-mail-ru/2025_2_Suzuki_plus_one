@@ -23,9 +23,10 @@ var (
 
 var (
 	// URL query parameters
-	QueryParamMovieRecommendationsOffset = "offset"
-	QueryParamMovieRecommendationsLimit  = "limit"
-	QueryParamMovieRecommendationsType   = "type"
+	QueryParamMovieRecommendationsOffset   = "offset"
+	QueryParamMovieRecommendationsLimit    = "limit"
+	QueryParamMovieRecommendationsType     = "type"
+	QueryParamMovieRecommendationsGenreIDs = "genre_ids"
 )
 
 // GetMediaRecommendations handler
@@ -41,6 +42,7 @@ func (h *Handlers) GetMediaRecommendations(w http.ResponseWriter, r *http.Reques
 	rp.AddQuery(QueryParamMovieRecommendationsLimit, &input.Limit)
 	rp.AddQuery(QueryParamMovieRecommendationsOffset, &input.Offset)
 	rp.AddQuery(QueryParamMovieRecommendationsType, &input.Type)
+	rp.AddQuery(QueryParamMovieRecommendationsGenreIDs, &input.GenreIDs)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {
@@ -58,6 +60,8 @@ func (h *Handlers) GetMediaRecommendations(w http.ResponseWriter, r *http.Reques
 		log.ToString(QueryParamMovieRecommendationsType, input.Type),
 	)
 
+	log.Debug("GetMediaRecommendations:", log.ToAny("genre_ids", input.GenreIDs))
+	
 	// Execute use case
 	output, err := h.GetMediaRecommendationsUseCase.Execute(ctx, input)
 	if err != nil {

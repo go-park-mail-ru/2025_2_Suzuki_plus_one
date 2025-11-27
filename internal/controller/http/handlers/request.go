@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"reflect"
+	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -101,15 +104,23 @@ func (rp *RequestParams) Parse() error {
 	for i := range rp.queryParams {
 		param := rp.queryParams[i]
 		storage := rp.queryParamsStorage[i]
-		val := query.Get(param)
 
-		// Scan value into the given storage
-		if _, err := fmt.Sscanf(val, "%v", storage); err != nil {
+		// Use all occurrences of the parameter (supports repeated keys)
+		vals := query[param]
+
+		// If there are no repeated params but there is a single comma-separated value,
+		// the helper will split it into elements.
+		if len(vals) == 0 {
+			// nothing provided -> leave zero value
+			continue
+		}
+
+		if err := parseAndSetFromStrings(vals, storage); err != nil {
 			rp.logger.Warn("Invalid query parameter",
 				rp.logger.ToString("param", param),
-				rp.logger.ToString("value", val),
+				rp.logger.ToString("value", strings.Join(vals, ",")),
 				rp.logger.ToError(err))
-			// If can't scan just set zero value
+			// If can't parse just set zero value
 		}
 	}
 
@@ -233,4 +244,122 @@ func (rp *RequestParams) Parse() error {
 		rp.logger.ToAny("fileParamsStorage lengths in bytes", fileParamsLengths),
 	)
 	return nil
+}
+
+// parseAndSetFromStrings parses one or more string values into the provided storage pointer.
+// Storage must be a pointer to a supported kind: basic scalar (string,int,uint,bool,float)
+// or a slice of those types (e.g. *[]uint, *[]int, *[]string). It supports repeated query
+// parameters (e.g. ?id=1&id=2) and comma-separated lists (e.g. ?id=1,2,3).
+func parseAndSetFromStrings(vals []string, storage any) error {
+	if storage == nil {
+		return fmt.Errorf("nil storage")
+	}
+
+	rv := reflect.ValueOf(storage)
+	if rv.Kind() != reflect.Ptr {
+		return fmt.Errorf("storage must be pointer")
+	}
+	ev := rv.Elem()
+
+	// Helper to build flat list of items from repeated params and comma-separated values
+	items := make([]string, 0, len(vals))
+	for _, v := range vals {
+		if v == "" {
+			continue
+		}
+		// split comma-separated values
+		if strings.Contains(v, ",") {
+			for _, part := range strings.Split(v, ",") {
+				if s := strings.TrimSpace(part); s != "" {
+					items = append(items, s)
+				}
+			}
+		} else {
+			items = append(items, strings.TrimSpace(v))
+		}
+	}
+
+	// If target is a slice, fill it with parsed elements
+	if ev.Kind() == reflect.Slice {
+		elemType := ev.Type().Elem()
+		newSlice := reflect.MakeSlice(ev.Type(), 0, len(items))
+		for _, it := range items {
+			parsed, err := parseSingleStringToType(it, elemType)
+			if err != nil {
+				return err
+			}
+			newSlice = reflect.Append(newSlice, parsed)
+		}
+		ev.Set(newSlice)
+		return nil
+	}
+
+	// Not a slice: take first item only
+	var s string
+	if len(items) > 0 {
+		s = items[0]
+	} else {
+		s = ""
+	}
+	parsed, err := parseSingleStringToType(s, ev.Type())
+	if err != nil {
+		return err
+	}
+	ev.Set(parsed)
+	return nil
+}
+
+// parseSingleStringToType parses a single string into a reflect.Value of the provided type.
+func parseSingleStringToType(s string, t reflect.Type) (reflect.Value, error) {
+	if t.Kind() == reflect.String {
+		return reflect.ValueOf(s).Convert(t), nil
+	}
+	switch t.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		if s == "" {
+			return reflect.Zero(t), nil
+		}
+		v, err := strconv.ParseInt(s, 10, t.Bits())
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		rv := reflect.New(t).Elem()
+		rv.SetInt(v)
+		return rv, nil
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		if s == "" {
+			return reflect.Zero(t), nil
+		}
+		v, err := strconv.ParseUint(s, 10, t.Bits())
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		rv := reflect.New(t).Elem()
+		rv.SetUint(v)
+		return rv, nil
+	case reflect.Bool:
+		if s == "" {
+			return reflect.Zero(t), nil
+		}
+		v, err := strconv.ParseBool(s)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		rv := reflect.New(t).Elem()
+		rv.SetBool(v)
+		return rv, nil
+	case reflect.Float32, reflect.Float64:
+		if s == "" {
+			return reflect.Zero(t), nil
+		}
+		v, err := strconv.ParseFloat(s, t.Bits())
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		rv := reflect.New(t).Elem()
+		rv.SetFloat(v)
+		return rv, nil
+	default:
+		return reflect.Value{}, fmt.Errorf("unsupported type: %s", t.Kind())
+	}
 }

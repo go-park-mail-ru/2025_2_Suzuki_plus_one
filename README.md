@@ -47,10 +47,10 @@ Popfilms -- это стриминговый сервис, вдохновленн
 
 ```bash
 # Установка docker и docker-compose
-[Ссылка](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
 # Установка Go
-[Ссылка](https://go.dev/doc/install)
+https://go.dev/doc/install
 
 # Установка migrate
 echo "export PATH=$PATH:$HOME/go/bin" >> ~/.bashrc

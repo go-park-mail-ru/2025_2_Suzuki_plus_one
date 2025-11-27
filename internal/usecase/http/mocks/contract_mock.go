@@ -118,18 +118,18 @@ func (mr *MockMediaRepositoryMockRecorder) GetMediaPostersKeys(ctx, media_id any
 }
 
 // GetMediaSortedByName mocks base method.
-func (m *MockMediaRepository) GetMediaSortedByName(ctx context.Context, limit, offset uint, media_type string) ([]uint, error) {
+func (m *MockMediaRepository) GetMediaSortedByName(ctx context.Context, limit, offset uint, media_type string, media_prefered_genres []uint) ([]uint, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMediaSortedByName", ctx, limit, offset, media_type)
+	ret := m.ctrl.Call(m, "GetMediaSortedByName", ctx, limit, offset, media_type, media_prefered_genres)
 	ret0, _ := ret[0].([]uint)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetMediaSortedByName indicates an expected call of GetMediaSortedByName.
-func (mr *MockMediaRepositoryMockRecorder) GetMediaSortedByName(ctx, limit, offset, media_type any) *gomock.Call {
+func (mr *MockMediaRepositoryMockRecorder) GetMediaSortedByName(ctx, limit, offset, media_type, media_prefered_genres any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaSortedByName", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaSortedByName), ctx, limit, offset, media_type)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaSortedByName", reflect.TypeOf((*MockMediaRepository)(nil).GetMediaSortedByName), ctx, limit, offset, media_type, media_prefered_genres)
 }
 
 // GetMediaTrailersKeys mocks base method.
