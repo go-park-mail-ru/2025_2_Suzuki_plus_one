@@ -4,8 +4,8 @@ services:
     image: prom/prometheus:latest
     container_name: popfilms_prometheus
     volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
-      - ./prometheus-alerts.yaml:/etc/prometheus/prometheus-alerts.yml
+      - ./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/prometheus-alerts.yaml:/etc/prometheus/prometheus-alerts.yml
     ports:
       - "9090:9090"
     networks:
@@ -22,7 +22,7 @@ services:
     ports:
       - "9093:9093"
     volumes:
-      - ./alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
+      - ./monitoring/alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
 
   grafana:
     image: grafana/grafana-oss:latest
@@ -36,9 +36,10 @@ services:
       - app-network
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./grafana/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/dashboard-files:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/dashboard-files:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini
     env_file:
       - .env
   node-exporter:
@@ -48,6 +49,18 @@ services:
       - "9100:9100"
     networks:
       - app-network
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: popfilms_blackbox
+    ports:
+      - "9115:9115"
+    networks:
+      - app-network
+    volumes:
+      - ./monitoring/blackbox/blackbox.yaml:/etc/blackbox_exporter/config.yml
+    command:
+      - "--config.file=/etc/blackbox_exporter/config.yml"
 
   ### Databases ###
   db:

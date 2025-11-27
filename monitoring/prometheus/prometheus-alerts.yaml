@@ -1,0 +1,54 @@
+groups:
+  - name: easy-test-alerts
+    interval: 15s
+
+    rules:
+      # -------------------------------
+      # 1. Fires if a single HTTP error is observed
+      # -------------------------------
+      - alert: HttpErrorsAny
+        expr: rate(http_errors_total[1m]) > 0
+        for: 10s
+        labels:
+          severity: warning
+        annotations:
+          summary: "HTTP errors detected"
+          description: "Errors are being registered in http_errors_total"
+
+      # -------------------------------
+      # 2. Fires if latency P95 > 0.2s (very easy to hit)
+      # -------------------------------
+      - alert: HighHttpLatencyP95
+        expr: histogram_quantile(0.95,
+                sum by (le) (rate(http_request_duration_seconds_bucket[1m]))
+              ) > 0.2
+        for: 15s
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP latency"
+          description: "P95 latency is above 200ms"
+
+      # -------------------------------
+      # 3. Fires if CPU load > 10% (super easy)
+      # -------------------------------
+      - alert: CPUHigh
+        expr: (100 - (avg without(cpu, mode) (rate(node_cpu_seconds_total{mode="idle"}[1m])) * 100)) > 10
+        for: 15s
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU usage high"
+          description: "CPU usage > 10%"
+
+      # -------------------------------
+      # 4. Fires ALWAYS (optional), good to test alerts
+      # -------------------------------
+      - alert: AlwaysFiringTestAlert
+        expr: vector(1)
+        for: 5s
+        labels:
+          severity: info
+        annotations:
+          summary: "Backend is up"
+          description: "Alert that is always firing, when backend is redeployed"
