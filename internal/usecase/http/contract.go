@@ -32,6 +32,9 @@ type (
 
 		// Get media IDs related to specific genre ID
 		GetMediasByGenreID(ctx context.Context, limit uint, offset uint, genreID uint) ([]uint, error)
+
+		// Get episodes (medias with type episode) related to specific media ID (with type series)
+		GetEpisodesByMediaID(ctx context.Context, media_id uint) ([]entity.Episode, error)
 	}
 
 	GenreRepository interface {

@@ -42,6 +42,21 @@ func (m *MockMediaRepository) EXPECT() *MockMediaRepositoryMockRecorder {
 	return m.recorder
 }
 
+// GetEpisodesByMediaID mocks base method.
+func (m *MockMediaRepository) GetEpisodesByMediaID(ctx context.Context, media_id uint) ([]entity.Episode, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEpisodesByMediaID", ctx, media_id)
+	ret0, _ := ret[0].([]entity.Episode)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetEpisodesByMediaID indicates an expected call of GetEpisodesByMediaID.
+func (mr *MockMediaRepositoryMockRecorder) GetEpisodesByMediaID(ctx, media_id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEpisodesByMediaID", reflect.TypeOf((*MockMediaRepository)(nil).GetEpisodesByMediaID), ctx, media_id)
+}
+
 // GetMediaByID mocks base method.
 func (m *MockMediaRepository) GetMediaByID(ctx context.Context, media_id uint) (*entity.Media, error) {
 	m.ctrl.T.Helper()

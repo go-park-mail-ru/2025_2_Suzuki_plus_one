@@ -226,6 +226,8 @@ func Run(logger logger.Logger, config cfg.Config) {
 		getGenreUseCase,
 		uc.NewGetGenreAllUseCase(logger, genreRepository, getGenreUseCase),
 		uc.NewGetGenreMediaUseCase(logger, mediaRepository, getMediaUseCase),
+		// Episodes usecase
+		uc.NewGetMediaEpisodesUseCase(logger, mediaRepository, getMediaUseCase),
 	)
 
 	// Initialize JWT middleware engine

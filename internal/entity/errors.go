@@ -66,6 +66,8 @@ var (
 	ErrGetGenreMediaFailed = errors.New("failed to get media related to genre")
 	ErrGetAllGenresFailed = errors.New("failed to get all genres")	
 
+	ErrGetMediaEpisodesParamsInvalid = errors.New("invalid get_media_episodes request parameters")
+
 	// Like usecase errors
 	ErrGetMediaLikeInvalidParams = errors.New("invalid get_media_like request parameters")
 	ErrGetMediaLikeRepositoryFailed = errors.New("like repository failed to get like status")

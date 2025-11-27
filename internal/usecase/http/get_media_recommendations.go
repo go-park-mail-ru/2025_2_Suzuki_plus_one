@@ -76,9 +76,9 @@ func (uc *GetMediaRecommendationsUsecase) Execute(
 	}
 
 	// Return error if limit+offset exceeds total number of movies
-	if input.Offset+input.Limit > uint(movie_number) {
+	if int(input.Offset+input.Limit) > movie_number {
 		derr := dto.NewError(
-			"usecase/get_movie_recommendations",
+			"usecase/get_media_recommendations",
 			entity.ErrGetMediaRecommendationsParamsInvalid,
 			fmt.Sprintf(
 				"limit+offset > media count: %d+%d > %d",

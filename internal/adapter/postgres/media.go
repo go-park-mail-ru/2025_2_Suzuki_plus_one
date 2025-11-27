@@ -244,7 +244,7 @@ func (db *DataBase) GetMediaSortedByName(ctx context.Context, limit uint, offset
 					HAVING COUNT(DISTINCT mg.genre_id) = cardinality($4::int[])
 				)
 			)
-		ORDER BY title
+		ORDER BY media_id
 		LIMIT $2 OFFSET $3;
 	`
 	rows, err := db.conn.Query(query, media_type, limit, offset, media_prefered_genres)
@@ -385,4 +385,34 @@ func (db *DataBase) GetMediasByGenreID(ctx context.Context, limit uint, offset u
 		mediaIDs = append(mediaIDs, mediaID)
 	}
 	return mediaIDs, nil
+}
+
+func (db *DataBase) GetEpisodesByMediaID(ctx context.Context, media_id uint) ([]entity.Episode, error) {
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("GetEpisodesByMediaID called",
+		log.ToInt("media_id", int(media_id)),
+	)
+
+	var episodes []entity.Episode
+	query := `
+	SELECT episode_id, series_id, season_number, episode_number
+	FROM media_episode
+	WHERE series_id = $1
+	ORDER BY season_number, episode_number
+	`
+	rows, err := db.conn.Query(query, media_id)
+	if err != nil {
+		log.Error("GetEpisodesByMediaID: failed to execute query", log.ToError(err))
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var episode entity.Episode
+		if err := rows.Scan(&episode.EpisodeID, &episode.SeriesID, &episode.SeasonNumber, &episode.EpisodeNumber); err != nil {
+			log.Error("GetEpisodesByMediaID: failed to scan episode", log.ToError(err))
+			return nil, err
+		}
+		episodes = append(episodes, episode)
+	}
+	return episodes, nil
 }

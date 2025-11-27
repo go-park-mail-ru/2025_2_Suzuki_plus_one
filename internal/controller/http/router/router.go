@@ -31,6 +31,7 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Get("/media/my", h.GetMediaMy)
 	r.Get("/media/recommendations", h.GetMediaRecommendations)
 	r.Get(fmt.Sprintf("/media/{%s}", handlers.PathParamGetMediaID), h.GetMedia)
+	r.Get(fmt.Sprintf("/media/{%s}/episodes", handlers.PathParamGetMediaEpisodesID), h.GetMediaEpisodes)
 	r.Get(fmt.Sprintf("/media/{%s}/actor", handlers.PathParamGetMediaActorID), h.GetMediaActor)
 	r.Get(fmt.Sprintf("/media/{%s}/like", handlers.PathParamGetMediaLikeID), h.GetMediaLike)
 	r.Put(fmt.Sprintf("/media/{%s}/like", handlers.PathParamPutMediaLikeID), h.PutMediaLike)

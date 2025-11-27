@@ -282,3 +282,35 @@ my:
           application/json:
             schema:
               $ref: "../schemas/error.yaml#/ErrorResponse"
+
+media_episodes:
+  get:
+    tags:
+      - content
+    summary: Get episodes of a specific media
+    description: Retrieve a list of episodes associated with a media given its ID
+    parameters:
+      - in: path
+        name: media_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the media
+    responses:
+      "200":
+        description: Episodes of the media retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                episodes:
+                  type: array
+                  items:
+                    $ref: "../schemas/media.yaml#/MediaEpisodeResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"

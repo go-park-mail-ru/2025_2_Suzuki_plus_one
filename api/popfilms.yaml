@@ -42,12 +42,15 @@ paths:
     $ref: "./paths/media.yaml#/recommendations"
   /media/{media_id}:
     $ref: "./paths/media.yaml#/certain"
+  /media/{media_id}/episodes:
+    $ref: "./paths/media.yaml#/media_episodes"
   /media/watch:
     $ref: "./paths/media.yaml#/watch"
   /media/{media_id}/actor:
     $ref: "./paths/media.yaml#/actor"
   /media/{media_id}/like:
     $ref: "./paths/media.yaml#/like"
+
   # user.yaml
   /user/me:
     $ref: "./paths/user.yaml#/me"

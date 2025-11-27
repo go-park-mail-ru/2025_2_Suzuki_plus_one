@@ -91,3 +91,22 @@ LikeResponse:
       type: boolean
       description: Indicates whether the media is disliked by the user
       example: false
+
+
+MediaEpisodeResponse:
+  type: object
+  required:
+    - media
+    - episode_number
+    - season_number
+  properties:
+    media:
+      $ref: "./media.yaml#/MediaResponse"
+    episode_number:
+      type: integer
+      description: Episode number within the season
+      example: 1
+    season_number:
+      type: integer
+      description: Season number of the media
+      example: 1
