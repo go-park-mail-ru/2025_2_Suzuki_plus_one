@@ -21,27 +21,11 @@ services:
       - app-network
     ports:
       - "9093:9093"
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
     volumes:
       - ./monitoring/alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
-
-  grafana:
-    image: grafana/grafana-oss:latest
-    container_name: popfilms_grafana
-    ports:
-      - "5000:3000"
-    depends_on:
-      prometheus:
-        condition: service_started
-    networks:
-      - app-network
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
-      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./monitoring/grafana/dashboard-files:/var/lib/grafana/dashboards
-      - ./monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini
-    env_file:
-      - .env
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
@@ -61,6 +45,59 @@ services:
       - ./monitoring/blackbox/blackbox.yaml:/etc/blackbox_exporter/config.yml
     command:
       - "--config.file=/etc/blackbox_exporter/config.yml"
+
+  ### Logging ###
+  loki:
+    image: grafana/loki:latest
+    container_name: popfilms_loki
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      - ./monitoring/loki/loki.yaml:/etc/loki/config.yaml
+      - loki_data:/loki
+    ports:
+      - "3100:3100"
+    networks:
+      - app-network
+    depends_on:
+      - backend-http
+
+  alloy:
+    image: grafana/alloy:latest
+    container_name: alloy
+    command:
+      [
+        "run",
+        "/etc/alloy/alloy-config.alloy",
+        "--server.http.listen-addr=0.0.0.0:1111",
+      ]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./monitoring/alloy/config.alloy:/etc/alloy/alloy-config.alloy
+    depends_on:
+      - loki
+    networks:
+      - app-network
+    ports:
+      - "1111:1111"
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: popfilms_grafana
+    ports:
+      - "5000:3000"
+    depends_on:
+      prometheus:
+        condition: service_started
+    networks:
+      - app-network
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/dashboard-files:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini
+    env_file:
+      - .env
 
   ### Databases ###
   db:
@@ -162,6 +199,7 @@ volumes:
   minio_data:
   redis_data:
   grafana_data:
+  loki_data:
 
 networks:
   app-network:
