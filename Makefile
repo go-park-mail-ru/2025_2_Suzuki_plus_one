@@ -82,6 +82,9 @@ clean: ## cleans binary and other generated files
 vendor: ## all packages required to support builds and tests in the /vendor directory
 	go mod vendor
 
+swagger:
+	@echo "Launching swagger UI on http://localhost"
+	docker run -p 80:8080 -e SWAGGER_JSON=/api/popfilms.yaml -v ./api:/api swaggerapi/swagger-ui 
 
 ## Image
 image-create: ## creates a docker image for the application
