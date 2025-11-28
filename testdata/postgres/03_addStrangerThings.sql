@@ -63,11 +63,11 @@ episode_src AS (
         ('medias/Stranger.Things.S02E02.720p.mp4',                                         2, 2, 'Stranger Things S02E02 - Chapter Two: Trick or Treat, Freak'),
         ('medias/Stranger.Things.S02E03.720p.mp4',                                         2, 3, 'Stranger Things S02E03 - Chapter Three: The Pollywog'),
         ('medias/Stranger.Things.S02E04.720p.mp4',                                         2, 4, 'Stranger Things S02E04 - Chapter Four: Will the Wise'),
-        ('medias/Stranger.Things.S02E05.720p.mp4',                                         2, 5, 'Stranger Things S02E05 - Chapter Five: Dig Dug'),
-        ('medias/Stranger.Things.S02E06.720p.mp4',                                         2, 6, 'Stranger Things S02E06 - Chapter Six: The Spy'),
-        ('medias/Stranger.Things.S02E07.720p.mp4',                                         2, 7, 'Stranger Things S02E07 - Chapter Seven: The Lost Sister'),
-        ('medias/Stranger.Things.S02E08.720p.mp4',                                         2, 8, 'Stranger Things S02E08 - Chapter Eight: The Mind Flayer'),
-        ('medias/Stranger.Things.S02E09.720p.mp4',                                         2, 9, 'Stranger Things S02E09 - Chapter Nine: The Gate')
+        ('medias/Stranger.Things.S02E05.720p.mkv',                                         2, 5, 'Stranger Things S02E05 - Chapter Five: Dig Dug'),
+        ('medias/Stranger.Things.S02E06.720p.mkv',                                         2, 6, 'Stranger Things S02E06 - Chapter Six: The Spy'),
+        ('medias/Stranger.Things.S02E07.720p.mkv',                                         2, 7, 'Stranger Things S02E07 - Chapter Seven: The Lost Sister'),
+        ('medias/Stranger.Things.S02E08.720p.mkv',                                         2, 8, 'Stranger Things S02E08 - Chapter Eight: The Mind Flayer'),
+        ('medias/Stranger.Things.S02E09.720p.mkv',                                         2, 9, 'Stranger Things S02E09 - Chapter Nine: The Gate')
     ) AS v(s3_key, season_number, episode_number, title)
 ),
 
