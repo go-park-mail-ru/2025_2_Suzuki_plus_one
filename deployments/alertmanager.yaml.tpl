@@ -10,6 +10,7 @@ route:
 
   routes:
     # Only send the "too many requests vs average" alert to Telegram
+    # However top receiver is set as default so it is unnecessary
     - receiver: telegram-notifications
       matchers:
         - alertname = "HighRequestSpikePerService"

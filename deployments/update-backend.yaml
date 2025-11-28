@@ -24,10 +24,18 @@
         force: yes
       become: yes
 
-    - name: Upload alertmanager configuration file with secrets
+    - name: Substitute alertmanager configuration file with telegram secrets
       shell: |
-        set -a && source /home/{{ ansible_user }}/backend/.env && set +a && envsubst < /home/{{ ansible_user }}/backend/deployments/alertmanager.yaml.tpl > /home/{{ ansible_user }}/backend/monitoring/alertmanager/alertmanager.yaml
+        bash -lc '
+        set -a
+        source /home/{{ ansible_user }}/backend/.env
+        set +a
+        envsubst \
+          < /home/{{ ansible_user }}/backend/deployments/alertmanager.yaml.tpl \
+          > /home/{{ ansible_user }}/backend/monitoring/alertmanager/alertmanager.yaml
+        '    
       # see also ansible.builtin.template
+      # can use "." as posix source
 
 
     - name: Pull latest image for backend
