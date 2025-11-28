@@ -25,11 +25,9 @@
       become: yes
 
     - name: Upload alertmanager configuration file with secrets
-      copy:
-        src: ./alertmanager.yaml
-        dest: /home/{{ ansible_user }}/backend/monitoring/alertmanager/alertmanager.yaml
-        mode: "0644"
-        force: yes
+      shell: |
+        set -a && source /home/{{ ansible_user }}/backend/.env && set +a && envsubst < /home/{{ ansible_user }}/backend/deployments/alertmanager.yaml.tpl > /home/{{ ansible_user }}/backend/monitoring/alertmanager/alertmanager.yaml
+      # see also ansible.builtin.template
 
 
     - name: Pull latest image for backend
