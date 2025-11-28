@@ -68,12 +68,12 @@ sudo apt-get install -y postgresql-client
 #### Запуск проекта в режиме прод
 
 ```bash
-# Настройка окружения
-cp deployments/prod.env.example .env
+# Для запуска всего проекта в docker compose
+cp docker.env.example .env
 
-# Скачивание медиа ассетов
+# Скачивание медиа ассетов (долго)
 # (требуется ~/.config/rclone/rclone.conf с настройками доступа к облачному хранилищу)
-cd <project root>
+cd <project root> # важно!
 make minio-pull
 
 # Запуск docker compose, миграций, наполнение тестовыми данными
