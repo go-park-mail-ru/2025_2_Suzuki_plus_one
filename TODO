@@ -1,7 +1,4 @@
-- Add domain metrics. Add 500 errors metric. Add health check metric.
-- [fix alertmanager](https://github.com/grafana/prometheus-alertmanager-tutorial/blob/main/docker-compose.yaml)
-- Not node exporter, but per service
-- loki?
+- Not just node exporter, but per service exporter
 - Ensure test coverage >60%. Now 25%
 - Add Golangci-lint
 - Search for another "TODO" comments

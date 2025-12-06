@@ -123,6 +123,14 @@ update-deploy-backend: ## updates backend deployment by building and pushing ima
 # Postgres commands using docker-compose
 db-start: ## starts the database using docker-compose
 	source .env && docker compose up -d db
+	@echo "Waiting for Postgres to be ready..."
+	@timeout=60; \
+	while [ $$timeout -gt 0 ]; do \
+		pg_isready -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB && break; \
+		sleep 2; \
+		timeout=$$((timeout-2)); \
+	done;
+	@echo "Postgres is ready"
 db-stop: ## stops the database using docker-compose
 	source .env && docker compose down db
 db-wipe: ## wipes the database container and its volume
@@ -140,6 +148,40 @@ db-fill: ## fills the database with test data from testdata/postgres
 		PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB -f $$file; \
 	done
 	@echo "Test data inserted"
+db-create-app-user: ## creates user for popfilms application
+	@echo "Adding app user to database..."
+	source .env && \
+	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB \
+	-v dbname="$$POSTGRES_DB" \
+	-v app_user="$$APP_DB_USER" \
+	-v app_password="$$APP_DB_PASSWORD" \
+	-f scripts/create_app_user.sql
+	@echo "App user added"
+db-create-stats:
+	@echo "Creating pg_stat_statements extension..."
+	@bash -c 'source .env && \
+	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 \
+	-U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"'
+db-stats: ## shows pg_stat_statements top 20 queries
+	@echo "Showing pg_stat_statements top 20 queries..."
+	@bash -c 'source .env && \
+	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 \
+	-U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "SELECT * FROM pg_stat_statements ORDER BY total_time DESC LIMIT 20;"'
+db-badger: ## generates pgbadger report from postgres logs
+	@echo "Generating pgbadger report from Postgres logs..."
+	docker compose run --rm pgbadger
+
+db-create-exporter-user: ## creates postgres_exporter user
+	@echo "Creating exporter user for postgres_exporter..."
+	@bash -c 'source .env && \
+	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 \
+	-U "$$POSTGRES_USER" -d "$$POSTGRES_DB" \
+	-v dbname="$$POSTGRES_DB" \
+	-v exporter_user="$$POSTGRES_EXPORTER_USER" \
+	-v exporter_password="$$POSTGRES_EXPORTER_PASSWORD" \
+	-f scripts/create_exporter_user.sql'
+	@echo "Exporter user created"
+
 
 # Psql shell command
 db-shell: ## connects to the database shell with psql
@@ -282,6 +324,9 @@ all-prepare: ## prepare all database: starts, migrates, fills with test data
 	fi
 	make all-migrate
 	make all-fill
+	make db-create-app-user
+	make db-create-stats
+	make db-create-exporter-user
 	@echo "All services prepared"
 
 all-service-deploy: ## runs all microservices in docker-compose

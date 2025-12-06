@@ -12,26 +12,29 @@ alerting:
             - "alertmanager:9093"
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: "prometheus"
     static_configs:
-      - targets: ['prometheus:9090']
+      - targets: ["prometheus:9090"]
 
-  - job_name: 'node-exporter'
+  - job_name: "node-exporter"
     static_configs:
-      - targets: ['node-exporter:9100']
+      - targets: ["node-exporter:9100"]
 
-  - job_name: 'backend-http'
+  - job_name: "backend-http"
     static_configs:
-      - targets: ['backend-http:8880']
+      - targets: ["backend-http:8880"]
 
-  - job_name: 'backend-auth'
+  - job_name: "backend-auth"
     static_configs:
-      - targets: ['backend-auth:8882']
+      - targets: ["backend-auth:8882"]
 
-  - job_name: 'backend-search'
+  - job_name: "backend-search"
     static_configs:
-      - targets: ['backend-search:8883']
+      - targets: ["backend-search:8883"]
 
+  - job_name: "postgres-exporter"
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
 
   - job_name: "blackbox-http"
     metrics_path: /probe
