@@ -46,6 +46,21 @@ services:
     command:
       - "--config.file=/etc/blackbox_exporter/config.yml"
 
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    container_name: popfilms_postgres_exporter
+    environment:
+      # DSN до твоей БД под exporter-пользователем
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_EXPORTER_USER}:${POSTGRES_EXPORTER_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+    # порт наружу можно не открывать, Prometheus в той же сети
+    # ports:
+    #   - "9187:9187"
+
   ### Logging ###
   loki:
     image: grafana/loki:latest
@@ -99,12 +114,42 @@ services:
     env_file:
       - .env
 
+  pgbadger:
+    image: dalibo/pgbadger
+    container_name: popfilms_pgbadger
+    depends_on:
+      - db
+    volumes:
+      - db_data:/var/lib/postgresql/data:ro
+      - ./build:/data
+    # read all log files contained in the log directory
+    # combine them into a single report named pgbadger.html
+    # command: ["pgbadger", "/var/log/postgresql/popfilms-*"]
+    command:
+      [
+        "-f",
+        "stderr",
+        "/var/lib/postgresql/data/log/postgresql.log",
+        "-O",
+        "/data",
+        "-o",
+        "pgbadger.html",
+        "--prefix",
+        "%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h ",
+      ]
+    # environment:
+    # PGBADGER_PREFIX: "%t [%p-%l] user=%u,db=%d "
+    # PGBADGER_DATA: "/data"
+    networks:
+      - app-network
+
   ### Databases ###
   db:
     image: postgres:17
     container_name: popfilms_db
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./postgres.conf:/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -116,6 +161,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - app-network
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+
   # minio:
   #   image: minio/minio:latest
   #   container_name: popfilms_minio

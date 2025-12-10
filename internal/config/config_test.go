@@ -69,8 +69,8 @@ func TestLoadEnvExample(t *testing.T) {
 
 	// Database
 	require.Equal(t, envVars["POSTGRES_HOST"], config.POSTGRES_HOST)
-	require.Equal(t, envVars["POSTGRES_USER"], config.POSTGRES_USER)
-	require.Equal(t, envVars["POSTGRES_PASSWORD"], config.POSTGRES_PASSWORD)
+	require.Equal(t, envVars["APP_DB_USER"], config.APP_DB_USER)
+	require.Equal(t, envVars["APP_DB_PASSWORD"], config.APP_DB_PASSWORD)
 	require.Equal(t, envVars["POSTGRES_DB"], config.POSTGRES_DB)
 
 	// Redis

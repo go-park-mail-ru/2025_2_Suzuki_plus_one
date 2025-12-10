@@ -49,9 +49,9 @@ func Run(logger logger.Logger, config cfg.Config) {
 
 	// --- Connect to external services ---
 	// Create Postgres connection
-	dbURL := "postgres://" + config.POSTGRES_USER + ":" + config.POSTGRES_PASSWORD +
+	dbURL := "postgres://" + config.APP_DB_USER + ":" + config.APP_DB_PASSWORD +
 		"@" + config.POSTGRES_HOST + ":" + "5432" + "/" + config.POSTGRES_DB + "?sslmode=disable"
-	var databaseAdapter app.DatabaseRepository = db.NewDataBase(logger, dbURL)
+	var databaseAdapter app.DatabaseRepository = db.NewDataBase(logger, dbURL, config.DB_POOL_MAX_OPEN, config.DB_POOL_MAX_IDLE, config.DB_POOL_CONN_MAX_LIFETIME_MIN)
 	err := databaseAdapter.Connect()
 	if err != nil {
 		logger.Fatal("Failed to connect to database: " + err.Error())
