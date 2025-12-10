@@ -154,7 +154,7 @@ db-fill: ## fills the database with test data from testdata/postgres
 	@echo "Test data inserted"
 db-create-app-user: ## creates user for popfilms application
 	@echo "Adding app user to database..."
-	source .env && \
+	source $(ENV_FILE) && \
 	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB \
 	-v dbname="$$POSTGRES_DB" \
 	-v app_user="$$APP_DB_USER" \
@@ -163,12 +163,12 @@ db-create-app-user: ## creates user for popfilms application
 	@echo "App user added"
 db-create-stats:
 	@echo "Creating pg_stat_statements extension..."
-	@bash -c 'source .env && \
+	@bash -c 'source $(ENV_FILE) && \
 	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 \
 	-U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"'
 db-stats: ## shows pg_stat_statements top 20 queries
 	@echo "Showing pg_stat_statements top 20 queries..."
-	@bash -c 'source .env && \
+	@bash -c 'source $(ENV_FILE) && \
 	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 \
 	-U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c "SELECT * FROM pg_stat_statements ORDER BY total_time DESC LIMIT 20;"'
 db-badger: ## generates pgbadger report from postgres logs
@@ -177,7 +177,7 @@ db-badger: ## generates pgbadger report from postgres logs
 
 db-create-exporter-user: ## creates postgres_exporter user
 	@echo "Creating exporter user for postgres_exporter..."
-	@bash -c 'source .env && \
+	@bash -c 'source $(ENV_FILE) && \
 	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 \
 	-U "$$POSTGRES_USER" -d "$$POSTGRES_DB" \
 	-v dbname="$$POSTGRES_DB" \
@@ -341,6 +341,7 @@ all-deploy: ## deploy all services using docker-compose
 	docker compose --env-file $(ENV_FILE) -f compose.yaml up --build -d
 
 all-bootstrap: ## bootstrap all: wipe, prepare, build and run
+	@echo "Boostrapping with ENV_FILE=$(ENV_FILE)"
 	@echo "Filling data"
 	make all-prepare
 	make all-stop

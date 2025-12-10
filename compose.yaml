@@ -112,7 +112,7 @@ services:
       - ./monitoring/grafana/dashboard-files:/var/lib/grafana/dashboards
       - ./monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini
     env_file:
-      - .env
+      - ${POPFILMS_ENV_FILE}
 
   pgbadger:
     image: dalibo/pgbadger
@@ -190,8 +190,8 @@ services:
     container_name: popfilms_backend-http
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
     env_file:
+      - ${POPFILMS_ENV_FILE}
       # - "./configs/http.env"
-      - .env
     ports:
       - "8080:8080"
       - "8880:8880"
@@ -207,7 +207,7 @@ services:
     container_name: popfilms_backend-auth
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
     env_file:
-      - .env
+      - ${POPFILMS_ENV_FILE}
     ports:
       - "8082:8082"
       - "8882:8882"
@@ -223,7 +223,7 @@ services:
     container_name: popfilms_backend-search
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
     env_file:
-      - .env
+      - ${POPFILMS_ENV_FILE}
     ports:
       - "8083:8083"
       - "8883:8883"
