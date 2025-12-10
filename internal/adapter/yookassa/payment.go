@@ -2,23 +2,26 @@ package yookassa
 
 import (
 	"context"
+	"errors"
 	"strconv"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+	"github.com/rvinnie/yookassa-sdk-go/yookassa"
 	yoocommon "github.com/rvinnie/yookassa-sdk-go/yookassa/common"
 	yoopayment "github.com/rvinnie/yookassa-sdk-go/yookassa/payment"
 )
 
-func (yk *Yookassa) CreatePayment(ctx context.Context, userID uint, amount string, description string) (string, error) {
+func (yk *Yookassa) CreatePayment(ctx context.Context, userID uint, amount string, description string) (*yoopayment.Payment, error) {
 	log := logger.LoggerWithKey(yk.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("CreatePayment called",
 		log.ToString("amount", amount),
 		log.ToString("description", description),
 	)
 
+	handler := yookassa.NewPaymentHandler(yk.Client)
 	// Создаем платеж
-	payment, err := yk.Handler.CreatePayment(&yoopayment.Payment{
+	payment, err := handler.CreatePayment(&yoopayment.Payment{
 		Amount: &yoocommon.Amount{
 			Value:    amount,
 			Currency: "RUB",
@@ -37,15 +40,17 @@ func (yk *Yookassa) CreatePayment(ctx context.Context, userID uint, amount strin
 
 	if err != nil {
 		log.Error("CreatePayment: failed to create payment", log.ToError(err))
-		return "", err
+		return nil, err
 	}
 
 	log.Info("Payment created successfully",
 		log.ToString("payment.ID", payment.ID),
 		log.ToAny("payment.Test", payment.Test),
+		log.ToAny("payment", payment),
 	)
 
-	return payment.ID, nil
+	yk.Handlers[payment.ID] = handler
+	return payment, nil
 }
 
 func (yk *Yookassa) CapturePayment(ctx context.Context, payment *yoopayment.Payment) (*yoopayment.Payment, error) {
@@ -54,7 +59,13 @@ func (yk *Yookassa) CapturePayment(ctx context.Context, payment *yoopayment.Paym
 		log.ToString("payment.ID", payment.ID),
 	)
 
-	capturedPayment, err := yk.Handler.CapturePayment(payment)
+	handler, ok := yk.Handlers[payment.ID]
+	if !ok {
+		log.Error("CapturePayment: payment handler not found for payment ID", log.ToString("payment.ID", payment.ID))
+		return nil, errors.New("CapturePayment: payment handler not found")
+	}
+
+	capturedPayment, err := handler.CapturePayment(payment)
 
 	if err != nil {
 		log.Error("CapturePayment: failed to capture payment", log.ToError(err))
@@ -65,5 +76,7 @@ func (yk *Yookassa) CapturePayment(ctx context.Context, payment *yoopayment.Paym
 		log.ToString("capturedPayment.ID", capturedPayment.ID),
 		log.ToAny("capturedPayment.Status", capturedPayment.Status),
 	)
+	delete(yk.Handlers, payment.ID)
+	
 	return capturedPayment, nil
 }

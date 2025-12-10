@@ -55,30 +55,31 @@ var (
 
 	ErrPutAppealResolve = errors.New("failed to resolve an appeal")
 
-	ErrGetSearchParamsInvalid = errors.New("invalid get_search request parameters")
+	ErrGetSearchParamsInvalid  = errors.New("invalid get_search request parameters")
 	ErrGetMediaMyParamsInvalid = errors.New("invalid get_media_my request parameters")
 
 	ErrGetGenreInvalidParams = errors.New("invalid get_genre request parameters")
-	ErrGetGenreRepo = errors.New("failed to get genre from repository")
-	ErrGetGenreNotFound = errors.New("genre not found")
+	ErrGetGenreRepo          = errors.New("failed to get genre from repository")
+	ErrGetGenreNotFound      = errors.New("genre not found")
 
 	ErrGetGenreAllInvalidParams = errors.New("invalid get_genre_all request parameters")
-	ErrGetGenreMediaFailed = errors.New("failed to get media related to genre")
-	ErrGetAllGenresFailed = errors.New("failed to get all genres")	
+	ErrGetGenreMediaFailed      = errors.New("failed to get media related to genre")
+	ErrGetAllGenresFailed       = errors.New("failed to get all genres")
 
 	ErrGetMediaEpisodesParamsInvalid = errors.New("invalid get_media_episodes request parameters")
 
-	ErrPostPaymentNewAccessTokenInvalid = errors.New("invalid access token in post_payment_new request")
+	ErrPostPaymentNewAccessTokenInvalid  = errors.New("invalid access token in post_payment_new request")
 	ErrPostPaymentCompletedInvalidParams = errors.New("invalid parameters in post_payment_completed request")
 
-	ErrGetMediaAccessDenied = errors.New("access to requested media is denied")
-	
+	ErrGetMediaAccessDenied                 = errors.New("access to requested media is denied")
+	ErrPostPaymentNewConfirmationURLInvalid = errors.New("invalid confirmation URL in post_payment_new request")
+
 	// Like usecase errors
-	ErrGetMediaLikeInvalidParams = errors.New("invalid get_media_like request parameters")
-	ErrGetMediaLikeRepositoryFailed = errors.New("like repository failed to get like status")
-	ErrPutMediaLikeInvalidParams = errors.New("invalid put_media_like request parameters")
-	ErrPutMediaLikeRepositoryFailed = errors.New("like repository failed to toggle like status")
-	ErrDeleteMediaLikeInvalidParams = errors.New("invalid delete_media_like request parameters")
+	ErrGetMediaLikeInvalidParams       = errors.New("invalid get_media_like request parameters")
+	ErrGetMediaLikeRepositoryFailed    = errors.New("like repository failed to get like status")
+	ErrPutMediaLikeInvalidParams       = errors.New("invalid put_media_like request parameters")
+	ErrPutMediaLikeRepositoryFailed    = errors.New("like repository failed to toggle like status")
+	ErrDeleteMediaLikeInvalidParams    = errors.New("invalid delete_media_like request parameters")
 	ErrDeleteMediaLikeRepositoryFailed = errors.New("like repository failed to toggle like status")
 
 	// Authentication service errors

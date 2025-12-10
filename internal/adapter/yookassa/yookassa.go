@@ -16,12 +16,15 @@ import (
 type Yookassa struct {
 	logger      logger.Logger
 	Client      *yookassa.Client
-	Handler     *yookassa.PaymentHandler
 	redirectURL string
+	Handlers map[string]*yookassa.PaymentHandler
 }
 
 func NewYookassa(logger logger.Logger, shopID, secretKey, redirectURL string) (*Yookassa, error) {
 	client := yookassa.NewClient(shopID, secretKey)
+	logger.Info("Yookassa client created",
+		logger.ToString("shopID", shopID),
+	)
 
 	// Создаем обработчик настроек
 	settingsHandler := yookassa.NewSettingsHandler(client)
@@ -49,7 +52,7 @@ func NewYookassa(logger logger.Logger, shopID, secretKey, redirectURL string) (*
 	return &Yookassa{
 		logger:      logger,
 		Client:      client,
-		Handler:     yookassa.NewPaymentHandler(client),
 		redirectURL: redirectURL,
+		Handlers:    make(map[string]*yookassa.PaymentHandler),
 	}, nil
 }

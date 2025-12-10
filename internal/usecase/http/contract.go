@@ -147,7 +147,7 @@ type (
 	// Payment gateway
 	PaymentRepository interface {
 		// Create payment and return payment ID
-		CreatePayment(ctx context.Context, userID uint, amount string, description string) (string, error)
+		CreatePayment(ctx context.Context, userID uint, amount string, description string) (*yoopayment.Payment, error)
 
 		// Approve payment by payment
 		CapturePayment(ctx context.Context, payment *yoopayment.Payment) (*yoopayment.Payment, error)

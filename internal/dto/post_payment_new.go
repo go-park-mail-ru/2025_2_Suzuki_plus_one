@@ -5,5 +5,6 @@ type PostPaymentNewInput struct {
 }
 
 type PostPaymentNewOutput struct {
-	PaymentID string `json:"payment_id"`
+	PaymentID       string `json:"payment_id"`
+	ConfirmationURL string `json:"confirmation_url"`
 }

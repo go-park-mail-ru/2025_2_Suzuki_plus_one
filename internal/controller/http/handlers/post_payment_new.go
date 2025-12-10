@@ -60,6 +60,6 @@ func (h *Handlers) PostPaymentNew(w http.ResponseWriter, r *http.Request) {
 		"Creating new payment completed successfully",
 	)
 
-	// Respond with output
-	Respond(log, w, ResponsePostPaymentNew.Code, output)
+	// Respond with redirect to confirmation URL
+	http.Redirect(w, r, output.ConfirmationURL, http.StatusSeeOther)
 }
