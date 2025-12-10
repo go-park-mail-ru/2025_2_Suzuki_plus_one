@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/aws"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/redis"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/app"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
@@ -22,6 +23,7 @@ import (
 
 // Minio
 var _ uc.ObjectRepository = &minio.Minio{}
+var _ uc.ObjectRepository = &aws.AWSS3{}
 
 // Postgres
 var _ uc.MediaRepository = &db.DataBase{}
@@ -70,24 +72,17 @@ func Run(logger logger.Logger, config cfg.Config) {
 	// Create s3 connection
 	var s3 app.S3
 
-	// URL for media files will be like http(s)://POPFILMS_SERVICE_HTTP_FRONTEND_URL/bucketName/objectName
-	minioServePrefix := config.SERVICE_HTTP_FRONTEND_URL
-	// must not end with /
-	if minioServePrefix[len(minioServePrefix)-1] == '/' {
-		minioServePrefix = minioServePrefix[:len(minioServePrefix)-1]
-	}
-	s3, err = minio.NewMinio(
-		logger,
-		config.MINIO_INTERNAL_HOST,
-		config.MINIO_EXTERNAL_HOST,
-		config.MINIO_ROOT_USER,
-		config.MINIO_ROOT_PASSWORD,
-		false, // because minio is behind nginx proxy with SSL
-	)
+	// AWS S3 required env variables:
+	// - AWS_ACCESS_KEY_ID
+	// - AWS_SECRET_ACCESS_KEY
+	// - AWS_REGION
+	// - AWS_S3_ENDPOINT
+	logger.Info("Connecting to AWS S3")
+	s3, err = aws.NewAWSS3(logger, config.AWS_S3_PUBLIC_URL)
 	if err != nil {
-		logger.Fatal("Failed to connect to Minio: " + err.Error())
+		logger.Fatal("Failed to connect to AWS S3: " + err.Error())
 	}
-	logger.Info("Minio connection established")
+	logger.Info("AWS S3 connection established")
 
 	// Connect Auth gRPC service
 	var authService app.Service

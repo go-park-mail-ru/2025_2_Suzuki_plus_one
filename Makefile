@@ -7,10 +7,14 @@ SHELL := /bin/bash # Use bash syntax
 # Go settings
 ALL_PACKAGES=$(shell go list ./... | grep -v /vendor)
 
+# Default value for ENV_FILE if not set
+ENV_FILE ?= .env
+
 SERVICES = http auth search
 
 # Default service to build/run/test
 SERVICE ?= http
+
 
 ENTRYPOINT = ./cmd/${SERVICE}/main.go
 APP_EXECUTABLE = build/${SERVICE}
@@ -63,11 +67,11 @@ build: ## build the go application
 
 start: ## starts the application (requires built binary)
 	@echo "Starting $(APP_EXECUTABLE)..."
-	set -a && source .env && set +a && $(APP_EXECUTABLE)
+	set -a && source $(ENV_FILE) && set +a && $(APP_EXECUTABLE)
 
 live: ## launch the application using air for live reloading
 	@echo "Starting live reload for $(SERVICE)..."
-	set -a && source .env && set +a && SERVICE=$(SERVICE) air
+	set -a && source $(ENV_FILE) && set +a && SERVICE=$(SERVICE) air
 
 run: ## builds and starts the application
 	make build
@@ -122,18 +126,18 @@ update-deploy-backend: ## updates backend deployment by building and pushing ima
 
 # Postgres commands using docker-compose
 db-start: ## starts the database using docker-compose
-	source .env && docker compose up -d db
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) up -d db
 db-stop: ## stops the database using docker-compose
-	source .env && docker compose down db
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) down --env-file $(ENV_FILE) db
 db-wipe: ## wipes the database container and its volume
-	source .env && docker compose down -v db
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) down -v --env-file $(ENV_FILE) db
 db-logs: ## views database logs
-	source .env && docker compose logs -f db
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) logs -f db
 db-ps:   ## lists docker status of the database container
-	source .env && docker compose ps db
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) ps db
 db-fill: ## fills the database with test data from testdata/postgres
 	@echo "Filling Postgres with test data..."
-	source .env && \
+	source $(ENV_FILE) && \
 	sql_files=$$(ls -1 testdata/postgres/*.sql | sort); \
 	for file in $$sql_files; do \
 		echo "Executing $$file..."; \
@@ -143,11 +147,11 @@ db-fill: ## fills the database with test data from testdata/postgres
 
 # Psql shell command
 db-shell: ## connects to the database shell with psql
-	source .env && \
+	source $(ENV_FILE) && \
 	PGPASSWORD=$$POSTGRES_PASSWORD psql -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB
 
 db-check: ## checks database connection
-	source .env && \
+	source $(ENV_FILE) && \
 	pg_isready -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB
 
 ## Database Migrations
@@ -160,12 +164,12 @@ migrate-create: ## creates a new migration file. Usage: make migrate-create NAME
 	migrate create -ext sql -dir ./migrations -seq $(NAME)
 
 migrate-up: ## applies all up migrations
-	source .env && \
+	source $(ENV_FILE) && \
 	POSTGRESQL_URL="postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@localhost:5432/$$POSTGRES_DB?sslmode=disable" && \
 	migrate -path ./migrations -database $$POSTGRESQL_URL up
 
 migrate-down: ## applies all down migrations
-	source .env && \
+	source $(ENV_FILE) && \
 	POSTGRESQL_URL="postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@localhost:5432/$$POSTGRES_DB?sslmode=disable" && \
 	migrate -path ./migrations -database $$POSTGRESQL_URL down
 
@@ -184,28 +188,28 @@ remigrate: ## reapplies all migrations
 
 ## Redis
 redis-start: ## starts the redis using docker-compose
-	source .env && docker compose up -d redis
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) up -d redis
 redis-stop: ## stops the redis using docker-compose
-	source .env && docker compose down redis
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) down --env-file $(ENV_FILE) redis
 redis-wipe: ## wipes the redis container and its volume
-	source .env && docker compose down -v redis
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) down -v --env-file $(ENV_FILE) redis
 
-## Minio
+## [DEPRECATED] Minio
 
 minio-pull: ## fetches data from vkedu minio to local minio
 	@echo "Fetching data from vkedu drive to local minio..."
 	rclone sync vkedu: testdata/minio/ -P
 
 minio-start: ## starts the minio using docker-compose
-	source .env && docker compose up -d minio
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) up -d minio
 minio-stop: ## stops the minio using docker-compose
-	source .env && docker compose down minio
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) down minio
 minio-wipe: ## wipes the minio container and its volume
-	source .env && docker compose down -v minio
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) down -v minio
 minio-create: ## creates required buckets in minio
 	@echo "Creating buckets in Minio..."
-	source .env && \
-	docker compose exec minio /bin/sh -c " \
+	source $(ENV_FILE) && \
+	docker compose --env-file $(ENV_FILE) exec minio /bin/sh -c " \
 	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
 	mc mb local/actors || true && \
 	mc mb local/avatars || true && \
@@ -221,15 +225,15 @@ minio-create: ## creates required buckets in minio
 	"
 minio-list: ## lists buckets in minio
 	@echo "Listing buckets in Minio..."
-	source .env && \
-	docker compose exec minio /bin/sh -c " \
+	source $(ENV_FILE) && \
+	docker compose --env-file $(ENV_FILE) exec minio /bin/sh -c " \
 	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
 	mc ls local \
 	"
 minio-fill:
 	@echo "Mirroring test data directly..."
-	source .env && \
-	docker compose exec minio /bin/sh -c " \
+	source $(ENV_FILE) && \
+	docker compose --env-file $(ENV_FILE) exec minio /bin/sh -c " \
 	mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD && \
 	mc mb -p local/actors local/avatars local/medias local/posters local/trailers && \
 	mc mirror --overwrite /testdata/actors/ local/actors/ && \
@@ -241,34 +245,35 @@ minio-fill:
 
 ## All Services
 all-start: ## starts all services using docker-compose
-	source .env && docker compose up -d
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) up -d
 
 all-stop: ## stops all services using docker-compose
-	source .env && docker compose down
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) down
 
 all-wipe: ## wipes all services containers and their volumes
-	source .env && docker compose down -v
+	source $(ENV_FILE) && docker compose --env-file $(ENV_FILE) down -v
 
 all-fill: ## fills all services with test data
-	make minio-fill
+# 	make minio-fill
 	make db-fill
 
-all-migrate: ## migrates database and minio services
+all-migrate: ## migrates database
 	make migrate-up
-	make minio-create
+# 	make minio-create
 
 all-prepare: ## prepare all database: starts, migrates, fills with test data
-	docker compose down -v
-	docker compose up --build -d db redis minio
+	docker compose --env-file $(ENV_FILE) down -v
+# 	docker compose up --build -d db redis minio
+	docker compose --env-file $(ENV_FILE) up --build -d db redis
 
 	@echo "Waiting for services to be ready..."
 	@timeout=60; \
 	while [ $$timeout -gt 0 ]; do \
 		ready=true; \
-		source .env && pg_isready -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB || ready=false; \
-		docker compose exec redis redis-cli ping | grep -q PONG || ready=false; \
-		docker compose exec minio mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD >/dev/null 2>&1 && \
-		docker compose exec minio mc ls local >/dev/null 2>&1 || ready=false; \
+		source $(ENV_FILE) && pg_isready -h localhost -p 5432 -U $$POSTGRES_USER -d $$POSTGRES_DB || ready=false; \
+		docker compose --env-file $(ENV_FILE) exec redis redis-cli ping | grep -q PONG || ready=false; \
+		# docker compose --env-file $(ENV_FILE) exec minio mc alias set local http://localhost:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD >/dev/null 2>&1 && \
+		# docker compose --env-file $(ENV_FILE) exec minio mc ls local >/dev/null 2>&1 || ready=false; \
 		if [ "$$ready" = true ]; then \
 			echo "All services are ready."; \
 			break; \
@@ -285,10 +290,10 @@ all-prepare: ## prepare all database: starts, migrates, fills with test data
 	@echo "All services prepared"
 
 all-service-deploy: ## runs all microservices in docker-compose
-	docker compose -f compose.yaml up --build -d backend-http backend-auth backend-search
+	docker compose --env-file $(ENV_FILE) -f compose.yaml up --build -d backend-http backend-auth backend-search
 
 all-deploy: ## deploy all services using docker-compose
-	docker compose -f compose.yaml up --build -d
+	docker compose --env-file $(ENV_FILE) -f compose.yaml up --build -d
 
 all-bootstrap: ## bootstrap all: wipe, prepare, build and run
 	@echo "Filling data"

@@ -116,20 +116,20 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - app-network
-  minio:
-    image: minio/minio:latest
-    container_name: popfilms_minio
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data
-      - ./testdata/minio:/testdata
-    ports:
-      - "9000:9000"
-    networks:
-      - app-network
+  # minio:
+  #   image: minio/minio:latest
+  #   container_name: popfilms_minio
+  #   environment:
+  #     MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+  #     MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+  #   command: server /data --console-address ":9001"
+  #   volumes:
+  #     - minio_data:/data
+  #     - ./testdata/minio:/testdata
+  #   ports:
+  #     - "9000:9000"
+  #   networks:
+  #     - app-network
   redis:
     image: redis:alpine
     container_name: popfilms_redis
@@ -151,8 +151,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      minio:
-        condition: service_started
       redis:
         condition: service_started
     networks:
@@ -169,8 +167,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      minio:
-        condition: service_started
       redis:
         condition: service_started
     networks:
@@ -187,8 +183,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      minio:
-        condition: service_started
       redis:
         condition: service_started
     networks:
@@ -196,7 +190,6 @@ services:
     entrypoint: ["./search"]
 volumes:
   db_data:
-  minio_data:
   redis_data:
   grafana_data:
   loki_data:

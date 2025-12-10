@@ -76,11 +76,12 @@ func TestLoadEnvExample(t *testing.T) {
 	// Redis
 	require.Equal(t, envVars["REDIS_HOST"], config.REDIS_HOST)
 
-	// Minio
-	require.Equal(t, envVars["MINIO_INTERNAL_HOST"], config.MINIO_INTERNAL_HOST)
-	require.Equal(t, envVars["MINIO_EXTERNAL_HOST"], config.MINIO_EXTERNAL_HOST)
-	require.Equal(t, envVars["MINIO_ROOT_USER"], config.MINIO_ROOT_USER)
-	require.Equal(t, envVars["MINIO_ROOT_PASSWORD"], config.MINIO_ROOT_PASSWORD)
+	// AWS S3
+	require.Equal(t, envVars["AWS_S3_EXTERNAL_HOST"], config.AWS_S3_PUBLIC_URL)
+	require.Equal(t, envVars["AWS_ACCESS_KEY_ID"], config.AWS_ACCESS_KEY_ID)
+	require.Equal(t, envVars["AWS_SECRET_ACCESS_KEY"], config.AWS_SECRET_ACCESS_KEY)
+	require.Equal(t, envVars["AWS_DEFAULT_REGION"], config.AWS_REGION)
+	require.Equal(t, envVars["AWS_ENDPOINT_URL"], config.AWS_S3_ENDPOINT)
 
 	// Services
 
