@@ -23,12 +23,15 @@ func (yk *Yookassa) CreatePayment(ctx context.Context, userID uint, amount strin
 			Value:    amount,
 			Currency: "RUB",
 		},
-		// PaymentMethod: yoopayment.PaymentMethodType("bank_card"),
+		PaymentMethod: yoopayment.PaymentMethodType("bank_card"),
 		Confirmation: yoopayment.Redirect{
 			Type:      "redirect",
 			ReturnURL: yk.redirectURL,
 		},
-		Description:        "Test payment",
+		Description:       description,
+		SavePaymentMethod: false,
+		Capture:           false,
+		// Metadata:           map[string]string{"user_id": strconv.Itoa(int(userID))},
 		MerchantCustomerID: strconv.Itoa(int(userID)),
 	})
 
@@ -62,6 +65,5 @@ func (yk *Yookassa) CapturePayment(ctx context.Context, payment *yoopayment.Paym
 		log.ToString("capturedPayment.ID", capturedPayment.ID),
 		log.ToAny("capturedPayment.Status", capturedPayment.Status),
 	)
-
 	return capturedPayment, nil
 }
