@@ -8,21 +8,31 @@ import (
 )
 
 func (db *DataBase) SearchMedia(ctx context.Context, query string, limit, offset uint) ([]uint, error) {
-	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
-	log.Debug("SearchMedia called",
-		log.ToString("query", query),
-	)
+	log.Debug("SearchMedia called", log.ToString("query", query))
 
-	sql_query := `
-		SELECT media_id
-		FROM media
-		WHERE title ILIKE '%' || $1 || '%'
-		ORDER BY rating DESC
-		LIMIT $2 OFFSET $3
-	`
+	const sqlQuery = `
+		WITH q AS (
+		SELECT
+			websearch_to_tsquery('english', $1) AS tsq,
+			lower($1)                           AS lq
+		)
+		SELECT
+		m.media_id
+		FROM
+		media m,
+		q
+		WHERE
+			m.search_doc @@ q.tsq
+		OR similarity(lower(m.title), q.lq) > 0.2
+		ORDER BY
+		ts_rank_cd(m.search_doc, q.tsq) DESC,
+		similarity(lower(m.title), q.lq) DESC,
+		m.rating DESC
+		LIMIT $2 OFFSET $3;
+    `
 
-	rows, err := db.conn.QueryContext(ctx, sql_query, query, limit, offset)
+	rows, err := db.conn.QueryContext(ctx, sqlQuery, query, limit, offset)
 	if err != nil {
 		log.Error("SearchMedia query failed", log.ToError(err))
 		return nil, err
@@ -48,22 +58,31 @@ func (db *DataBase) SearchMedia(ctx context.Context, query string, limit, offset
 	return mediaIDs, nil
 }
 
-
 func (db *DataBase) SearchActor(ctx context.Context, query string, limit, offset uint) ([]uint, error) {
-	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
-	log.Debug("SearchActor called",
-		log.ToString("query", query),
-	)
+	log.Debug("SearchActor called", log.ToString("query", query))
 
-	sql_query := `
-		SELECT actor_id
-		FROM actor
-		WHERE name ILIKE '%' || $1 || '%'
-		LIMIT $2 OFFSET $3
-	`
+	const sqlQuery = `
+		WITH q AS (
+		SELECT
+			websearch_to_tsquery('english', $1) AS tsq,
+			lower($1)                           AS lq
+		)
+		SELECT
+		a.actor_id
+		FROM
+		actor a,
+		q
+		WHERE
+			a.search_doc @@ q.tsq
+		OR similarity(lower(a.name), lq) > 0.2
+		ORDER BY
+		ts_rank_cd(a.search_doc, q.tsq) DESC,
+		similarity(lower(a.name), lq) DESC
+		LIMIT $2 OFFSET $3;
+    `
 
-	rows, err := db.conn.QueryContext(ctx, sql_query, query, limit, offset)
+	rows, err := db.conn.QueryContext(ctx, sqlQuery, query, limit, offset)
 	if err != nil {
 		log.Error("SearchActor query failed", log.ToError(err))
 		return nil, err

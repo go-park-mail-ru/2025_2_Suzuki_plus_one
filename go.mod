@@ -12,6 +12,7 @@ require (
 	github.com/go-playground/validator/v10 v10.28.0
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/minio/minio-go/v7 v7.0.95
+	github.com/mozillazg/go-unidecode v0.2.0
 	github.com/prometheus/client_golang v1.23.2
 	github.com/redis/go-redis/v9 v9.16.0
 	github.com/rvinnie/yookassa-sdk-go v0.1.4
