@@ -223,6 +223,7 @@ erDiagram
         text password_hash
         date date_of_birth
         text phone_number
+        text subscription_status "active / inactive / pending"
         %% ---
         timestamptz created_at
         timestamptz updated_at

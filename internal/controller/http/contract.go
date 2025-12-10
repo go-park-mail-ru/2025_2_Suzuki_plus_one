@@ -131,4 +131,12 @@ type (
 	GetMediaEpisodesUseCase interface {
 		Execute(context.Context, dto.GetMediaEpisodesInput) (dto.GetMediaEpisodesOutput, *dto.Error)
 	}
+
+	PostPaymentCompletedUseCase interface {
+		Execute(context.Context, dto.PostPaymentCompletedInput) (dto.PostPaymentCompletedOutput, *dto.Error)
+	}
+
+	PostPaymentNewUseCase interface {
+		Execute(context.Context, dto.PostPaymentNewInput) (dto.PostPaymentNewOutput, *dto.Error)
+	}
 )

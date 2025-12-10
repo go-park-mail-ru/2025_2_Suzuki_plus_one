@@ -1,0 +1,45 @@
+new:
+  post:
+    security:
+      - access_token: []
+    summary: Create a new payment
+    description: Initiates a new payment transaction.
+    tags:
+      - payment
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/payment.yaml#/PaymentRequest'
+    responses:
+      '201':
+        description: Payment created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/payment.yaml#/PaymentResponse'
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ErrorResponse'
+
+completed:
+  post:
+    summary: Confirm payment webhook endpoint
+    description: Yookassa send a request to this endpoint when the payment is completed.
+    tags:
+      - payment
+    responses:
+      '200':
+        description: Payment confirmed successfully
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/ErrorResponse'
+
+    

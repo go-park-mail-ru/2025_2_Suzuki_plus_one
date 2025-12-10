@@ -40,12 +40,16 @@ type Config struct {
 	REDIS_HOST string
 
 	// AWS S3
-	AWS_ACCESS_KEY_ID string
+	AWS_ACCESS_KEY_ID     string
 	AWS_SECRET_ACCESS_KEY string
-	AWS_REGION string
-	AWS_S3_ENDPOINT string
-	AWS_S3_PUBLIC_URL string
-	
+	AWS_REGION            string
+	AWS_S3_ENDPOINT       string
+	AWS_S3_PUBLIC_URL     string
+
+	// Payment
+	YOOKASSA_SHOP_ID    string
+	YOOKASSA_SECRET_KEY string
+	YOOKASSA_RETURN_URL string
 
 	// Services
 
@@ -72,10 +76,10 @@ func Load() Config {
 		ENVIRONMENT:                         getEnv("POPFILMS_ENVIRONMENT", "development"),
 
 		// Database
-		POSTGRES_HOST:                 mustEnv("POSTGRES_HOST"),
-		POSTGRES_DB:                   mustEnv("POSTGRES_DB"),
-		APP_DB_USER:                   mustEnv("APP_DB_USER"),
-		APP_DB_PASSWORD:               mustEnv("APP_DB_PASSWORD"),
+		POSTGRES_HOST:   mustEnv("POSTGRES_HOST"),
+		POSTGRES_DB:     mustEnv("POSTGRES_DB"),
+		APP_DB_USER:     mustEnv("APP_DB_USER"),
+		APP_DB_PASSWORD: mustEnv("APP_DB_PASSWORD"),
 
 		// Database connection pool settings
 		DB_POOL_MAX_OPEN:              parseInt(getEnv("DB_POOL_MAX_OPEN", "5")),
@@ -86,11 +90,16 @@ func Load() Config {
 		REDIS_HOST: mustEnv("REDIS_HOST"),
 
 		// AWS S3
-		AWS_S3_PUBLIC_URL: mustEnv("AWS_S3_EXTERNAL_HOST"), // custom env var for public URL
-		AWS_ACCESS_KEY_ID: mustEnv("AWS_ACCESS_KEY_ID"),
+		AWS_S3_PUBLIC_URL:     mustEnv("AWS_S3_EXTERNAL_HOST"), // custom env var for public URL
+		AWS_ACCESS_KEY_ID:     mustEnv("AWS_ACCESS_KEY_ID"),
 		AWS_SECRET_ACCESS_KEY: mustEnv("AWS_SECRET_ACCESS_KEY"),
-		AWS_REGION: mustEnv("AWS_DEFAULT_REGION"),
-		AWS_S3_ENDPOINT: mustEnv("AWS_ENDPOINT_URL"),
+		AWS_REGION:            mustEnv("AWS_DEFAULT_REGION"),
+		AWS_S3_ENDPOINT:       mustEnv("AWS_ENDPOINT_URL"),
+
+		// Payment
+		YOOKASSA_SHOP_ID:    mustEnv("YOOKASSA_SHOP_ID"),
+		YOOKASSA_SECRET_KEY: mustEnv("YOOKASSA_SECRET_KEY"),
+		YOOKASSA_RETURN_URL: mustEnv("YOOKASSA_RETURN_URL"),
 
 		// Services
 

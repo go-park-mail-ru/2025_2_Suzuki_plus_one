@@ -13,17 +13,32 @@ type GetMediaWatchUseCase struct {
 	logger           logger.Logger
 	mediaRepo        MediaRepository
 	getObjectUseCase *GetObjectUseCase
+	userRepo 	  UserRepository
 }
 
 func NewGetMediaWatchUseCase(
 	logger logger.Logger,
 	mediaRepo MediaRepository,
 	getObjectUseCase *GetObjectUseCase,
+	userRepo UserRepository,
 ) *GetMediaWatchUseCase {
+	if logger == nil {
+		panic("NewGetMediaWatchUseCase: logger is nil")
+	}
+	if mediaRepo == nil {
+		panic("NewGetMediaWatchUseCase: mediaRepo is nil")
+	}
+	if getObjectUseCase == nil {
+		panic("NewGetMediaWatchUseCase: getObjectUseCase is nil")
+	}
+	if userRepo == nil {
+		panic("NewGetMediaWatchUseCase: userRepo is nil")
+	}
 	return &GetMediaWatchUseCase{
 		logger:           logger,
 		mediaRepo:        mediaRepo,
 		getObjectUseCase: getObjectUseCase,
+		userRepo:         userRepo,
 	}
 }
 
@@ -53,7 +68,56 @@ func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaW
 		return dto.GetMediaWatchOutput{}, &derr
 	}
 
-	// TODO: CHECK USER PERMISSION RIGHT HERE
+
+	media, err := uc.mediaRepo.GetMediaByID(ctx, input.MediaID)
+	if err != nil {
+		derr := dto.NewError(
+			"usecase/get_media_watch",
+			err,
+			"Failed to get media info by ID",
+		)
+		log.Error("Failed to get media info by ID", log.ToError(err))
+		return dto.GetMediaWatchOutput{}, &derr
+	}
+
+	// If media is movie or series, validate access token and user subscription status
+	if media.MediaType == "episode" {
+		// Get user ID from access token
+		userID, err := common.ValidateToken(input.AccessToken)
+		if err != nil {
+			derr := dto.NewError(
+				"usecase/get_media_watch",
+				entity.ErrGetMediaAccessDenied,
+				"access token is invalid: "+err.Error(),
+			)
+			log.Error("Access token is invalid", log.ToError(err))
+			return dto.GetMediaWatchOutput{}, &derr
+		}
+
+		// Get user subscription status
+		status, err := uc.userRepo.GetUserSubscriptionStatus(ctx, userID)
+		if err != nil {
+			derr := dto.NewError(
+				"usecase/get_media_watch",
+				err,
+				"Failed to get user subscription status",
+			)
+			log.Error("Failed to get user subscription status", log.ToError(err))
+			return dto.GetMediaWatchOutput{}, &derr
+		}
+
+		// Check if subscription status is active
+		if status != "active" {
+			derr := dto.NewError(
+				"usecase/get_media_watch",
+				entity.ErrGetMediaAccessDenied,
+				"user subscription is not active",
+			)
+			log.Error("User subscription is not active")
+			return dto.GetMediaWatchOutput{}, &derr
+		}
+	}
+	
 	// Get presigned URL from object use case
 	object, derr := uc.getObjectUseCase.Execute(ctx, dto.GetObjectInput{
 		Key:        s3Key.Key,

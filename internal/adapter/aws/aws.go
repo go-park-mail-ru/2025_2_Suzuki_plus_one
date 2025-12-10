@@ -11,12 +11,12 @@ import (
 )
 
 var BucketMap = map[string]string{
-	"avatars":    "ava",
-	"actors":     "actors",
-	"posters":    "posters",
-	"trailers":  "trailers",
+	"avatars":  "ava",
+	"actors":   "actors",
+	"posters":  "posters",
+	"trailers": "trailers",
+	"medias":   "medias",
 }
-
 
 type AWSS3 struct {
 	logger    logger.Logger

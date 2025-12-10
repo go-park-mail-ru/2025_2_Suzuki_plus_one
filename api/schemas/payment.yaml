@@ -1,0 +1,9 @@
+PaymentRequest:
+  type: object
+
+PaymentResponse:
+  type: object
+  properties:
+    payment_id:
+      type: string
+      example: "pay_1234567890abcdef"

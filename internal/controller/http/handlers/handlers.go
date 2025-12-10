@@ -39,6 +39,8 @@ type Handlers struct {
 	GetGenreAllUseCase              GetGenreAllUseCase
 	GetGenreMediaUseCase            GetGenreMediaUseCase
 	GetMediaEpisodesUseCase         GetMediaEpisodesUseCase
+	PostPaymentCompletedUseCase     PostPaymentCompletedUseCase
+	PostPaymentNewUseCase           PostPaymentNewUseCase
 }
 
 func NewHandlers(
@@ -74,6 +76,8 @@ func NewHandlers(
 	GetGenreAllUseCase GetGenreAllUseCase,
 	GetGenreMediaUseCase GetGenreMediaUseCase,
 	GetMediaEpisodesUseCase GetMediaEpisodesUseCase,
+	PostPaymentCompletedUseCase PostPaymentCompletedUseCase,
+	PostPaymentNewUseCase PostPaymentNewUseCase,
 ) *Handlers {
 	return &Handlers{
 		Logger:                          logger,
@@ -108,5 +112,7 @@ func NewHandlers(
 		GetGenreAllUseCase:              GetGenreAllUseCase,
 		GetGenreMediaUseCase:            GetGenreMediaUseCase,
 		GetMediaEpisodesUseCase:         GetMediaEpisodesUseCase,
+		PostPaymentCompletedUseCase:     PostPaymentCompletedUseCase,
+		PostPaymentNewUseCase:           PostPaymentNewUseCase,
 	}
 }

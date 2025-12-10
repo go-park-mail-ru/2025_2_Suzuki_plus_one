@@ -24,6 +24,9 @@ UserResponse:
       type: string
       format: uri
       example: "http://example.com/avatars/johndoe.jpg"
+    subscription_status:
+      type: string
+      example: "active"
 
 UserUpdateRequest:
   summary: User profile settings

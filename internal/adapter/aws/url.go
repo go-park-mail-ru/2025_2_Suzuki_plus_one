@@ -3,6 +3,7 @@ package aws
 import (
 	"context"
 	"time"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -18,12 +19,17 @@ func (sss *AWSS3) GeneratePresignedURL(ctx context.Context, bucketName string, o
 		log.ToString("bucketName", bucketName),
 		log.ToString("objectName", objectName),
 	)
+
 	// Map logical bucket name to actual S3 bucket name
-	bucketName = BucketMap[bucketName]
+	mappedBucketName, ok := BucketMap[bucketName]
+	if !ok || mappedBucketName == "" {
+		log.Error("Invalid or missing bucket mapping for: " + bucketName)
+		return nil, fmt.Errorf("invalid or missing bucket mapping for: %s", bucketName)
+	}
 
 	// Check if the object exists
 	_, err := sss.client.HeadObject(ctx, &s3.HeadObjectInput{
-		Bucket: aws.String(bucketName),
+		Bucket: aws.String(mappedBucketName),
 		Key:    aws.String(objectName),
 	})
 	if err != nil {
@@ -34,7 +40,7 @@ func (sss *AWSS3) GeneratePresignedURL(ctx context.Context, bucketName string, o
 	// Generate presigned URL
 	presignClient := s3.NewPresignClient(sss.client)
 	presignedReq, err := presignClient.PresignGetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(bucketName),
+		Bucket: aws.String(mappedBucketName),
 		Key:    aws.String(objectName),
 	}, s3.WithPresignExpires(expiration))
 	if err != nil {
@@ -44,6 +50,7 @@ func (sss *AWSS3) GeneratePresignedURL(ctx context.Context, bucketName string, o
 
 	log.Info("Presigned URL generated successfully",
 		log.ToString("bucketName", bucketName),
+		log.ToString("mappedBucketName", mappedBucketName),
 		log.ToString("objectName", objectName),
 		log.ToString("presignedURL", presignedReq.URL),
 	)
@@ -61,16 +68,20 @@ func (sss *AWSS3) GeneratePublicURL(ctx context.Context, bucketName string, obje
 		log.ToString("objectName", objectName),
 	)
 	// Map logical bucket name to actual S3 bucket name
-	bucketName = BucketMap[bucketName]
+	mappedBucketName, ok := BucketMap[bucketName]
+	if !ok || mappedBucketName == "" {
+		log.Error("Invalid or missing bucket mapping for: " + bucketName)
+		return nil, fmt.Errorf("invalid or missing bucket mapping for: %s", bucketName)
+	}
 
 	// https://cloud.ru/docs/s3e/ug/topics/guides__public-access-for-bucket?source-platform=Evolution
 	// Example public URL format:
 	// 		https://global.s3.cloud.ru/bucketName/objectName
 
-	publicURL := sss.publicURL + "/" + bucketName + "/" + objectName
+	publicURL := sss.publicURL + "/" + mappedBucketName + "/" + objectName
 
 	log.Info("Public URL generated successfully",
-		log.ToString("bucketName", bucketName),
+		log.ToString("bucketName", mappedBucketName),
 		log.ToString("objectName", objectName),
 		log.ToString("publicURL", publicURL),
 	)

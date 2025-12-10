@@ -22,6 +22,8 @@ tags:
     description: User appeals and feedback endpoints
   - name: user
     description: User profile management endpoints
+  - name: payment
+    description: Payment processing endpoints
 paths:
   # auth.yaml
   /auth/refresh:
@@ -88,6 +90,12 @@ paths:
   # search.yaml
   /search:
     $ref: "./paths/search.yaml#/.self"
+  # payment.yaml
+  /payment/new:
+    $ref: "./paths/payment.yaml#/new"
+  /payment/completed:
+    $ref: "./paths/payment.yaml#/completed"
+  
 
 components:
   securitySchemes:

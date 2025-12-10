@@ -41,7 +41,7 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Get(fmt.Sprintf("/genre/{%s}", handlers.PathParamGetGenreID), h.GetGenre)
 	r.Get(fmt.Sprintf("/genre/{%s}/media", handlers.PathParamGetGenreMediaID), h.GetGenreMedia)
 	r.Get("/genre/all", h.GetGenreAll)
-	
+
 	r.Get(fmt.Sprintf("/actor/{%s}", handlers.PathParamGetActorID), h.GetActor)
 	r.Get(fmt.Sprintf("/actor/{%s}/media", handlers.PathParamGetActorMediaID), h.GetActorMedia)
 	r.Get("/search", h.GetSearch)
@@ -84,6 +84,13 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 		r.Post(fmt.Sprintf("/appeal/{%s}/message", handlers.PathParamGetAppealID), h.PostAppealMessage)
 		r.Get(fmt.Sprintf("/appeal/{%s}/message", handlers.PathParamGetAppealID), h.GetAppealMessage)
 	})
+
+	// Payment
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Authenticator(common.TokenAuth))
+		r.Post("/payment/new", h.PostPaymentNew)
+	})
+	r.Post("/payment/completed", h.PostPaymentCompleted)
 
 	return r
 }

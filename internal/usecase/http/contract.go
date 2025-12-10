@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
+	yoopayment "github.com/rvinnie/yookassa-sdk-go/yookassa/payment"
 )
 
 //go:generate mockgen -source=contract.go -destination=./mocks/contract_mock.go -package=mocks
@@ -70,6 +71,7 @@ type (
 		GetUserByID(ctx context.Context, userID uint) (*entity.User, error)
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		GetUserAvatarKey(ctx context.Context, userID uint) (*entity.S3Key, error)
+		GetUserSubscriptionStatus(ctx context.Context, userID uint) (string, error)
 
 		// Update
 		UpdateUser(ctx context.Context,
@@ -81,6 +83,7 @@ type (
 		) (*entity.User, error)
 		UpdateUserAvatarKey(ctx context.Context, userID uint, assetImageID uint) error
 		UpdateUserPassword(ctx context.Context, userID uint, newHashedPassword string) error
+		UpdateUserSubscriptionStatus(ctx context.Context, userID uint, status string) error
 	}
 
 	AppealRepository interface {
@@ -110,7 +113,7 @@ type (
 		GetAssetImageByID(ctx context.Context, assetImageID uint) (*entity.AssetImage, error)
 	}
 
-	// Minio
+	// S3
 	ObjectRepository interface {
 		GeneratePublicURL(ctx context.Context, bucketName string, objectName string) (*entity.URL, error)
 		GeneratePresignedURL(ctx context.Context, bucketName string, objectName string, expiration time.Duration) (*entity.URL, error)
@@ -139,5 +142,14 @@ type (
 	ServiceSearchRepository interface {
 		CallSearchMedia(ctx context.Context, query string, limit, offset uint) ([]uint, error)
 		CallSearchActors(ctx context.Context, query string, limit, offset uint) ([]uint, error)
+	}
+
+	// Payment gateway
+	PaymentRepository interface {
+		// Create payment and return payment ID
+		CreatePayment(ctx context.Context, userID uint, amount string, description string) (string, error)
+
+		// Approve payment by payment
+		CapturePayment(ctx context.Context, payment *yoopayment.Payment) (*yoopayment.Payment, error)
 	}
 )

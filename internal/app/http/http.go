@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/aws"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/redis"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/yookassa"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/app"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
@@ -44,6 +45,9 @@ var _ uc.ServiceAuthRepository = &grpc_auth.AuthService{}
 
 // Search service
 var _ uc.ServiceSearchRepository = &grpc_search.SearchService{}
+
+// Payment
+var _ uc.PaymentRepository = &yookassa.Yookassa{}
 
 func Run(logger logger.Logger, config cfg.Config) {
 
@@ -171,6 +175,17 @@ func Run(logger logger.Logger, config cfg.Config) {
 		logger.Fatal("gRPC Search service can't be converted to SearchService")
 	}
 
+	// Create Payment repository
+	paymentRepository, err := yookassa.NewYookassa(
+		logger,
+		config.YOOKASSA_SHOP_ID,
+		config.YOOKASSA_SECRET_KEY,
+		config.YOOKASSA_RETURN_URL,
+	)
+	if err != nil {
+		logger.Fatal("Failed to create Yookassa repository: " + err.Error())
+	}
+
 	// --- Create usecase level ---
 
 	// Reusable usecases
@@ -194,7 +209,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 		getUserUseCase,
 		getActorUseCase,
 		getMediaUseCase,
-		uc.NewGetMediaWatchUseCase(logger, mediaRepository, getObjectUseCase),
+		uc.NewGetMediaWatchUseCase(logger, mediaRepository, getObjectUseCase, userRepository),
 		uc.NewPostUserMeUpdateUseCase(logger, userRepository, getUserUseCase),
 		uc.NewPostUserMeUpdateAvatarUseCase(logger, userRepository, objectRepository, assetRepository),
 		uc.NewGetActorMediaUseCase(logger, actorRepository, getMediaUseCase),
@@ -203,9 +218,9 @@ func Run(logger logger.Logger, config cfg.Config) {
 
 		// Appeal usecases
 		uc.NewGetAppealMyUseCase(logger, appealRepository),
-		uc.NewPostAppealNewUseCase(logger, appealRepository),    //done
-		uc.NewGetAppealUseCase(logger, appealRepository),        //done
-		uc.NewPutAppealResolveUseCase(logger, appealRepository), //done
+		uc.NewPostAppealNewUseCase(logger, appealRepository),
+		uc.NewGetAppealUseCase(logger, appealRepository),
+		uc.NewPutAppealResolveUseCase(logger, appealRepository),
 		// ----
 		uc.NewPostAppealMessageUseCase(logger, appealRepository),
 		uc.NewGetAppealMessageUseCase(logger, appealRepository),
@@ -223,6 +238,9 @@ func Run(logger logger.Logger, config cfg.Config) {
 		uc.NewGetGenreMediaUseCase(logger, mediaRepository, getMediaUseCase),
 		// Episodes usecase
 		uc.NewGetMediaEpisodesUseCase(logger, mediaRepository, getMediaUseCase),
+		// Payment usecases
+		uc.NewPostPaymentCompletedUsecase(logger, userRepository, paymentRepository),
+		uc.NewPostPaymentNewUsecase(logger, paymentRepository),
 	)
 
 	// Initialize JWT middleware engine

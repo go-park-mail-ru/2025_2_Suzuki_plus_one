@@ -68,6 +68,11 @@ var (
 
 	ErrGetMediaEpisodesParamsInvalid = errors.New("invalid get_media_episodes request parameters")
 
+	ErrPostPaymentNewAccessTokenInvalid = errors.New("invalid access token in post_payment_new request")
+	ErrPostPaymentCompletedInvalidParams = errors.New("invalid parameters in post_payment_completed request")
+
+	ErrGetMediaAccessDenied = errors.New("access to requested media is denied")
+	
 	// Like usecase errors
 	ErrGetMediaLikeInvalidParams = errors.New("invalid get_media_like request parameters")
 	ErrGetMediaLikeRepositoryFailed = errors.New("like repository failed to get like status")
