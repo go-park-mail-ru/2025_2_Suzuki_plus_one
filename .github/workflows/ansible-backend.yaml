@@ -21,15 +21,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up SSH agent
+        shell: bash
+        run: |
+           eval `ssh-agent -s`
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
       - name: Install Ansible and collections
         run: |
           python -m pip install --upgrade pip
-          pip install ansible ansible-core community.general
+          pip install ansible ansible-core
+
+          # Install Ansible collections with ansible-galaxy rather than pip
+          ansible-galaxy collection install community.general
 
       - name: Create ansible.env with vault password and ssh key
         working-directory: deployments
