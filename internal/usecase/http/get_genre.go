@@ -13,14 +13,12 @@ type GetGenreUseCase struct {
 	log             logger.Logger
 	genreRepo       GenreRepository
 	mediaRepo       MediaRepository
-	getMediaUsecase *GetMediaUseCase
 }
 
 func NewGetGenreUseCase(
 	log logger.Logger,
 	genreRepo GenreRepository,
 	mediaRepo MediaRepository,
-	getMediaUsecase *GetMediaUseCase,
 ) *GetGenreUseCase {
 	if log == nil {
 		panic("log is nil")
@@ -31,14 +29,11 @@ func NewGetGenreUseCase(
 	if mediaRepo == nil {
 		panic("mediaRepo is nil")
 	}
-	if getMediaUsecase == nil {
-		panic("getMediaUsecase is nil")
-	}
+
 	return &GetGenreUseCase{
 		log:             log,
 		genreRepo:       genreRepo,
 		mediaRepo:       mediaRepo,
-		getMediaUsecase: getMediaUsecase,
 	}
 }
 
@@ -84,33 +79,8 @@ func (uc *GetGenreUseCase) Execute(
 		return dto.GetGenreOutput{}, &derr
 	}
 
-	// Get media IDs related to specific genre ID
-	mediaIDs, err := uc.mediaRepo.GetMediasByGenreID(ctx, input.MediaLimit, input.MediaOffset, input.GenreID)
-	if err != nil {
-		derr := dto.NewError(
-			"usecase/get_genre",
-			entity.ErrGetGenreRepo,
-			err.Error(),
-		)
-		return dto.GetGenreOutput{}, &derr
-	}
-
-	// Get media entities by IDs
-	medias := make([]dto.GetMediaOutput, 0, len(mediaIDs))
-	for _, mediaID := range mediaIDs {
-		getMediaOutput, derr := uc.getMediaUsecase.Execute(ctx, dto.GetMediaInput{
-			MediaID: mediaID,
-		})
-		if derr != nil {
-			log.Error("GetGenreUseCase failed to get media by ID", log.ToError(err), log.ToInt("media_id", int(mediaID)))
-			continue
-		}
-		medias = append(medias, getMediaOutput)
-	}
-
 	output := dto.GetGenreOutput{
 		Genre:  *genre,
-		Medias: medias,
 	}
 
 	return output, nil

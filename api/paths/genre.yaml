@@ -11,20 +11,6 @@ certain:
         schema:
           type: string
         description: The unique identifier of the genre
-      - in: query
-        name: media_limit
-        required: false
-        schema:
-          type: integer
-          default: 10
-        description: The maximum number of media items to return
-      - in: query
-        name: media_offset
-        required: false
-        schema:
-          type: integer
-          default: 0
-        description: The offset for media items to return
     responses:
       "200":
         description: Genre details retrieved successfully
@@ -32,6 +18,51 @@ certain:
           application/json:
             schema:
               $ref: "../schemas/genre.yaml#/GenreResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+genre_media:
+  get:
+    tags:
+      - content
+    summary: Get media items for a specific genre
+    description: Retrieve a list of media items associated with a specific genre
+    parameters:
+      - in: path
+        name: genre_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the genre
+      - in: query
+        name: limit
+        required: false
+        schema:
+          type: integer
+          default: 10
+        description: The maximum number of media items to return
+      - in: query
+        name: offset
+        required: false
+        schema:
+          type: integer
+          default: 0
+        description: The offset for media items to return
+    responses:
+      "200":
+        description: Media items for the genre retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                medias:
+                  type: array
+                  items:
+                    $ref: "../schemas/media.yaml#/MediaResponse"
       "400":
         description: Bad request
         content:

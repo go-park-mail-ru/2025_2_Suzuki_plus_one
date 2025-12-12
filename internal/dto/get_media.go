@@ -11,4 +11,10 @@ type GetMediaOutput struct {
 	Genres   []GetGenreOutput `json:"genres"`
 	Posters  []string         `json:"posters"`  // S3 public URLs
 	Trailers []string         `json:"trailers"` // S3 public URLs
+	Rating   MediaRating      `json:"user_rating"`
+}
+
+type MediaRating struct {
+	Likes    uint `json:"likes"`
+	Dislikes uint `json:"dislikes"`
 }

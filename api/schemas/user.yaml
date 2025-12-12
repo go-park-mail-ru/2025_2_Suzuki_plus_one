@@ -24,6 +24,13 @@ UserResponse:
       type: string
       format: uri
       example: "http://example.com/avatars/johndoe.jpg"
+    subscription_status:
+      type: string
+      example: "active"
+      oneOf:
+        - "active"
+        - "inactive"
+        - "pending"
 
 UserUpdateRequest:
   summary: User profile settings
@@ -45,12 +52,12 @@ UserUpdateRequest:
       example: "+1234567890"
 
 UserAvatarUpdateRequest:
-    type: object
-    properties:
-      avatar:
-        type: string
-        format: binary
-        description: The new avatar image file
+  type: object
+  properties:
+    avatar:
+      type: string
+      format: binary
+      description: The new avatar image file
 
 UserAvatarUpdateResponse:
   type: object

@@ -1,0 +1,75 @@
+groups:
+  - name: easy-test-alerts
+    interval: 15s
+
+    rules:
+      # -------------------------------
+      # 1. Fires if 10 HTTP error is observed
+      # -------------------------------
+      - alert: HttpErrorsAny
+        expr: rate(http_errors_total[1m]) > 10
+        for: 10s
+        labels:
+          severity: WARNING
+        annotations:
+          summary: "HTTP errors detected"
+          description: "Errors are being registered in http_errors_total"
+
+      # -------------------------------
+      # 2. Fires if latency P95 > 0.5s
+      # -------------------------------
+      - alert: HighHttpLatencyP95
+        expr: histogram_quantile(0.95,
+                sum by (le) (rate(http_request_duration_seconds_bucket[1m]))
+              ) > 0.5
+        for: 15s
+        labels:
+          severity: WARNING
+        annotations:
+          summary: "High HTTP latency"
+          description: "P95 latency is above 500ms"
+
+      # -------------------------------
+      # 3. Fires if CPU load > 80%
+      # -------------------------------
+      - alert: CPUHigh
+        expr: (100 - (avg without(cpu, mode) (rate(node_cpu_seconds_total{mode="idle"}[1m])) * 100)) > 80
+        for: 15s
+        labels:
+          severity: WARNING
+        annotations:
+          summary: "CPU usage high"
+          description: "CPU usage > 80%"
+
+      # -------------------------------
+      # 4. Fires ALWAYS (optional), good to test alerts
+      # -------------------------------
+      - alert: AlwaysFiringTestAlert
+        expr: vector(1)
+        for: 5s
+        labels:
+          severity: INFO
+        annotations:
+          summary: "Backend is up"
+          description: "Alert that is always firing, when backend is redeployed"
+      
+      # -------------------------------
+      # 5. Fires if disk free space < 5%
+      # -------------------------------
+      - alert: DiskSpaceLow
+        expr: |
+          (
+            node_filesystem_size_bytes{fstype!~"tmpfs|overlay"} 
+            - node_filesystem_free_bytes{fstype!~"tmpfs|overlay"}
+          )
+          /
+          node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}
+          > 0.95
+        for: 1m
+        labels:
+          severity: WARNING
+        annotations:
+          summary: "Disk nearly full"
+          description: |
+            Disk usage is above 95% on {{ $labels.instance }} (mountpoint: {{ $labels.mountpoint }}).
+            Free space is running low.

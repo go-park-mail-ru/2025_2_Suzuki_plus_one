@@ -31,15 +31,17 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 	r.Get("/media/my", h.GetMediaMy)
 	r.Get("/media/recommendations", h.GetMediaRecommendations)
 	r.Get(fmt.Sprintf("/media/{%s}", handlers.PathParamGetMediaID), h.GetMedia)
+	r.Get(fmt.Sprintf("/media/{%s}/episodes", handlers.PathParamGetMediaEpisodesID), h.GetMediaEpisodes)
 	r.Get(fmt.Sprintf("/media/{%s}/actor", handlers.PathParamGetMediaActorID), h.GetMediaActor)
 	r.Get(fmt.Sprintf("/media/{%s}/like", handlers.PathParamGetMediaLikeID), h.GetMediaLike)
 	r.Put(fmt.Sprintf("/media/{%s}/like", handlers.PathParamPutMediaLikeID), h.PutMediaLike)
 	r.Delete(fmt.Sprintf("/media/{%s}/like", handlers.PathParamDeleteMediaLikeID), h.DeleteMediaLike)
 
 	// Genre
-	r.Get("/genre/all", h.GetGenreAll)
 	r.Get(fmt.Sprintf("/genre/{%s}", handlers.PathParamGetGenreID), h.GetGenre)
-	
+	r.Get(fmt.Sprintf("/genre/{%s}/media", handlers.PathParamGetGenreMediaID), h.GetGenreMedia)
+	r.Get("/genre/all", h.GetGenreAll)
+
 	r.Get(fmt.Sprintf("/actor/{%s}", handlers.PathParamGetActorID), h.GetActor)
 	r.Get(fmt.Sprintf("/actor/{%s}/media", handlers.PathParamGetActorMediaID), h.GetActorMedia)
 	r.Get("/search", h.GetSearch)
@@ -82,6 +84,13 @@ func InitRouter(h *handlers.Handlers, l logger.Logger, origin string) http.Handl
 		r.Post(fmt.Sprintf("/appeal/{%s}/message", handlers.PathParamGetAppealID), h.PostAppealMessage)
 		r.Get(fmt.Sprintf("/appeal/{%s}/message", handlers.PathParamGetAppealID), h.GetAppealMessage)
 	})
+
+	// Payment
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Authenticator(common.TokenAuth))
+		r.Post("/payment/new", h.PostPaymentNew)
+	})
+	r.Post("/payment/completed", h.PostPaymentCompleted)
 
 	return r
 }

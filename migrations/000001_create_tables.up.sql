@@ -211,6 +211,7 @@ CREATE TABLE "user" (
         LENGTH(email) <= 255
         AND email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
     ),
+    subscription_status TEXT NOT NULL CHECK (subscription_status IN ('active', 'inactive', 'pending')) DEFAULT 'inactive',
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_asset_image FOREIGN KEY (asset_image_id) REFERENCES asset_image (asset_image_id) ON DELETE CASCADE

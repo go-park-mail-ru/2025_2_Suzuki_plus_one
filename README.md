@@ -23,9 +23,11 @@ Popfilms -- это стриминговый сервис, вдохновленн
 [См. Swagger](https://popfilms.ru/docs/)
 
 - Регистрация и аутентификация пользователей
-- Отдача медиа контента (фильмы, сериалы и т.д.) через Minio
-- Управление сессиями пользователей через Redis
-- Настройки пользователями (профиль, пароль)
+- Настройки пользователями (профиль, аватарка, пароль)
+- Отдача медиа контента (фильмы, сериалы и т.д.) через ~~Minio~~ Cloud.ru Evolution Object Storage
+- Управление сессиями пользователей через ~~Redis~~ JWT токены
+- Поиск по названию и описанию медиа контента с помощью полнотекстового поиска PostgreSQL
+- Оплата подписки через YooKassa
 
 ### Детали реализации
 
@@ -33,7 +35,6 @@ Popfilms -- это стриминговый сервис, вдохновленн
 - Авторизация реализована при помощи JWT Access и Refresh токенов
 - База данных PostgreSQL взаимодействует с бэкендом через pgx библиотеку
 - Миграции базы данных с помощью golang-migrate
-- Объектное хранилище Minio
 - Бэкенд задеплоен при помощи docker контейнеров, которые управляются ansible плейбуками
 - Логирование с помощью Zap
 - Тесты с использованием Testify и GoMock, SqlMock
@@ -47,10 +48,10 @@ Popfilms -- это стриминговый сервис, вдохновленн
 
 ```bash
 # Установка docker и docker-compose
-[Ссылка](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
 
 # Установка Go
-[Ссылка](https://go.dev/doc/install)
+https://go.dev/doc/install
 
 # Установка migrate
 echo "export PATH=$PATH:$HOME/go/bin" >> ~/.bashrc
@@ -68,15 +69,15 @@ sudo apt-get install -y postgresql-client
 #### Запуск проекта в режиме прод
 
 ```bash
-# Настройка окружения
-cp deployments/prod.env.example .env
+# Для запуска всего проекта в docker compose
+cp docker.env.example .env
 
-# Скачивание медиа ассетов
-# (требуется ~/.config/rclone/rclone.conf с настройками доступа к облачному хранилищу)
-make minio-pull
 
 # Запуск docker compose, миграций, наполнение тестовыми данными
 make all-bootstrap
+
+# Файл по умолчанию .env можно менять по необходимости при помощи опции ENV_FILE
+# make all-bootstrap ENV_FILE=docker.env
 ```
 
 #### Деплой через ansible

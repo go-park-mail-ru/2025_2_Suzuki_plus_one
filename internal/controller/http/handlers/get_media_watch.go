@@ -35,6 +35,7 @@ func (h *Handlers) GetMediaWatch(w http.ResponseWriter, r *http.Request) {
 	input := dto.GetMediaWatchInput{}
 	rp := NewRequestParams(log, r, &input)
 	rp.AddQuery(QueryParamMediaWatchID, &input.MediaID)
+	rp.AddAuthHeader(&input.AccessToken)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {

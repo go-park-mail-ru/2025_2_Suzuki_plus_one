@@ -20,7 +20,7 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 	var user entity.User
 
 	query := `
-		SELECT user_id, email, username, password_hash, asset_image_id, date_of_birth, phone_number
+		SELECT user_id, email, username, password_hash, asset_image_id, date_of_birth, phone_number, subscription_status
 		FROM "user"
 		WHERE email = $1
 	`
@@ -37,6 +37,7 @@ func (db *DataBase) GetUserByEmail(ctx context.Context, email string) (*entity.U
 		&assetImageID,
 		&dateOfBirth,
 		&phoneNumber,
+		&user.SubscriptionStatus,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -75,7 +76,7 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 	// Note: There is a problem with nullable uint. So we need a crutch here.
 
 	query := `
-		SELECT user_id, email, username, password_hash, asset_image_id, date_of_birth, phone_number
+		SELECT user_id, email, username, password_hash, asset_image_id, date_of_birth, phone_number, subscription_status
 		FROM "user"
 		WHERE user_id = $1
 	`
@@ -88,6 +89,7 @@ func (db *DataBase) GetUserByID(ctx context.Context, userID uint) (*entity.User,
 		&assetImageID,
 		&dateOfBirth,
 		&phoneNumber,
+		&user.SubscriptionStatus,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -298,4 +300,97 @@ func (db *DataBase) UpdateUserPassword(ctx context.Context, userID uint, newHash
 	}
 
 	return nil
+}
+
+func (db *DataBase) UpdateUserSubscriptionStatus(ctx context.Context, userID uint, status string) error {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("UpdateUserSubscriptionStatus called",
+		log.ToInt("user_id", int(userID)),
+		log.ToString("status", status),
+	)
+
+	tx, err := db.conn.BeginTx(ctx, nil)
+	if err != nil {
+		log.Error("UpdateUserSubscriptionStatus: failed to begin transaction", log.ToError(err))
+		return err
+	}
+	defer func() {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil && rollbackErr != sql.ErrTxDone {
+			log.Error("UpdateUserSubscriptionStatus: tx rollback failed", log.ToError(rollbackErr))
+		}
+	}()
+
+	// Lock the user row for update
+	checkQuery := `
+		SELECT 1
+		FROM "user"
+		WHERE user_id = $1
+		FOR UPDATE
+	`
+	var tmp int
+	if err := tx.QueryRowContext(ctx, checkQuery, userID).Scan(&tmp); err != nil {
+		if err == sql.ErrNoRows {
+			log.Error("UpdateUserSubscriptionStatus: user not found", log.ToInt("user_id", int(userID)))
+			return entity.ErrUserNotFound
+		}
+		log.Error("UpdateUserSubscriptionStatus: failed to select for update", log.ToError(err))
+		return err
+	}
+
+	updateQuery := `
+		UPDATE "user"
+		SET subscription_status = $1,
+			updated_at = now()
+		WHERE user_id = $2
+	`
+	result, err := tx.ExecContext(ctx, updateQuery, status, userID)
+	if err != nil {
+		log.Error("UpdateUserSubscriptionStatus: failed to update subscription status", log.ToError(err))
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Error("UpdateUserSubscriptionStatus: failed to get rows affected", log.ToError(err))
+		return err
+	}
+	if rowsAffected == 0 {
+		log.Error("UpdateUserSubscriptionStatus: user not found", log.ToInt("user_id", int(userID)))
+		return entity.ErrUserNotFound
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Error("UpdateUserSubscriptionStatus: failed to commit transaction", log.ToError(err))
+		return err
+	}
+
+	return nil
+}
+
+func (db *DataBase) GetUserSubscriptionStatus(ctx context.Context, userID uint) (string, error) {
+	// Bind logger with request ID
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("GetUserSubscriptionStatus called",
+		log.ToInt("user_id", int(userID)),
+	)
+
+	var status string
+
+	query := `
+		SELECT subscription_status
+		FROM "user"
+		WHERE user_id = $1
+	`
+	row := db.conn.QueryRow(query, userID)
+	err := row.Scan(&status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Error("GetUserSubscriptionStatus: user not found", log.ToInt("user_id", int(userID)))
+			return "", entity.ErrUserNotFound
+		}
+		log.Error("GetUserSubscriptionStatus: failed to scan subscription status", log.ToError(err))
+		return "", err
+	}
+
+	return status, nil
 }

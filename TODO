@@ -1,4 +1,4 @@
-- Add domain metrics
+- Not just node exporter, but per service exporter
 - Ensure test coverage >60%. Now 25%
 - Add Golangci-lint
 - Search for another "TODO" comments

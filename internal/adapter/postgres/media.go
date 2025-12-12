@@ -220,23 +220,34 @@ func (db *DataBase) GetMediaTrailersKeys(ctx context.Context, media_id uint) ([]
 }
 
 // Get random media IDs for recommendations using RANDOM()
-func (db *DataBase) GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error) {
+func (db *DataBase) GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string, media_prefered_genres []uint) ([]uint, error) {
 	// Bind logger with request ID
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("GetMediaSortedByName called",
 		log.ToInt("limit", int(limit)),
 		log.ToInt("offset", int(offset)),
 		log.ToString("media_type", media_type),
+		log.ToAny("media_prefered_genres", media_prefered_genres),
 	)
 	var mediaIDs []uint
 	query := `
 		SELECT media_id
 		FROM media
 		WHERE media_type = $1
-		ORDER BY title
-		LIMIT $2 OFFSET $3
+		AND (
+				$4::int[] IS NULL
+				OR media_id IN (
+					SELECT mg.media_id
+					FROM media_genre mg
+					WHERE mg.genre_id = ANY($4::int[])
+					GROUP BY mg.media_id
+					HAVING COUNT(DISTINCT mg.genre_id) = cardinality($4::int[])
+				)
+			)
+		ORDER BY media_id
+		LIMIT $2 OFFSET $3;
 	`
-	rows, err := db.conn.Query(query, media_type, limit, offset)
+	rows, err := db.conn.Query(query, media_type, limit, offset, media_prefered_genres)
 	if err != nil {
 		log.Error("GetMediaSortedByName: failed to execute query", log.ToError(err))
 		return nil, err
@@ -374,4 +385,34 @@ func (db *DataBase) GetMediasByGenreID(ctx context.Context, limit uint, offset u
 		mediaIDs = append(mediaIDs, mediaID)
 	}
 	return mediaIDs, nil
+}
+
+func (db *DataBase) GetEpisodesByMediaID(ctx context.Context, media_id uint) ([]entity.Episode, error) {
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("GetEpisodesByMediaID called",
+		log.ToInt("media_id", int(media_id)),
+	)
+
+	var episodes []entity.Episode
+	query := `
+	SELECT episode_id, series_id, season_number, episode_number
+	FROM media_episode
+	WHERE series_id = $1
+	ORDER BY season_number, episode_number
+	`
+	rows, err := db.conn.Query(query, media_id)
+	if err != nil {
+		log.Error("GetEpisodesByMediaID: failed to execute query", log.ToError(err))
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var episode entity.Episode
+		if err := rows.Scan(&episode.EpisodeID, &episode.SeriesID, &episode.SeasonNumber, &episode.EpisodeNumber); err != nil {
+			log.Error("GetEpisodesByMediaID: failed to scan episode", log.ToError(err))
+			return nil, err
+		}
+		episodes = append(episodes, episode)
+	}
+	return episodes, nil
 }

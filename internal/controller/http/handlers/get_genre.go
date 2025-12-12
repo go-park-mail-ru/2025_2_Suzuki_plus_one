@@ -24,8 +24,6 @@ var (
 // Path parameters
 const (
 	PathParamGetGenreID = "genre_id"
-	QueryParamMediaLimit = "media_limit"
-	QueryParamMediaOffset = "media_offset"
 )
 
 // GetGenre handler
@@ -39,8 +37,6 @@ func (h *Handlers) GetGenre(w http.ResponseWriter, r *http.Request) {
 	input := dto.GetGenreInput{}
 	rp := NewRequestParams(log, r, &input)
 	rp.AddPath(PathParamGetGenreID, &input.GenreID)
-	rp.AddQuery(QueryParamMediaLimit, &input.MediaLimit)
-	rp.AddQuery(QueryParamMediaOffset, &input.MediaOffset)
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {

@@ -48,3 +48,10 @@ func NewMedia(
 	}
 	return m, nil
 }
+
+type Episode struct {
+	EpisodeID     uint `json:"episode_id"` // References Media.MediaID
+	SeriesID      uint `json:"series_id"`  // References Media.MediaID
+	SeasonNumber  int  `json:"season_number" validate:"min=1"`
+	EpisodeNumber int  `json:"episode_number" validate:"min=1"`
+}

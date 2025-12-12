@@ -68,12 +68,14 @@ func (uc *GetUserMeUseCase) Execute(ctx context.Context, input dto.GetUserMeInpu
 	log.Debug("Fetched user info", "user", log.ToAny("user", user))
 
 	output := dto.GetUserMeOutput{
-		ID:          user.ID,
-		Username:    user.Username,
-		Email:       user.Email,
-		DateOfBirth: dto.JSONDate{Time: user.DateOfBirth},
-		PhoneNumber: user.PhoneNumber,
+		ID:                 user.ID,
+		Username:           user.Username,
+		Email:              user.Email,
+		DateOfBirth:        dto.JSONDate{Time: user.DateOfBirth},
+		PhoneNumber:        user.PhoneNumber,
+		SubscriptionStatus: user.SubscriptionStatus,
 	}
+
 	// Get s3 key for user avatar
 	avatarKey, err := uc.userRepo.GetUserAvatarKey(ctx, user.ID)
 	if err != nil {

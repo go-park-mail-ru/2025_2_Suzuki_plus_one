@@ -14,17 +14,32 @@ type GetMediaUseCase struct {
 	mediaRepo        MediaRepository
 	actorRepo        ActorRepository
 	getObjectUseCase *GetObjectUseCase
+	likeRepo         LikeRepository
 }
 
 func NewGetMediaUseCase(
 	logger logger.Logger,
 	mediaRepo MediaRepository,
 	getObjectUseCase *GetObjectUseCase,
+	likeRepo LikeRepository,
 ) *GetMediaUseCase {
+	if logger == nil {
+		panic("logger is nil")
+	}
+	if mediaRepo == nil {
+		panic("mediaRepo is nil")
+	}
+	if getObjectUseCase == nil {
+		panic("getObjectUseCase is nil")
+	}
+	if likeRepo == nil {
+		panic("likeRepo is nil")
+	}
 	return &GetMediaUseCase{
 		logger:           logger,
 		mediaRepo:        mediaRepo,
 		getObjectUseCase: getObjectUseCase,
+		likeRepo:         likeRepo,
 	}
 }
 
@@ -124,5 +139,26 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 		trailersLinks = append(trailersLinks, object.URL)
 	}
 
-	return dto.GetMediaOutput{Media: *media, Genres: genresDTO, Posters: postersLinks, Trailers: trailersLinks}, nil
+	// Get media rating
+	likes, dislikes, err := uc.likeRepo.GetMediaLikesDislikesCount(ctx, media.MediaID)
+	if err != nil {
+		derr := dto.NewError(
+			"usecase/get_media",
+			err,
+			"Failed to get media likes and dislikes count",
+		)
+		log.Error("Failed to get media likes and dislikes count", log.ToError(err))
+		return dto.GetMediaOutput{}, &derr
+	}
+
+	return dto.GetMediaOutput{
+		Media:    *media,
+		Genres:   genresDTO,
+		Posters:  postersLinks,
+		Trailers: trailersLinks,
+		Rating: dto.MediaRating{
+			Likes:    likes,
+			Dislikes: dislikes,
+		},
+	}, nil
 }

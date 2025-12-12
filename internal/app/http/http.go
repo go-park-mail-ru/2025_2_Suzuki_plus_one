@@ -1,7 +1,9 @@
 package http
 
 import (
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/aws"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/redis"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/yookassa"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/app"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
@@ -22,6 +24,7 @@ import (
 
 // Minio
 var _ uc.ObjectRepository = &minio.Minio{}
+var _ uc.ObjectRepository = &aws.AWSS3{}
 
 // Postgres
 var _ uc.MediaRepository = &db.DataBase{}
@@ -43,13 +46,16 @@ var _ uc.ServiceAuthRepository = &grpc_auth.AuthService{}
 // Search service
 var _ uc.ServiceSearchRepository = &grpc_search.SearchService{}
 
+// Payment
+var _ uc.PaymentRepository = &yookassa.Yookassa{}
+
 func Run(logger logger.Logger, config cfg.Config) {
 
 	// --- Connect to external services ---
 	// Create Postgres connection
-	dbURL := "postgres://" + config.POSTGRES_USER + ":" + config.POSTGRES_PASSWORD +
+	dbURL := "postgres://" + config.APP_DB_USER + ":" + config.APP_DB_PASSWORD +
 		"@" + config.POSTGRES_HOST + ":" + "5432" + "/" + config.POSTGRES_DB + "?sslmode=disable"
-	var databaseAdapter app.DatabaseRepository = db.NewDataBase(logger, dbURL)
+	var databaseAdapter app.DatabaseRepository = db.NewDataBase(logger, dbURL, config.DB_POOL_MAX_OPEN, config.DB_POOL_MAX_IDLE, config.DB_POOL_CONN_MAX_LIFETIME_MIN)
 	err := databaseAdapter.Connect()
 	if err != nil {
 		logger.Fatal("Failed to connect to database: " + err.Error())
@@ -70,24 +76,17 @@ func Run(logger logger.Logger, config cfg.Config) {
 	// Create s3 connection
 	var s3 app.S3
 
-	// URL for media files will be like http(s)://POPFILMS_SERVICE_HTTP_FRONTEND_URL/bucketName/objectName
-	minioServePrefix := config.SERVICE_HTTP_FRONTEND_URL
-	// must not end with /
-	if minioServePrefix[len(minioServePrefix)-1] == '/' {
-		minioServePrefix = minioServePrefix[:len(minioServePrefix)-1]
-	}
-	s3, err = minio.NewMinio(
-		logger,
-		config.MINIO_INTERNAL_HOST,
-		config.MINIO_EXTERNAL_HOST,
-		config.MINIO_ROOT_USER,
-		config.MINIO_ROOT_PASSWORD,
-		false,
-	)
+	// AWS S3 required env variables:
+	// - AWS_ACCESS_KEY_ID
+	// - AWS_SECRET_ACCESS_KEY
+	// - AWS_REGION
+	// - AWS_S3_ENDPOINT
+	logger.Info("Connecting to AWS S3")
+	s3, err = aws.NewAWSS3(logger, config.AWS_S3_PUBLIC_URL)
 	if err != nil {
-		logger.Fatal("Failed to connect to Minio: " + err.Error())
+		logger.Fatal("Failed to connect to AWS S3: " + err.Error())
 	}
-	logger.Info("Minio connection established")
+	logger.Info("AWS S3 connection established")
 
 	// Connect Auth gRPC service
 	var authService app.Service
@@ -176,14 +175,25 @@ func Run(logger logger.Logger, config cfg.Config) {
 		logger.Fatal("gRPC Search service can't be converted to SearchService")
 	}
 
+	// Create Payment repository
+	paymentRepository, err := yookassa.NewYookassa(
+		logger,
+		config.YOOKASSA_SHOP_ID,
+		config.YOOKASSA_SECRET_KEY,
+		config.YOOKASSA_RETURN_URL,
+	)
+	if err != nil {
+		logger.Fatal("Failed to create Yookassa repository: " + err.Error())
+	}
+
 	// --- Create usecase level ---
 
 	// Reusable usecases
 	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
-	getMediaUseCase := uc.NewGetMediaUseCase(logger, mediaRepository, getObjectUseCase)
+	getMediaUseCase := uc.NewGetMediaUseCase(logger, mediaRepository, getObjectUseCase, likeRepository)
 	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, objectRepository)
 	getActorUseCase := uc.NewGetActorUseCase(logger, actorRepository, getObjectUseCase)
-	getGenreUseCase := uc.NewGetGenreUseCase(logger, genreRepository, mediaRepository, getMediaUseCase)
+	getGenreUseCase := uc.NewGetGenreUseCase(logger, genreRepository, mediaRepository)
 
 	// Inject usecases into handler
 	handler := handlers.NewHandlers(
@@ -199,7 +209,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 		getUserUseCase,
 		getActorUseCase,
 		getMediaUseCase,
-		uc.NewGetMediaWatchUseCase(logger, mediaRepository, getObjectUseCase),
+		uc.NewGetMediaWatchUseCase(logger, mediaRepository, getObjectUseCase, userRepository),
 		uc.NewPostUserMeUpdateUseCase(logger, userRepository, getUserUseCase),
 		uc.NewPostUserMeUpdateAvatarUseCase(logger, userRepository, objectRepository, assetRepository),
 		uc.NewGetActorMediaUseCase(logger, actorRepository, getMediaUseCase),
@@ -208,9 +218,9 @@ func Run(logger logger.Logger, config cfg.Config) {
 
 		// Appeal usecases
 		uc.NewGetAppealMyUseCase(logger, appealRepository),
-		uc.NewPostAppealNewUseCase(logger, appealRepository),    //done
-		uc.NewGetAppealUseCase(logger, appealRepository),        //done
-		uc.NewPutAppealResolveUseCase(logger, appealRepository), //done
+		uc.NewPostAppealNewUseCase(logger, appealRepository),
+		uc.NewGetAppealUseCase(logger, appealRepository),
+		uc.NewPutAppealResolveUseCase(logger, appealRepository),
 		// ----
 		uc.NewPostAppealMessageUseCase(logger, appealRepository),
 		uc.NewGetAppealMessageUseCase(logger, appealRepository),
@@ -225,6 +235,12 @@ func Run(logger logger.Logger, config cfg.Config) {
 		// Genre usecases
 		getGenreUseCase,
 		uc.NewGetGenreAllUseCase(logger, genreRepository, getGenreUseCase),
+		uc.NewGetGenreMediaUseCase(logger, mediaRepository, getMediaUseCase),
+		// Episodes usecase
+		uc.NewGetMediaEpisodesUseCase(logger, mediaRepository, getMediaUseCase),
+		// Payment usecases
+		uc.NewPostPaymentCompletedUsecase(logger, userRepository, paymentRepository),
+		uc.NewPostPaymentNewUsecase(logger, paymentRepository),
 	)
 
 	// Initialize JWT middleware engine

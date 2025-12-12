@@ -22,6 +22,8 @@ tags:
     description: User appeals and feedback endpoints
   - name: user
     description: User profile management endpoints
+  - name: payment
+    description: Payment processing endpoints
 paths:
   # auth.yaml
   /auth/refresh:
@@ -42,12 +44,15 @@ paths:
     $ref: "./paths/media.yaml#/recommendations"
   /media/{media_id}:
     $ref: "./paths/media.yaml#/certain"
+  /media/{media_id}/episodes:
+    $ref: "./paths/media.yaml#/media_episodes"
   /media/watch:
     $ref: "./paths/media.yaml#/watch"
   /media/{media_id}/actor:
     $ref: "./paths/media.yaml#/actor"
   /media/{media_id}/like:
     $ref: "./paths/media.yaml#/like"
+
   # user.yaml
   /user/me:
     $ref: "./paths/user.yaml#/me"
@@ -78,11 +83,19 @@ paths:
   # genre.yaml
   /genre/{genre_id}:
     $ref: "./paths/genre.yaml#/certain"
+  /genre/{genre_id}/media:
+    $ref: "./paths/genre.yaml#/genre_media"
   /genre/all:
     $ref: "./paths/genre.yaml#/all"
   # search.yaml
   /search:
     $ref: "./paths/search.yaml#/.self"
+  # payment.yaml
+  /payment/new:
+    $ref: "./paths/payment.yaml#/new"
+  /payment/completed:
+    $ref: "./paths/payment.yaml#/completed"
+  
 
 components:
   securitySchemes:

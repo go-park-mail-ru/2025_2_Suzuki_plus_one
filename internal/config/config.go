@@ -5,6 +5,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -26,19 +27,29 @@ type Config struct {
 	ENVIRONMENT                         string
 
 	// Database
-	POSTGRES_HOST     string
-	POSTGRES_USER     string
-	POSTGRES_PASSWORD string
-	POSTGRES_DB       string
+	POSTGRES_HOST   string
+	POSTGRES_DB     string
+	APP_DB_USER     string
+	APP_DB_PASSWORD string
+
+	DB_POOL_MAX_OPEN              int
+	DB_POOL_MAX_IDLE              int
+	DB_POOL_CONN_MAX_LIFETIME_MIN time.Duration
 
 	// Redis
 	REDIS_HOST string
 
-	// Minio
-	MINIO_INTERNAL_HOST string
-	MINIO_EXTERNAL_HOST string
-	MINIO_ROOT_USER     string
-	MINIO_ROOT_PASSWORD string
+	// AWS S3
+	AWS_ACCESS_KEY_ID     string
+	AWS_SECRET_ACCESS_KEY string
+	AWS_REGION            string
+	AWS_S3_ENDPOINT       string
+	AWS_S3_PUBLIC_URL     string
+
+	// Payment
+	YOOKASSA_SHOP_ID    string
+	YOOKASSA_SECRET_KEY string
+	YOOKASSA_RETURN_URL string
 
 	// Services
 
@@ -65,19 +76,30 @@ func Load() Config {
 		ENVIRONMENT:                         getEnv("POPFILMS_ENVIRONMENT", "development"),
 
 		// Database
-		POSTGRES_HOST:     mustEnv("POSTGRES_HOST"),
-		POSTGRES_USER:     mustEnv("POSTGRES_USER"),
-		POSTGRES_PASSWORD: mustEnv("POSTGRES_PASSWORD"),
-		POSTGRES_DB:       mustEnv("POSTGRES_DB"),
+		POSTGRES_HOST:   mustEnv("POSTGRES_HOST"),
+		POSTGRES_DB:     mustEnv("POSTGRES_DB"),
+		APP_DB_USER:     mustEnv("APP_DB_USER"),
+		APP_DB_PASSWORD: mustEnv("APP_DB_PASSWORD"),
+
+		// Database connection pool settings
+		DB_POOL_MAX_OPEN:              parseInt(getEnv("DB_POOL_MAX_OPEN", "5")),
+		DB_POOL_MAX_IDLE:              parseInt(getEnv("DB_POOL_MAX_IDLE", "2")),
+		DB_POOL_CONN_MAX_LIFETIME_MIN: parseDuration(getEnv("DB_POOL_CONN_MAX_LIFETIME", "30m")),
 
 		// Redis
 		REDIS_HOST: mustEnv("REDIS_HOST"),
 
-		// Minio
-		MINIO_INTERNAL_HOST: mustEnv("MINIO_INTERNAL_HOST"),
-		MINIO_EXTERNAL_HOST: mustEnv("MINIO_EXTERNAL_HOST"),
-		MINIO_ROOT_USER:     mustEnv("MINIO_ROOT_USER"),
-		MINIO_ROOT_PASSWORD: mustEnv("MINIO_ROOT_PASSWORD"),
+		// AWS S3
+		AWS_S3_PUBLIC_URL:     mustEnv("AWS_S3_EXTERNAL_HOST"), // custom env var for public URL
+		AWS_ACCESS_KEY_ID:     mustEnv("AWS_ACCESS_KEY_ID"),
+		AWS_SECRET_ACCESS_KEY: mustEnv("AWS_SECRET_ACCESS_KEY"),
+		AWS_REGION:            mustEnv("AWS_DEFAULT_REGION"),
+		AWS_S3_ENDPOINT:       mustEnv("AWS_ENDPOINT_URL"),
+
+		// Payment
+		YOOKASSA_SHOP_ID:    mustEnv("YOOKASSA_SHOP_ID"),
+		YOOKASSA_SECRET_KEY: mustEnv("YOOKASSA_SECRET_KEY"),
+		YOOKASSA_RETURN_URL: mustEnv("YOOKASSA_RETURN_URL"),
 
 		// Services
 
@@ -134,4 +156,13 @@ func trimTrailingSlash(s string) string {
 		return s[:len(s)-1]
 	}
 	return s
+}
+
+// parseInt converts a string to int, logs fatal if conversion fails.
+func parseInt(value string) int {
+	i, err := strconv.Atoi(value)
+	if err != nil {
+		log.Fatalf("Invalid int value %q: %v", value, err)
+	}
+	return i
 }

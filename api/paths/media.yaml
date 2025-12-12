@@ -16,6 +16,15 @@ recommendations:
           type: string
           enum: [movie, series]
       - in: query
+        name: genre_ids
+        required: false
+        description: "Genre filter for recommendations"
+        schema:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+      - in: query
         name: limit
         required: false
         description: "Number of recommended media to retrieve"
@@ -267,6 +276,38 @@ my:
                   type: array
                   items:
                     $ref: "../schemas/media.yaml#/MediaResponse"
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/error.yaml#/ErrorResponse"
+
+media_episodes:
+  get:
+    tags:
+      - content
+    summary: Get episodes of a specific media
+    description: Retrieve a list of episodes associated with a media given its ID
+    parameters:
+      - in: path
+        name: media_id
+        required: true
+        schema:
+          type: string
+        description: The unique identifier of the media
+    responses:
+      "200":
+        description: Episodes of the media retrieved successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                episodes:
+                  type: array
+                  items:
+                    $ref: "../schemas/media.yaml#/MediaEpisodeResponse"
       "400":
         description: Bad request
         content:

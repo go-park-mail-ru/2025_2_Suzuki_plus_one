@@ -110,7 +110,7 @@ func (db *DataBase) GetAppealMessagesIDsByAppealID(ctx context.Context, appealID
 	query := `
 		SELECT user_appeal_message_id FROM user_appeal_message
 		WHERE user_appeal_id = $1
-		ORDER BY created_at ASC
+		ORDER BY created_at DESC
 	`
 	rows, err := db.conn.QueryContext(ctx, query, appealID)
 	if err != nil {
@@ -143,7 +143,7 @@ func (db *DataBase) GetAppealMessagesByID(ctx context.Context, appealID uint) ([
 		SELECT user_appeal_message_id, is_response, message_content, created_at
 		FROM user_appeal_message
 		WHERE user_appeal_id = $1
-		ORDER BY created_at ASC
+		ORDER BY created_at DESC
 	`
 
 	rows, err := db.conn.QueryContext(ctx, query, appealID)

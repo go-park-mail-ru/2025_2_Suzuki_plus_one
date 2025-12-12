@@ -123,4 +123,20 @@ type (
 	GetGenreAllUseCase interface {
 		Execute(context.Context, dto.GetGenreAllInput) (dto.GetGenreAllOutput, *dto.Error)
 	}
+
+	GetGenreMediaUseCase interface {
+		Execute(context.Context, dto.GetGenreMediaInput) (dto.GetGenreMediaOutput, *dto.Error)
+	}
+
+	GetMediaEpisodesUseCase interface {
+		Execute(context.Context, dto.GetMediaEpisodesInput) (dto.GetMediaEpisodesOutput, *dto.Error)
+	}
+
+	PostPaymentCompletedUseCase interface {
+		Execute(context.Context, dto.PostPaymentCompletedInput) (dto.PostPaymentCompletedOutput, *dto.Error)
+	}
+
+	PostPaymentNewUseCase interface {
+		Execute(context.Context, dto.PostPaymentNewInput) (dto.PostPaymentNewOutput, *dto.Error)
+	}
 )

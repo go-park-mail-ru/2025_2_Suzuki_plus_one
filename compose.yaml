@@ -4,8 +4,8 @@ services:
     image: prom/prometheus:latest
     container_name: popfilms_prometheus
     volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
-      - ./prometheus-alerts.yaml:/etc/prometheus/prometheus-alerts.yml
+      - ./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/prometheus-alerts.yaml:/etc/prometheus/prometheus-alerts.yml
     ports:
       - "9090:9090"
     networks:
@@ -21,8 +21,79 @@ services:
       - app-network
     ports:
       - "9093:9093"
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
     volumes:
-      - ./alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
+      - ./monitoring/alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yml
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - app-network
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: popfilms_blackbox
+    ports:
+      - "9115:9115"
+    networks:
+      - app-network
+    volumes:
+      - ./monitoring/blackbox/blackbox.yaml:/etc/blackbox_exporter/config.yml
+    command:
+      - "--config.file=/etc/blackbox_exporter/config.yml"
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    container_name: popfilms_postgres_exporter
+    environment:
+      # DSN до твоей БД под exporter-пользователем
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_EXPORTER_USER}:${POSTGRES_EXPORTER_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+    # порт наружу можно не открывать, Prometheus в той же сети
+    # ports:
+    #   - "9187:9187"
+
+  ### Logging ###
+  loki:
+    image: grafana/loki:latest
+    container_name: popfilms_loki
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      - ./monitoring/loki/loki.yaml:/etc/loki/config.yaml
+      - loki_data:/loki
+    ports:
+      - "3100:3100"
+    networks:
+      - app-network
+    depends_on:
+      - backend-http
+
+  alloy:
+    image: grafana/alloy:latest
+    container_name: alloy
+    command:
+      [
+        "run",
+        "/etc/alloy/alloy-config.alloy",
+        "--server.http.listen-addr=0.0.0.0:1111",
+      ]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./monitoring/alloy/config.alloy:/etc/alloy/alloy-config.alloy
+    depends_on:
+      - loki
+    networks:
+      - app-network
+    ports:
+      - "1111:1111"
 
   grafana:
     image: grafana/grafana-oss:latest
@@ -36,16 +107,39 @@ services:
       - app-network
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./grafana/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/dashboard-files:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/dashboard-files:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini
     env_file:
-      - .env
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-    ports:
-      - "9100:9100"
+      - ${POPFILMS_ENV_FILE}
+
+  pgbadger:
+    image: dalibo/pgbadger
+    container_name: popfilms_pgbadger
+    depends_on:
+      - db
+    volumes:
+      - db_data:/var/lib/postgresql/data:ro
+      - ./build:/data
+    # read all log files contained in the log directory
+    # combine them into a single report named pgbadger.html
+    # command: ["pgbadger", "/var/log/postgresql/popfilms-*"]
+    command:
+      [
+        "-f",
+        "stderr",
+        "/var/lib/postgresql/data/log/postgresql.log",
+        "-O",
+        "/data",
+        "-o",
+        "pgbadger.html",
+        "--prefix",
+        "%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h ",
+      ]
+    # environment:
+    # PGBADGER_PREFIX: "%t [%p-%l] user=%u,db=%d "
+    # PGBADGER_DATA: "/data"
     networks:
       - app-network
 
@@ -55,6 +149,7 @@ services:
     container_name: popfilms_db
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./postgres.conf:/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -66,19 +161,22 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - app-network
-  minio:
-    image: minio/minio:latest
-    container_name: popfilms_minio
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data
-    ports:
-      - "9000:9000" # S3 API
-    networks:
-      - app-network
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+
+  # minio:
+  #   image: minio/minio:latest
+  #   container_name: popfilms_minio
+  #   environment:
+  #     MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+  #     MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+  #   command: server /data --console-address ":9001"
+  #   volumes:
+  #     - minio_data:/data
+  #     - ./testdata/minio:/testdata
+  #   ports:
+  #     - "9000:9000"
+  #   networks:
+  #     - app-network
   redis:
     image: redis:alpine
     container_name: popfilms_redis
@@ -92,16 +190,14 @@ services:
     container_name: popfilms_backend-http
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
     env_file:
+      - ${POPFILMS_ENV_FILE}
       # - "./configs/http.env"
-      - .env
     ports:
       - "8080:8080"
       - "8880:8880"
     depends_on:
       db:
         condition: service_healthy
-      minio:
-        condition: service_started
       redis:
         condition: service_started
     networks:
@@ -111,15 +207,13 @@ services:
     container_name: popfilms_backend-auth
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
     env_file:
-      - .env
+      - ${POPFILMS_ENV_FILE}
     ports:
       - "8082:8082"
       - "8882:8882"
     depends_on:
       db:
         condition: service_healthy
-      minio:
-        condition: service_started
       redis:
         condition: service_started
     networks:
@@ -129,15 +223,13 @@ services:
     container_name: popfilms_backend-search
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
     env_file:
-      - .env
+      - ${POPFILMS_ENV_FILE}
     ports:
       - "8083:8083"
       - "8883:8883"
     depends_on:
       db:
         condition: service_healthy
-      minio:
-        condition: service_started
       redis:
         condition: service_started
     networks:
@@ -145,9 +237,9 @@ services:
     entrypoint: ["./search"]
 volumes:
   db_data:
-  minio_data:
   redis_data:
   grafana_data:
+  loki_data:
 
 networks:
   app-network:

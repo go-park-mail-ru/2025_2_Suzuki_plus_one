@@ -9,9 +9,6 @@ import (
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
-const GET_GENRE_ALL_LIMIT_MEDIA = 10
-const GET_GENRE_ALL_OFFSET_MEDIA = 0
-
 type GetGenreAllUseCase struct {
 	log             logger.Logger
 	genreRepo       GenreRepository
@@ -76,8 +73,6 @@ func (uc *GetGenreAllUseCase) Execute(
 	for _, genreID := range genreIDs {
 		genreOutput, derr := uc.getGenreUsecase.Execute(ctx, dto.GetGenreInput{
 			GenreID: genreID,
-			MediaLimit: GET_GENRE_ALL_LIMIT_MEDIA,
-			MediaOffset: GET_GENRE_ALL_OFFSET_MEDIA,
 		})
 		if derr != nil {
 			return dto.GetGenreAllOutput{}, derr

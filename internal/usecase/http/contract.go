@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
+	yoopayment "github.com/rvinnie/yookassa-sdk-go/yookassa/payment"
 )
 
 //go:generate mockgen -source=contract.go -destination=./mocks/contract_mock.go -package=mocks
@@ -25,13 +26,16 @@ type (
 		GetMediaWatchKey(ctx context.Context, media_id uint) (*entity.S3Key, error)
 
 		// Get random media IDs for recommendations
-		GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string) ([]uint, error)
+		GetMediaSortedByName(ctx context.Context, limit uint, offset uint, media_type string, media_prefered_genres []uint) ([]uint, error)
 
 		// Get media IDs by like status
 		GetMediaIDsByLikeStatus(ctx context.Context, userID uint, isDislike bool, limit uint, offset uint) ([]uint, error)
 
 		// Get media IDs related to specific genre ID
 		GetMediasByGenreID(ctx context.Context, limit uint, offset uint, genreID uint) ([]uint, error)
+
+		// Get episodes (medias with type episode) related to specific media ID (with type series)
+		GetEpisodesByMediaID(ctx context.Context, media_id uint) ([]entity.Episode, error)
 	}
 
 	GenreRepository interface {
@@ -49,6 +53,9 @@ type (
 		ToggleLike(ctx context.Context, userID uint, mediaID uint) (isDislike bool, err error)
 		// Delete
 		DeleteLike(ctx context.Context, userID uint, mediaID uint) error
+
+		// Get count of likes and dislikes for media
+		GetMediaLikesDislikesCount(ctx context.Context, mediaID uint) (likes uint, dislikes uint, err error)
 	}
 
 	ActorRepository interface {
@@ -67,6 +74,7 @@ type (
 		GetUserByID(ctx context.Context, userID uint) (*entity.User, error)
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		GetUserAvatarKey(ctx context.Context, userID uint) (*entity.S3Key, error)
+		GetUserSubscriptionStatus(ctx context.Context, userID uint) (string, error)
 
 		// Update
 		UpdateUser(ctx context.Context,
@@ -78,6 +86,7 @@ type (
 		) (*entity.User, error)
 		UpdateUserAvatarKey(ctx context.Context, userID uint, assetImageID uint) error
 		UpdateUserPassword(ctx context.Context, userID uint, newHashedPassword string) error
+		UpdateUserSubscriptionStatus(ctx context.Context, userID uint, status string) error
 	}
 
 	AppealRepository interface {
@@ -107,7 +116,7 @@ type (
 		GetAssetImageByID(ctx context.Context, assetImageID uint) (*entity.AssetImage, error)
 	}
 
-	// Minio
+	// S3
 	ObjectRepository interface {
 		GeneratePublicURL(ctx context.Context, bucketName string, objectName string) (*entity.URL, error)
 		GeneratePresignedURL(ctx context.Context, bucketName string, objectName string, expiration time.Duration) (*entity.URL, error)
@@ -136,5 +145,14 @@ type (
 	ServiceSearchRepository interface {
 		CallSearchMedia(ctx context.Context, query string, limit, offset uint) ([]uint, error)
 		CallSearchActors(ctx context.Context, query string, limit, offset uint) ([]uint, error)
+	}
+
+	// Payment gateway
+	PaymentRepository interface {
+		// Create payment and return payment ID
+		CreatePayment(ctx context.Context, userID uint, amount string, description string) (*yoopayment.Payment, error)
+
+		// Approve payment by payment
+		CapturePayment(ctx context.Context, payment *yoopayment.Payment) (*yoopayment.Payment, error)
 	}
 )

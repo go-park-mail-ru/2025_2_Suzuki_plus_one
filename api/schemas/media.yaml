@@ -77,6 +77,17 @@ MediaResponse:
         format: uri
       description: URLs to the movie trailer videos
       example: ["http://example.com/trailers/inception_trailer.mp4"]
+    user_rating:
+      type: object
+      properties:
+        likes:
+          type: integer
+          description: Number of likes
+          example: 100
+        dislikes:
+          type: integer
+          description: Number of dislikes
+          example: 1
 
 LikeResponse:
   type: object
@@ -91,3 +102,22 @@ LikeResponse:
       type: boolean
       description: Indicates whether the media is disliked by the user
       example: false
+
+
+MediaEpisodeResponse:
+  type: object
+  required:
+    - media
+    - episode_number
+    - season_number
+  properties:
+    media:
+      $ref: "./media.yaml#/MediaResponse"
+    episode_number:
+      type: integer
+      description: Episode number within the season
+      example: 1
+    season_number:
+      type: integer
+      description: Season number of the media
+      example: 1

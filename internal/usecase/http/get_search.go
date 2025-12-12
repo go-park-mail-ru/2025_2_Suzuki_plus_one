@@ -2,11 +2,14 @@ package http
 
 import (
 	"context"
+	"strings"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+
+	unidecode "github.com/mozillazg/go-unidecode"
 )
 
 type GetSearchUseCase struct {
@@ -58,18 +61,25 @@ func (uc *GetSearchUseCase) Execute(ctx context.Context, input dto.GetSearchInpu
 	}
 	log.Debug("Get object input parameters are valid", log.ToAny("input", input))
 
+	// Optional: collapse multiple spaces
+	query := strings.Join(strings.Fields(input.Query), " ")
+
+	// Transliterate query
+	query = unidecode.Unidecode(query)
+	log.Debug("Transliterated search query", log.ToString("original", input.Query), log.ToString("transliterated", query))
+
 	// Call Search service to get IDs
 	var media_ids []uint
 	var actor_ids []uint
 	var err error
 	switch input.Type {
 	case "media":
-		media_ids, err = uc.searchService.CallSearchMedia(ctx, input.Query, input.Limit, input.Offset)
+		media_ids, err = uc.searchService.CallSearchMedia(ctx, query, input.Limit, input.Offset)
 	case "actor":
-		actor_ids, err = uc.searchService.CallSearchActors(ctx, input.Query, input.Limit, input.Offset)
+		actor_ids, err = uc.searchService.CallSearchActors(ctx, query, input.Limit, input.Offset)
 	case "any":
-		media_ids, err = uc.searchService.CallSearchMedia(ctx, input.Query, input.Limit, input.Offset)
-		actor_ids, err = uc.searchService.CallSearchActors(ctx, input.Query, input.Limit, input.Offset)
+		media_ids, err = uc.searchService.CallSearchMedia(ctx, query, input.Limit, input.Offset)
+		actor_ids, err = uc.searchService.CallSearchActors(ctx, query, input.Limit, input.Offset)
 	default:
 		derr := dto.NewError(
 			"usecase/get_search",

@@ -1,0 +1,59 @@
+name: Ansible deploy
+
+on:
+  # push:
+  #   branches:
+  #     - deploy # or deploy, etc.
+  workflow_run: # To trigger it, it have to be in default branch
+    workflows: ["Docker publish"] # exact name of the first workflow
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ansible and collections
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible ansible-core community.general
+
+      - name: Create ansible.env with vault password and ssh key
+        working-directory: deployments
+        run: |
+          # Get vault password from GitHub Secrets
+          echo "VAULT_PASSWORD=${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ansible.env
+          chmod 600 ansible.env
+
+          # Get VAULT_PASSWORD and ANSIBLE_PRIVATE_KEY from ansible.env.vault
+          chmod +x vault_password.sh
+          ansible-vault view ansible.env.vault > ansible.env --vault-password-file ansible.env
+
+      - name: Decrypt the rest of ansible vault files
+        working-directory: deployments
+        run: |
+          # Decrypt ssh key
+          ansible-vault view ssh-key.pem.vault --vault-password-file=vault_password.sh > ssh-key.pem
+          # Make ssh-key.pem file only readable by user (required by ssh)
+          chmod 400 ssh-key.pem
+
+          # Decrypt prod.env
+          ansible-vault view prod.env.vault --vault-password-file=vault_password.sh > prod.env
+
+      - name: Run Ansible playbook to deploy backend
+        working-directory: deployments
+        run: |
+          ansible-playbook update-backend.yaml --vault-password-file=vault_password.sh
