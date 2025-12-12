@@ -1,9 +1,6 @@
 name: Ansible deploy
 
 on:
-  # push:
-  #   branches:
-  #     - deploy # or deploy, etc.
   workflow_run: # To trigger it, it have to be in default branch
     workflows: ["Docker publish"] # exact name of the first workflow
     types:
@@ -12,7 +9,7 @@ on:
 
 jobs:
   deploy:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.head_branch == 'deploy' || github.event.workflow_run.head_branch == 'main'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -48,7 +45,7 @@ jobs:
 
           # Get VAULT_PASSWORD and ANSIBLE_PRIVATE_KEY from ansible.env.vault
           chmod +x vault_password.sh
-          ansible-vault view ansible.env.vault > ansible.env --vault-password-file ansible.env
+          ansible-vault view ansible.env.vault > ansible.env --vault-password-file=vault_password.sh
 
       - name: Decrypt the rest of ansible vault files
         working-directory: deployments
