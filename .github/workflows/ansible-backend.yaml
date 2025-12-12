@@ -45,7 +45,8 @@ jobs:
 
           # Get VAULT_PASSWORD and ANSIBLE_PRIVATE_KEY from ansible.env.vault
           chmod +x vault_password.sh
-          ansible-vault view ansible.env.vault > ansible.env --vault-password-file=vault_password.sh
+          ansible-vault view ansible.env.vault --vault-password-file=vault_password.sh > ansible1.env
+          mv ansible1.env ansible.env
 
       - name: Decrypt the rest of ansible vault files
         working-directory: deployments
