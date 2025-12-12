@@ -240,7 +240,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 		uc.NewGetMediaEpisodesUseCase(logger, mediaRepository, getMediaUseCase),
 		// Payment usecases
 		uc.NewPostPaymentCompletedUsecase(logger, userRepository, paymentRepository),
-		uc.NewPostPaymentNewUsecase(logger, paymentRepository),
+		uc.NewPostPaymentNewUsecase(logger, paymentRepository, userRepository),
 	)
 
 	// Initialize JWT middleware engine
