@@ -44,6 +44,7 @@ func SetCors(frontendOrigin string) func(http.Handler) http.Handler {
 				// Allow cookies to be sent in cross-origin requests
 				// w.Header().Set("Access-Control-Allow-Credentials", "true") // Requires Allow-origin not '*'
 			}
+			w.Header().Set("Access-Control-Expose-Headers", "Location")
 			w.Header().Set("Access-Control-Allow-Credentials", "true") // Requires Allow-origin not '*'
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusNoContent)
