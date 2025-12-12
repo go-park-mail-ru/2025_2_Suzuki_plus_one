@@ -5,10 +5,11 @@ type GetUserMeInput struct {
 }
 
 type GetUserMeOutput struct {
-	ID          uint     `json:"id"`
-	Username    string   `json:"username"`
-	Email       string   `json:"email"`
-	DateOfBirth JSONDate `json:"date_of_birth"`
-	PhoneNumber string   `json:"phone_number"`
-	AvatarURL   string   `json:"avatar_url"`
+	ID                 uint     `json:"id"`
+	Username           string   `json:"username"`
+	Email              string   `json:"email"`
+	DateOfBirth        JSONDate `json:"date_of_birth"`
+	PhoneNumber        string   `json:"phone_number"`
+	AvatarURL          string   `json:"avatar_url"`
+	SubscriptionStatus string   `json:"subscription_status"`
 }
