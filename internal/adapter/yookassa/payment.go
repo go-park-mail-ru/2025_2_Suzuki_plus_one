@@ -33,7 +33,7 @@ func (yk *Yookassa) CreatePayment(ctx context.Context, userID uint, amount strin
 		},
 		Description:       description,
 		SavePaymentMethod: false,
-		Capture:           false,
+		Capture:           true,
 		// Metadata:           map[string]string{"user_id": strconv.Itoa(int(userID))},
 		MerchantCustomerID: strconv.Itoa(int(userID)),
 	})

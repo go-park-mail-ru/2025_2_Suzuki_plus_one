@@ -310,12 +310,41 @@ func (db *DataBase) UpdateUserSubscriptionStatus(ctx context.Context, userID uin
 		log.ToString("status", status),
 	)
 
-	query := `
+	tx, err := db.conn.BeginTx(ctx, nil)
+	if err != nil {
+		log.Error("UpdateUserSubscriptionStatus: failed to begin transaction", log.ToError(err))
+		return err
+	}
+	defer func() {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil && rollbackErr != sql.ErrTxDone {
+			log.Error("UpdateUserSubscriptionStatus: tx rollback failed", log.ToError(rollbackErr))
+		}
+	}()
+
+	// Lock the user row for update
+	checkQuery := `
+		SELECT 1
+		FROM "user"
+		WHERE user_id = $1
+		FOR UPDATE
+	`
+	var tmp int
+	if err := tx.QueryRowContext(ctx, checkQuery, userID).Scan(&tmp); err != nil {
+		if err == sql.ErrNoRows {
+			log.Error("UpdateUserSubscriptionStatus: user not found", log.ToInt("user_id", int(userID)))
+			return entity.ErrUserNotFound
+		}
+		log.Error("UpdateUserSubscriptionStatus: failed to select for update", log.ToError(err))
+		return err
+	}
+
+	updateQuery := `
 		UPDATE "user"
-		SET subscription_status = $1
+		SET subscription_status = $1,
+			updated_at = now()
 		WHERE user_id = $2
 	`
-	result, err := db.conn.Exec(query, status, userID)
+	result, err := tx.ExecContext(ctx, updateQuery, status, userID)
 	if err != nil {
 		log.Error("UpdateUserSubscriptionStatus: failed to update subscription status", log.ToError(err))
 		return err
@@ -328,6 +357,11 @@ func (db *DataBase) UpdateUserSubscriptionStatus(ctx context.Context, userID uin
 	if rowsAffected == 0 {
 		log.Error("UpdateUserSubscriptionStatus: user not found", log.ToInt("user_id", int(userID)))
 		return entity.ErrUserNotFound
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Error("UpdateUserSubscriptionStatus: failed to commit transaction", log.ToError(err))
+		return err
 	}
 
 	return nil

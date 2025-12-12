@@ -17,11 +17,13 @@ const PRICE = "1.00" // TODO: remove hardcoded price
 type PostPaymentNewUsecase struct {
 	logger      logger.Logger
 	paymentRepo PaymentRepository
+	userRepo    UserRepository
 }
 
 func NewPostPaymentNewUsecase(
 	logger logger.Logger,
 	paymentRepo PaymentRepository,
+	userRepo UserRepository,
 ) *PostPaymentNewUsecase {
 	if logger == nil {
 		panic("NewPostPaymentNewUsecase: logger is nil")
@@ -29,9 +31,13 @@ func NewPostPaymentNewUsecase(
 	if paymentRepo == nil {
 		panic("NewPostPaymentNewUsecase: paymentRepo is nil")
 	}
+	if userRepo == nil {
+		panic("NewPostPaymentNewUsecase: userRepo is nil")
+	}
 	return &PostPaymentNewUsecase{
 		logger:      logger,
 		paymentRepo: paymentRepo,
+		userRepo:    userRepo,
 	}
 }
 
@@ -88,6 +94,17 @@ func (uc *PostPaymentNewUsecase) Execute(
 
 	log.Debug("Payment created successfully", log.ToString("paymentID", payment.ID))
 
+	err = uc.userRepo.UpdateUserSubscriptionStatus(ctx, uint(userID), "pending")
+	if err != nil {
+		derr := dto.NewError(
+			"usecase/post_payment_new",
+			entity.ErrPostPaymentNewAccessTokenInvalid,
+			"userRepo.UpdateUserSubscriptionStatus failed: "+err.Error(),
+		)
+		log.Error("Failed to update user subscription status", log.ToError(err))
+		return dto.PostPaymentNewOutput{}, &derr
+	}
+
 	// Extract confirmation URL from different possible types
 	var confirmationURLStr string
 	switch c := payment.Confirmation.(type) {
@@ -125,6 +142,6 @@ func (uc *PostPaymentNewUsecase) Execute(
 	// Return output DTO
 	return dto.PostPaymentNewOutput{
 		RedirectURL: confirmationURLStr,
-		PaymentID:       payment.ID,
+		PaymentID:   payment.ID,
 	}, nil
 }

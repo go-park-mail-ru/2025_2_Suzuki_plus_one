@@ -95,9 +95,8 @@ func (uc *PostPaymentCompletedUsecase) Execute(
 		log.Debug("User subscription pending status set",
 			log.ToInt("userID", userID),
 		)
-
 	case yoowebhook.EventPaymentSucceeded:
-		log.Debug("Processing payment succeeded event",
+		log.Info("Processing payment succeeded event",
 			log.ToString("paymentID", input.Webhook.Object.ID),
 		)
 		uc.userRepo.UpdateUserSubscriptionStatus(ctx, uint(userID), "active")
