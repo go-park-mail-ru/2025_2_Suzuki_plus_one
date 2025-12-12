@@ -124,7 +124,7 @@ func (uc *PostPaymentNewUsecase) Execute(
 
 	// Return output DTO
 	return dto.PostPaymentNewOutput{
-		ConfirmationURL: confirmationURLStr,
+		RedirectURL: confirmationURLStr,
 		PaymentID:       payment.ID,
 	}, nil
 }

@@ -13,8 +13,12 @@ new:
           schema:
             $ref: '../schemas/payment.yaml#/PaymentRequest'
     responses:
-      '303':
-        description: Payment created successfully, redirect to confirmation URL
+      '200':
+        description: Payment created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/payment.yaml#/PaymentResponse'
       '400':
         description: Bad request
         content:

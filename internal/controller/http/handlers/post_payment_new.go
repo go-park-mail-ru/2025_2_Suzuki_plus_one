@@ -17,7 +17,7 @@ var (
 		Message: errors.New("Invalid parameters for payment"),
 	}
 	ResponsePostPaymentNew = Response{
-		Code: http.StatusCreated,
+		Code: http.StatusOK,
 	}
 )
 
@@ -61,5 +61,6 @@ func (h *Handlers) PostPaymentNew(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with redirect to confirmation URL
-	http.Redirect(w, r, output.ConfirmationURL, http.StatusSeeOther)
+	// http.Redirect(w, r, output.RedirectURL, http.StatusSeeOther)
+	Respond(log, w, ResponsePostPaymentNew.Code, output)
 }

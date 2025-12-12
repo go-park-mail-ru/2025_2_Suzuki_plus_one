@@ -7,3 +7,8 @@ PaymentResponse:
     payment_id:
       type: string
       example: "pay_1234567890abcdef"
+    redirect_url:
+      type: string
+      example: "https://payment-gateway.com/redirect/pay_1234567890abcdef"
+  required:
+    - redirect_url
