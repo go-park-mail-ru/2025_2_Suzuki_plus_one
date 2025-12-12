@@ -49,6 +49,7 @@ func TestGetMediaRecommendationsUsecase(t *testing.T) {
 		logger,
 		mediaRepo,
 		NewGetObjectUseCase(logger, objectRepo),
+		NewMockLikeRepository(mockCtrl),
 	)
 	usecase := NewGetMediaRecommendationsUsecase(
 		logger,

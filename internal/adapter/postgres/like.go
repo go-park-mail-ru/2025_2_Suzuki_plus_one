@@ -47,7 +47,6 @@ func (db *DataBase) GetLike(ctx context.Context, userID uint, mediaID uint) (exi
 	return true, like, nil
 }
 
-
 func (db *DataBase) ToggleLike(ctx context.Context, userID uint, mediaID uint) (isDislike bool, err error) {
 	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("ToggleLike called",
@@ -101,4 +100,52 @@ func (db *DataBase) DeleteLike(ctx context.Context, userID uint, mediaID uint) e
 	)
 
 	return nil
+}
+
+func (db *DataBase) GetMediaLikesDislikesCount(ctx context.Context, mediaID uint) (likes uint, dislikes uint, err error) {
+	log := logger.LoggerWithKey(db.logger, ctx, common.ContextKeyRequestID)
+	log.Debug("GetMediaLikesDislikesCount called",
+		log.ToInt("media_id", int(mediaID)),
+	)
+
+	query := `
+	SELECT 
+		COUNT(CASE WHEN is_dislike = FALSE THEN 1 END) AS likes,
+		COUNT(CASE WHEN is_dislike = TRUE THEN 1 END) AS dislikes
+	FROM user_like_media
+	WHERE media_id = $1
+	GROUP BY media_id
+	`
+
+	var likesCount, dislikesCount sql.NullInt64
+	err = db.conn.QueryRow(query, mediaID).Scan(&likesCount, &dislikesCount)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Debug("No likes/dislikes found for media",
+				log.ToInt("media_id", int(mediaID)),
+			)
+			return 0, 0, nil
+		}
+		return 0, 0, err
+	}
+
+	if likesCount.Valid {
+		likes = uint(likesCount.Int64)
+	} else {
+		likes = 0
+	}
+
+	if dislikesCount.Valid {
+		dislikes = uint(dislikesCount.Int64)
+	} else {
+		dislikes = 0
+	}
+
+	log.Debug("Likes/Dislikes count retrieved",
+		log.ToInt("media_id", int(mediaID)),
+		log.ToAny("likes", likes),
+		log.ToAny("dislikes", dislikes),
+	)
+
+	return likes, dislikes, nil
 }

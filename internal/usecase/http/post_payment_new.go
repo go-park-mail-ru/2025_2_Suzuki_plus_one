@@ -95,7 +95,7 @@ func (uc *PostPaymentNewUsecase) Execute(
 		confirmationURLStr = c.ConfirmationURL
 	case yoopayment.Redirect:
 		confirmationURLStr = c.ConfirmationURL
-	case map[string]interface{}:
+	case map[string]any:
 		// try common JSON keys
 		if v, ok := c["confirmation_url"].(string); ok && v != "" {
 			confirmationURLStr = v

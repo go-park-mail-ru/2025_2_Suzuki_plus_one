@@ -53,6 +53,9 @@ type (
 		ToggleLike(ctx context.Context, userID uint, mediaID uint) (isDislike bool, err error)
 		// Delete
 		DeleteLike(ctx context.Context, userID uint, mediaID uint) error
+
+		// Get count of likes and dislikes for media
+		GetMediaLikesDislikesCount(ctx context.Context, mediaID uint) (likes uint, dislikes uint, err error)
 	}
 
 	ActorRepository interface {

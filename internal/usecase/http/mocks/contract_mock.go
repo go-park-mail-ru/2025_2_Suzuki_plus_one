@@ -15,6 +15,7 @@ import (
 	time "time"
 
 	entity "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
+	yoopayment "github.com/rvinnie/yookassa-sdk-go/yookassa/payment"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -300,6 +301,22 @@ func (mr *MockLikeRepositoryMockRecorder) GetLike(ctx, userID, mediaID any) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLike", reflect.TypeOf((*MockLikeRepository)(nil).GetLike), ctx, userID, mediaID)
 }
 
+// GetMediaLikesDislikesCount mocks base method.
+func (m *MockLikeRepository) GetMediaLikesDislikesCount(ctx context.Context, mediaID uint) (uint, uint, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMediaLikesDislikesCount", ctx, mediaID)
+	ret0, _ := ret[0].(uint)
+	ret1, _ := ret[1].(uint)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetMediaLikesDislikesCount indicates an expected call of GetMediaLikesDislikesCount.
+func (mr *MockLikeRepositoryMockRecorder) GetMediaLikesDislikesCount(ctx, mediaID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMediaLikesDislikesCount", reflect.TypeOf((*MockLikeRepository)(nil).GetMediaLikesDislikesCount), ctx, mediaID)
+}
+
 // ToggleLike mocks base method.
 func (m *MockLikeRepository) ToggleLike(ctx context.Context, userID, mediaID uint) (bool, error) {
 	m.ctrl.T.Helper()
@@ -483,6 +500,21 @@ func (mr *MockUserRepositoryMockRecorder) GetUserByID(ctx, userID any) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockUserRepository)(nil).GetUserByID), ctx, userID)
 }
 
+// GetUserSubscriptionStatus mocks base method.
+func (m *MockUserRepository) GetUserSubscriptionStatus(ctx context.Context, userID uint) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserSubscriptionStatus", ctx, userID)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSubscriptionStatus indicates an expected call of GetUserSubscriptionStatus.
+func (mr *MockUserRepositoryMockRecorder) GetUserSubscriptionStatus(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSubscriptionStatus", reflect.TypeOf((*MockUserRepository)(nil).GetUserSubscriptionStatus), ctx, userID)
+}
+
 // UpdateUser mocks base method.
 func (m *MockUserRepository) UpdateUser(ctx context.Context, userID uint, username, email string, dateOfBirth time.Time, phoneNumber string) (*entity.User, error) {
 	m.ctrl.T.Helper()
@@ -524,6 +556,20 @@ func (m *MockUserRepository) UpdateUserPassword(ctx context.Context, userID uint
 func (mr *MockUserRepositoryMockRecorder) UpdateUserPassword(ctx, userID, newHashedPassword any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserPassword", reflect.TypeOf((*MockUserRepository)(nil).UpdateUserPassword), ctx, userID, newHashedPassword)
+}
+
+// UpdateUserSubscriptionStatus mocks base method.
+func (m *MockUserRepository) UpdateUserSubscriptionStatus(ctx context.Context, userID uint, status string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserSubscriptionStatus", ctx, userID, status)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserSubscriptionStatus indicates an expected call of UpdateUserSubscriptionStatus.
+func (mr *MockUserRepositoryMockRecorder) UpdateUserSubscriptionStatus(ctx, userID, status any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserSubscriptionStatus", reflect.TypeOf((*MockUserRepository)(nil).UpdateUserSubscriptionStatus), ctx, userID, status)
 }
 
 // MockAppealRepository is a mock of AppealRepository interface.
@@ -1026,4 +1072,58 @@ func (m *MockServiceSearchRepository) CallSearchMedia(ctx context.Context, query
 func (mr *MockServiceSearchRepositoryMockRecorder) CallSearchMedia(ctx, query, limit, offset any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CallSearchMedia", reflect.TypeOf((*MockServiceSearchRepository)(nil).CallSearchMedia), ctx, query, limit, offset)
+}
+
+// MockPaymentRepository is a mock of PaymentRepository interface.
+type MockPaymentRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockPaymentRepositoryMockRecorder
+	isgomock struct{}
+}
+
+// MockPaymentRepositoryMockRecorder is the mock recorder for MockPaymentRepository.
+type MockPaymentRepositoryMockRecorder struct {
+	mock *MockPaymentRepository
+}
+
+// NewMockPaymentRepository creates a new mock instance.
+func NewMockPaymentRepository(ctrl *gomock.Controller) *MockPaymentRepository {
+	mock := &MockPaymentRepository{ctrl: ctrl}
+	mock.recorder = &MockPaymentRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPaymentRepository) EXPECT() *MockPaymentRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CapturePayment mocks base method.
+func (m *MockPaymentRepository) CapturePayment(ctx context.Context, payment *yoopayment.Payment) (*yoopayment.Payment, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CapturePayment", ctx, payment)
+	ret0, _ := ret[0].(*yoopayment.Payment)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CapturePayment indicates an expected call of CapturePayment.
+func (mr *MockPaymentRepositoryMockRecorder) CapturePayment(ctx, payment any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CapturePayment", reflect.TypeOf((*MockPaymentRepository)(nil).CapturePayment), ctx, payment)
+}
+
+// CreatePayment mocks base method.
+func (m *MockPaymentRepository) CreatePayment(ctx context.Context, userID uint, amount, description string) (*yoopayment.Payment, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreatePayment", ctx, userID, amount, description)
+	ret0, _ := ret[0].(*yoopayment.Payment)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreatePayment indicates an expected call of CreatePayment.
+func (mr *MockPaymentRepositoryMockRecorder) CreatePayment(ctx, userID, amount, description any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePayment", reflect.TypeOf((*MockPaymentRepository)(nil).CreatePayment), ctx, userID, amount, description)
 }

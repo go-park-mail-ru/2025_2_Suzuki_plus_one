@@ -77,6 +77,17 @@ MediaResponse:
         format: uri
       description: URLs to the movie trailer videos
       example: ["http://example.com/trailers/inception_trailer.mp4"]
+    user_rating:
+      type: object
+      properties:
+        likes:
+          type: integer
+          description: Number of likes
+          example: 100
+        dislikes:
+          type: integer
+          description: Number of dislikes
+          example: 1
 
 LikeResponse:
   type: object

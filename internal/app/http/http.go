@@ -190,7 +190,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 
 	// Reusable usecases
 	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
-	getMediaUseCase := uc.NewGetMediaUseCase(logger, mediaRepository, getObjectUseCase)
+	getMediaUseCase := uc.NewGetMediaUseCase(logger, mediaRepository, getObjectUseCase, likeRepository)
 	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, objectRepository)
 	getActorUseCase := uc.NewGetActorUseCase(logger, actorRepository, getObjectUseCase)
 	getGenreUseCase := uc.NewGetGenreUseCase(logger, genreRepository, mediaRepository)
