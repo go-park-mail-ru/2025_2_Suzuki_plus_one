@@ -164,6 +164,13 @@ like:
         schema:
           type: integer
         description: The unique identifier of the media to check
+      - in: query
+        name: is_dislike
+        required: true
+        description: Check for like or dislike status. If true, check for dislike; if false, check for like
+        schema:
+          type: boolean
+          default: false
     responses:
       "200":
         description: Like status retrieved successfully
