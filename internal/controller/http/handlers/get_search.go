@@ -14,7 +14,7 @@ import (
 var (
 	ErrGetSearchInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for search"),
+		Message: errors.New("invalid parameters for search"),
 	}
 	ErrGetSearchNotFound = ResponseError{
 		Code: http.StatusBadRequest,

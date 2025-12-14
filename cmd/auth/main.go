@@ -13,13 +13,17 @@ func main() {
 
 	// Initialize logger
 	logger := logger.NewZapLogger(config.ENVIRONMENT == "development")
-	defer logger.Sync()
+	defer func() {
+		err := logger.Sync()
+		if err != nil {
+			logger.Error("Failed to sync logger", "error", err)
+		}
+	}()
 	logger.Info("Auth service: Config loaded")
 
 	// Run HTTP metrics service
 	go metrics.Serve(logger, config.SERVICE_AUTH_METRICS_SERVE_STRING)
 	logger.Info("Auth service: Metrics service started")
-
 
 	// Run gRPC auth service
 	auth.Run(logger, config)

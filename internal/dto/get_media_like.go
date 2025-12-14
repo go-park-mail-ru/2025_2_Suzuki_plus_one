@@ -6,6 +6,6 @@ type GetMediaLikeInput struct {
 }
 
 type GetMediaLikeOutput struct {
-	Liked bool `json:"liked"`
+	Liked     bool `json:"liked"`
 	IsDislike bool `json:"is_dislike"`
 }

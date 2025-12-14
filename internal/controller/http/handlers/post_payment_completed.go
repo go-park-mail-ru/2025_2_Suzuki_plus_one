@@ -15,7 +15,7 @@ import (
 var (
 	ErrPostPaymentCompletedInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for actor"),
+		Message: errors.New("invalid parameters for actor"),
 	}
 	ErrPostPaymentCompletedNotFound = ResponseError{
 		Code: http.StatusBadRequest,

@@ -28,7 +28,6 @@ func GetContext(r *http.Request) context.Context {
 	return ctx
 }
 
-
 func GetRequestIDFromContext(ctx context.Context) string {
 	if ctx == nil {
 		return "Context is nil"

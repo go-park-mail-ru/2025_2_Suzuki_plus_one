@@ -10,9 +10,9 @@ import (
 )
 
 type GetGenreUseCase struct {
-	log             logger.Logger
-	genreRepo       GenreRepository
-	mediaRepo       MediaRepository
+	log       logger.Logger
+	genreRepo GenreRepository
+	mediaRepo MediaRepository
 }
 
 func NewGetGenreUseCase(
@@ -31,9 +31,9 @@ func NewGetGenreUseCase(
 	}
 
 	return &GetGenreUseCase{
-		log:             log,
-		genreRepo:       genreRepo,
-		mediaRepo:       mediaRepo,
+		log:       log,
+		genreRepo: genreRepo,
+		mediaRepo: mediaRepo,
 	}
 }
 
@@ -80,7 +80,7 @@ func (uc *GetGenreUseCase) Execute(
 	}
 
 	output := dto.GetGenreOutput{
-		Genre:  *genre,
+		Genre: *genre,
 	}
 
 	return output, nil

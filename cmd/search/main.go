@@ -13,7 +13,7 @@ func main() {
 
 	// Initialize logger
 	logger := logger.NewZapLogger(config.ENVIRONMENT == "development")
-	defer logger.Sync()
+	defer func() { _ = logger.Sync() }()
 	logger.Info("Search service: Config loaded")
 
 	// Run HTTP metrics service

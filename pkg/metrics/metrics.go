@@ -9,10 +9,12 @@ import (
 
 func Serve(log logger.Logger, serveString string) {
 	http.Handle("/metrics", promhttp.Handler())
-	
+
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("ok"))
+		if _, err := w.Write([]byte("ok")); err != nil {
+			log.Error("Failed to write health response: "+err.Error())
+		}
 	})
 
 	log.Info("Metrics server is starting at " + serveString + "/metrics")

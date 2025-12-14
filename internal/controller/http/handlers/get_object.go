@@ -13,7 +13,7 @@ import (
 var (
 	ErrGetObjectMediaInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for media s3 object"),
+		Message: errors.New("invalid parameters for media s3 object"),
 	}
 	ResponseGetObjectMedia = Response{
 		Code: http.StatusOK,

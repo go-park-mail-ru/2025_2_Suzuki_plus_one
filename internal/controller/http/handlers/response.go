@@ -27,7 +27,9 @@ func Respond(l logger.Logger, w http.ResponseWriter, status int, data any) {
 	)
 
 	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(data)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		l.Error("Failed to encode response", l.ToError(err))
+	}
 }
 
 // Sends a JSON error ResponseError with overridden details
@@ -46,7 +48,9 @@ func RespondWithError(l logger.Logger, w http.ResponseWriter, err ResponseError,
 	)
 
 	w.WriteHeader(err.Code)
-	json.NewEncoder(w).Encode(dto)
+	if err := json.NewEncoder(w).Encode(dto); err != nil {
+		l.Error("Failed to encode error response", l.ToError(err))
+	}
 }
 
 // Sends a JSON error response using a dto.Error
@@ -59,5 +63,7 @@ func RespondWithDTOError(l logger.Logger, w http.ResponseWriter, err ResponseErr
 	)
 
 	w.WriteHeader(err.Code)
-	json.NewEncoder(w).Encode(dtoErr)
+	if err := json.NewEncoder(w).Encode(dtoErr); err != nil {
+		l.Error("Failed to encode dto error response", l.ToError(err))
+	}
 }

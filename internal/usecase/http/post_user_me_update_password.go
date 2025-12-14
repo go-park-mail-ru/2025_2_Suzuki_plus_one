@@ -10,8 +10,8 @@ import (
 )
 
 type PostUserMeUpdatePasswordUseCase struct {
-	logger      logger.Logger
-	userRepo    UserRepository
+	logger   logger.Logger
+	userRepo UserRepository
 }
 
 func NewPostUserMeUpdatePasswordUseCase(
@@ -19,8 +19,8 @@ func NewPostUserMeUpdatePasswordUseCase(
 	userRepo UserRepository,
 ) *PostUserMeUpdatePasswordUseCase {
 	return &PostUserMeUpdatePasswordUseCase{
-		logger:      logger,
-		userRepo:    userRepo,
+		logger:   logger,
+		userRepo: userRepo,
 	}
 }
 

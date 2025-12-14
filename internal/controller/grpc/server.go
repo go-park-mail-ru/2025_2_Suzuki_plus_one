@@ -19,7 +19,7 @@ func NewGRPCServer(log logger.Logger) *GRPCServer {
 		panic("logger is nil")
 	}
 	return &GRPCServer{
-		Log: log,
+		Log:        log,
 		Middleware: make([]grpc.UnaryServerInterceptor, 0),
 	}
 }

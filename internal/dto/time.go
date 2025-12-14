@@ -23,13 +23,12 @@ func (d *JSONDate) UnmarshalJSON(b []byte) error {
 }
 
 func (d JSONDate) MarshalJSON() ([]byte, error) {
-	return json.Marshal(d.Time.Format("2006-01-02"))
+	return json.Marshal(d.Format("2006-01-02"))
 }
 
 func (d JSONDate) GoString() string {
-	return d.Time.Format("2006-01-02")
+	return d.Format("2006-01-02")
 }
-
 
 type JSONDateTime struct {
 	time.Time
@@ -53,9 +52,9 @@ func (dt *JSONDateTime) UnmarshalJSON(b []byte) error {
 }
 
 func (dt JSONDateTime) MarshalJSON() ([]byte, error) {
-	return json.Marshal(dt.Time.Format("15:04 02.01.2006"))
+	return json.Marshal(dt.Format("15:04 02.01.2006"))
 }
 
 func (dt JSONDateTime) GoString() string {
-	return dt.Time.Format("15:04 02.01.2006")
+	return dt.Format("15:04 02.01.2006")
 }

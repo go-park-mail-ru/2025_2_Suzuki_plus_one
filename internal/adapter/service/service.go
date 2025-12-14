@@ -41,6 +41,8 @@ func (s *Service) Init() error {
 
 func (s *Service) Close() {
 	if s.Connection != nil {
-		s.Connection.Close()
+		if err := s.Connection.Close(); err != nil {
+			s.Logger.Error("Failed to close gRPC connection", s.Logger.ToError(err))
+		}
 	}
 }

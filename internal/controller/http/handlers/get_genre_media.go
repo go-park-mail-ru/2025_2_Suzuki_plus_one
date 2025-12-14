@@ -15,7 +15,7 @@ import (
 var (
 	ErrGetGenreMediaInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for genre"),
+		Message: errors.New("invalid parameters for genre"),
 	}
 	ErrGetGenreMediaNotFound = ResponseError{
 		Code: http.StatusBadRequest,

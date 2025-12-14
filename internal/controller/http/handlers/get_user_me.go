@@ -13,7 +13,7 @@ import (
 var (
 	ErrGetUserMeInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for getting user info"),
+		Message: errors.New("invalid parameters for getting user info"),
 	}
 	ResponseGetUserMe = Response{
 		Code: http.StatusOK,

@@ -44,7 +44,7 @@ func ValidateToken(tokenStr string) (uint, error) {
 	if TokenAuth == nil {
 		return 0, errors.New("JWT not initialized")
 	}
-	
+
 	token, err := TokenAuth.Decode(tokenStr)
 	if err != nil {
 		return 0, err

@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/service"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	logger "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	pb "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/proto/auth"
 	"google.golang.org/grpc/metadata"
-	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/adapter/service"
-
 )
 
 func (s *AuthService) CallLogin(ctx context.Context, email string, password string) (accessToken string, refreshToken string, err error) {
@@ -30,7 +29,7 @@ func (s *AuthService) CallLogin(ctx context.Context, email string, password stri
 		return "", "", err
 	}
 
-	if r.GetSuccess() == false {
+	if !r.GetSuccess() {
 		log.Warn("Login failed for email", log.ToString("email", email))
 		return "", "", fmt.Errorf("login failed")
 	}
@@ -57,7 +56,7 @@ func (s *AuthService) CallCreateUser(ctx context.Context, email string, username
 		return 0, "", "", err
 	}
 
-	if r.GetSuccess() == false {
+	if !r.GetSuccess() {
 		log.Warn("CreateUser failed for email", log.ToString("email", email))
 		return 0, "", "", fmt.Errorf("create user failed")
 	}
@@ -86,7 +85,7 @@ func (s *AuthService) CallLogout(ctx context.Context, refreshToken string, acces
 		return err
 	}
 
-	if r.GetSuccess() == false {
+	if !r.GetSuccess() {
 		log.Warn("Logout failed for refresh token", log.ToString("refresh_token", refreshToken))
 		return fmt.Errorf("logout failed")
 	}
@@ -113,7 +112,7 @@ func (s *AuthService) CallRefresh(ctx context.Context, refreshToken string) (new
 		return "", err
 	}
 
-	if r.GetSuccess() == false {
+	if !r.GetSuccess() {
 		log.Warn("RefreshToken failed for refresh token", log.ToString("refresh_token", refreshToken))
 		return "", fmt.Errorf("refresh token failed")
 	}

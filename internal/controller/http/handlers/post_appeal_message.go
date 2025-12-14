@@ -14,7 +14,7 @@ import (
 var (
 	ErrPostAppealMessageInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for actor"),
+		Message: errors.New("invalid parameters for actor"),
 	}
 	ResponsePostAppealMessage = Response{
 		Code: http.StatusOK,
@@ -41,7 +41,6 @@ func (h *Handlers) PostAppealMessage(w http.ResponseWriter, r *http.Request) {
 	rp.AddPath(PathParamGetAppealID, &input.AppealID)
 	// Add body parameter
 	rp.AddBody(BodyParamPostAppealMessageMessage, &input.Message)
-
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {

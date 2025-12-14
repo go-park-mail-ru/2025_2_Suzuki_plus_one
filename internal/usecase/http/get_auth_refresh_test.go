@@ -7,7 +7,6 @@ import (
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
-	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 	. "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/usecase/http/mocks"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/stretchr/testify/require"
@@ -21,18 +20,9 @@ func TestGetAuthRefreshUsecase(t *testing.T) {
 	common.InitJWT("secret", time.Hour, time.Hour*24*7)
 
 	userID := uint(1)
-	refreshTokens := make([]entity.RefreshToken, 1)
 	expiresAt := time.Hour
 	token, genErr := common.GenerateToken(uint(userID), expiresAt)
 	require.NoError(t, genErr)
-	refreshTokens = append(refreshTokens,
-		entity.RefreshToken{
-			ID:        1,
-			ExpiresAt: time.Now().Add(expiresAt),
-			UserID:    userID,
-			Token:     token,
-		},
-	)
 	mockAccessToken, err := common.GenerateToken(userID, common.AccessTokenTTL)
 	require.NoError(t, err)
 

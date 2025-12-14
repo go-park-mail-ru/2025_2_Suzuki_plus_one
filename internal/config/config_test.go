@@ -17,7 +17,7 @@ func TestLoadEnvExample(t *testing.T) {
 	// Open the .env file
 	file, err := os.Open(ENVFILE)
 	require.NoError(t, err, "Failed to open %s", ENVFILE)
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	// Create a map to store environment variables
 	envVars := make(map[string]string)

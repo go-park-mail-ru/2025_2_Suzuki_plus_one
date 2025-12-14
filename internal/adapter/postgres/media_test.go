@@ -16,7 +16,7 @@ func TestGetMediaCount(t *testing.T) {
 
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err, "failed to open sqlmock database")
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	lg := logpkg.NewZapLogger(true)
 
@@ -47,7 +47,7 @@ func TestGetMedia(t *testing.T) {
 
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err, "failed to open sqlmock database")
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	lg := logpkg.NewZapLogger(true)
 

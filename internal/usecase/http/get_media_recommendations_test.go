@@ -58,9 +58,9 @@ func TestGetMediaRecommendationsUsecase(t *testing.T) {
 	)
 	ctx := context.Background()
 	output, err := usecase.Execute(ctx, dto.GetMediaRecommendationsInput{
-		Limit:  uint(times),
-		Offset: 0,
-		Type:   "movie",
+		Limit:    uint(times),
+		Offset:   0,
+		Type:     "movie",
 		GenreIDs: []uint{1, 2},
 	})
 	var emptyErr *dto.Error

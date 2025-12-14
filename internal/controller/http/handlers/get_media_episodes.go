@@ -15,7 +15,7 @@ import (
 var (
 	ErrGetMediaEpisodesInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for episodes"),
+		Message: errors.New("invalid parameters for episodes"),
 	}
 	ErrGetMediaEpisodesNotFound = ResponseError{
 		Code: http.StatusBadRequest,

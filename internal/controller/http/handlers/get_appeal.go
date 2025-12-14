@@ -14,7 +14,7 @@ import (
 var (
 	ErrGetAppealInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for actor"),
+		Message: errors.New("invalid parameters for appeal"),
 	}
 	ResponseGetAppeal = Response{
 		Code: http.StatusOK,
@@ -62,7 +62,7 @@ func (h *Handlers) GetAppeal(w http.ResponseWriter, r *http.Request) {
 	// Log successful completion
 	log.Debug(
 		"Fetching appeals details completed successfully",
-		log.ToInt("ID: ", int(output.Appeal.ID)),
+		log.ToInt("ID", int(output.ID)),
 	)
 
 	// Respond with output

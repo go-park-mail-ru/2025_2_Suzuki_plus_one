@@ -14,7 +14,7 @@ import (
 var (
 	ErrGetMediaWatchInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for media fetching"),
+		Message: errors.New("invalid parameters for media fetching"),
 	}
 	ResponseGetMediaWatch = Response{
 		Code: http.StatusOK,

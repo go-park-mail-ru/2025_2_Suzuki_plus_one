@@ -12,7 +12,7 @@ import (
 
 var _ pb.SearchServiceServer = (*SearchServer)(nil)
 
-var searchMediaError = fmt.Errorf("search media error")
+var ErrSearchMedia = fmt.Errorf("search media error")
 
 func (s *SearchServer) SearchMedia(ctx context.Context, req *pb.SearchMediaRequest) (*pb.SearchMediaResponse, error) {
 	// Register log with request ID
@@ -28,7 +28,7 @@ func (s *SearchServer) SearchMedia(ctx context.Context, req *pb.SearchMediaReque
 	output, errDto := s.searchMediaUsecase.Execute(ctx, input)
 	if errDto != nil {
 		log.Error("SearchMedia usecase error: ", errDto)
-		return nil, searchMediaError
+		return nil, ErrSearchMedia
 	}
 
 	pbOutputs := &pb.SearchMediaResponse{}
@@ -37,7 +37,7 @@ func (s *SearchServer) SearchMedia(ctx context.Context, req *pb.SearchMediaReque
 	medias := output.Medias
 	for _, media := range medias {
 		pbOutput := &pb.Media{
-			Id:          int64(media.MediaID),
+			Id: int64(media.MediaID),
 		}
 		pbOutputs.Medias = append(pbOutputs.Medias, pbOutput)
 	}
@@ -67,7 +67,7 @@ func (s *SearchServer) SearchActor(ctx context.Context, req *pb.SearchActorReque
 	actors := outputs.Actors
 	for _, actor := range actors {
 		pbOutput := &pb.Actor{
-			Id:          int64(actor.ID),
+			Id: int64(actor.ID),
 		}
 		pbOutputs.Actors = append(pbOutputs.Actors, pbOutput)
 	}

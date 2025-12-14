@@ -17,7 +17,7 @@ type Yookassa struct {
 	logger      logger.Logger
 	Client      *yookassa.Client
 	redirectURL string
-	Handlers map[string]*yookassa.PaymentHandler
+	Handlers    map[string]*yookassa.PaymentHandler
 }
 
 func NewYookassa(logger logger.Logger, shopID, secretKey, redirectURL string) (*Yookassa, error) {

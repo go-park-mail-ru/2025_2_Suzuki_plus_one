@@ -37,7 +37,11 @@ func (db *DataBase) SearchMedia(ctx context.Context, query string, limit, offset
 		log.Error("SearchMedia query failed", log.ToError(err))
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("SearchMedia: failed to close rows", log.ToError(cerr))
+		}
+	}()
 
 	var mediaIDs []uint
 	for rows.Next() {
@@ -87,7 +91,11 @@ func (db *DataBase) SearchActor(ctx context.Context, query string, limit, offset
 		log.Error("SearchActor query failed", log.ToError(err))
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("SearchActor: failed to close rows", log.ToError(cerr))
+		}
+	}()
 
 	var actorIDs []uint
 	for rows.Next() {

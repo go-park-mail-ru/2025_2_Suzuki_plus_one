@@ -5,9 +5,8 @@ import (
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
-	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
-
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
 type RefreshUseCase struct {
@@ -29,7 +28,7 @@ func (uc *RefreshUseCase) Execute(ctx context.Context, input dto.GetAuthRefreshI
 	log := logger.LoggerWithKey(uc.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("auth/usecase/get_auth_refresh: called")
 
-	// 1. Validation 
+	// 1. Validation
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(
@@ -98,6 +97,6 @@ func (uc *RefreshUseCase) Execute(ctx context.Context, input dto.GetAuthRefreshI
 	}
 
 	return dto.GetAuthRefreshOutput{
-		AccessToken:  accessToken,
+		AccessToken: accessToken,
 	}, nil
 }

@@ -54,7 +54,11 @@ func (db *DataBase) GetActorImageS3(ctx context.Context, actorID uint) ([]entity
 		log.Error("Failed to query actor images: " + err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetActorImageS3: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var url string
 		if err := rows.Scan(&url); err != nil {
@@ -92,7 +96,11 @@ func (db *DataBase) GetMediasByActorID(ctx context.Context, actorID uint) ([]ent
 		log.Error("Failed to query medias by actor ID: " + err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetMediasByActorID: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var media entity.Media
 		var description sql.NullString
@@ -129,7 +137,11 @@ func (db *DataBase) GetActorsByMediaID(ctx context.Context, media_id uint) ([]en
 		log.Error("Failed to query actors by media ID: " + err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetActorsByMediaID: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var actor entity.Actor
 		if err := rows.Scan(&actor.ID, &actor.Name, &actor.BirthDate, &actor.Bio); err != nil {

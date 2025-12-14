@@ -22,7 +22,7 @@ func NewSearchServer(log logger.Logger, searchMediaUsecase SearchMediaUsecase, s
 		panic("searchActorUsecase is nil")
 	}
 	return &SearchServer{
-		GRPCServer:        *srv.NewGRPCServer(log),
+		GRPCServer:         *srv.NewGRPCServer(log),
 		searchMediaUsecase: searchMediaUsecase,
 		searchActorUsecase: searchActorUsecase,
 	}

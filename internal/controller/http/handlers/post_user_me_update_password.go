@@ -14,7 +14,7 @@ import (
 var (
 	ErrPostUserMeUpdatePasswordInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for user password update"),
+		Message: errors.New("invalid parameters for user password update"),
 	}
 	ErrPostUserMeUpdatePasswordNotFound = ResponseError{
 		Code: http.StatusBadRequest,

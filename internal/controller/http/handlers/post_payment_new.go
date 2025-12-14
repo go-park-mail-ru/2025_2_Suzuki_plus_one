@@ -14,7 +14,7 @@ import (
 var (
 	ErrPostPaymentNewInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for payment"),
+		Message: errors.New("invalid parameters for payment"),
 	}
 	ResponsePostPaymentNew = Response{
 		Code: http.StatusOK,

@@ -21,10 +21,10 @@ func NewAuthService(l logger.Logger, serverString string) *AuthService {
 
 func (s *AuthService) Connect() error {
 	// Add metrics middleware
-	s.Service.Middleware = append(s.Service.Middleware,
+	s.Middleware = append(s.Middleware,
 		metrics.GRPCClientMetricsInterceptor(metrics.ServiceHTTP, metrics.ServiceSearch),
 	)
-	err := s.Service.Init()
+	err := s.Init()
 	if err != nil {
 		return err
 	}

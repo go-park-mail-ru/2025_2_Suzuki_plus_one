@@ -10,7 +10,7 @@ import (
 	pb "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/proto/auth"
 )
 
-var LoginError = fmt.Errorf("login error")
+var ErrLogin = fmt.Errorf("login error")
 
 func (s *AuthServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	// Register log with request ID
@@ -23,13 +23,13 @@ func (s *AuthServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Login
 	}
 
 	output, err := s.loginUsecase.Execute(ctx, input)
-	
+
 	if err != nil {
 		log.Error("Can't execute login usecase",
 			log.ToString("email", req.GetEmail()),
 			log.ToAny("derr", err),
 		)
-		return &pb.LoginResponse{Success: false}, LoginError
+		return &pb.LoginResponse{Success: false}, ErrLogin
 	}
 
 	pbOutput := &pb.LoginResponse{

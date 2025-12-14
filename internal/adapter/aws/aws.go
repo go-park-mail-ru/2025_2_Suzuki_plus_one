@@ -20,9 +20,6 @@ var BucketMap = map[string]string{
 
 type AWSS3 struct {
 	logger    logger.Logger
-	accessKey string
-	secretKey string
-	region    string
 	client    *s3.Client
 	publicURL string
 }

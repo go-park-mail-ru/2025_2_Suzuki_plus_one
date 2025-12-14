@@ -13,7 +13,7 @@ import (
 var (
 	ErrPostAuthSignInInvalidParams = ResponseError{
 		Code:    http.StatusUnauthorized,
-		Message: errors.New("Invalid parameters for authentication sign-in"),
+		Message: errors.New("invalid parameters for authentication sign-in"),
 	}
 	ResponsePostAuthSignIn = Response{
 		Code: http.StatusOK,

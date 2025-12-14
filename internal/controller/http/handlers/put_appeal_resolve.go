@@ -14,7 +14,7 @@ import (
 var (
 	ErrPutAppealResolveInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for actor"),
+		Message: errors.New("invalid parameters for actor"),
 	}
 	ResponsePutAppealResolve = Response{
 		Code: http.StatusOK,
@@ -32,9 +32,8 @@ func (h *Handlers) PutAppealResolve(w http.ResponseWriter, r *http.Request) {
 	input := dto.PutAppealResolveInput{}
 	rp := NewRequestParams(log, r, &input)
 	rp.AddAuthHeader(&input.AccessToken)
-// Add path parameter
+	// Add path parameter
 	rp.AddPath(PathParamGetAppealID, &input.AppealId)
-
 
 	// Parse request parameters
 	if err := rp.Parse(); err != nil {

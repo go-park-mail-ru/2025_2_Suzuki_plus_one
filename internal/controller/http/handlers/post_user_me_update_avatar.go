@@ -14,7 +14,7 @@ import (
 var (
 	ErrPostUserMeUpdateAvatarInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for actor"),
+		Message: errors.New("invalid parameters for actor"),
 	}
 	ErrPostUserMeUpdateAvatarNotFound = ResponseError{
 		Code: http.StatusBadRequest,

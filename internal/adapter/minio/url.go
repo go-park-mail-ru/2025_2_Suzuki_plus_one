@@ -67,7 +67,7 @@ func (m *Minio) GeneratePresignedURL(ctx context.Context, bucketName string, obj
 	// Generate presigned URL
 	reqParams := make(url.Values)
 	presignedURL, err := m.client.PresignedGetObject(ctx, bucketName, objectName, expiration, reqParams)
-	
+
 	if err != nil {
 		log.Error("Failed to generate presigned URL: " + err.Error())
 		return nil, err
@@ -78,7 +78,7 @@ func (m *Minio) GeneratePresignedURL(ctx context.Context, bucketName string, obj
 	url = strings.Replace(url, "https://", "", 1)
 	url = strings.Replace(url, "http://", "", 1)
 	url = strings.Replace(url, m.internalHost, m.externalHost, 1)
-	
+
 	return &entity.URL{
 		URL: url,
 	}, nil

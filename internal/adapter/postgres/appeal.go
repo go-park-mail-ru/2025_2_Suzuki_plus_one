@@ -22,7 +22,11 @@ func (db *DataBase) GetAppealIDsByUserID(ctx context.Context, userID uint) ([]ui
 		log.Error("Failed to query appeal IDs: " + err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetAppealIDsByUserID: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var appealID uint
 		if err := rows.Scan(&appealID); err != nil {
@@ -58,7 +62,11 @@ func (db *DataBase) GetAppealIDsAll(ctx context.Context, tag *string, status *st
 		log.Error("Failed to query appeal IDs: " + err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetAppealIDsAll: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var appealID uint
 		if err := rows.Scan(&appealID); err != nil {
@@ -117,7 +125,11 @@ func (db *DataBase) GetAppealMessagesIDsByAppealID(ctx context.Context, appealID
 		log.Error("Failed to query appeal message IDs: " + err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetAppealMessagesIDsByAppealID: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var messageID uint
 		if err := rows.Scan(&messageID); err != nil {
@@ -151,7 +163,11 @@ func (db *DataBase) GetAppealMessagesByID(ctx context.Context, appealID uint) ([
 		log.Error("Failed to query appeal messages: " + err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetAppealMessagesByID: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var message entity.AppealMessage
 		if err := rows.Scan(

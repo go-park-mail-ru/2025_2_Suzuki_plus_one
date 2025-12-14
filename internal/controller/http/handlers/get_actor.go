@@ -15,7 +15,7 @@ import (
 var (
 	ErrGetActorInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for actor"),
+		Message: errors.New("invalid parameters for actor"),
 	}
 	ErrGetActorNotFound = ResponseError{
 		Code: http.StatusBadRequest,

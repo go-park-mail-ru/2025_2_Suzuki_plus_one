@@ -15,7 +15,7 @@ import (
 var (
 	ErrPutMediaLikeInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for like"),
+		Message: errors.New("invalid parameters for like"),
 	}
 	ErrPutMediaLikeNotFound = ResponseError{
 		Code: http.StatusBadRequest,

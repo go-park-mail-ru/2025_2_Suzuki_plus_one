@@ -14,7 +14,7 @@ import (
 var (
 	ErrGetGenreInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for genre fetching"),
+		Message: errors.New("invalid parameters for genre fetching"),
 	}
 	ResponseGetGenre = Response{
 		Code: http.StatusOK,

@@ -15,7 +15,7 @@ import (
 var (
 	ErrGetActorMediaInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for actor"),
+		Message: errors.New("invalid parameters for actor"),
 	}
 	ErrGetActorMediaNotFound = ResponseError{
 		Code: http.StatusBadRequest,

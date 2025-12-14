@@ -7,7 +7,6 @@ type SearchServiceConfig struct {
 	Port string
 }
 
-
 func LoadSearchServiceConfig() SearchServiceConfig {
 	return SearchServiceConfig{
 		Host: getEnv("SEARCH_SERVICE_HOST", "localhost"),

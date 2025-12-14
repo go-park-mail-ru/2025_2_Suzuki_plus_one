@@ -13,7 +13,7 @@ type GetMediaWatchUseCase struct {
 	logger           logger.Logger
 	mediaRepo        MediaRepository
 	getObjectUseCase *GetObjectUseCase
-	userRepo 	  UserRepository
+	userRepo         UserRepository
 }
 
 func NewGetMediaWatchUseCase(
@@ -68,7 +68,6 @@ func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaW
 		return dto.GetMediaWatchOutput{}, &derr
 	}
 
-
 	media, err := uc.mediaRepo.GetMediaByID(ctx, input.MediaID)
 	if err != nil {
 		derr := dto.NewError(
@@ -117,7 +116,7 @@ func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaW
 			return dto.GetMediaWatchOutput{}, &derr
 		}
 	}
-	
+
 	// Get presigned URL from object use case
 	object, derr := uc.getObjectUseCase.Execute(ctx, dto.GetObjectInput{
 		Key:        s3Key.Key,
@@ -128,7 +127,5 @@ func (uc *GetMediaWatchUseCase) Execute(ctx context.Context, input dto.GetMediaW
 		return dto.GetMediaWatchOutput{}, derr
 	}
 
-	return dto.GetMediaWatchOutput{
-		URL: object.URL,
-	}, nil
+	return dto.GetMediaWatchOutput(object), nil
 }

@@ -15,7 +15,7 @@ import (
 var (
 	ErrDeleteMediaLikeInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for like"),
+		Message: errors.New("invalid parameters for like"),
 	}
 	ErrDeleteMediaLikeNotFound = ResponseError{
 		Code: http.StatusBadRequest,

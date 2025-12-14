@@ -129,7 +129,11 @@ func (db *DataBase) GetMediaPostersKeys(ctx context.Context, media_id uint) ([]e
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetMediaPostersKeys: failed to close rows", log.ToError(cerr))
+		}
+	}()
 
 	for rows.Next() {
 		var url string
@@ -168,7 +172,11 @@ func (db *DataBase) GetMediaGenres(ctx context.Context, media_id uint) ([]entity
 		log.Error("GetMediaGenres: failed to execute query", log.ToError(err))
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetMediaGenres: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var genre entity.Genre
 		if err := rows.Scan(&genre.ID, &genre.Name, &genre.Description); err != nil {
@@ -201,7 +209,11 @@ func (db *DataBase) GetMediaTrailersKeys(ctx context.Context, media_id uint) ([]
 		log.Error("GetMediaTrailerKeys: failed to execute query", log.ToError(err))
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetMediaTrailersKeys: failed to close rows", log.ToError(cerr))
+		}
+	}()
 
 	for rows.Next() {
 		var s3KeyString string
@@ -252,7 +264,11 @@ func (db *DataBase) GetMediaSortedByName(ctx context.Context, limit uint, offset
 		log.Error("GetMediaSortedByName: failed to execute query", log.ToError(err))
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetMediaSortedByName: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var mediaID uint
 		if err := rows.Scan(&mediaID); err != nil {
@@ -345,7 +361,11 @@ func (db *DataBase) GetMediaIDsByLikeStatus(ctx context.Context, userID uint, is
 		log.Error("GetMediaIDsByLikeStatus: failed to execute query", log.ToError(err))
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetMediaIDsByLikeStatus: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var mediaID uint
 		if err := rows.Scan(&mediaID); err != nil {
@@ -375,7 +395,11 @@ func (db *DataBase) GetMediasByGenreID(ctx context.Context, limit uint, offset u
 		log.Error("GetMediasByGenreID: failed to execute query", log.ToError(err))
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetMediasByGenreID: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var mediaID uint
 		if err := rows.Scan(&mediaID); err != nil {
@@ -405,7 +429,11 @@ func (db *DataBase) GetEpisodesByMediaID(ctx context.Context, media_id uint) ([]
 		log.Error("GetEpisodesByMediaID: failed to execute query", log.ToError(err))
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetEpisodesByMediaID: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var episode entity.Episode
 		if err := rows.Scan(&episode.EpisodeID, &episode.SeriesID, &episode.SeasonNumber, &episode.EpisodeNumber); err != nil {

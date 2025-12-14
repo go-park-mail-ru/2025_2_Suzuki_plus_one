@@ -50,7 +50,11 @@ func (db *DataBase) GetAllGenreIDs(ctx context.Context) ([]uint, error) {
 		log.Error("GetAllGenreIDs: failed to execute query", log.ToError(err))
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetAllGenreIDs: failed to close rows", log.ToError(cerr))
+		}
+	}()
 	for rows.Next() {
 		var genreID uint
 		if err := rows.Scan(&genreID); err != nil {

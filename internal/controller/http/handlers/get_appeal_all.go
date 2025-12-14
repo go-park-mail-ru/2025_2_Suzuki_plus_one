@@ -14,7 +14,7 @@ import (
 var (
 	ErrGetAppealAllInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for getting all appeals"),
+		Message: errors.New("invalid parameters for getting all appeals"),
 	}
 	ResponseGetAppealAll = Response{
 		Code: http.StatusOK,

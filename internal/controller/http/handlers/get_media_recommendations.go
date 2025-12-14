@@ -14,7 +14,7 @@ import (
 var (
 	ErrGetMediaRecommendationsInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for movie recommendations"),
+		Message: errors.New("invalid parameters for movie recommendations"),
 	}
 	ResponseGetMediaRecommendations = Response{
 		Code: http.StatusOK,
@@ -61,7 +61,7 @@ func (h *Handlers) GetMediaRecommendations(w http.ResponseWriter, r *http.Reques
 	)
 
 	log.Debug("GetMediaRecommendations:", log.ToAny("genre_ids", input.GenreIDs))
-	
+
 	// Execute use case
 	output, err := h.GetMediaRecommendationsUseCase.Execute(ctx, input)
 	if err != nil {

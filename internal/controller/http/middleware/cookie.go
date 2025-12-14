@@ -12,7 +12,7 @@ import (
 var (
 	ErrorMissingCookie = handlers.ResponseError{
 		Code:    http.StatusUnauthorized,
-		Message: errors.New("Missing required cookie"),
+		Message: errors.New("missing required cookie"),
 	}
 )
 

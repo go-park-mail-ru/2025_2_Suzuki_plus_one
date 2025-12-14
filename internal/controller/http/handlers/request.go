@@ -192,7 +192,11 @@ func (rp *RequestParams) Parse() error {
 				rp.logger.ToError(err))
 			continue
 		}
-		defer file.Close()
+		defer func() {
+			if cerr := file.Close(); cerr != nil {
+				rp.logger.Warn("Failed to close uploaded file", rp.logger.ToError(cerr))
+			}
+		}()
 
 		const maxFileSize = 10 * 1024 * 1024 // 10 MB limit for avatar files
 		fileData := make([]byte, 0)

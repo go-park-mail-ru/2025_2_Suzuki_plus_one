@@ -13,7 +13,7 @@ import (
 var (
 	ErrPostAuthSignUpInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for post-auth signup"),
+		Message: errors.New("invalid parameters for post-auth signup"),
 	}
 	ResponsePostAuthSignUp = Response{
 		Code: http.StatusCreated,

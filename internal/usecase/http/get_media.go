@@ -12,7 +12,6 @@ import (
 type GetMediaUseCase struct {
 	logger           logger.Logger
 	mediaRepo        MediaRepository
-	actorRepo        ActorRepository
 	getObjectUseCase *GetObjectUseCase
 	likeRepo         LikeRepository
 }

@@ -26,7 +26,11 @@ func Run(logger logger.Logger, config cfg.Config) {
 	if err != nil {
 		logger.Fatal("Failed to connect to database: " + err.Error())
 	}
-	defer databaseAdapter.Close()
+	defer func() {
+		if cerr := databaseAdapter.Close(); cerr != nil {
+			logger.Error("Failed to close database adapter", logger.ToError(cerr))
+		}
+	}()
 
 	// Initialize JWT settings
 	common.InitJWT(config.SERVICE_HTTP_JWT_SECRET, config.SERVICE_HTTP_JWT_ACCESS_EXPIRATION, config.SERVICE_HTTP_JWT_REFRESH_EXPIRATION)

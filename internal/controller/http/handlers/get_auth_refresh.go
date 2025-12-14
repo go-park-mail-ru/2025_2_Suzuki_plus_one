@@ -13,7 +13,7 @@ import (
 var (
 	ErrGetAuthRefreshInvalidParams = ResponseError{
 		Code:    http.StatusUnauthorized,
-		Message: errors.New("Invalid parameters for auth refresh"),
+		Message: errors.New("invalid parameters for auth refresh"),
 	}
 	ResponseGetAuthRefresh = Response{
 		Code: http.StatusOK,

@@ -28,7 +28,7 @@ func (uc *LoginUseCase) Execute(ctx context.Context, input dto.PostAuthSignInInp
 	// Bind logger with request ID
 	log := logger.LoggerWithKey(uc.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("Executing LoginUseCase with input: ", log.ToString("email", input.Email))
-	
+
 	// Validate input
 	if err := dto.ValidateStruct(input); err != nil {
 		derr := dto.NewError(

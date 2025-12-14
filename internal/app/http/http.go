@@ -60,13 +60,21 @@ func Run(logger logger.Logger, config cfg.Config) {
 	if err != nil {
 		logger.Fatal("Failed to connect to database: " + err.Error())
 	}
-	defer databaseAdapter.Close()
+	defer func() {
+		if cerr := databaseAdapter.Close(); cerr != nil {
+			logger.Error("Failed to close database adapter", logger.ToError(cerr))
+		}
+	}()
 
 	// Create redis connection
 	var cache app.Cache
 	logger.Info("Connecting to redis", config.REDIS_HOST+":6379")
 	redisClient := redis.NewRedis(logger, config.REDIS_HOST+":6379", "")
-	defer redisClient.Close()
+	defer func() {
+		if cerr := redisClient.Close(); cerr != nil {
+			logger.Error("Failed to close redis client", logger.ToError(cerr))
+		}
+	}()
 	err = redisClient.CheckConnection()
 	if err != nil {
 		logger.Fatal("Failed to connect to Redis: " + err.Error())
@@ -89,9 +97,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 	logger.Info("AWS S3 connection established")
 
 	// Connect Auth gRPC service
-	var authService app.Service
-
-	authService = grpc_auth.NewAuthService(logger, config.SERVICE_AUTH_SERVE_STRING)
+	var authService app.Service = grpc_auth.NewAuthService(logger, config.SERVICE_AUTH_SERVE_STRING)
 	err = authService.Connect()
 	if err != nil {
 		logger.Fatal("Failed to connect to Auth gRPC service: " + err.Error())
@@ -99,9 +105,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 	defer authService.Close()
 
 	// Connect Search gRPC service
-	var searchService app.Service
-
-	searchService = grpc_search.NewSearchService(logger, config.SERVICE_SEARCH_SERVE_STRING)
+	var searchService app.Service = grpc_search.NewSearchService(logger, config.SERVICE_SEARCH_SERVE_STRING)
 	err = searchService.Connect()
 	if err != nil {
 		logger.Fatal("Failed to connect to Search gRPC service: " + err.Error())

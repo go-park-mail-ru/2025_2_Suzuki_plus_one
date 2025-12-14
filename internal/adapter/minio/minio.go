@@ -23,7 +23,7 @@ func NewMinio(logger logger.Logger, internalHost string, externalHost string, lo
 		Creds:  credentials.NewStaticV4(login, password, ""),
 		Secure: useSSL,
 	})
-	
+
 	if err != nil {
 		logger.Error("Failed to create Minio client: " + err.Error())
 		return nil, err

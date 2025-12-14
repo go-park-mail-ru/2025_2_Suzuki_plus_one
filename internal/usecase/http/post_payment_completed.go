@@ -91,7 +91,9 @@ func (uc *PostPaymentCompletedUsecase) Execute(
 			log.ToString("paymentID", input.Webhook.Object.ID),
 		)
 		// You might also want to notify the user that their payment was successful.
-		uc.userRepo.UpdateUserSubscriptionStatus(ctx, uint(userID), "pending")
+		if uerr := uc.userRepo.UpdateUserSubscriptionStatus(ctx, uint(userID), "pending"); uerr != nil {
+			log.Error("Failed to set user subscription to pending", log.ToError(uerr))
+		}
 		log.Debug("User subscription pending status set",
 			log.ToInt("userID", userID),
 		)
@@ -99,7 +101,9 @@ func (uc *PostPaymentCompletedUsecase) Execute(
 		log.Info("Processing payment succeeded event",
 			log.ToString("paymentID", input.Webhook.Object.ID),
 		)
-		uc.userRepo.UpdateUserSubscriptionStatus(ctx, uint(userID), "active")
+		if uerr := uc.userRepo.UpdateUserSubscriptionStatus(ctx, uint(userID), "active"); uerr != nil {
+			log.Error("Failed to set user subscription to active", log.ToError(uerr))
+		}
 		log.Debug("User subscription active status set",
 			log.ToInt("userID", userID),
 		)
@@ -107,7 +111,9 @@ func (uc *PostPaymentCompletedUsecase) Execute(
 		log.Warn("Processing payment canceled event",
 			log.ToString("paymentID", input.Webhook.Object.ID),
 		)
-		uc.userRepo.UpdateUserSubscriptionStatus(ctx, uint(userID), "inactive")
+		if uerr := uc.userRepo.UpdateUserSubscriptionStatus(ctx, uint(userID), "inactive"); uerr != nil {
+			log.Error("Failed to set user subscription to inactive", log.ToError(uerr))
+		}
 		log.Debug("User subscription inactive status set",
 			log.ToInt("userID", userID),
 		)

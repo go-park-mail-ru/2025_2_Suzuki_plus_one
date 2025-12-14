@@ -77,6 +77,6 @@ func (yk *Yookassa) CapturePayment(ctx context.Context, payment *yoopayment.Paym
 		log.ToAny("capturedPayment.Status", capturedPayment.Status),
 	)
 	delete(yk.Handlers, payment.ID)
-	
+
 	return capturedPayment, nil
 }

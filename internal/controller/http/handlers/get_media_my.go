@@ -15,7 +15,7 @@ import (
 var (
 	ErrGetMediaMyInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for like"),
+		Message: errors.New("invalid parameters for like"),
 	}
 	ErrGetMediaMyNotFound = ResponseError{
 		Code: http.StatusBadRequest,
@@ -28,8 +28,8 @@ var (
 // Input path parameter
 var (
 	QueryParamGetMediaMyIsDislike = "is_dislike"
-	QueryParamGetMediaMyLimit = "limit"
-	QueryParamGetMediaMyOffset = "offset"
+	QueryParamGetMediaMyLimit     = "limit"
+	QueryParamGetMediaMyOffset    = "offset"
 )
 
 // Get all movies from database

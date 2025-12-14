@@ -78,8 +78,14 @@ func (uc *GetSearchUseCase) Execute(ctx context.Context, input dto.GetSearchInpu
 	case "actor":
 		actor_ids, err = uc.searchService.CallSearchActors(ctx, query, input.Limit, input.Offset)
 	case "any":
-		media_ids, err = uc.searchService.CallSearchMedia(ctx, query, input.Limit, input.Offset)
-		actor_ids, err = uc.searchService.CallSearchActors(ctx, query, input.Limit, input.Offset)
+		var err1, err2 error
+		media_ids, err1 = uc.searchService.CallSearchMedia(ctx, query, input.Limit, input.Offset)
+		actor_ids, err2 = uc.searchService.CallSearchActors(ctx, query, input.Limit, input.Offset)
+		if err1 != nil {
+			err = err1
+		} else if err2 != nil {
+			err = err2
+		}
 	default:
 		derr := dto.NewError(
 			"usecase/get_search",

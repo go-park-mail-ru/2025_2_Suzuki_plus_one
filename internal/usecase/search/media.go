@@ -29,7 +29,7 @@ func (u *SearchMediaUsecase) Execute(ctx context.Context, input dto.GetSearchInp
 	log := logger.LoggerWithKey(u.logger, ctx, common.ContextKeyRequestID)
 	log.Debug("Executing SearchMediaUsecase with input: ", log.ToString("qiery", input.Query))
 
-	// 
+	//
 	mediaIDs, err := u.mediaRepo.SearchMedia(ctx, input.Query, input.Limit, input.Offset)
 	if err != nil {
 		log.Error("SearchMediaUsecase: failed to search media: ", log.ToError(err))

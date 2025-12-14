@@ -9,6 +9,18 @@ env:
   IMAGE_NAME: ghcr.io/sorrtory/popfilms-backend
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v9
+      # Test are done in dockerfile
+
   build-and-push:
     runs-on: ubuntu-latest
 

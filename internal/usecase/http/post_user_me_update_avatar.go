@@ -12,10 +12,10 @@ import (
 )
 
 type PostUserMeUpdateAvatarUseCase struct {
-	logger      logger.Logger
-	userRepo    UserRepository
-	objectRepo  ObjectRepository
-	assetRepo   AssetRepository
+	logger     logger.Logger
+	userRepo   UserRepository
+	objectRepo ObjectRepository
+	assetRepo  AssetRepository
 }
 
 func NewPostUserMeUpdateAvatarUseCase(
@@ -25,10 +25,10 @@ func NewPostUserMeUpdateAvatarUseCase(
 	assetRepo AssetRepository,
 ) *PostUserMeUpdateAvatarUseCase {
 	return &PostUserMeUpdateAvatarUseCase{
-		logger:      logger,
-		userRepo:    userRepo,
-		objectRepo:  objectRepo,
-		assetRepo:   assetRepo,
+		logger:     logger,
+		userRepo:   userRepo,
+		objectRepo: objectRepo,
+		assetRepo:  assetRepo,
 	}
 }
 

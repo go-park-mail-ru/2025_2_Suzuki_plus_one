@@ -14,7 +14,7 @@ import (
 var (
 	ErrPostUserMeUpdateInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for user update"),
+		Message: errors.New("invalid parameters for user update"),
 	}
 	ErrPostUserMeUpdateCantUpdate = ResponseError{
 		Code: http.StatusBadRequest,

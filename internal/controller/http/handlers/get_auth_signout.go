@@ -13,7 +13,7 @@ import (
 var (
 	ErrGetAuthSignOutInvalidParams = ResponseError{
 		Code:    http.StatusUnauthorized,
-		Message: errors.New("Invalid parameters for authentication sign-out"),
+		Message: errors.New("invalid parameters for authentication sign-out"),
 	}
 	ResponseGetAuthSignOut = Response{
 		Code: http.StatusOK,

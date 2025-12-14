@@ -29,7 +29,6 @@ func (s *SearchService) CallSearchMedia(ctx context.Context, query string, limit
 	ctx, cancel := context.WithTimeout(ctx, service.ResponseTimeout)
 	defer cancel()
 
-
 	// Make the gRPC call
 	r, err := s.client.SearchMedia(ctx, req)
 	if err != nil {
@@ -47,7 +46,6 @@ func (s *SearchService) CallSearchMedia(ctx context.Context, query string, limit
 	log.Info("SearchMedia successful", log.ToInt("results_count", len(mediaIDs)))
 	return mediaIDs, nil
 }
-
 
 func (s *SearchService) CallSearchActors(ctx context.Context, query string, limit, offset uint) ([]uint, error) {
 	log := logger.LoggerWithKey(s.Logger, ctx, common.ContextKeyRequestID)
@@ -67,7 +65,6 @@ func (s *SearchService) CallSearchActors(ctx context.Context, query string, limi
 	// Create a context with timeout
 	ctx, cancel := context.WithTimeout(ctx, service.ResponseTimeout)
 	defer cancel()
-
 
 	// Make the gRPC call
 	r, err := s.client.SearchActor(ctx, req)

@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
-	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
+	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
 )
 
 type GetMediaLikeUseCase struct {
@@ -78,7 +78,7 @@ func (uc *GetMediaLikeUseCase) Execute(
 
 	// Prepare output
 	output := dto.GetMediaLikeOutput{
-		Liked: exists,
+		Liked:     exists,
 		IsDislike: like.IsDislike,
 	}
 

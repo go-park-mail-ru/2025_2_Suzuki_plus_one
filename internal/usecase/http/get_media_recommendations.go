@@ -51,7 +51,6 @@ func (uc *GetMediaRecommendationsUsecase) Execute(
 		return dto.GetMediaRecommendationsOutput{}, &derr
 	}
 
-	
 	// Validate ?limit boundaries
 	if input.Limit < GET_MOVIE_RECOMMENDATION_LIMIT_MIN || input.Limit > GET_MOVIE_RECOMMENDATION_LIMIT_MAX {
 		derr := dto.NewError(
@@ -67,7 +66,7 @@ func (uc *GetMediaRecommendationsUsecase) Execute(
 		log.Error("Invalid limit for movie recommendations", log.ToError(fmt.Errorf("limit: %d", input.Limit)))
 		return dto.GetMediaRecommendationsOutput{}, &derr
 	}
-	
+
 	// // Get total movie number from repository
 	// movie_number, err := uc.movieRepo.GetMediaCount(ctx, input.Type)
 	// if err != nil {

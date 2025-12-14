@@ -8,7 +8,7 @@ type GetMediaEpisodesInput struct {
 
 type GetMediaEpisodeOutput struct {
 	entity.Episode
-	Media  GetMediaOutput `json:"media"`
+	Media GetMediaOutput `json:"media"`
 }
 
 type GetMediaEpisodesOutput struct {

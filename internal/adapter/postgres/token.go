@@ -51,7 +51,11 @@ func (db *DataBase) GetRefreshTokensForUser(ctx context.Context, userID uint) ([
 		log.Error("Failed to get refresh tokens for user: " + err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Error("GetRefreshTokensForUser: failed to close rows", log.ToError(cerr))
+		}
+	}()
 
 	var tokens []entity.RefreshToken
 	for rows.Next() {

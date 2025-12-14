@@ -1,7 +1,6 @@
 package dto
 
 type GetGenreAllInput struct {
-	
 }
 
 type GetGenreAllOutput struct {

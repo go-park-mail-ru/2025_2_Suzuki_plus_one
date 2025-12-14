@@ -14,7 +14,7 @@ import (
 var (
 	ErrGetAppealMyInvalidParams = ResponseError{
 		Code:    http.StatusBadRequest,
-		Message: errors.New("Invalid parameters for actor"),
+		Message: errors.New("invalid parameters for actor"),
 	}
 	ResponseGetAppealMy = Response{
 		Code: http.StatusOK,
