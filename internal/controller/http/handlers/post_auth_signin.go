@@ -76,7 +76,7 @@ func (h *Handlers) PostAuthSignIn(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output (refresh token not in body)
-	Respond(log, w, ResponsePostAuthSignIn.Code, UpdatePostAuthSignInOutput(output))
+	RespondEasyJSON(log, w, ResponsePostAuthSignIn.Code, UpdatePostAuthSignInOutput(output))
 }
 
 // UpdatePostAuthSignInOutput modifies the output to avoid sending the refresh token in the response body

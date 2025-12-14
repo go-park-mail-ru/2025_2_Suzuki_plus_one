@@ -62,8 +62,14 @@ go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@lat
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
+# Установка easyjson
+go install github.com/mailru/easyjson/...@latest
+
 # Установка PostgreSQL клиента
 sudo apt-get install -y postgresql-client
+
+# Установка библиотек
+go mod tidy
 ```
 
 #### Запуск проекта в режиме прод

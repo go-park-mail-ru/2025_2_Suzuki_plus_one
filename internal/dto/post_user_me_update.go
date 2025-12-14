@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type PostUserMeUpdateInput struct {
 	AccessToken string   `json:"access_token" required:"true"` // Access token from Authorization header
 	Username    string   `json:"username" example:"johndoe" required:"true"`

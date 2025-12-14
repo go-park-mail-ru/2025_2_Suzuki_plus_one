@@ -72,5 +72,5 @@ func (h *Handlers) GetMediaEpisodes(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetMediaEpisodes.Code, output)
+	RespondEasyJSON(log, w, ResponseGetMediaEpisodes.Code, output)
 }

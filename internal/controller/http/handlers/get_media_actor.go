@@ -66,5 +66,5 @@ func (h *Handlers) GetMediaActor(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetMediaActor.Code, output)
+	RespondEasyJSON(log, w, ResponseGetMediaActor.Code, output)
 }

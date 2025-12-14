@@ -76,5 +76,5 @@ func (h *Handlers) PostUserMeUpdatePassword(w http.ResponseWriter, r *http.Reque
 	)
 
 	// Respond with output
-	Respond(log, w, ResponsePostUserMeUpdatePassword.Code, output)
+	RespondEasyJSON(log, w, ResponsePostUserMeUpdatePassword.Code, output)
 }

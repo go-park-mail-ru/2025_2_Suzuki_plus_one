@@ -79,5 +79,5 @@ func (h *Handlers) PostUserMeUpdateAvatar(w http.ResponseWriter, r *http.Request
 	)
 
 	// Respond with output
-	Respond(log, w, ResponsePostUserMeUpdateAvatar.Code, output)
+	RespondEasyJSON(log, w, ResponsePostUserMeUpdateAvatar.Code, output)
 }

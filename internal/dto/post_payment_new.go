@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type PostPaymentNewInput struct {
 	AccessToken string `json:"access_token"`
 }

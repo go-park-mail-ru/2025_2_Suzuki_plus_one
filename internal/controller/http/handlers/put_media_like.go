@@ -73,5 +73,5 @@ func (h *Handlers) PutMediaLike(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponsePutMediaLike.Code, output)
+	RespondEasyJSON(log, w, ResponsePutMediaLike.Code, output)
 }

@@ -2,6 +2,8 @@ package dto
 
 import "github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
 
+//go:generate easyjson -all $GOFILE
+
 type GetMediaEpisodesInput struct {
 	MediaID uint `json:"media_id" validate:"required"`
 }

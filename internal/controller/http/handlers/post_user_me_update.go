@@ -69,5 +69,5 @@ func (h *Handlers) PostUserMeUpdate(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponsePostUserMeUpdate.Code, output)
+	RespondEasyJSON(log, w, ResponsePostUserMeUpdate.Code, output)
 }

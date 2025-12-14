@@ -76,5 +76,5 @@ func (h *Handlers) GetAuthSignOut(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetAuthSignOut.Code, output)
+	RespondEasyJSON(log, w, ResponseGetAuthSignOut.Code, output)
 }

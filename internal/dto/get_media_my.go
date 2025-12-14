@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type GetMediaMyInput struct {
 	IsDislike   bool   `json:"is_dislike"`
 	AccessToken string `json:"access_token" validate:"required"`

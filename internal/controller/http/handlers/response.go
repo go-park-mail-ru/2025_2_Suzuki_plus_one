@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/pkg/logger"
+	"github.com/mailru/easyjson"
 )
 
 type Response struct {
@@ -65,5 +66,40 @@ func RespondWithDTOError(l logger.Logger, w http.ResponseWriter, err ResponseErr
 	w.WriteHeader(err.Code)
 	if err := json.NewEncoder(w).Encode(dtoErr); err != nil {
 		l.Error("Failed to encode dto error response", l.ToError(err))
+	}
+}
+
+// Easy json
+func RespondEasyJSON(l logger.Logger, w http.ResponseWriter, status int, data easyjson.Marshaler) {
+	l.Info("HTTP response",
+		l.ToInt("status_code", status),
+	)
+
+	// Set status code (will be overwritten to 500 on write error)
+	w.WriteHeader(status)
+
+	// Serialize
+	_, _, err := easyjson.MarshalToHTTPResponseWriter(
+		data,
+		w,
+	)
+	// Flush status code and data
+	if err != nil {
+		l.Error("Failed to encode response", l.ToError(err))
+	}
+}
+
+func RespondWithDTOErrorEasyJSON(l logger.Logger, w http.ResponseWriter, err ResponseError, dtoErr easyjson.Marshaler) {
+	// Set status code (will be overwritten to 500 on write error)
+	w.WriteHeader(err.Code)
+
+	// Serialize
+	_, _, mErr := easyjson.MarshalToHTTPResponseWriter(
+		dtoErr,
+		w,
+	)
+	// Flush status code and data
+	if mErr != nil {
+		l.Error("Failed to encode dto error response", l.ToError(mErr))
 	}
 }

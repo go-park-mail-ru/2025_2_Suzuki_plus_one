@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type GetMediaLikeInput struct {
 	AccessToken string `json:"access_token" validate:"required"`
 	MediaID     uint   `json:"media_id" validate:"required"`

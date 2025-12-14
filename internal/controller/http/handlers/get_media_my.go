@@ -77,5 +77,5 @@ func (h *Handlers) GetMediaMy(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetMediaMy.Code, output)
+	RespondEasyJSON(log, w, ResponseGetMediaMy.Code, output)
 }

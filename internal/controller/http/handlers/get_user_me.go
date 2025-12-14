@@ -63,5 +63,5 @@ func (h *Handlers) GetUserMe(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetUserMe.Code, output)
+	RespondEasyJSON(log, w, ResponseGetUserMe.Code, output)
 }

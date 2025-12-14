@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type GetGenreMediaInput struct {
 	GenreID uint `json:"genre_id" validate:"required"`
 	Limit   uint `json:"limit" validate:"gte=0,max=100"`

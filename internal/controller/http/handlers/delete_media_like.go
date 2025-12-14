@@ -70,5 +70,5 @@ func (h *Handlers) DeleteMediaLike(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseDeleteMediaLike.Code, output)
+	RespondEasyJSON(log, w, ResponseDeleteMediaLike.Code, output)
 }

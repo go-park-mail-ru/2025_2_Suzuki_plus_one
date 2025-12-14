@@ -78,5 +78,5 @@ func (h *Handlers) GetSearch(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetSearch.Code, output)
+	RespondEasyJSON(log, w, ResponseGetSearch.Code, output)
 }

@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type PostUserMeUpdatePasswordInput struct {
 	AccessToken     string `json:"access_token" validate:"required"`
 	CurrentPassword string `json:"current_password" validate:"required,min=8,max=64"`

@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type GetAppealAllInput struct {
 	Tag    string `query:"tag" validate:"omitempty,oneof=bug feature other"`
 	Status string `query:"status" validate:"omitempty,oneof=open closed in_progress"`

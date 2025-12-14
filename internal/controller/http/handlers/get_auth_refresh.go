@@ -67,5 +67,5 @@ func (h *Handlers) GetAuthRefresh(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetAuthRefresh.Code, output)
+	RespondEasyJSON(log, w, ResponseGetAuthRefresh.Code, output)
 }

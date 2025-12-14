@@ -58,5 +58,5 @@ func (h *Handlers) GetGenreAll(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetGenreAll.Code, output)
+	RespondEasyJSON(log, w, ResponseGetGenreAll.Code, output)
 }

@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type PostUserMeUpdateAvatarInput struct {
 	AccessToken string  `json:"access_token" required:"true"`
 	Bytes       []byte  `json:"avatar" required:"true"`

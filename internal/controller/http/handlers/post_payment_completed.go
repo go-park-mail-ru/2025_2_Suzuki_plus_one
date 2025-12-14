@@ -78,6 +78,6 @@ func (h *Handlers) PostPaymentCompleted(w http.ResponseWriter, r *http.Request) 
 		"Fetching actor details completed successfully",
 	)
 
-	// Respond with output
+	// Respond with output (generics are not supported)
 	Respond(log, w, ResponsePostPaymentCompleted.Code, output)
 }

@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type GetSearchInput struct {
 	Query  string `json:"query" validate:"required,min=1,max=100"`
 	Limit  uint   `json:"limit" validate:"omitempty,min=1,max=100"`

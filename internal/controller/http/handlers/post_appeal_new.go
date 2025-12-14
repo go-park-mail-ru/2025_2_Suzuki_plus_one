@@ -72,5 +72,5 @@ func (h *Handlers) PostAppealNew(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponsePostAppealNew.Code, output)
+	RespondEasyJSON(log, w, ResponsePostAppealNew.Code, output)
 }

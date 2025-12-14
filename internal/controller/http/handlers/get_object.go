@@ -71,5 +71,5 @@ func (h *Handlers) GetObjectMedia(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetObjectMedia.Code, output)
+	RespondEasyJSON(log, w, ResponseGetObjectMedia.Code, output)
 }

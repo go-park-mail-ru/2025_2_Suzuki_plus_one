@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type Error struct {
 	Type    string `json:"type"`
 	Message string `json:"message,omitempty"`

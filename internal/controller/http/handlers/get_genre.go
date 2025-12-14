@@ -69,5 +69,5 @@ func (h *Handlers) GetGenre(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetGenre.Code, output)
+	RespondEasyJSON(log, w, ResponseGetGenre.Code, output)
 }

@@ -62,5 +62,5 @@ func (h *Handlers) PostPaymentNew(w http.ResponseWriter, r *http.Request) {
 
 	// Respond with redirect to confirmation URL
 	// http.Redirect(w, r, output.RedirectURL, http.StatusSeeOther)
-	Respond(log, w, ResponsePostPaymentNew.Code, output)
+	RespondEasyJSON(log, w, ResponsePostPaymentNew.Code, output)
 }

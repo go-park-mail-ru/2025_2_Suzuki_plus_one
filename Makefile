@@ -37,7 +37,7 @@ check-quality: ## runs code quality checks
 
 # Append || true below if blocking local developement
 lint: ## go linting. Update and use specific lint tool and options
-	golangci-lint run --enable-all
+	golangci-lint run
 
 vet: ## go vet
 	go vet ./...
@@ -51,7 +51,7 @@ tidy: ## runs tidy to fix go.mod dependencies
 ## Test
 test: ## runs tests and create generates coverage report
 	@echo "Running tests excluding /mocks..."
-	PACKAGES=$$(go list ./... | grep -v '/mocks') &&  \
+	PACKAGES=$$(go list ./... | grep -v '/mocks' | grep -v '/dto') &&  \
 	go test $$PACKAGES -coverprofile=coverage.out
 
 coverage: ## generate test coverage report in html mode

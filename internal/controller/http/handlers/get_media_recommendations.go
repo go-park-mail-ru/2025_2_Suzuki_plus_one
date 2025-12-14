@@ -81,5 +81,5 @@ func (h *Handlers) GetMediaRecommendations(w http.ResponseWriter, r *http.Reques
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetMediaRecommendations.Code, output)
+	RespondEasyJSON(log, w, ResponseGetMediaRecommendations.Code, output)
 }

@@ -1,9 +1,12 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
 type GetUserMeInput struct {
 	AccessToken string `json:"access_token"` // Access token from Authorization header
 }
 
+
+//go:generate easyjson -all $GOFILE
 type GetUserMeOutput struct {
 	ID                 uint     `json:"id"`
 	Username           string   `json:"username"`

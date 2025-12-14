@@ -69,5 +69,5 @@ func (h *Handlers) GetActor(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetActor.Code, output)
+	RespondEasyJSON(log, w, ResponseGetActor.Code, output)
 }

@@ -9,8 +9,7 @@ type PostPaymentCompletedInput struct {
 	Webhook yoowebhook.WebhookEvent[yoopayment.Payment] `json:"yoopayment"`
 }
 
+//easyjson:json
 type PostPaymentCompletedOutput struct {
 	Status string `json:"status"`
 }
-
-// //go:generate easyjson -all post_payment_completed.go

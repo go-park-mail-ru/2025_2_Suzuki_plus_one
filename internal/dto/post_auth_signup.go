@@ -1,5 +1,7 @@
 package dto
 
+//go:generate easyjson -all $GOFILE
+
 type PostAuthSignUpInput struct {
 	Email    string `json:"email" validate:"required,email"`
 	Username string `json:"username" validate:"required,min=3"`

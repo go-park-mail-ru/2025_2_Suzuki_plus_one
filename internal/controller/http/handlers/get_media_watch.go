@@ -69,5 +69,5 @@ func (h *Handlers) GetMediaWatch(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetMediaWatch.Code, output)
+	RespondEasyJSON(log, w, ResponseGetMediaWatch.Code, output)
 }

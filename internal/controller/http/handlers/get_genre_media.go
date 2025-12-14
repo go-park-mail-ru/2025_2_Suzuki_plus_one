@@ -75,5 +75,5 @@ func (h *Handlers) GetGenreMedia(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetGenreMedia.Code, output)
+	RespondEasyJSON(log, w, ResponseGetGenreMedia.Code, output)
 }

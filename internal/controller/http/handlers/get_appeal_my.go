@@ -62,5 +62,5 @@ func (h *Handlers) GetAppealMy(w http.ResponseWriter, r *http.Request) {
 	)
 
 	// Respond with output
-	Respond(log, w, ResponseGetAppealMy.Code, output)
+	RespondEasyJSON(log, w, ResponseGetAppealMy.Code, output)
 }
