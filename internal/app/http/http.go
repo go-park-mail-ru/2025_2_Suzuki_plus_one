@@ -193,7 +193,7 @@ func Run(logger logger.Logger, config cfg.Config) {
 	// --- Create usecase level ---
 
 	// Reusable usecases
-	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository)
+	getObjectUseCase := uc.NewGetObjectUseCase(logger, objectRepository, config.SERVICE_HTTP_S3_PRESIGNED_URL_EXPIRATION)
 	getMediaUseCase := uc.NewGetMediaUseCase(logger, mediaRepository, getObjectUseCase, likeRepository)
 	getUserUseCase := uc.NewGetUserMeUseCase(logger, userRepository, objectRepository)
 	getActorUseCase := uc.NewGetActorUseCase(logger, actorRepository, getObjectUseCase)

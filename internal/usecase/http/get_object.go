@@ -11,17 +11,29 @@ import (
 )
 
 type GetObjectUseCase struct {
-	logger     logger.Logger
-	objectRepo ObjectRepository
+	logger              logger.Logger
+	objectRepo          ObjectRepository
+	presignedExpiration time.Duration
 }
 
 func NewGetObjectUseCase(
 	logger logger.Logger,
 	objectRepo ObjectRepository,
+	presignedExpiration time.Duration,
 ) *GetObjectUseCase {
+	if logger == nil {
+		panic("logger is nil")
+	}
+	if objectRepo == nil {
+		panic("objectRepo is nil")
+	}
+	if presignedExpiration <= 0 {
+		panic("presignedExpiration is invalid")
+	}
 	return &GetObjectUseCase{
-		logger:     logger,
-		objectRepo: objectRepo,
+		logger:              logger,
+		objectRepo:          objectRepo,
+		presignedExpiration: presignedExpiration,
 	}
 }
 
@@ -47,9 +59,7 @@ func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInpu
 	var object *entity.URL
 	var err error
 	if input.BucketName == "medias" {
-		// TODO: linkAliveDuration is hardcoded here, can be changed later if needed
-		linkAliveDuration := time.Minute * 15
-		object, err = uc.objectRepo.GeneratePresignedURL(ctx, input.BucketName, input.Key, linkAliveDuration)
+		object, err = uc.objectRepo.GeneratePresignedURL(ctx, input.BucketName, input.Key, uc.presignedExpiration)
 	} else {
 		object, err = uc.objectRepo.GeneratePublicURL(ctx, input.BucketName, input.Key)
 	}

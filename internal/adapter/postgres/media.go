@@ -294,7 +294,7 @@ func (db *DataBase) GetMediaWatchKey(ctx context.Context, media_id uint) (*entit
 		JOIN media_video USING (media_id)
 		JOIN asset_video USING (asset_video_id)
 		JOIN asset USING (asset_id)
-		WHERE media_id = $1
+		WHERE media_id = $1 and video_type = 'main_video'
 	`
 	err := db.conn.QueryRow(query, media_id).Scan(&s3Key)
 	if err != nil {

@@ -16,15 +16,16 @@ import (
 // Please keep fields as in .env file for easier reference.
 // See .env.example for documentation.
 type Config struct {
-	SERVICE_HTTP_SERVESTRING            string
-	SERVICE_HTTP_METRICS_SERVESTRING    string
-	SERVICE_HTTP_SERVE_PREFIX           string
-	SERVICE_HTTP_JWT_SECRET             string
-	SERVICE_HTTP_JWT_ACCESS_EXPIRATION  time.Duration
-	SERVICE_HTTP_JWT_REFRESH_EXPIRATION time.Duration
-	SERVICE_HTTP_NAME                   string
-	SERVICE_HTTP_FRONTEND_URL           string
-	ENVIRONMENT                         string
+	SERVICE_HTTP_SERVESTRING                 string
+	SERVICE_HTTP_METRICS_SERVESTRING         string
+	SERVICE_HTTP_SERVE_PREFIX                string
+	SERVICE_HTTP_JWT_SECRET                  string
+	SERVICE_HTTP_JWT_ACCESS_EXPIRATION       time.Duration
+	SERVICE_HTTP_JWT_REFRESH_EXPIRATION      time.Duration
+	SERVICE_HTTP_NAME                        string
+	SERVICE_HTTP_FRONTEND_URL                string
+	ENVIRONMENT                              string
+	SERVICE_HTTP_S3_PRESIGNED_URL_EXPIRATION time.Duration
 
 	// Database
 	POSTGRES_HOST   string
@@ -65,15 +66,16 @@ type Config struct {
 // Load loads config from env vars with defaults and validation.
 func Load() Config {
 	cfg := Config{
-		SERVICE_HTTP_SERVESTRING:            getEnv("POPFILMS_SERVICE_HTTP_SERVESTRING", ":8080"),
-		SERVICE_HTTP_METRICS_SERVESTRING:    getEnv("POPFILMS_SERVICE_HTTP_METRICS_SERVESTRING", ":8880"),
-		SERVICE_HTTP_SERVE_PREFIX:           trimTrailingSlash(getEnv("POPFILMS_SERVICE_HTTP_SERVE_PREFIX", "")),
-		SERVICE_HTTP_JWT_SECRET:             mustEnv("POPFILMS_SERVICE_HTTP_JWT_SECRET"),
-		SERVICE_HTTP_JWT_ACCESS_EXPIRATION:  parseDuration(getEnv("POPFILMS_SERVICE_HTTP_JWT_ACCESS_EXPIRATION", "15m")),
-		SERVICE_HTTP_JWT_REFRESH_EXPIRATION: parseDuration(getEnv("POPFILMS_SERVICE_HTTP_JWT_REFRESH_EXPIRATION", "1440m")),
-		SERVICE_HTTP_NAME:                   getEnv("POPFILMS_SERVICE_HTTP_NAME", "Localhost"),
-		SERVICE_HTTP_FRONTEND_URL:           trimTrailingSlash(mustEnv("POPFILMS_SERVICE_HTTP_FRONTEND_URL")),
-		ENVIRONMENT:                         getEnv("POPFILMS_ENVIRONMENT", "development"),
+		SERVICE_HTTP_SERVESTRING:                 getEnv("POPFILMS_SERVICE_HTTP_SERVESTRING", ":8080"),
+		SERVICE_HTTP_METRICS_SERVESTRING:         getEnv("POPFILMS_SERVICE_HTTP_METRICS_SERVESTRING", ":8880"),
+		SERVICE_HTTP_SERVE_PREFIX:                trimTrailingSlash(getEnv("POPFILMS_SERVICE_HTTP_SERVE_PREFIX", "")),
+		SERVICE_HTTP_JWT_SECRET:                  mustEnv("POPFILMS_SERVICE_HTTP_JWT_SECRET"),
+		SERVICE_HTTP_JWT_ACCESS_EXPIRATION:       parseDuration(getEnv("POPFILMS_SERVICE_HTTP_JWT_ACCESS_EXPIRATION", "15m")),
+		SERVICE_HTTP_JWT_REFRESH_EXPIRATION:      parseDuration(getEnv("POPFILMS_SERVICE_HTTP_JWT_REFRESH_EXPIRATION", "1440m")),
+		SERVICE_HTTP_NAME:                        getEnv("POPFILMS_SERVICE_HTTP_NAME", "Localhost"),
+		SERVICE_HTTP_FRONTEND_URL:                trimTrailingSlash(mustEnv("POPFILMS_SERVICE_HTTP_FRONTEND_URL")),
+		SERVICE_HTTP_S3_PRESIGNED_URL_EXPIRATION: parseDuration(getEnv("POPFILMS_SERVICE_HTTP_S3_PRESIGNED_URL_EXPIRATION", "20m")),
+		ENVIRONMENT:                              getEnv("POPFILMS_ENVIRONMENT", "development"),
 
 		// Database
 		POSTGRES_HOST:   mustEnv("POSTGRES_HOST"),

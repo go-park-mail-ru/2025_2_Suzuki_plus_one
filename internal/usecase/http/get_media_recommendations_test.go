@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/common"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
@@ -53,7 +54,7 @@ func TestGetMediaRecommendationsUsecase(t *testing.T) {
 	getMediaUseCase := NewGetMediaUseCase(
 		logger,
 		mediaRepo,
-		NewGetObjectUseCase(logger, objectRepo),
+		NewGetObjectUseCase(logger, objectRepo, time.Minute*20),
 		likeRepo,
 	)
 	usecase := NewGetMediaRecommendationsUsecase(

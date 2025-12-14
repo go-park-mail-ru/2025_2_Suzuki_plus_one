@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/dto"
 	"github.com/go-park-mail-ru/2025_2_Suzuki_plus_one/internal/entity"
@@ -41,7 +42,7 @@ func TestGetObjectUsecase_Execute(t *testing.T) {
 
 	// Call usecase
 	logger := logger.NewZapLogger(true)
-	usecase := NewGetObjectUseCase(logger, objectRepo)
+	usecase := NewGetObjectUseCase(logger, objectRepo, time.Minute*20)
 	ctx := context.Background()
 	output, err := usecase.Execute(ctx, input)
 	var emptyErr *dto.Error
