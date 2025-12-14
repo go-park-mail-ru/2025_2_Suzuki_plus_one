@@ -64,7 +64,7 @@ func (uc *PutMediaLikeUseCase) Execute(
 		return dto.PutMediaLikeOutput{}, &derr
 	}
 
-	// Call Like repository to get like status
+	// Call Like repository to set like status
 	isDislike, err := uc.likeRepo.ToggleLike(ctx, userID, input.MediaID)
 	if err != nil {
 		derr := dto.NewError(
@@ -74,6 +74,20 @@ func (uc *PutMediaLikeUseCase) Execute(
 		)
 		log.Error("PutMediaLikeUseCase failed on like repository call", log.ToError(err))
 		return dto.PutMediaLikeOutput{}, &derr
+	}
+
+	// toggle again to match the requested state
+	if isDislike != input.IsDislike {
+		isDislike, err = uc.likeRepo.ToggleLike(ctx, userID, input.MediaID)
+		if err != nil {
+			derr := dto.NewError(
+				"usecase/put_media_like",
+				entity.ErrPutMediaLikeRepositoryFailed,
+				"like repository failed to toggle like status: "+err.Error(),
+			)
+			log.Error("PutMediaLikeUseCase failed on like repository call", log.ToError(err))
+			return dto.PutMediaLikeOutput{}, &derr
+		}
 	}
 
 	// Prepare output
