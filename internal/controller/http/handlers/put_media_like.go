@@ -27,7 +27,7 @@ var (
 
 // Input path parameter
 const PathParamPutMediaLikeID = "media_id"
-const PathParamPutMediaLikeIsDislike = "is_dislike"
+const QueryParamPutMediaLikeIsDislike = "is_dislike"
 
 // Get all movies from database
 func (h *Handlers) PutMediaLike(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +40,7 @@ func (h *Handlers) PutMediaLike(w http.ResponseWriter, r *http.Request) {
 	input := dto.PutMediaLikeInput{}
 	rp := NewRequestParams(log, r, &input)
 	rp.AddPath(PathParamPutMediaLikeID, &input.MediaID)
-	rp.AddPath(PathParamPutMediaLikeIsDislike, &input.IsDislike)
+	rp.AddQuery(QueryParamPutMediaLikeIsDislike, &input.IsDislike)
 	rp.AddAuthHeader(&input.AccessToken)
 
 	// Parse request parameters
