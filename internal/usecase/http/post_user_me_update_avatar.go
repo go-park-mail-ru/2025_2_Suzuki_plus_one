@@ -62,7 +62,7 @@ func (uc *PostUserMeUpdateAvatarUseCase) Execute(
 	}
 
 	// Upload avatar file to object storage
-	bucketName := "ava" // TODO: move to config and fix mapping in object storage repo
+	bucketName := "avatars" // TODO: move to config and fix mapping in object storage repo
 
 	// The key is formed as "<userID>_<timestamp>.<format>"
 	format := input.MimeFormat[len("image/"):] // govalidator ensures correct format

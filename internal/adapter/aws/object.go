@@ -18,8 +18,14 @@ func (sss *AWSS3) UploadObject(ctx context.Context, bucketName string, objectNam
 		log.ToString("bucketName", bucketName),
 		log.ToString("objectName", objectName),
 	)
-	// Map logical bucket name to actual S3 bucket name
-	bucketName = BucketMap[bucketName]
+	//  We accept logical name here, so no mapping is needed
+
+	// // Map logical bucket name to actual S3 bucket name
+	// bucketName, ok := BucketMap[bucketName]
+	// if !ok {
+	// 	log.Error("Bucket name not found in BucketMap: " + bucketName)
+	// 	return &entity.S3Key{}, errors.New("invalid bucket name")
+	// }
 
 	// Upload the object
 	_, err := sss.client.PutObject(
