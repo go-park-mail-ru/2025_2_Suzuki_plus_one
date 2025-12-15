@@ -57,7 +57,7 @@ func (h *Handlers) PutMediaLike(w http.ResponseWriter, r *http.Request) {
 	// Execute use case
 	output, err := h.PutMediaLikeUseCase.Execute(ctx, input)
 	if err != nil {
-		log.Error("Failed to fetch actor",
+		log.Error("Failed to put like usecase",
 			log.ToString("error", err.Message),
 		)
 		// Respond with error, if use case execution fails

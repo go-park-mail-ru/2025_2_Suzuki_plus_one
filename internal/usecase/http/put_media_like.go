@@ -41,6 +41,7 @@ func (uc *PutMediaLikeUseCase) Execute(
 	log := logger.LoggerWithKey(uc.log, ctx, common.ContextKeyRequestID)
 	log.Debug("PutMediaLikeUseCase called",
 		log.ToInt("media_id", int(input.MediaID)),
+		log.ToAny("is_dislike", input.IsDislike),
 	)
 
 	// Validate input
