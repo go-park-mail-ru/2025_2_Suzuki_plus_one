@@ -60,4 +60,18 @@ SignInRequest:
       example: "Password123!"
 
 SignInResponse:
-  $ref: "./auth.yaml#/RefreshResponse"
+  type: object
+  required:
+    - access_token
+    - refresh_token
+  properties:
+    access_token:
+      type: string
+      example: "<NewAccessToken>"
+      description: New JWT access token
+    refresh_token:
+      type: string
+      example: "token is set in http-only cookie"
+      description: Refresh token (set as HttpOnly cookie)
+  
+  
