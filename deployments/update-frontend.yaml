@@ -6,12 +6,12 @@
         path: /var/www/frontend
         state: directory
 
-    - name: Pull latest code and switch to rating-score-media branch
+    - name: Pull latest code and switch to deploy branch
       git:
         repo: "https://github.com/frontend-park-mail-ru/2025_2_Suzuki_plus_one.git"
         dest: /var/www/frontend
         update: yes
-        version: rating-score-media
+        version: deploy
       become: yes
 
     - name: build frontend

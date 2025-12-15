@@ -56,19 +56,32 @@ sudo ./aws/install
 - list current buckets
 
   ```bash
+  KEY=dima.png
+  BUCKET=bucket-test
   aws s3api list-buckets --endpoint-url https://s3.cloud.ru --query "Buckets[].Name"
   ```
+
+- download file
+
+  ```bash
+  KEY=dima.png
+  BUCKET=bucket-test
+  aws s3api get-object --endpoint-url https://s3.cloud.ru --bucket $BUCKET --key $KEY $
 
 #### Additional cmds
 
 - create new bucket
 
   ```bash
+  KEY=dima.png
+  BUCKET=bucket-test
   aws s3api create-bucket --endpoint-url https://s3.cloud.ru --bucket $BUCKET
   ```
 
 - [WARN] remove all data from the bucket
 
   ```bash
+  KEY=dima.png
+  BUCKET=bucket-test
   aws s3 rm s3://$BUCKET --recursive --endpoint-url https://s3.cloud.ru
   ```
