@@ -78,7 +78,7 @@ services:
 
   alloy:
     image: grafana/alloy:latest
-    container_name: alloy
+    container_name: popfilms_alloy
     command:
       [
         "run",
@@ -162,6 +162,7 @@ services:
     networks:
       - app-network
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    restart: unless-stopped
 
   # minio:
   #   image: minio/minio:latest
@@ -203,6 +204,7 @@ services:
     networks:
       - app-network
     entrypoint: ["./http"]
+    restart: unless-stopped
   backend-auth:
     container_name: popfilms_backend-auth
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
@@ -219,6 +221,7 @@ services:
     networks:
       - app-network
     entrypoint: ["./auth"]
+    restart: unless-stopped
   backend-search:
     container_name: popfilms_backend-search
     image: "ghcr.io/sorrtory/popfilms-backend:latest"
@@ -235,6 +238,7 @@ services:
     networks:
       - app-network
     entrypoint: ["./search"]
+    restart: unless-stopped
 volumes:
   db_data:
   redis_data:
