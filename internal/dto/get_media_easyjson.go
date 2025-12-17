@@ -192,7 +192,7 @@ func easyjson6fcbc553DecodeGithubComGoParkMailRu20252SuzukiPlusOneInternalDto1(i
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				(out.Rating).UnmarshalEasyJSON(in)
+				(out.UserRating).UnmarshalEasyJSON(in)
 			}
 		case "media_id":
 			if in.IsNull() {
@@ -225,6 +225,12 @@ func easyjson6fcbc553DecodeGithubComGoParkMailRu20252SuzukiPlusOneInternalDto1(i
 				if data := in.Raw(); in.Ok() {
 					in.AddError((out.ReleaseDate).UnmarshalJSON(data))
 				}
+			}
+		case "rating":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Rating = float64(in.Float64())
 			}
 		case "duration_minutes":
 			if in.IsNull() {
@@ -315,7 +321,7 @@ func easyjson6fcbc553EncodeGithubComGoParkMailRu20252SuzukiPlusOneInternalDto1(o
 	{
 		const prefix string = ",\"user_rating\":"
 		out.RawString(prefix)
-		(in.Rating).MarshalEasyJSON(out)
+		(in.UserRating).MarshalEasyJSON(out)
 	}
 	{
 		const prefix string = ",\"media_id\":"
@@ -341,6 +347,11 @@ func easyjson6fcbc553EncodeGithubComGoParkMailRu20252SuzukiPlusOneInternalDto1(o
 		const prefix string = ",\"release_date\":"
 		out.RawString(prefix)
 		out.Raw((in.ReleaseDate).MarshalJSON())
+	}
+	if in.Rating != 0 {
+		const prefix string = ",\"rating\":"
+		out.RawString(prefix)
+		out.Float64(float64(in.Rating))
 	}
 	if in.Duration != 0 {
 		const prefix string = ",\"duration_minutes\":"

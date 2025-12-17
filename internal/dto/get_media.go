@@ -10,10 +10,10 @@ type GetMediaInput struct {
 
 type GetMediaOutput struct {
 	entity.Media
-	Genres   []GetGenreOutput `json:"genres"`
-	Posters  []string         `json:"posters"`  // S3 public URLs
-	Trailers []string         `json:"trailers"` // S3 public URLs
-	Rating   MediaRating      `json:"user_rating"`
+	Genres     []GetGenreOutput `json:"genres"`
+	Posters    []string         `json:"posters"`  // S3 public URLs
+	Trailers   []string         `json:"trailers"` // S3 public URLs
+	UserRating MediaRating      `json:"user_rating"`
 }
 
 type MediaRating struct {

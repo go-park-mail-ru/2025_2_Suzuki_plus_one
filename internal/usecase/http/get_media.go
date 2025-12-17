@@ -155,7 +155,7 @@ func (uc *GetMediaUseCase) Execute(ctx context.Context, input dto.GetMediaInput)
 		Genres:   genresDTO,
 		Posters:  postersLinks,
 		Trailers: trailersLinks,
-		Rating: dto.MediaRating{
+		UserRating: dto.MediaRating{
 			Likes:    likes,
 			Dislikes: dislikes,
 		},
