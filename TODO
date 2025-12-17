@@ -1,5 +1,5 @@
-- Not just node exporter, but per service exporter
-- Ensure test coverage >60%. Now 25%
-- Add Golangci-lint
+- Not just node exporter, but per service exporter?
+- test coverage :(
+- Add Golangci-lint to githooks?
 - Search for another "TODO" comments
 - move proto gens to internal/protos
