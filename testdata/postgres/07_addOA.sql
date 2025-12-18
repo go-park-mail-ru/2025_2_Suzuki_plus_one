@@ -51,24 +51,24 @@ episode_src AS (
     SELECT *
     FROM (VALUES
         -- Season 1
-        ('The.OA.S01E01.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 1, 'The OA S01E01'),
-        ('The.OA.S01E02.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 2, 'The OA S01E02'),
-        ('The.OA.S01E03.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 3, 'The OA S01E03'),
-        ('The.OA.S01E04.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 4, 'The OA S01E04'),
-        ('The.OA.S01E05.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 5, 'The OA S01E05'),
-        ('The.OA.S01E06.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 6, 'The OA S01E06'),
-        ('The.OA.S01E07.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 7, 'The OA S01E07'),
-        ('The.OA.S01E08.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 8, 'The OA S01E08'),
+        ('medias/The.OA.S01E01.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 1, 'The OA S01E01'),
+        ('medias/The.OA.S01E02.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 2, 'The OA S01E02'),
+        ('medias/The.OA.S01E03.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 3, 'The OA S01E03'),
+        ('medias/The.OA.S01E04.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 4, 'The OA S01E04'),
+        ('medias/The.OA.S01E05.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 5, 'The OA S01E05'),
+        ('medias/The.OA.S01E06.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 6, 'The OA S01E06'),
+        ('medias/The.OA.S01E07.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 7, 'The OA S01E07'),
+        ('medias/The.OA.S01E08.WEBRip.Rus.Eng.DV.LostFilm.mp4', 1, 8, 'The OA S01E08'),
 
         -- Season 2
-        ('The.OA.S02E01.WEBRip.Rus.Eng.LostFilm.mp4', 2, 1, 'The OA S02E01'),
-        ('The.OA.S02E02.WEBRip.Rus.Eng.LostFilm.mp4', 2, 2, 'The OA S02E02'),
-        ('The.OA.S02E03.WEBRip.Rus.Eng.LostFilm.mp4', 2, 3, 'The OA S02E03'),
-        ('The.OA.S02E04.WEBRip.Rus.Eng.LostFilm.mp4', 2, 4, 'The OA S02E04'),
-        ('The.OA.S02E05.WEBRip.Rus.Eng.LostFilm.mp4', 2, 5, 'The OA S02E05'),
-        ('The.OA.S02E06.WEBRip.Rus.Eng.LostFilm.mp4', 2, 6, 'The OA S02E06'),
-        ('The.OA.S02E07.WEBRip.Rus.Eng.LostFilm.mp4', 2, 7, 'The OA S02E07'),
-        ('The.OA.S02E08.WEBRip.Rus.Eng.LostFilm.mp4', 2, 8, 'The OA S02E08')
+        ('medias/The.OA.S02E01.WEBRip.Rus.Eng.LostFilm.mp4', 2, 1, 'The OA S02E01'),
+        ('medias/The.OA.S02E02.WEBRip.Rus.Eng.LostFilm.mp4', 2, 2, 'The OA S02E02'),
+        ('medias/The.OA.S02E03.WEBRip.Rus.Eng.LostFilm.mp4', 2, 3, 'The OA S02E03'),
+        ('medias/The.OA.S02E04.WEBRip.Rus.Eng.LostFilm.mp4', 2, 4, 'The OA S02E04'),
+        ('medias/The.OA.S02E05.WEBRip.Rus.Eng.LostFilm.mp4', 2, 5, 'The OA S02E05'),
+        ('medias/The.OA.S02E06.WEBRip.Rus.Eng.LostFilm.mp4', 2, 6, 'The OA S02E06'),
+        ('medias/The.OA.S02E07.WEBRip.Rus.Eng.LostFilm.mp4', 2, 7, 'The OA S02E07'),
+        ('medias/The.OA.S02E08.WEBRip.Rus.Eng.LostFilm.mp4', 2, 8, 'The OA S02E08')
     ) AS v(s3_key, season_number, episode_number, title)
 ),
 
