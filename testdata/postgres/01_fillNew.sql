@@ -124,6 +124,46 @@ INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
 ('/actors/Robert_De_Niro.png', 'image/png', 0.07),
 ('/actors/Al_Pacino.png', 'image/png', 0.07),
 ('/actors/Harrison_Ford.png', 'image/png', 0.07),
+-- Add actors
+('/actors/albert_brooks.jpg', 'image/jpeg', 0.64),
+('/actors/alexander_gould.jpg', 'image/jpeg', 4.67),
+('/actors/al_pacino.jpg', 'image/jpeg', 0.0065),
+('/actors/anna_torv.jpg', 'image/jpeg', 0.0144),
+('/actors/bella_ramsey.jpg', 'image/jpeg', 0.81),
+('/actors/brad_renfro.jpg', 'image/jpeg', 0.03),
+('/actors/carrie-anne_moss.jpg', 'image/jpeg', 0.55),
+('/actors/daniel_radcliffe.jpg', 'image/jpeg', 0.19),
+('/actors/david_harbour.jpg', 'image/jpeg', 0.85),
+('/actors/ellen_degeneres.jpg', 'image/jpeg', 0.072),
+('/actors/elliot_page.jpg', 'image/jpeg', 0.076),
+('/actors/emma_watson.jpg', 'image/jpeg', 0.12),
+('/actors/eric_schweig.jpg', 'image/jpeg', 0.027),
+('/actors/greg_kinnear.jpg', 'image/jpeg', 0.0088),
+('/actors/harrison_ford.jpg', 'image/jpeg', 0.0062),
+('/actors/izabella_scorupco.jpg', 'image/jpeg', 0.0063),
+('/actors/jean-claude_van_damme.jpg', 'image/jpeg', 0.022),
+('/actors/john_wood.jpg', 'image/jpeg', 0.021),
+('/actors/jonathan_taylor_thomas.jpg', 'image/jpeg', 0.0097),
+('/actors/jon_voight.jpg', 'image/jpeg', 0.0057),
+('/actors/joseph_gordon-levitt.jpg', 'image/jpeg', 0.75),
+('/actors/julia_ormond.jpg', 'image/jpeg', 0.0074),
+('/actors/keanu_reeves.jpg', 'image/jpeg', 0.84),
+('/actors/laurence_fishburne.jpg', 'image/jpeg', 0.031),
+('/actors/leonardo_dicaprio.jpg', 'image/jpeg', 0.034),
+('/actors/merle_dandridge.jpg', 'image/jpeg', 0.30),
+('/actors/millie_bobby_brown.jpg', 'image/jpeg', 0.48),
+('/actors/nancy_marchand.jpg', 'image/jpeg', 0.0087),
+('/actors/pedro_pascal.jpg', 'image/jpeg', 0.21),
+('/actors/pierce_brosnan.jpg', 'image/jpeg', 0.0083),
+('/actors/powers_boothe.jpg', 'image/jpeg', 0.020),
+('/actors/raymond_j._barry.jpg', 'image/jpeg', 0.020),
+('/actors/robert_de_niro.jpg', 'image/jpeg', 0.0066),
+('/actors/rupert_grint.jpg', 'image/jpeg', 1.37),
+('/actors/sean_bean.jpg', 'image/jpeg', 1.96),
+('/actors/tom_sizemore.jpg', 'image/jpeg', 0.0081),
+('/actors/val_kilmer.jpg', 'image/jpeg', 0.0075),
+('/actors/winona_ryder.jpg', 'image/jpeg', 0.47),
+
 -- Posters
 ('/posters/1_Toy_Story.png', 'image/png', 0.1),
 ('/posters/2_Jumanji.png', 'image/png', 0.1),
@@ -218,50 +258,110 @@ WHERE a.s3_key = '/posters/10_GoldenEye.png';
 
 -- Insert actors
 INSERT INTO actor (name, birth_date, bio) VALUES
-                                              ('Tom Hanks', '1956-07-09', 'Thomas Jeffrey Hanks (born July 9, 1956) is an American actor and filmmaker.'),
-                                              ('Tim Allen', '1953-06-13', 'Tim Allen (born Timothy Allen Dick; June 13, 1953) is an American comedian, actor, voice-over artist, and entertainer.'),
-                                              ('Robert De Niro', '1943-08-17', 'Robert Anthony De Niro is an American actor, producer, and director.'),
-                                              ('Al Pacino', '1940-04-25', 'Alfredo James Pacino is an American actor and filmmaker.'),
-                                              ('Harrison Ford', '1942-07-13', 'Harrison Ford is an American actor.');
+    ('Tom Hanks', '1956-07-09', 'Thomas Jeffrey Hanks (born July 9, 1956) is an American actor and filmmaker.'),
+    ('Tim Allen', '1953-06-13', 'Tim Allen (born Timothy Allen Dick; June 13, 1953) is an American comedian, actor, voice-over artist, and entertainer.'),
+    ('Robert De Niro', '1943-08-17', 'Robert Anthony De Niro is an American actor, producer, and director.'),
+    ('Al Pacino', '1940-04-25', 'Alfredo James Pacino is an American actor and filmmaker.'),
+    ('Harrison Ford', '1942-07-13', 'Harrison Ford is an American actor.'),
+-- add actors
+  ('Albert Brooks', '1947-07-22', 'Albert Brooks (born Albert Lawrence Einstein; July 22, 1947) is an American actor, comedian, director and screenwriter.'),
+    ('Alexander Gould', '1994-05-04', 'Alexander Jerome Gould (born May 4, 1994) is an American actor and United States Marine.'),
+    ('Anna Torv', '1979-06-07', 'Anna Torv (born 7 June 1979) is an Australian actress.'),
+    ('Bella Ramsey', '2003-09-25', 'Bella Ramsey (born 25 September 2003) is an English actor.'),
+    ('Brad Renfro', '1982-07-25', 'Brad Barron Renfro (July 25, 1982 – January 15, 2008) was an American actor.'),
+    ('Carrie-Anne Moss', '1967-08-21', 'Carrie-Anne Moss (born August 21, 1967) is a Canadian actress.'),
+    ('Daniel Radcliffe', '1989-07-23', 'Daniel Jacob Radcliffe (born 23 July 1989) is an English actor.'),
+    ('David Harbour', '1975-04-10', 'David Harbour (born April 10, 1975) is an American actor.'),
+    ('Ellen DeGeneres', '1958-01-26', 'Ellen Lee DeGeneres (born January 26, 1958) is an American comedian, television host, actress, writer, and producer.'),
+    ('Elliot Page', '1987-02-21', 'Elliot Page (born February 21, 1987) is a Canadian actor and producer.'),
+    ('Emma Watson', '1990-04-15', 'Emma Charlotte Duerre Watson (born 15 April 1990) is an English actress and activist.'),
+    ('Eric Schweig', '1967-06-19', 'Eric Schweig (born June 19, 1967) is a Canadian film and television actor.'),
+    ('Greg Kinnear', '1963-06-17', 'Gregory Buck Kinnear (born June 17, 1963) is an American actor and television personality.'),
+    ('Izabella Scorupco', '1970-06-04', 'Izabella Dorota Scorupco (born 4 June 1970) is a Polish actress, model and singer.'),
+    ('Jean-Claude Van Damme', '1960-10-18', 'Jean-Claude Van Damme (born Jean-Claude Camille François Van Varenberg; 18 October 1960) is a Belgian martial artist and actor.'),
+    ('John Wood', '1930-07-05', 'John Wood (5 July 1930 – 6 August 2011) was an English actor.'),
+    ('Jonathan Taylor Thomas', '1981-09-08', 'Jonathan Taylor Thomas (born September 8, 1981) is an American actor and director.'),
+    ('Jon Voight', '1938-12-29', 'Jonathan Vincent Voight (born December 29, 1938) is an American actor.'),
+    ('Joseph Gordon-Levitt', '1981-02-17', 'Joseph Leonard Gordon-Levitt (born February 17, 1981) is an American actor.'),
+    ('Julia Ormond', '1965-01-04', 'Julia Karin Ormond (born 4 January 1965) is an English actress.'),
+    ('Keanu Reeves', '1964-09-02', 'Keanu Charles Reeves (born September 2, 1964) is a Canadian actor.'),
+    ('Laurence Fishburne', '1961-07-30', 'Laurence John Fishburne III (born July 30, 1961) is an American actor.'),
+    ('Leonardo DiCaprio', '1974-11-11', 'Leonardo Wilhelm DiCaprio (born November 11, 1974) is an American actor and film producer.'),
+    ('Merle Dandridge', '1975-05-31', 'Merle Dandridge (born May 31, 1975) is an American actress and singer.'),
+    ('Millie Bobby Brown', '2004-02-19', 'Millie Bobby Brown (born 19 February 2004) is a British actress and model.'),
+    ('Nancy Marchand', '1928-06-19', 'Nancy Marchand (June 19, 1928 – June 18, 2000) was an American actress.'),
+    ('Pedro Pascal', '1975-04-02', 'Pedro Pascal (born José Pedro Balmaceda Pascal; April 2, 1975) is a Chilean-American actor.'),
+    ('Pierce Brosnan', '1953-05-16', 'Pierce Brendan Brosnan (born 16 May 1953) is an Irish actor and film producer.'),
+    ('Powers Boothe', '1948-06-01', 'Powers Allen Boothe (June 1, 1948 – May 14, 2017) was an American actor.'),
+    ('Raymond J. Barry', '1939-03-14', 'Raymond J. Barry (born March 14, 1939) is an American character actor.'),
+    ('Rupert Grint', '1988-08-24', 'Rupert Alexander Lloyd Grint (born 24 August 1988) is an English actor.'),
+    ('Sean Bean', '1959-04-17', 'Shaun Mark Bean (born 17 April 1959), known professionally as Sean Bean, is an English actor.'),
+    ('Tom Sizemore', '1961-11-29', 'Thomas Edward Sizemore Jr. (November 29, 1961 – March 3, 2023) was an American actor.'),
+    ('Val Kilmer', '1959-12-31', 'Val Edward Kilmer (born December 31, 1959) is an American actor.'),
+    ('Winona Ryder', '1971-10-29', 'Winona Laura Horowitz (born October 29, 1971), known professionally as Winona Ryder, is an American actress.');
+
 
 -- Link actor images
-INSERT INTO actor_image (actor_id, asset_image_id, image_type)
-SELECT 1, asset_image_id, 'profile'
-FROM asset_image ai
-         JOIN asset a ON ai.asset_id = a.asset_id
-WHERE a.s3_key = '/actors/Tom_Hanks.png';
+
+CREATE OR REPLACE FUNCTION normalize_name(name text) RETURNS text AS $$
+    BEGIN
+		RETURN LOWER(REGEXP_REPLACE(name, '_', ' ', 'g'));
+	END
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 INSERT INTO actor_image (actor_id, asset_image_id, image_type)
-SELECT 2, asset_image_id, 'profile'
-FROM asset_image ai
-         JOIN asset a ON ai.asset_id = a.asset_id
-WHERE a.s3_key = '/actors/Tim_Allen.png';
+SELECT 
+	act.actor_id,
+	ai.asset_image_id,
+	'profile'
+FROM actor act
+JOIN asset  on normalize_name(asset.s3_key) LIKE '%' || normalize_name(act.name) || '%'
+JOIN asset_image ai on ai.asset_id = asset.asset_id;
 
-INSERT INTO actor_image (actor_id, asset_image_id, image_type)
-SELECT 3, asset_image_id, 'profile'
-FROM asset_image ai
-         JOIN asset a ON ai.asset_id = a.asset_id
-WHERE a.s3_key = '/actors/Robert_De_Niro.png';
+-- Не актуально
 
-INSERT INTO actor_image (actor_id, asset_image_id, image_type)
-SELECT 4, asset_image_id, 'profile'
-FROM asset_image ai
-         JOIN asset a ON ai.asset_id = a.asset_id
-WHERE a.s3_key = '/actors/Al_Pacino.png';
+-- INSERT INTO actor_image (actor_id, asset_image_id, image_type)
+-- SELECT 1, asset_image_id, 'profile'
+-- FROM asset_image ai
+--          JOIN asset a ON ai.asset_id = a.asset_id
+-- WHERE a.s3_key = '/actors/Tom_Hanks.png';
 
-INSERT INTO actor_image (actor_id, asset_image_id, image_type)
-SELECT 5, asset_image_id, 'profile'
-FROM asset_image ai
-         JOIN asset a ON ai.asset_id = a.asset_id
-WHERE a.s3_key = '/actors/Harrison_Ford.png';
+-- INSERT INTO actor_image (actor_id, asset_image_id, image_type)
+-- SELECT 2, asset_image_id, 'profile'
+-- FROM asset_image ai
+--          JOIN asset a ON ai.asset_id = a.asset_id
+-- WHERE a.s3_key = '/actors/Tim_Allen.png';
+
+-- INSERT INTO actor_image (actor_id, asset_image_id, image_type)
+-- SELECT 3, asset_image_id, 'profile'
+-- FROM asset_image ai
+--          JOIN asset a ON ai.asset_id = a.asset_id
+-- WHERE a.s3_key = '/actors/Robert_De_Niro.png';
+
+-- INSERT INTO actor_image (actor_id, asset_image_id, image_type)
+-- SELECT 4, asset_image_id, 'profile'
+-- FROM asset_image ai
+--          JOIN asset a ON ai.asset_id = a.asset_id
+-- WHERE a.s3_key = '/actors/Al_Pacino.png';
+
+-- INSERT INTO actor_image (actor_id, asset_image_id, image_type)
+-- SELECT 5, asset_image_id, 'profile'
+-- FROM asset_image ai
+--          JOIN asset a ON ai.asset_id = a.asset_id
+-- WHERE a.s3_key = '/actors/Harrison_Ford.png';
 
 -- Insert actor roles
-INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
-                                                           (1, 1, 'Woody (voice)'),
-                                                           (2, 1, 'Buzz Lightyear (voice)'),
-                                                           (3, 6, 'Neil McCauley'),
-                                                           (4, 6, 'Lt. Vincent Hanna'),
-                                                           (5, 10, 'James Bond');
+
+
+-- Перенесено в файл 07_add_actor_roles.sql
+-- INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+--                                                            (1, 1, 'Woody (voice)'),
+--                                                            (2, 1, 'Buzz Lightyear (voice)'),
+--                                                            (3, 6, 'Neil McCauley'),
+--                                                            (4, 6, 'Lt. Vincent Hanna'),
+--                                                            (5, 10, 'James Bond');
+
+
 
 -- Insert additional users
 INSERT INTO "user" (username, asset_image_id, password_hash, date_of_birth, phone_number, email) VALUES
