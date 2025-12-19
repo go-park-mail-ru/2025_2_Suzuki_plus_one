@@ -1,0 +1,4 @@
+GET https://popfilms.ru/api/v1/media/recommendations?type=movie&limit=3&offset=0
+Accept: application/json
+User-Agent: vegeta
+
