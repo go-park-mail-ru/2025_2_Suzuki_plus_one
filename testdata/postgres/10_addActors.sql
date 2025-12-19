@@ -567,3 +567,237 @@ INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
     );
 
 
+-- Brit Marling
+BEGIN;
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+    ('actors/Brit_Marling.jpg', 'image/jpeg', 2);
+
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+    ((SELECT asset_id FROM asset WHERE s3_key = 'actors/Brit_Marling.jpg' LIMIT 1), 500, 667);
+
+INSERT INTO actor (name, birth_date, bio) VALUES
+    ('Brit Marling', '1982-08-07', 'Brit Marling is an American actress, writer, and producer known for combining character-driven storytelling with ambitious, high-concept ideas. She co-created and starred in the Netflix series The OA, where she plays Prairie Johnson, and has also written and starred in films such as Another Earth and Sound of My Voice.');
+
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+    ((SELECT actor_id FROM actor WHERE name = 'Brit Marling' LIMIT 1),
+     (SELECT asset_image_id FROM asset_image WHERE asset_id = (SELECT asset_id FROM asset WHERE s3_key = 'actors/Brit_Marling.jpg' LIMIT 1) LIMIT 1),
+     'profile');
+COMMIT;
+
+BEGIN;
+INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+    (
+        (SELECT actor_id FROM actor WHERE name = 'Brit Marling' LIMIT 1),
+        (SELECT media_id FROM media WHERE title = 'The OA' LIMIT 1),
+        'Prairie Johnson / The OA'
+    );
+COMMIT;
+
+-- Jason Isaacs
+BEGIN;
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+    ('actors/Jason_Isaacs.jpeg', 'image/jpeg', 2);
+
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+    ((SELECT asset_id FROM asset WHERE s3_key = 'actors/Jason_Isaacs.jpeg' LIMIT 1), 1200, 800);
+
+INSERT INTO actor (name, birth_date, bio) VALUES
+    ('Jason Isaacs', '1963-06-06', 'Jason Isaacs is an English actor known for his range across film, television, and stage. He has played memorable roles in major franchises and dramas, including Lucius Malfoy in the Harry Potter films and Captain Lorca in Star Trek: Discovery. In The OA, he portrays Dr. Hunter ‘Hap’ Percy, a complex character central to the series’ mystery and tension.');
+
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+    ((SELECT actor_id FROM actor WHERE name = 'Jason Isaacs' LIMIT 1),
+     (SELECT asset_image_id FROM asset_image WHERE asset_id = (SELECT asset_id FROM asset WHERE s3_key = 'actors/Jason_Isaacs.jpeg' LIMIT 1) LIMIT 1),
+     'profile');
+COMMIT;
+
+BEGIN;
+INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+    (
+        (SELECT actor_id FROM actor WHERE name = 'Jason Isaacs' LIMIT 1),
+        (SELECT media_id FROM media WHERE title = 'The OA' LIMIT 1),
+        'Dr. Hunter ''Hap'' Percy'
+    );
+COMMIT;
+
+-- Emory Cohen
+BEGIN;
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+    ('actors/Emory_Cohen.jpeg', 'image/jpeg', 2);
+
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+    ((SELECT asset_id FROM asset WHERE s3_key = 'actors/Emory_Cohen.jpeg' LIMIT 1), 900, 540);
+
+INSERT INTO actor (name, birth_date, bio) VALUES
+    ('Emory Cohen', '1990-03-13', 'Emory Cohen is an American actor known for emotionally intense performances in both independent films and major productions. He gained recognition for his role in Brooklyn and later appeared in The Place Beyond the Pines. In The OA, he plays Homer Roberts, bringing vulnerability and emotional depth to the series’ central narrative.');
+
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+    ((SELECT actor_id FROM actor WHERE name = 'Emory Cohen' LIMIT 1),
+     (SELECT asset_image_id FROM asset_image WHERE asset_id = (SELECT asset_id FROM asset WHERE s3_key = 'actors/Emory_Cohen.jpeg' LIMIT 1) LIMIT 1),
+     'profile');
+COMMIT;
+
+BEGIN;
+INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+    (
+        (SELECT actor_id FROM actor WHERE name = 'Emory Cohen' LIMIT 1),
+        (SELECT media_id FROM media WHERE title = 'The OA' LIMIT 1),
+        'Homer Roberts'
+    );
+COMMIT;
+
+-- Jonathan Groff
+BEGIN;
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+    ('actors/Jonathan_Groff.jpg', 'image/jpeg', 2);
+
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+    ((SELECT asset_id FROM asset WHERE s3_key = 'actors/Jonathan_Groff.jpg' LIMIT 1), 1033, 758);
+
+INSERT INTO actor (name, birth_date, bio) VALUES
+    ('Jonathan Groff', '1985-03-26', 'Jonathan Groff is an American actor recognized for acclaimed work in television, film, and musical theater. He earned major attention for stage roles in Spring Awakening and Hamilton, and is widely known to audiences as the voice of Kristoff in Disney’s Frozen franchise. In Mindhunter, he stars as FBI agent Holden Ford, anchoring the series with a focused, inquisitive performance.');
+
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+    ((SELECT actor_id FROM actor WHERE name = 'Jonathan Groff' LIMIT 1),
+     (SELECT asset_image_id FROM asset_image WHERE asset_id = (SELECT asset_id FROM asset WHERE s3_key = 'actors/Jonathan_Groff.jpg' LIMIT 1) LIMIT 1),
+     'profile');
+COMMIT;
+
+BEGIN;
+INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+    (
+        (SELECT actor_id FROM actor WHERE name = 'Jonathan Groff' LIMIT 1),
+        (SELECT media_id FROM media WHERE title = 'Mindhunter' LIMIT 1),
+        'Holden Ford'
+    );
+COMMIT;
+
+-- Holt McCallany
+BEGIN;
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+    ('actors/Holt_McCallany.webp', 'image/webp', 2);
+
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+    ((SELECT asset_id FROM asset WHERE s3_key = 'actors/Holt_McCallany.webp' LIMIT 1), 480, 320);
+
+INSERT INTO actor (name, birth_date, bio) VALUES
+    ('Holt McCallany', '1963-09-03', 'Holt McCallany is an American actor known for portraying tough, grounded characters in crime dramas and thrillers. He has appeared in films such as Fight Club and The Ice Road, and gained wide recognition for his role in Mindhunter, where he plays FBI agent Bill Tench, providing a steady, pragmatic counterbalance to the series’ investigative intensity.');
+
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+    ((SELECT actor_id FROM actor WHERE name = 'Holt McCallany' LIMIT 1),
+     (SELECT asset_image_id FROM asset_image WHERE asset_id = (SELECT asset_id FROM asset WHERE s3_key = 'actors/Holt_McCallany.webp' LIMIT 1) LIMIT 1),
+     'profile');
+COMMIT;
+
+BEGIN;
+INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+    (
+        (SELECT actor_id FROM actor WHERE name = 'Holt McCallany' LIMIT 1),
+        (SELECT media_id FROM media WHERE title = 'Mindhunter' LIMIT 1),
+        'Bill Tench'
+    );
+COMMIT;
+
+-- Anna Torv
+BEGIN;
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+    ('actors/Anna_Torv.webp', 'image/webp', 2);
+
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+    ((SELECT asset_id FROM asset WHERE s3_key = 'actors/Anna_Torv.webp' LIMIT 1), 240, 320);
+
+INSERT INTO actor (name, birth_date, bio) VALUES
+    ('Anna Torv', '1979-06-07', 'Anna Torv is an Australian actress known for intelligent, emotionally grounded performances in science fiction and crime drama. She gained international recognition as the lead in Fringe and later starred in Mindhunter as Wendy Carr, a psychologist whose academic insight and moral perspective play a crucial role in the development of the FBI’s profiling unit.');
+
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+    ((SELECT actor_id FROM actor WHERE name = 'Anna Torv' LIMIT 1),
+     (SELECT asset_image_id FROM asset_image WHERE asset_id = (SELECT asset_id FROM asset WHERE s3_key = 'actors/Anna_Torv.webp' LIMIT 1) LIMIT 1),
+     'profile');
+COMMIT;
+
+BEGIN;
+INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+    (
+        (SELECT actor_id FROM actor WHERE name = 'Anna Torv' LIMIT 1),
+        (SELECT media_id FROM media WHERE title = 'Mindhunter' LIMIT 1),
+        'Wendy Carr'
+    );
+COMMIT;
+
+-- Emma Roberts
+BEGIN;
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+    ('actors/Emma_Roberts.webp', 'image/webp', 2);
+
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+    ((SELECT asset_id FROM asset WHERE s3_key = 'actors/Emma_Roberts.webp' LIMIT 1), 1024, 1536);
+
+INSERT INTO actor (name, birth_date, bio) VALUES
+    ('Emma Roberts', '1991-02-10', 'Emma Roberts is an American actress known for her work in both comedy and horror genres. She gained early recognition with films such as Nancy Drew and later became widely known for her roles in American Horror Story and Scream Queens. In Scream Queens, she portrays Chanel Oberlin, delivering a sharp, satirical performance that defines the series’ dark comedic tone.');
+
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+    ((SELECT actor_id FROM actor WHERE name = 'Emma Roberts' LIMIT 1),
+     (SELECT asset_image_id FROM asset_image WHERE asset_id = (SELECT asset_id FROM asset WHERE s3_key = 'actors/Emma_Roberts.webp' LIMIT 1) LIMIT 1),
+     'profile');
+COMMIT;
+
+BEGIN;
+INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+    (
+        (SELECT actor_id FROM actor WHERE name = 'Emma Roberts' LIMIT 1),
+        (SELECT media_id FROM media WHERE title = 'Scream Queens' LIMIT 1),
+        'Chanel Oberlin'
+    );
+COMMIT;
+
+-- Jamie Lee Curtis
+BEGIN;
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+    ('actors/Jamie_Lee_Curtis.jpeg', 'image/jpeg', 2);
+
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+    ((SELECT asset_id FROM asset WHERE s3_key = 'actors/Jamie_Lee_Curtis.jpeg' LIMIT 1), 1200, 800);
+
+INSERT INTO actor (name, birth_date, bio) VALUES
+    ('Jamie Lee Curtis', '1958-11-22', 'Jamie Lee Curtis is an American actress and author widely regarded as a genre icon. She rose to fame as a leading figure in horror cinema with the Halloween franchise and later showcased her versatility in comedies and dramas. In Scream Queens, she plays Dean Cathy Munsch, blending authority, satire, and dark humor.');
+
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+    ((SELECT actor_id FROM actor WHERE name = 'Jamie Lee Curtis' LIMIT 1),
+     (SELECT asset_image_id FROM asset_image WHERE asset_id = (SELECT asset_id FROM asset WHERE s3_key = 'actors/Jamie_Lee_Curtis.jpeg' LIMIT 1) LIMIT 1),
+     'profile');
+COMMIT;
+
+BEGIN;
+INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+    (
+        (SELECT actor_id FROM actor WHERE name = 'Jamie Lee Curtis' LIMIT 1),
+        (SELECT media_id FROM media WHERE title = 'Scream Queens' LIMIT 1),
+        'Dean Cathy Munsch'
+    );
+COMMIT;
+
+-- Lea Michele
+BEGIN;
+INSERT INTO asset (s3_key, mime_type, file_size_mb) VALUES
+    ('actors/Lea_Michele.webp', 'image/webp', 2);
+
+INSERT INTO asset_image (asset_id, resolution_width, resolution_height) VALUES
+    ((SELECT asset_id FROM asset WHERE s3_key = 'actors/Lea_Michele.webp' LIMIT 1), 1200, 800);
+
+INSERT INTO actor (name, birth_date, bio) VALUES
+    ('Lea Michele', '1986-08-29', 'Lea Michele is an American actress and singer best known for her breakout role as Rachel Berry on Glee, which highlighted her vocal talent and comedic timing. With a background in musical theater, she later expanded into horror-comedy television. In Scream Queens, she plays Hester Ulrich, a character whose intensity and unpredictability help drive the show’s mystery and satire.');
+
+INSERT INTO actor_image (actor_id, asset_image_id, image_type) VALUES
+    ((SELECT actor_id FROM actor WHERE name = 'Lea Michele' LIMIT 1),
+     (SELECT asset_image_id FROM asset_image WHERE asset_id = (SELECT asset_id FROM asset WHERE s3_key = 'actors/Lea_Michele.webp' LIMIT 1) LIMIT 1),
+     'profile');
+COMMIT;
+
+BEGIN;
+INSERT INTO actor_role (actor_id, media_id, role_name) VALUES
+    (
+        (SELECT actor_id FROM actor WHERE name = 'Lea Michele' LIMIT 1),
+        (SELECT media_id FROM media WHERE title = 'Scream Queens' LIMIT 1),
+        'Hester Ulrich'
+    );
+COMMIT;
+
