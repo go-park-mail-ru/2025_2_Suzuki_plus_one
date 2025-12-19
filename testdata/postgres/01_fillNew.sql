@@ -303,12 +303,14 @@ INSERT INTO actor (name, birth_date, bio) VALUES
 
 -- Link actor images
 
+-- Escape with _
 CREATE OR REPLACE FUNCTION normalize_name(name text) RETURNS text AS $$
     BEGIN
 		RETURN LOWER(REGEXP_REPLACE(name, '_', ' ', 'g'));
 	END
 $$ LANGUAGE plpgsql IMMUTABLE;
 
+-- Insert all actor images based on matching asset s3_key with actor name
 INSERT INTO actor_image (actor_id, asset_image_id, image_type)
 SELECT 
 	act.actor_id,

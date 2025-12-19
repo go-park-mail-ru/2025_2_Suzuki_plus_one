@@ -61,12 +61,20 @@ sudo ./aws/install
   aws s3api list-buckets --endpoint-url https://s3.cloud.ru --query "Buckets[].Name"
   ```
 
+- list files in bucket
+
+  ```bash
+  BUCKET=bucket-test
+  aws s3api list-objects --endpoint-url https://s3.cloud.ru --bucket $BUCKET --query "Contents[].Key"
+  ```
+
 - download file
 
   ```bash
   KEY=dima.png
   BUCKET=bucket-test
   aws s3api get-object --endpoint-url https://s3.cloud.ru --bucket $BUCKET --key $KEY $
+  ```
 
 #### Additional cmds
 
