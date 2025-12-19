@@ -1,0 +1,40 @@
+Requests      [total, rate, throughput]  100000, 500.00, 0.00
+Duration      [total, attack, wait]      3m21.061553678s, 3m19.998503675s, 1.063050003s
+Latencies     [mean, 50, 95, 99, max]    1.234162848s, 1.166901434s, 2.006500852s, 2.777404354s, 4.412292183s
+Bytes In      [total, mean]              20014431, 200.14
+Bytes Out     [total, mean]              10573550, 105.74
+Success       [ratio]                    0.00%
+Status Codes  [code:count]               0:40  400:94890  500:5070  
+Error Set:
+400 Bad Request
+500 Internal Server Error
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:39989->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:48927->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:52231->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:33965->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:35759->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": EOF
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:42315->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:46139->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:35655->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:37085->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:40623->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:35837->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:39909->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:52441->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:49865->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:35149->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:49651->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:44877->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:52413->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:42737->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:44907->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:58001->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:58643->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:55989->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:56915->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:55821->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:37095->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:49017->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:56341->217.16.18.125:443: read: connection reset by peer
+Post "https://popfilms.ru/api/v1/auth/signup": read tcp 192.168.10.71:45695->217.16.18.125:443: read: connection reset by peer
