@@ -50,16 +50,16 @@ series_image AS (
 episode_src AS (
     SELECT *
     FROM (VALUES
-        ('media/Mindhunter.S01E01.1080p.rus.sub.FOCS-PB.mp4', 1, 1, 'Mindhunter S01E01', 'FBI negotiator Holden Ford begins questioning traditional crime-solving methods after a hostage situation exposes the limits of conventional profiling.'),
-        ('media/Mindhunter.S01E02.1080p.rus.sub.FOCS-PB.mp4', 1, 2, 'Mindhunter S01E02', 'Holden and Bill Tench conduct their first prison interview with a convicted killer, discovering how unsettling it is to step inside a murderer’s mind.'),
-        ('media/Mindhunter.S01E03.1080p.rus.sub.FOCS-PB.mp4', 1, 3, 'Mindhunter S01E03', 'The Behavioral Science Unit faces internal resistance as Holden pushes controversial theories that blur moral and professional boundaries.'),
-        ('media/Mindhunter.S01E04.1080p.rus.sub.FOCS-PB.mp4', 1, 4, 'Mindhunter S01E04', 'A new case forces the team to apply their emerging profiling techniques in the real world, with disturbing consequences.'),
-        ('media/Mindhunter.S01E05.1080p.rus.sub.FOCS-PB.mp4', 1, 5, 'Mindhunter S01E05', 'Holden’s growing obsession with serial killers strains his relationship and raises concerns about his mental stability.'),
-        ('media/Mindhunter.S01E06.1080p.rus.sub.FOCS-PB.mp4', 1, 6, 'Mindhunter S01E06', 'As the interviews intensify, Bill Tench struggles to balance family life with the emotional toll of studying violent criminals.'),
-        ('media/Mindhunter.S01E07.1080p.rus.sub.FOCS-PB.mp4', 1, 7, 'Mindhunter S01E07', 'The team refines their profiling language while encountering chilling patterns that connect different murder cases.'),
-        ('media/Mindhunter.S01E08.1080p.rus.sub.FOCS-PB.mp4', 1, 8, 'Mindhunter S01E08', 'Holden becomes dangerously close to his subjects as the line between empathy and identification begins to fade.'),
-        ('media/Mindhunter.S01E09.1080p.rus.sub.FOCS-PB.mp4', 1, 9, 'Mindhunter S01E09', 'A high-stakes investigation tests whether behavioral profiling can actually save lives—or only explain death.'),
-        ('media/Mindhunter.S01E10.1080p.rus.sub.FOCS-PB.mp4', 1, 10,'Mindhunter S01E10','Season finale: Holden faces the personal and professional cost of diving too deep into the darkest corners of the human psyche.')
+        ('medias/Mindhunter.S01E01.1080p.rus.sub.FOCS-PB.mp4', 1, 1, 'Mindhunter S01E01', 'FBI negotiator Holden Ford begins questioning traditional crime-solving methods after a hostage situation exposes the limits of conventional profiling.'),
+        ('medias/Mindhunter.S01E02.1080p.rus.sub.FOCS-PB.mp4', 1, 2, 'Mindhunter S01E02', 'Holden and Bill Tench conduct their first prison interview with a convicted killer, discovering how unsettling it is to step inside a murderer’s mind.'),
+        ('medias/Mindhunter.S01E03.1080p.rus.sub.FOCS-PB.mp4', 1, 3, 'Mindhunter S01E03', 'The Behavioral Science Unit faces internal resistance as Holden pushes controversial theories that blur moral and professional boundaries.'),
+        ('medias/Mindhunter.S01E04.1080p.rus.sub.FOCS-PB.mp4', 1, 4, 'Mindhunter S01E04', 'A new case forces the team to apply their emerging profiling techniques in the real world, with disturbing consequences.'),
+        ('medias/Mindhunter.S01E05.1080p.rus.sub.FOCS-PB.mp4', 1, 5, 'Mindhunter S01E05', 'Holden’s growing obsession with serial killers strains his relationship and raises concerns about his mental stability.'),
+        ('medias/Mindhunter.S01E06.1080p.rus.sub.FOCS-PB.mp4', 1, 6, 'Mindhunter S01E06', 'As the interviews intensify, Bill Tench struggles to balance family life with the emotional toll of studying violent criminals.'),
+        ('medias/Mindhunter.S01E07.1080p.rus.sub.FOCS-PB.mp4', 1, 7, 'Mindhunter S01E07', 'The team refines their profiling language while encountering chilling patterns that connect different murder cases.'),
+        ('medias/Mindhunter.S01E08.1080p.rus.sub.FOCS-PB.mp4', 1, 8, 'Mindhunter S01E08', 'Holden becomes dangerously close to his subjects as the line between empathy and identification begins to fade.'),
+        ('medias/Mindhunter.S01E09.1080p.rus.sub.FOCS-PB.mp4', 1, 9, 'Mindhunter S01E09', 'A high-stakes investigation tests whether behavioral profiling can actually save lives—or only explain death.'),
+        ('medias/Mindhunter.S01E10.1080p.rus.sub.FOCS-PB.mp4', 1, 10,'Mindhunter S01E10','Season finale: Holden faces the personal and professional cost of diving too deep into the darkest corners of the human psyche.')
     ) AS v(s3_key, season_number, episode_number, title, episode_plot)
 ),
 

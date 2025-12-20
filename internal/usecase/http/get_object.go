@@ -48,7 +48,7 @@ func (uc *GetObjectUseCase) Execute(ctx context.Context, input dto.GetObjectInpu
 			entity.ErrGetObjectParamsInvalid,
 			err.Error(),
 		)
-		log.Error("Invalid get object input parameters", log.ToError(err))
+		log.Error("Invalid get object input parameters", log.ToError(err), log.ToAny("input", input))
 		return dto.GetObjectOutput{}, &derr
 	}
 	log.Debug("Get object input parameters are valid", log.ToAny("input", input))
